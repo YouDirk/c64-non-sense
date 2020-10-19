@@ -102,7 +102,7 @@ else
   $(shell echo 'PMOUNT_OPT = $(PMOUNT_OPT)' >> $(_CACHE_FILE))
 endif
 
-PUMOUNT_OPT := $(call _CMD_TEST,pumount,pmount (optional))
+PUMOUNT_OPT := $(call _CMD_TEST,pumount,pumount (optional))
 ifeq (,$(PUMOUNT_OPT))
   $(call _CMD_TEST_RESNO,pmount)
   $(shell echo 'PUMOUNT_OPT =' >> $(_CACHE_FILE))

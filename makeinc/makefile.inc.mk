@@ -136,7 +136,7 @@ $(OUTPUT).$(PRGEXT): $(OBJFILES)
 	$(LD) $(LDFLAGS) -o $@ $^ $(addprefix -l,$(LIBS))
 
 $(OUTPUT).$(D64EXT): $(OUTPUT).$(PRGEXT)
-	$(D64PACK) -format $*,xy d64 $@ -attach $@ -write $< $*
+	$(D64PACK) -format $*,xy d64 $@ -attach $@ -write $< $(OUTPUT)
 
 .PHONY: _cache
 _cache:
