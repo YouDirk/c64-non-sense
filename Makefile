@@ -22,7 +22,7 @@ all recompile run run-load run-mount8 debug ctags etags ebrowse all-tags:
 
 .PHONY: clean _clean
 _clean:
-	-rm -f *~ *.bak
+	-rm -f *~ *.bak makeinc/*~ makeinc/*.bak
 clean: _clean
 	$(MAKE) -C src $@
 

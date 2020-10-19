@@ -21,6 +21,14 @@
 /src/**/*.prg
 /src/**/*.d64
 
+# Make stuff
+/.makefile.cache.mk
+
+# Auto completion stuff
+/src/**/tags
+/src/**/TAGS
+/src/**/BROWSE
+
 # Backup files
 *~
 *.bak

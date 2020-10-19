@@ -24,18 +24,9 @@ LIBS :=
 EBROWSEFILE := BROWSE
 CTAGSFILE := tags
 ETAGSFILE := TAGS
-MAKEFILES := Makefile ../Makefile ../makefile.config.mk \
-  ../makeinc/makefile.variables.mk
-
-CC := cl65
-AS := cl65
-LD := cl65
-D64PACK := c1541
-DEBUGGER := gdb
-EBROWSE := ebrowse
-CTAGS := ctags
-ETAGS := etags
-EMULATOR := x64
+MAKEFILEZ := Makefile ../Makefile ../makefile.config.mk \
+  ../makeinc/makefile.variables.mk ../makeinc/makefile.inc.mk \
+  ../makeinc/makefile.check.mk
 
 CEXT := c
 HEXT := h
@@ -67,7 +58,6 @@ CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) $(CCDEFINES) \
            $(addprefix -I,$(INCLUDE_PATHS))
 ASFLAGS := $(CCFLAGS)
 LDFLAGS := $(FLAGS) $(addprefix -L,$(LD_PATHS))
-DEBUGGERFLAGS := --quiet
 
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
 

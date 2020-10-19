@@ -17,7 +17,14 @@
 
 include ../makefile.config.mk
 
+include ../.makefile.cache.mk
+include ../makeinc/makefile.check.mk
+
 include ../makeinc/makefile.variables.mk
+
+
+# ********************************************************************
+# Targets
 
 .PHONY: all
 all: $(OUTPUT).$(D64EXT)
@@ -61,8 +68,13 @@ clean-tags:
 clean: clean-deps
 	-rm -rf *.$(OEXT) *.$(LOGEXT) *.$(PRGEXT) *~ *.bak
 
+# _CLEAN_MAKECACHE must be the last one in the dependency list,
+# because it will be regenerated during recursive CLEAN calls
+.PHONY: _clean_makecache
+_clean-makecache:
+	-rm -f ../.makefile.cache.mk
 .PHONY: clean-all
-clean-all: clean clean-tags
+clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
 %.$(DEPEXT): %.$(CEXT)
@@ -70,19 +82,35 @@ clean-all: clean clean-tags
 %.$(DEPEXT): %.$(SEXT)
 	@$(MAKEDEP) $@ -E -o $*.$(OEXT) $<
 
-%.$(OEXT): %.$(CEXT) $(MAKEFILES)
+%.$(OEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -c $(CCFLAGS) -o $@ $<
-%.$(OEXT): %.$(SEXT) $(MAKEFILES)
+%.$(OEXT): %.$(SEXT) $(MAKEFILEZ)
 	$(AS) -c $(ASFLAGS) -o $@ $<
 
 $(CTAGSFILE): $(TAGEDFILES)
-	$(CTAGS) $(CTAGSFLAGS) -o $@ $^
-
+ifeq (,$(CTAGS_OPT))
+	$(error $(ERRB) CTAGS command not found!  Try Debian '$$> \
+          apt-get install emacs-bin-common' for installation.  After \
+          install run '$$> make clean-all')
+else
+	$(CTAGS_OPT) $(CTAGSFLAGS) -o $@ $^
+endif
 $(ETAGSFILE): $(TAGEDFILES)
-	$(ETAGS) $(ETAGSFLAGS) -o $@ $^
-
+ifeq (,$(ETAGS_OPT))
+	$(error $(ERRB) ETAGS command not found!  Try Debian '$$> \
+          apt-get install emacs-bin-common' for installation.  After \
+          install run '$$> make clean-all')
+else
+	$(ETAGS_OPT) $(ETAGSFLAGS) -o $@ $^
+endif
 $(EBROWSEFILE): $(TAGEDFILES)
-	$(EBROWSE) $(EBROWSEFLAGS) -o $@ $^
+ifeq (,$(EBROWSE_OPT))
+	$(error $(ERRB) EBROWSE command not found!  Try Debian '$$> \
+          apt-get install emacs-bin-common' for installation.  After \
+          install run '$$> make clean-all')
+else
+	$(EBROWSE_OPT) $(EBROWSEFLAGS) -o $@ $^
+endif
 
 $(OUTPUT).$(PRGEXT): $(OBJFILES)
 	$(LD) $(LDFLAGS) -o $@ $^ $(addprefix -l,$(LIBS))
@@ -90,4 +118,18 @@ $(OUTPUT).$(PRGEXT): $(OBJFILES)
 $(OUTPUT).$(D64EXT): $(OUTPUT).$(PRGEXT)
 	$(D64PACK) -format $*,xy d64 $@ -attach $@ -write $< $*
 
+.PHONY: _cache
+_cache:
+../.makefile.cache.mk: $(MAKEFILEZ)
+	echo '' > $@
+	$(MAKE) _CACHE_FILE=$@ _cache
+
+# Make sure that $(CC) was set by makefile.check.mk && _CACHE_FILE
+# will not generated (empty string) in the current MAKE instance,
+# before generating $(DEPFILES)
+ifeq (,$(if $(D64PACK),$(_CACHE_FILE),1))
 -include $(DEPFILES)
+endif
+
+# End of Targets
+# ********************************************************************
