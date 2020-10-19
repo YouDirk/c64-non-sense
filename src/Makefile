@@ -15,53 +15,66 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-OUTPUT = non-sense.prg
-OBJ = main
+include ../makefile.config.mk
 
-DEBUGFLAGS = -g
-OPTFLAG = -O
+OUTPUT := non-sense.prg
+OBJ := main
 
-INCLUDE_PATHS =
-LD_PATHS =
-LIBS =
+INCLUDE_PATHS :=
+LD_PATHS :=
+LIBS :=
 
-EBROWSEFILE = BROWSE
-CTAGSFILE = tags
-ETAGSFILE = TAGS
-MAKEFILE = Makefile
+EBROWSEFILE := BROWSE
+CTAGSFILE := tags
+ETAGSFILE := TAGS
+MAKEFILES := Makefile ../Makefile ../makefile.config.mk
 
-CC = cl65
-AS = cl65
-LD = cl65
-DEBUGGER = gdb
-EBROWSE = ebrowse
-CTAGS = ctags
-ETAGS = etags
-EMULATOR = x64
+CC := cl65
+AS := cl65
+LD := cl65
+DEBUGGER := gdb
+EBROWSE := ebrowse
+CTAGS := ctags
+ETAGS := etags
+EMULATOR := x64
 
-CEXT = c
-HEXT = h
-SEXT = S
-OEXT = o
-DEPEXT = d
-LOGEXT = log
+CEXT := c
+HEXT := h
+SEXT := S
+OEXT := o
+DEPEXT := d
+LOGEXT := log
 
-OBJFILES = $(OBJ:=.$(OEXT))
-DEPFILES = $(OBJ:=.$(DEPEXT))
+# --------------------------------------------------------------------
 
-FLAGS = $(DEBUGFLAGS) $(OPTFLAG)
-CCFLAGS = $(FLAGS) -c -DDEBUG $(addprefix -I,$(INCLUDE_PATHS))
-ASFLAGS = $(CCFLAGS)
-LDFLAGS = $(FLAGS) $(addprefix -L,$(LD_PATHS))
-DEBUGGERFLAGS = --quiet
+# Debug build?
+ifeq (1,$(DEBUG_BUILD))
+  DEBUGFLAGS := -g
+  CCDEFINES += -DDEBUG
+else
+  DEBUGFLAGS :=
+  CCDEFINES +=
+endif
 
-TAGEDFILES = $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
+# --------------------------------------------------------------------
 
-CTAGSFLAGS =
-ETAGSFLAGS =
-EBROWSEFLAGS =
+OBJFILES := $(OBJ:=.$(OEXT))
+DEPFILES := $(OBJ:=.$(DEPEXT))
 
-MAKEDEP = $(CC) $(CCFLAGS) --create-full-dep
+FLAGS := $(DEBUGFLAGS) $(OPTFLAG)
+CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) $(CCDEFINES) \
+           $(addprefix -I,$(INCLUDE_PATHS))
+ASFLAGS := $(CCFLAGS)
+LDFLAGS := $(FLAGS) $(addprefix -L,$(LD_PATHS))
+DEBUGGERFLAGS := --quiet
+
+TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
+
+CTAGSFLAGS :=
+ETAGSFLAGS :=
+EBROWSEFLAGS :=
+
+MAKEDEP := $(CC) $(CCFLAGS) --create-full-dep
 
 .PHONY: all
 all: $(OUTPUT)
@@ -91,29 +104,29 @@ all-tags: ctags etags ebrowse
 
 .PHONY: clean-deps
 clean-deps:
-	rm -f *.$(DEPEXT)
+	-rm -f *.$(DEPEXT)
 
 .PHONY: clean-tags
 clean-tags:
-	rm -f $(CTAGSFILE) $(ETAGSFILE) $(EBROWSEFILE)
+	-rm -f $(CTAGSFILE) $(ETAGSFILE) $(EBROWSEFILE)
 
 .PHONY: clean
 clean: clean-deps
-	rm -rf *.$(OEXT) *.$(LOGEXT) *~
+	-rm -rf *.$(OEXT) *.$(LOGEXT) *~ *.bak
 
 .PHONY: clean-all
 clean-all: clean clean-tags
-	rm -f $(OUTPUT)
+	-rm -f $(OUTPUT)
 
 %.$(DEPEXT): %.$(CEXT)
-	$(MAKEDEP) $@ -o $*.$(OEXT) $<
+	@$(MAKEDEP) $@ -E -o /dev/null $<
 %.$(DEPEXT): %.$(SEXT)
-	$(MAKEDEP) $@ -o $*.$(OEXT) $<
+	@$(MAKEDEP) $@ -E -o $*.$(OEXT) $<
 
-%.$(OEXT): %.$(CEXT) $(MAKEFILE)
-	$(CC) $(CCFLAGS) -o $@ $<
-%.$(OEXT): %.$(SEXT) $(MAKEFILE)
-	$(AS) $(ASFLAGS) -o $@ $<
+%.$(OEXT): %.$(CEXT) $(MAKEFILES)
+	$(CC) -c $(CCFLAGS) -o $@ $<
+%.$(OEXT): %.$(SEXT) $(MAKEFILES)
+	$(AS) -c $(ASFLAGS) -o $@ $<
 
 $(CTAGSFILE): $(TAGEDFILES)
 	$(CTAGS) $(CTAGSFLAGS) -o $@ $^

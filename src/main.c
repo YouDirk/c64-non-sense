@@ -21,11 +21,9 @@
 int
 main(int argc, char** argv)
 {
-  char* x = strdup("Hello World!");
+  const char* x = "Hello World!";
 
   printf("%s: %s\n", argv[0], x);
-
-  free(x);
 
   return 0;
 }
