@@ -93,6 +93,24 @@ endif
 # --------------------------------------------------------------------
 # Optional
 
+PMOUNT_OPT := $(call _CMD_TEST,pmount,pmount (optional))
+ifeq (,$(PMOUNT_OPT))
+  $(call _CMD_TEST_RESNO,pmount)
+  $(shell echo 'PMOUNT_OPT =' >> $(_CACHE_FILE))
+else
+  $(call _CMD_TEST_RESULT,$(PMOUNT_OPT))
+  $(shell echo 'PMOUNT_OPT = $(PMOUNT_OPT)' >> $(_CACHE_FILE))
+endif
+
+PUMOUNT_OPT := $(call _CMD_TEST,pumount,pmount (optional))
+ifeq (,$(PUMOUNT_OPT))
+  $(call _CMD_TEST_RESNO,pmount)
+  $(shell echo 'PUMOUNT_OPT =' >> $(_CACHE_FILE))
+else
+  $(call _CMD_TEST_RESULT,$(PUMOUNT_OPT))
+  $(shell echo 'PUMOUNT_OPT = $(PUMOUNT_OPT)' >> $(_CACHE_FILE))
+endif
+
 CTAGS_OPT := $(call _CMD_TEST,ctags,ctags (optional))
 ifeq (,$(CTAGS_OPT))
   $(call _CMD_TEST_RESNO,emacs-bin-common)

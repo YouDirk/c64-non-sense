@@ -23,6 +23,12 @@
 #
 DEBUG_BUILD := 1
 
+# The removable device (i.e. USB storage) where to copy the D64 file.
+#
+# values, such like: /dev/sdc1
+#
+DISK_DEVICE := /dev/sdc1
+
 # Only used if DEBUG_BUILD = 1, otherwise the best opimization level
 # will be used.
 #

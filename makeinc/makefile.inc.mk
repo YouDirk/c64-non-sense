@@ -44,17 +44,37 @@ run-mount8: all
 debug: all
 	$(EMULATOR) -autostart $(OUTPUT).$(D64EXT)
 
-.PHONY: ctags
-ctags: $(CTAGSFILE)
+.PHONY: disk
+disk: all
+ifeq (, $(if $(PMOUNT_OPT),$(PUMOUNT_OPT),))
+	$(error $(ERRB) PMOUNT command not found!  Please copy the file \
+          '$(OUTPUT).$(D64EXT)' manually to disk!  Or try Debian '$$> \
+          apt-get install pmount' for installation.  After install run \
+          '$$> make clean-all')
+else
+	@if [ ! -b "$(DISK_DEVICE)" ]; then \
+	  echo "\nERROR: Device '$(DISK_DEVICE)' does not exist!  Please" \
+	       "attach it to your computer or change the config" \
+	       "'makefile.config.mk'!\n" > /dev/stderr; \
+	  exit 1; \
+	fi
+	-$(PMOUNT_OPT) "$(DISK_DEVICE)" non-sense-disk
+	cp -f $(OUTPUT).$(D64EXT) /media/non-sense-disk/
+	sync && sleep 1
+	$(PUMOUNT_OPT) "$(DISK_DEVICE)"
+endif
 
-.PHONY: etags
-etags: $(ETAGSFILE)
+.PHONY: tags-ctags
+tags-ctags: $(CTAGSFILE)
 
-.PHONY: ebrowse
-ebrowse: $(EBROWSEFILE)
+.PHONY: tags-etags
+tags-etags: $(ETAGSFILE)
 
-.PHONY: all-tags
-all-tags: ctags etags ebrowse
+.PHONY: tags-ebrowse
+tags-ebrowse: $(EBROWSEFILE)
+
+.PHONY: tags-all
+tags-all: ctags etags ebrowse
 
 .PHONY: clean-deps
 clean-deps:
@@ -77,10 +97,10 @@ _clean-makecache:
 clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
-%.$(DEPEXT): %.$(CEXT)
-	@$(MAKEDEP) $@ -E -o /dev/null $<
-%.$(DEPEXT): %.$(SEXT)
-	@$(MAKEDEP) $@ -E -o $*.$(OEXT) $<
+%.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ)
+	$(MAKEDEP) $@ -c -o $*.$(OEXT) $<; rm -f $*.$(OEXT)
+%.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
+	@$(MAKEDEP) $@ -c -o $*.$(OEXT) $<; rm -f $*.$(OEXT)
 
 %.$(OEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -c $(CCFLAGS) -o $@ $<

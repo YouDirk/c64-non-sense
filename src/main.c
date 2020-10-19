@@ -18,12 +18,17 @@
 
 #include "common.h"
 
-int
-main(int argc, char** argv)
-{
-  const char* x = "Hello World!";
+#include <stdio.h>
 
-  printf("%s: %s\n", argv[0], x);
+int
+main(void)
+{
+  unsigned char* x;
+  printf("\n          ###     ###\n");
+  printf  ("       ### Luuuuuuul ###\n");
+  printf  ("          ###     ###\n");
+
+  for (x = (void*) 0xd800; x < (void*) 0xdbe8; *x++ = ((unsigned) x % 16));
 
   return 0;
 }
