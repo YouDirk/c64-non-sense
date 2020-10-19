@@ -19,6 +19,7 @@
 /src/**/*.o
 /src/**/*.d
 /src/**/*.prg
+/src/**/*.d64
 
 # Backup files
 *~

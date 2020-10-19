@@ -15,8 +15,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.PHONY: all recompile run debug ctags etags ebrowse all-tags
-all recompile run debug ctags etags ebrowse all-tags:
+.PHONY: all recompile run run-load run-mount8 debug ctags etags ebrowse
+.PHONY: all-tags
+all recompile run run-load run-mount8 debug ctags etags ebrowse all-tags:
 	$(MAKE) -C src $@
 
 .PHONY: clean _clean
