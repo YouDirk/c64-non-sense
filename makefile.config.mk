@@ -23,7 +23,7 @@
 #
 DEBUG_BUILD := 1
 
-# The removable device (i.e. USB storage) where to copy the D64 file.
+# The removable disk (i.e. USB storage) where to copy the D64 file.
 #
 # values, such like: /dev/sdc1
 #
