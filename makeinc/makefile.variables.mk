@@ -31,6 +31,7 @@ MAKEFILEZ := Makefile ../Makefile ../makefile.config.mk \
 CEXT := c
 HEXT := h
 SEXT := S
+SGENEXT := s
 OEXT := o
 DEPEXT := d
 LOGEXT := log

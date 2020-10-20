@@ -86,7 +86,7 @@ clean-tags:
 
 .PHONY: clean
 clean: clean-deps
-	-rm -rf *.$(OEXT) *.$(LOGEXT) *.$(PRGEXT) *~ *.bak
+	-rm -rf *.$(SGENEXT) *.$(OEXT) *.$(LOGEXT) *.$(PRGEXT) *~ *.bak
 
 # _CLEAN_MAKECACHE must be the last one in the dependency list,
 # because it will be regenerated during recursive CLEAN calls
@@ -102,6 +102,8 @@ clean-all: clean clean-tags _clean-makecache
 %.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
 	@$(MAKEDEP) $@ -c -o $*.$(OEXT) $<; rm -f $*.$(OEXT)
 
+%.$(SGENEXT): %.$(CEXT) $(MAKEFILEZ)
+	$(CC) -S $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -c $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(SEXT) $(MAKEFILEZ)
@@ -135,8 +137,8 @@ endif
 $(OUTPUT).$(PRGEXT): $(OBJFILES)
 	$(LD) $(LDFLAGS) -o $@ $^ $(addprefix -l,$(LIBS))
 
-$(OUTPUT).$(D64EXT): $(OUTPUT).$(PRGEXT)
-	$(D64PACK) -format $*,xy d64 $@ -attach $@ -write $< $(OUTPUT)
+%.$(D64EXT): %.$(PRGEXT)
+	$(D64PACK) -format "$* disk",aa d64 $@ -attach $@ -write $< $*
 
 .PHONY: _cache
 _cache:
