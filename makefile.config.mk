@@ -17,7 +17,8 @@
 
 # ********************************************************************
 
-# Set to 1 for debug build (recommended during development)
+# Set to 1 for enabling debugging symbols and debug code. (recommended
+# during development)
 #
 # values: [1 0]
 #

@@ -27,8 +27,8 @@ Development toolchain
 ---------------------
 
 We are developing on **Linux** using a **Debian** distribution as host
-platform.  You need the following tools to develop, which you can
-install using the Debian package manager `apt`
+platform.  You need the following tools to develop, which you are able
+to install using the Debian package manager `apt`
 
 * **git** To clone the source repository, i.e.
   ```shell
@@ -50,7 +50,7 @@ install using the Debian package manager `apt`
 
 ```shell
 $> sudo apt-get install git make cc65
-$> sudo apt-get pmount #optional
+$> sudo apt-get pmount                 # optional
 ```
 
 ### VICE/x64 (C64 emulator) Kernal/BASIC ROMs
@@ -60,11 +60,11 @@ need to download the Kernal and BASIC ROMs of the emulator manually
 due to copyright purposes.  Here an how-to:
 
 Download the source tarball `vice-3.x.tar.gz` (replace `3.x` with your
-installed VICE version show in `dpkg -l vice*`) from
+installed VICE version shown in `dpkg -l vice*`) from
 
 * *ftp://ftp.zimmers.net/pub/cbm/crossplatform/emulators/VICE/*
 
-Unpack it and copy it´s whole `data/*` directory to `/usr/lib/vice/*`.
+Unpack it and copy it´s whole `data/*` directory into `/usr/lib/vice/*`.
 
 ```shell
 tmp/$> tar zxf vice-3.x.tar.gz
