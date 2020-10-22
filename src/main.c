@@ -18,12 +18,12 @@
 
 #include "common.h"
 
-#include <string.h>
+#include "Graphix.h"
 
 int
 main(void)
 {
-  unsigned char* x;
+  uint8_t* x;
 
   /* *****************************************************************
    * init  */
@@ -35,21 +35,16 @@ main(void)
   unsigned char d016_mode2 = *(unsigned char*) 0xd016;
   unsigned char d018_buffer = *(unsigned char*) 0xd018;
 
-  /* black screen during initialization  */
-  *(unsigned char*) 0xd011 = d011_mode & 0xef;
-  *(unsigned char*) 0xd020 = 0x00;
+  Graphix_init();
 
   /* set Screen RAM  */
-  memset((void*) 0xc000, 0x50, 40*25);
+  memset(GRAPHIX_SCREEN_RAM, 0x50, 40*25);
 
   /* set Bitmap  */
-  memset((void*) 0xe000, 0x18, 8*40*25);
-  for (x = (void*) 0xe000; x < (void*) (0xe000 + 8*40*25); x+=8)
+  memset(GRAPHIX_BITMAP_RAM, 0x18, 8*40*25);
+  for (x = GRAPHIX_BITMAP_RAM;
+       x < (void*) ((unsigned) GRAPHIX_BITMAP_RAM + 8*40*25); x+=8)
     *x = 0xff;
-
-  /* Remap VIC memory  */
-  *(unsigned char*) 0xdd00 = (dd00_cia2 & 0xfc) | 0x00;
-  *(unsigned char*) 0xd018 = 0x08;
 
   /* switch into graphic mode  */
   *(unsigned char*) 0xd011 = d011_mode | 0x20;
@@ -110,13 +105,7 @@ main(void)
   /* black screen during deinitialization  */
   *(unsigned char*) 0xd011 = (d011_mode & 0xef) | 0x20;
 
-  /* restore VIC memory mapping  */
-  *(unsigned char*) 0xd018 = d018_buffer;
-  *(unsigned char*) 0xdd00 = dd00_cia2;
-
-  /* switch back to text mode  */
-  *(unsigned char*) 0xd020 = d020_border;
-  *(unsigned char*) 0xd011 = d011_mode;
+  Graphix_release();
 
   return 0;
 }

@@ -37,7 +37,7 @@ to install using the Debian package manager `apt`
 * **make** To build and run the stuff.  See the section *"Make targets"*
            below.  I.e. to compile and run in VICE type
   ```shell
-  c64-non-sense$> make run
+  c64-non-sense/$> make run
   ```
 * **cc65** The `cl65` C64 C cross-compiler collection.
 * **vice** The `x64` C64 emulator and `c1541` disk-image tool.  Make
@@ -50,7 +50,7 @@ to install using the Debian package manager `apt`
 
 ```shell
 $> sudo apt-get install git make cc65
-$> sudo apt-get pmount                 # optional
+$> sudo apt-get pmount          # optional
 ```
 
 ### VICE/x64 (C64 emulator) Kernal/BASIC ROMs
@@ -106,6 +106,10 @@ Programmers references
     - (left)   https://www.c64-wiki.com/wiki/File:PRG_Schematic_(left).gif
     - (right)  https://www.c64-wiki.com/wiki/File:PRG_Schematic_(right).gif
     - (others) http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/c64/
+
+* Commodore 64 Wiki *(well beginning)*
+    - (en)                          https://www.c64-wiki.com/wiki/C64
+    - (de, *deeper specifications*) https://www.c64-wiki.de/wiki/C64
 
 Credits
 =======

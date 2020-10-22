@@ -16,29 +16,23 @@
  */
 
 
-#ifndef COMMON_H__
-#define COMMON_H__
+#ifndef GRAPHIX_H__
+#define GRAPHIX_H__
 
-/* We should really use this.  Basic stuff such like memset() for
- * better performance, instead of implementing copy-loops.
- */
-#include <c64.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
+#include "common.h"
 
-#ifdef DEBUG
+#define _GRAPHIX_BANK_NUMBER_VIC_REG    0x00
+#define _GRAPHIX_SCREENRAM_ADDR_REG     0x00
+#define _GRAPHIX_BITMAP_ADDR_REG        0x08
 
-/* To fast implementing stuff for tests, not productive  */
-#include <stdio.h>
-#include <stdlib.h>
+#define GRAPHIX_VIC_RAM                                               \
+  ((void*) (0xc000 - _GRAPHIX_BANK_NUMBER_VIC_REG*0x4000))
+#define GRAPHIX_SCREEN_RAM                                            \
+  ((void*) ((unsigned) GRAPHIX_VIC_RAM + _GRAPHIX_SCREENRAM_ADDR_REG*0x04))
+#define GRAPHIX_BITMAP_RAM                                            \
+  ((void*) ((unsigned) GRAPHIX_VIC_RAM + _GRAPHIX_BITMAP_ADDR_REG*0x0400))
 
-#else /* #ifdef DEBUG  */
+extern void Graphix_init(void);
+extern void Graphix_release(void);
 
-#endif /* #ifdef DEBUG  */
-
-#define STRING_LEN                 256
-typedef char                       string_t[STRING_LEN];
-
-#endif /* COMMON_H__  */
+#endif /* GRAPHIX_H__  */

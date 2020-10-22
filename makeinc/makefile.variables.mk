@@ -42,7 +42,7 @@ D64EXT := d64
 
 # Debug build?
 ifeq (1,$(DEBUG_BUILD))
-  DEBUGFLAGS := -g
+  DEBUGFLAGS := -g -T
   CCDEFINES += -DDEBUG
 else
   DEBUGFLAGS :=
@@ -54,7 +54,7 @@ endif
 OBJFILES := $(OBJ:=.$(OEXT))
 DEPFILES := $(OBJ:=.$(DEPEXT))
 
-FLAGS := $(DEBUGFLAGS) $(OPTFLAG)
+FLAGS := $(DEBUGFLAGS) $(OPTFLAG) -t c64
 CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) $(CCDEFINES) \
            $(addprefix -I,$(INCLUDE_PATHS))
 ASFLAGS := $(CCFLAGS)

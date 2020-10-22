@@ -98,9 +98,9 @@ clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
 %.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ)
-	@$(MAKEDEP) $@ -c -o $*.$(OEXT) $<; rm -f $*.$(OEXT)
+	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; rm -f $*.$(OEXT)
 %.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
-	@$(MAKEDEP) $@ -c -o $*.$(OEXT) $<; rm -f $*.$(OEXT)
+	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; rm -f $*.$(OEXT)
 
 %.$(SGENEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -S $(CCFLAGS) -o $@ $<

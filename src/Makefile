@@ -15,6 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-OBJ = main
+OBJ = main Graphix
 
 include ../makeinc/makefile.inc.mk
