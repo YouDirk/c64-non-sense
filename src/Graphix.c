@@ -25,8 +25,8 @@
 
 #define _CIA2_PRA_BANK_MASK             0x03
 
-#define _BANK_NUMBER_VIC_REG            0x00
-#define _VIC_BANK        ((void*) (0xc000 - _BANK_NUMBER_VIC*0x4000))
+#define _VIC_ADDR_BITMAP_CHARSET1       0x05  /* (default) symbols    */
+#define _VIC_ADDR_BITMAP_CHARSET2       0x07  /* lower case possible  */
 
 static struct {
   uint8_t ctrl1;                        /* control reg 1  */
@@ -53,7 +53,7 @@ Graphix_init(void)
 
   /* remap VIC memory  */
   CIA2.pra = (_cia2_backups.pra & ~_CIA2_PRA_BANK_MASK)
-    | _BANK_NUMBER_VIC_REG;
+    | _GRAPHIX_BANK_NUMBER_VIC_REG;
   VIC.addr = (_VIC_ADDR_SCREENRAM_MASK & _GRAPHIX_SCREENRAM_ADDR_REG)
     | (_VIC_ADDR_BITMAP_MASK & _GRAPHIX_BITMAP_ADDR_REG);
 }
@@ -61,8 +61,11 @@ Graphix_init(void)
 void
 Graphix_release(void)
 {
-  /* restore VIC memory mapping  */
-  VIC.addr = _vic_backups.addr;
+  /* Restore VIC memory mapping AND set character-set back to 1
+   * (symbols, no lower case).
+   */
+  VIC.addr = (_vic_backups.addr & _VIC_ADDR_SCREENRAM_MASK)
+    | (_VIC_ADDR_BITMAP_MASK & _VIC_ADDR_BITMAP_CHARSET1);
   CIA2.pra = _cia2_backups.pra;
 
   /* switch back to text mode  */

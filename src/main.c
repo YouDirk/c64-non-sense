@@ -23,7 +23,7 @@
 int
 main(void)
 {
-  uint8_t* x;
+  unsigned i;
 
   /* *****************************************************************
    * init  */
@@ -37,14 +37,15 @@ main(void)
 
   Graphix_init();
 
-  /* set Screen RAM  */
-  memset(GRAPHIX_SCREEN_RAM, 0x50, 40*25);
+  /* set screen ram  */
+  memset(GRAPHIX_SCREEN_RAM,
+    GRAPHIX_SCREENRAM_COLOR(COLOR_GREEN, COLOR_BLACK),
+    GRAPHIX_CELLS_PER_SCREEN);
 
-  /* set Bitmap  */
-  memset(GRAPHIX_BITMAP_RAM, 0x18, 8*40*25);
-  for (x = GRAPHIX_BITMAP_RAM;
-       x < (void*) ((unsigned) GRAPHIX_BITMAP_RAM + 8*40*25); x+=8)
-    *x = 0xff;
+  /* set bitmap  */
+  memset(GRAPHIX_BITMAP_RAM, 0x18, GRAPHIX_BYTES_PER_SCREEN);
+  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
+    GRAPHIX_BITMAP_RAM[i] = 0xff;
 
   /* switch into graphic mode  */
   *(unsigned char*) 0xd011 = d011_mode | 0x20;
