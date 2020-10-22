@@ -31,8 +31,8 @@
 #ifdef DEBUG
 
 /* To fast implementing stuff for tests, not productive  */
-#include <stdio.h>
-#include <stdlib.h>
+#  include <stdio.h>
+#  include <stdlib.h>
 
 #else /* #ifdef DEBUG  */
 

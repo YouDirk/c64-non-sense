@@ -40,10 +40,6 @@ run-load: all
 run-mount8: all
 	$(EMULATOR) -8 $(OUTPUT).$(D64EXT)
 
-.PHONY: debug
-debug: all
-	$(EMULATOR) -autostart $(OUTPUT).$(D64EXT)
-
 .PHONY: disk
 disk: all
 ifeq (, $(if $(PMOUNT_OPT),$(PUMOUNT_OPT),))
@@ -86,7 +82,8 @@ clean-tags:
 
 .PHONY: clean
 clean: clean-deps
-	-rm -rf *.$(SGENEXT) *.$(OEXT) *.$(LOGEXT) *.$(PRGEXT) *~ *.bak
+	-rm -rf *.$(CCEXT) *.$(ASMEXT) *.$(OEXT) *.$(LOGEXT) *~ *.bak \
+	  *.$(PRGEXT)
 
 # _CLEAN_MAKECACHE must be the last one in the dependency list,
 # because it will be regenerated during recursive CLEAN calls
@@ -98,11 +95,15 @@ clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
 %.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ)
-	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; rm -f $*.$(OEXT)
+	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; \
+	  rm -f $*.$(OEXT)
 %.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
-	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; rm -f $*.$(OEXT)
+	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; \
+	  rm -f $*.$(OEXT)
 
-%.$(SGENEXT): %.$(CEXT) $(MAKEFILEZ)
+%.$(CCEXT): %.$(CEXT) $(MAKEFILEZ)
+	$(CC) -E $(CCFLAGS) -o $@ $<
+%.$(ASMEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -S $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(CC) -c $(CCFLAGS) -o $@ $<

@@ -30,9 +30,8 @@ _init_graphic_rams(uint8_t* screen_ram, uint8_t* bitmap_ram)
          GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
-  memset(bitmap_ram, 0x18, GRAPHIX_BYTES_PER_SCREEN);
-  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
-    bitmap_ram[i] = 0xff;
+  memset(bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
+  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8) bitmap_ram[i] = 0xff;
 }
 
 int
@@ -43,7 +42,7 @@ main(void)
   unsigned char joy_cntrl = 0x1f;
   int prev_time = -1;
 
-  while (joy_cntrl & (1<<4)) {
+  while (joy_cntrl & JOY_BTN_1_MASK) {
     while (prev_time >= 0
            || !(~(*(unsigned char*) 0xdc00) & 0x1f)) {
       if (prev_time >= 0
@@ -53,14 +52,10 @@ main(void)
     prev_time = *(unsigned char*) 0x00a2;
     joy_cntrl = *(unsigned char*) 0xdc00;
 
-    /* up  */
-    if (~joy_cntrl & (1<<0)) ++graphix->scroll_y;
-    /* down  */
-    if (~joy_cntrl & (1<<1)) --graphix->scroll_y;
-    /* left  */
-    if (~joy_cntrl & (1<<2)) ++graphix->scroll_x;
-    /* right  */
-    if (~joy_cntrl & (1<<3)) --graphix->scroll_x;
+    if (~joy_cntrl & JOY_UP_MASK)    ++graphix->scroll_y;
+    if (~joy_cntrl & JOY_DOWN_MASK)  --graphix->scroll_y;
+    if (~joy_cntrl & JOY_LEFT_MASK)  ++graphix->scroll_x;
+    if (~joy_cntrl & JOY_RIGHT_MASK) --graphix->scroll_x;
 
     Graphix_render();
   }

@@ -84,7 +84,6 @@ clean-all:     Deletes all files which are not under version control
 run:           Make 'all' and `RUN` NonSense in VICE emulator
 run-load:      Make 'all' and `LOAD"*",8,1` NonSense in VICE emulator
 run-mount8:    Make 'all' and run VICE emulator (no `LOAD`, no `RUN`)
-debug:         Make 'all' and 'run' using a debugger (not implemented)
 disk:          Make 'all' and copy the D64 file to a removable disk (i.e.
                USB storage) as configured in makefile.config.mk
 tags-all:      Make 'tags-ctags', 'tags-etags' and 'tags-ebrowse'

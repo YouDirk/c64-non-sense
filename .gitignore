@@ -16,7 +16,8 @@
 
 
 # Compiling stuff
-/src/**/*.s
+/src/**/*.cc
+/src/**/*.asm
 /src/**/*.o
 /src/**/*.d
 /src/**/*.prg

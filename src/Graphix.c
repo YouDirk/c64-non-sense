@@ -116,7 +116,7 @@ Graphix_release(void)
     | (_VIC_ADDR_BITMAP_MASK & _VIC_ADDR_BITMAP_CHARSET1);
   CIA2.pra = _cia2_backups.pra;
 
-  /* switch back to text mode  */
+  /* switch back into text mode  */
   VIC.bordercolor = _vic_backups.bordercolor;
   VIC.ctrl1 = _vic_backups.ctrl1;
 }

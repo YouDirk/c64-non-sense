@@ -60,8 +60,8 @@ typedef void __fastcall__
 
 /* 'this' structure  */
 typedef struct Graphix_t {
-  uint8_t scroll_x;
-  uint8_t scroll_y;
+  int8_t scroll_x;
+  int8_t scroll_y;
 } Graphix_t;
 
 /* Returns a singleton.  So it´s not needed to pass it as argument
