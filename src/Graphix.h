@@ -50,24 +50,28 @@
   (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_MULTICOLOR)
 
 
-/* default is 0x03  */
-#define _GRAPHIX_BANK_NUMBER_VIC_REG    0x00
-/* default is 0x10  */
-#define _GRAPHIX_SCREENRAM_ADDR_REG     0x00
-/* default is 0x07, but 0x00 or 0x08 should be used  */
-#define _GRAPHIX_BITMAP_ADDR_REG        0x08
-
-#define GRAPHIX_VIC_RAM                                               \
-  ((void*) (0xc000 - _GRAPHIX_BANK_NUMBER_VIC_REG*0x4000))
-#define GRAPHIX_SCREEN_RAM                                            \
-  ((uint8_t*) ((unsigned) GRAPHIX_VIC_RAM + _GRAPHIX_SCREENRAM_ADDR_REG*0x40))
-#define GRAPHIX_BITMAP_RAM                                            \
-  ((uint8_t*) ((unsigned) GRAPHIX_VIC_RAM + _GRAPHIX_BITMAP_ADDR_REG*0x0400))
-
+/* Colors are defined in <c64.h>  */
 #define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)                \
   ((set_color << 4) | zero_color)
 
-extern void Graphix_init(void);
-extern void Graphix_release(void);
+
+typedef void __fastcall__
+  (*Graphix_init_callback_t)(uint8_t* screen_ram, uint8_t* bitmap_ram);
+
+/* 'this' structure  */
+typedef struct Graphix_t {
+  uint8_t scroll_x;
+  uint8_t scroll_y;
+} Graphix_t;
+
+/* Returns a singleton.  So it´s not needed to pass it as argument
+ * into other functions.
+ */
+extern Graphix_t* __fastcall__
+  Graphix_new(Graphix_init_callback_t init_callback);
+
+extern void __fastcall__ Graphix_release(void);
+
+extern void __fastcall__ Graphix_render(void);
 
 #endif /* GRAPHIX_H__  */
