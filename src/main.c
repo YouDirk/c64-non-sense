@@ -39,13 +39,20 @@ int
 main(void)
 {
   Graphix_t* graphix;
-  unsigned char joy_cntrl = 0x1f;
-  int prev_time = -1;
+  unsigned char joy_cntrl;
+  int prev_time;
 
   Interrupt_init();
   graphix = Graphix_new(_init_graphic_rams);
 
+  joy_cntrl = 0x1f;
+  prev_time = -1;
   while (joy_cntrl & JOY_BTN_1_MASK) {
+
+    /* CIA1 timers are currently disabled for better IRQ control
+     * during development.
+     */
+#if 0
     while (prev_time >= 0
            || !(~(*(unsigned char*) 0xdc00) & 0x1f)) {
       if (prev_time >= 0
@@ -53,6 +60,10 @@ main(void)
         prev_time = -1;
     }
     prev_time = *(unsigned char*) 0x00a2;
+#else
+    while (!(~(*(unsigned char*) 0xdc00) & 0x1f));
+#endif
+
     joy_cntrl = *(unsigned char*) 0xdc00;
 
     if (~joy_cntrl & JOY_UP_MASK)    ++graphix->scroll_y;

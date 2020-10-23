@@ -21,22 +21,30 @@
 .define _KERNAL_IRQ_DEFAULT_ADDR        $ea31
 .define _KERNAL_IRQ_RETURN_ADDR         $ea81
 
+.define _CIA1_ICR                       $dc0d
+
+.define _CIA1_ICR_MASKALL_MASK          $7f
+.define _CIA1_ICR_UNMASKALL_MASK        $ff
+
 .code
 
 .export _Interrupt_init
 .proc _Interrupt_init: near
 
-        sei                             ; mask all IRQs
+        lda #_CIA1_ICR_MASKALL_MASK     ; disabling timer irqs from CIA1
+        sta _CIA1_ICR                   ; for now
+
+        sei                                ; mask all IRQs
 
         lda #<(Interrupt_irq)
-        sta _KERNAL_IRQ_USERENTRY_ADDR  ; set lower byte of isr
+        sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
         lda #>(Interrupt_irq)
-        sta _KERNAL_IRQ_USERENTRY_ADDR+1; set higher byte of isr
+        sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
-        cli                             ; unmask all IRQs
+        cli                                ; unmask all IRQs
         rts
 
-.endproc                                ; _Interrupt_init
+.endproc                                   ; _Interrupt_init
 
 .export _Interrupt_release
 .proc _Interrupt_release: near
@@ -49,6 +57,10 @@
         sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
         cli                                ; unmask all IRQs
+
+        lda #_CIA1_ICR_UNMASKALL_MASK   ; restoring timer irqs from CIA1
+        sta _CIA1_ICR                   ; for now
+
         rts
 
 .endproc                                   ; _Interrupt_release
@@ -56,8 +68,8 @@
 .proc Interrupt_irq: near
 
         ldx $D020
-        inx
-        stx $D020                       ; increment bg color
+        inx                             ; increment bg color if an IRQ
+        stx $D020                       ; occurs
 
         jmp _KERNAL_IRQ_DEFAULT_ADDR
 
