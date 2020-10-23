@@ -49,8 +49,8 @@ to install using the Debian package manager `apt`
            `make disk`.
 
 ```shell
-$> sudo apt-get install git make cc65
-$> sudo apt-get pmount          # optional
+$> sudo apt-get install git make cc65 vice
+$> sudo apt-get pmount               # optional
 ```
 
 ### VICE/x64 (C64 emulator) Kernal/BASIC ROMs
