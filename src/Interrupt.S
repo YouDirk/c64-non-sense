@@ -1,19 +1,19 @@
-; C64 NonSense, just playing around with C64 cross-compile tools.
-; Copyright (C) 2020  Dirk "YouDirk" Lehmann
-;
-; This program is free software: you can redistribute it and/or modify
-; it under the terms of the GNU Affero General Public License as published
-; by the Free Software Foundation, either version 3 of the License, or
-; (at your option) any later version.
-;
-; This program is distributed in the hope that it will be useful,
-; but WITHOUT ANY WARRANTY; without even the implied warranty of
-; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; GNU Affero General Public License for more details.
-;
-; You should have received a copy of the GNU Affero General Public License
-; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-;
+;; C64 NonSense, just playing around with C64 cross-compile tools.
+;; Copyright (C) 2020  Dirk "YouDirk" Lehmann
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU Affero General Public License as published
+;; by the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU Affero General Public License for more details.
+;;
+;; You should have received a copy of the GNU Affero General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;;
 
 
 .define _KERNAL_IRQ_USERENTRY_ADDR      $0314
@@ -41,23 +41,23 @@
 .export _Interrupt_release
 .proc _Interrupt_release: near
 
-        sei                             ; mask all IRQs
+        sei                                ; mask all IRQs
 
         lda #<(_KERNAL_IRQ_DEFAULT_ADDR)
-        sta _KERNAL_IRQ_USERENTRY_ADDR  ; set lower byte of isr
+        sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
         lda #>(_KERNAL_IRQ_DEFAULT_ADDR)
-        sta _KERNAL_IRQ_USERENTRY_ADDR+1; set higher byte of isr
+        sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
-        cli                             ; unmask all IRQs
+        cli                                ; unmask all IRQs
         rts
 
-.endproc                                ; _Interrupt_release
+.endproc                                   ; _Interrupt_release
 
 .proc Interrupt_irq: near
 
         ldx $D020
         inx
-        stx $D020
+        stx $D020                       ; increment bg color
 
         jmp _KERNAL_IRQ_DEFAULT_ADDR
 
