@@ -53,18 +53,19 @@ $> sudo apt-get install git make cc65 vice
 $> sudo apt-get pmount               # optional
 ```
 
-### VICE/x64 (C64 emulator) Kernal/BASIC ROMs
+### VICE/x64 (C64 emulator) Kernal/BASIC/CharGen ROMs
 
 If you are using the **Debian** `contrib` package of `vice` then you
-need to download the Kernal and BASIC ROMs of the emulator manually
-due to copyright purposes.  Here an how-to:
+need to download manually the Kernal, BASIC and CharGen ROMs of the
+emulator due to copyright purposes.  Here an how-to:
 
 Download the source tarball `vice-3.x.tar.gz` (replace `3.x` with your
 installed VICE version shown in `dpkg -l vice*`) from
 
 * *ftp://ftp.zimmers.net/pub/cbm/crossplatform/emulators/VICE/*
 
-Unpack it and copy it´s whole `data/*` directory into `/usr/lib/vice/*`.
+Unpack it and copy it´s whole `data/*` directory into
+`/usr/lib/vice/`.
 
 ```shell
 tmp/$> tar zxf vice-3.x.tar.gz
@@ -95,6 +96,10 @@ tags-ebrowse:  Runs 'etags' indexer for TAB auto-completion
 Programmers references
 ----------------------
 
+* Commodore 64 Wiki *(well beginning)*
+    - (en)                          https://www.c64-wiki.com/wiki/C64
+    - (de, *deeper specifications*) https://www.c64-wiki.de/wiki/C64
+
 * Commodore 64 Programmer's Reference Guide
     - (pdf)  http://www.classiccmp.org/cini/pdf/Commodore/C64%20Programmer's%20Reference%20Guide.pdf
     - (html) http://www.devili.iki.fi/Computers/Commodore/C64/Programmers_Reference/page_iii.html
@@ -106,9 +111,9 @@ Programmers references
     - (right)  https://www.c64-wiki.com/wiki/File:PRG_Schematic_(right).gif
     - (others) http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/c64/
 
-* Commodore 64 Wiki *(well beginning)*
-    - (en)                          https://www.c64-wiki.com/wiki/C64
-    - (de, *deeper specifications*) https://www.c64-wiki.de/wiki/C64
+* Commodore 64 Datasheets
+    - (MOS 6510, CPU)            http://www.6502.org/documents/datasheets/mos/mos_6510_mpu.pdf  
+      *instruction set, opcodes* http://www.6502.org/tutorials/6502opcodes.html
 
 Credits
 =======
