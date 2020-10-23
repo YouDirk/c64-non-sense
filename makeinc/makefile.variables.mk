@@ -58,7 +58,8 @@ DEPFILES := $(OBJ:=.$(DEPEXT))
 FLAGS := $(DEBUGFLAGS) $(OPTFLAG) -tc64
 CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
            $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
-ASFLAGS := $(CCFLAGS)
+ASFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
+           -Wa $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
 LDFLAGS := $(FLAGS) $(addprefix -L,$(LD_PATHS))
 
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))

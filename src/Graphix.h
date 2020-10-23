@@ -72,6 +72,4 @@ extern Graphix_t* __fastcall__
 
 extern void __fastcall__ Graphix_release(void);
 
-extern void __fastcall__ Graphix_render(void);
-
 #endif /* GRAPHIX_H__  */

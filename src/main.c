@@ -70,8 +70,6 @@ main(void)
     if (~joy_cntrl & JOY_DOWN_MASK)  --graphix->scroll_y;
     if (~joy_cntrl & JOY_LEFT_MASK)  ++graphix->scroll_x;
     if (~joy_cntrl & JOY_RIGHT_MASK) --graphix->scroll_x;
-
-    Graphix_render();
   }
 
   Graphix_release();

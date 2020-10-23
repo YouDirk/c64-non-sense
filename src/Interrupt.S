@@ -26,12 +26,20 @@
 .define _CIA1_ICR_MASKALL_MASK          $7f
 .define _CIA1_ICR_UNMASKALL_MASK        $ff
 
+.define _VIC_IRR                        $d019
+.define _VIC_IRR_RASTERLINE_MASK        $01
+.define _VIC_IRR_SHCOLLOSION_MASK       $02
+.define _VIC_IRR_SSCOLLOSION_MASK       $04
+.define _VIC_IRR_LIGHTPEN_MASK          $08
+
+.define _VIC_BORDERCOLOR                $d020
+
 .code
 
 .export _Interrupt_init
 .proc _Interrupt_init: near
 
-        lda #_CIA1_ICR_MASKALL_MASK     ; disabling timer irqs from CIA1
+        lda #_CIA1_ICR_MASKALL_MASK     ; disabling timer IRQs from CIA1
         sta _CIA1_ICR                   ; for now
 
         sei                                ; mask all IRQs
@@ -58,19 +66,30 @@
 
         cli                                ; unmask all IRQs
 
-        lda #_CIA1_ICR_UNMASKALL_MASK   ; restoring timer irqs from CIA1
+        lda #_CIA1_ICR_UNMASKALL_MASK   ; restoring timer IRQs from CIA1
         sta _CIA1_ICR                   ; for now
 
         rts
 
 .endproc                                   ; _Interrupt_release
 
+.import _Graphix_render_irq
 .proc Interrupt_irq: near
 
-        ldx $D020
-        inx                             ; increment bg color if an IRQ
-        stx $D020                       ; occurs
+        lda #_VIC_IRR_RASTERLINE_MASK
+        bit _VIC_IRR
+        beq not_served
 
+        jsr _Graphix_render_irq
+
+        lda #_VIC_IRR_RASTERLINE_MASK
+        sta _VIC_IRR
+        jmp _KERNAL_IRQ_RETURN_ADDR
+
+not_served:
+.ifdef DEBUG                            ; increment bg color if an
+        inc _VIC_BORDERCOLOR            ; unexpected IRQ occurs
+.endif
         jmp _KERNAL_IRQ_DEFAULT_ADDR
 
 .endproc                                ; Interrupt_irq
