@@ -18,6 +18,7 @@
 
 #include "common.h"
 
+#include "Interrupt.h"
 #include "Graphix.h"
 
 static void __fastcall__
@@ -37,10 +38,12 @@ _init_graphic_rams(uint8_t* screen_ram, uint8_t* bitmap_ram)
 int
 main(void)
 {
-  Graphix_t* graphix = Graphix_new(_init_graphic_rams);
-
+  Graphix_t* graphix;
   unsigned char joy_cntrl = 0x1f;
   int prev_time = -1;
+
+  Interrupt_init();
+  graphix = Graphix_new(_init_graphic_rams);
 
   while (joy_cntrl & JOY_BTN_1_MASK) {
     while (prev_time >= 0
@@ -61,6 +64,7 @@ main(void)
   }
 
   Graphix_release();
+  Interrupt_release();
 
   return 0;
 }
