@@ -39,14 +39,15 @@ to install using the Debian package manager `apt`
   ```shell
   c64-non-sense/$> make run
   ```
-* **cc65** The `cl65` C64 C cross-compiler collection.
-* **vice** The `x64` C64 emulator and `c1541` disk-image tool.  Make
-           sure to have **`contrib`** enabled in
-           `/etc/apt/sources.list`!  Additionally you need to install
-           the Kernal/BASIC ROMs manually, see the section below.
+* **cc65** Command `cl65` for the C64 C cross-compiler collection.
+* **vice** Command `c1541` for the disk-image tool and command `x64`
+           (optional) for the C64 emulator.  Make sure to have
+           **`contrib`** enabled in `/etc/apt/sources.list`!
+           Additionally you need to install the Kernal/BASIC ROMs
+           manually, see the section below.
 * **pmount (optional)** To automatically copy the D64 file to a
            removable disk (i.e. USB storage) using the make target
-           `make disk`.
+           `$> make disk`.
 
 ```shell
 $> sudo apt-get install git make cc65 vice
@@ -60,7 +61,7 @@ need to download manually the Kernal, BASIC and CharGen ROMs of the
 emulator due to copyright purposes.  Here an how-to:
 
 Download the source tarball `vice-3.x.tar.gz` (replace `3.x` with your
-installed VICE version shown in `dpkg -l vice*`) from
+installed VICE version shown in `$> dpkg -l vice*`) from
 
 * *ftp://ftp.zimmers.net/pub/cbm/crossplatform/emulators/VICE/*
 
@@ -77,7 +78,7 @@ Done, now you can run VICE using `$> x64` :)
 ### Make targets
 
 ```make
-all <default>: Compiles the current directory and all sub-directories
+all <default>: Compiles and packs the src/non-sense.d64 disk image file
 recompile:     Runs 'clean' followed by 'all'
 clean:         Deletes temporary files / prepare for recompilation
                Useful on 'Header file not found' compilation errors
@@ -93,10 +94,21 @@ tags-etags:    Runs 'ebrowse' indexer for TAB auto-completion in Emacs
 tags-ebrowse:  Runs 'etags' indexer for TAB auto-completion
 ```
 
-Programmers references
-----------------------
+Credits
+-------
 
-* Commodore 64 Wiki *(well beginning)*
+* Donators:  
+  [![Donate/Sponsor][sponsor-pic]][sponsor-link] *nobody1, nobody2,
+  nobody3 D':*
+
+* Regular contributors:  
+  *Dirk "YouDirk" Lehmann*
+
+----------------------------------------------------------------------
+
+### Appendix: Programmers references
+
+* Commodore 64 wiki *(well beginning)*
     - (en)                          https://www.c64-wiki.com/wiki/C64
     - (de, *deeper specifications*) https://www.c64-wiki.de/wiki/C64
 
@@ -106,24 +118,18 @@ Programmers references
     - (txt)  http://www.zimmers.net/cbmpics/cbm/c64/c64prg.txt
     - (wiki) https://www.c64-wiki.com/wiki/Commodore_64_Programmer%27s_Reference_Guide
 
-* Commodore 64 Schematic Diagram
+* Commodore 64 schematic diagrams
     - (left)   https://www.c64-wiki.com/wiki/File:PRG_Schematic_(left).gif
     - (right)  https://www.c64-wiki.com/wiki/File:PRG_Schematic_(right).gif
     - (others) http://www.zimmers.net/anonftp/pub/cbm/schematics/computers/c64/
 
-* Commodore 64 Datasheets
+* Commodore 64 datasheets
     - (MOS 6510, CPU)            http://www.6502.org/documents/datasheets/mos/mos_6510_mpu.pdf  
       *instruction set, opcodes* http://www.6502.org/tutorials/6502opcodes.html
 
-Credits
-=======
-
-* Donators:  
-  [![Donate/Sponsor][sponsor-pic]][sponsor-link] *nobody1, nobody2,
-  nobody3 D':*
-
-* Regular contributors:  
-  *Dirk "YouDirk" Lehmann*
+* CC65 compiler specifications
+    - (2x C Stack: return & parameter) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
+    - (C Calling Conventions) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
 
 
 [sponsor-link]: https://github.com/sponsors/YouDirk

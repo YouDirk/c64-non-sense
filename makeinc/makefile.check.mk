@@ -79,19 +79,17 @@ else
   $(shell echo 'D64PACK = $(D64PACK)' >> $(_CACHE_FILE))
 endif
 
-EMULATOR := $(call _CMD_TEST,x64,C64 emulator)
-ifeq (,$(EMULATOR))
-  $(shell rm -f $(_CACHE_FILE))
-  $(error $(ERRB) C64 emulator not found!  Try Debian '$$> \
-    apt-get install vice' in Debian CONTRIB packages for installation. \
-    After install run '$$> make clean-all')
-else
-  $(call _CMD_TEST_RESULT,$(EMULATOR))
-  $(shell echo 'EMULATOR = $(EMULATOR)' >> $(_CACHE_FILE))
-endif
-
 # --------------------------------------------------------------------
 # Optional
+
+EMULATOR_OPT := $(call _CMD_TEST,x64,C64 emulator (optional))
+ifeq (,$(EMULATOR_OPT))
+  $(call _CMD_TEST_RESNO,vice)
+  $(shell echo 'EMULATOR_OPT =' >> $(_CACHE_FILE))
+else
+  $(call _CMD_TEST_RESULT,$(EMULATOR_OPT))
+  $(shell echo 'EMULATOR_OPT = $(EMULATOR_OPT)' >> $(_CACHE_FILE))
+endif
 
 PMOUNT_OPT := $(call _CMD_TEST,pmount,pmount (optional))
 ifeq (,$(PMOUNT_OPT))
