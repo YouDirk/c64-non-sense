@@ -84,10 +84,11 @@ static struct {
 } _cia2_backups;
 
 
-static Graphix_t _singleton;
+/* 'this' and a shadow copy of it  */
+static Graphix_t _singleton, _shadow_4_isr;
 
 Graphix_t* __fastcall__
-Graphix_new(Graphix_init_callback_t init_callback)
+Graphix_new(Graphix_initCallback_t init_callback)
 {
   /* backup needed registers  */
   _vic_backups.ctrl1 = VIC.ctrl1;
@@ -118,11 +119,15 @@ Graphix_new(Graphix_init_callback_t init_callback)
   /* mode description above  */
   VIC.ctrl1 = _VIC_CTRL1_MODE;
 
-  /* (no backup needed) IRQs GO!  */
-  VIC.imr = _VIC_IMR_IRQS;
-
+  /* initialize 'this'  */
   _singleton.scroll_x = 0;
   _singleton.scroll_y = 0;
+
+  /* initialize _shadow_4_isr  */
+  Graphix_swapBuffers();
+
+  /* (no backup needed) VIC IRQs GO!  */
+  VIC.imr = _VIC_IMR_IRQS;
 
   return &_singleton;
 }
@@ -130,7 +135,7 @@ Graphix_new(Graphix_init_callback_t init_callback)
 void __fastcall__
 Graphix_release(void)
 {
-  /* Disable all IRQs first!  */
+  /* Disable VIC IRQs first!  */
   VIC.imr = _VIC_IMR_DISABLEALL_MASK;
 
   /* black screen during deinitialization  */
@@ -152,17 +157,36 @@ Graphix_release(void)
 }
 
 void __fastcall__
+Graphix_swapBuffers(void)
+{
+  _singleton.scroll_x &= _VIC_CTRL2_XSCROLL_MASK;
+  _singleton.scroll_y &= _VIC_CTRL1_YSCROLL_MASK;
+
+
+  /* Disable Rasterline IRQs.  Do not use the SEI and CLI assembler
+   * instructions!  SEI/CLI does also disable the timer interrupts
+   * which causes lags to the whole system.
+   */
+  /* commented out, too inaccurate timing of the raster line  */
+  /* VIC.imr = _VIC_IMR_IRQS & ~_VIC_IMR_RASTERLINE_MASK;  */
+
+  memcpy(&_shadow_4_isr, &_singleton, sizeof(Graphix_t));
+
+  /* Rasterline IRQs can come back
+   */
+  /* commented out, too inaccurate timing of the raster line  */
+  /* VIC.imr = _VIC_IMR_IRQS;  */
+}
+
+void __fastcall__
 _Graphix_render_isr(void)
 {
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = COLOR_RED;
 #endif
 
-  _singleton.scroll_x &= _VIC_CTRL2_XSCROLL_MASK;
-  _singleton.scroll_y &= _VIC_CTRL1_YSCROLL_MASK;
-
-  VIC.ctrl2 = _VIC_CTRL2_MODE | _singleton.scroll_x;
-  VIC.ctrl1 = _VIC_CTRL1_MODE | _singleton.scroll_y;
+  VIC.ctrl2 = _VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
+  VIC.ctrl1 = _VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
 
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = COLOR_BLACK;

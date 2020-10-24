@@ -56,7 +56,7 @@
 
 
 typedef void __fastcall__
-  (*Graphix_init_callback_t)(uint8_t* screen_ram, uint8_t* bitmap_ram);
+  (*Graphix_initCallback_t)(uint8_t* screen_ram, uint8_t* bitmap_ram);
 
 /* 'this' structure  */
 typedef struct Graphix_t {
@@ -68,8 +68,18 @@ typedef struct Graphix_t {
  * into other functions.
  */
 extern Graphix_t* __fastcall__
-  Graphix_new(Graphix_init_callback_t init_callback);
+  Graphix_new(Graphix_initCallback_t init_callback);
 
+/* Release all resources, restore regiters and disable interrupts.
+ */
 extern void __fastcall__ Graphix_release(void);
+
+/* Should feels like a swap in a double buffered system of Graphix_t*,
+ * which was returned by Graphix_new().
+ *
+ * The pointer and it´s values of Graphix_t* will not be affected,
+ * instead it values will be copied to a private shadow struct.
+ */
+extern void __fastcall__ Graphix_swapBuffers(void);
 
 #endif /* GRAPHIX_H__  */
