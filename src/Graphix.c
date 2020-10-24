@@ -152,11 +152,19 @@ Graphix_release(void)
 }
 
 void __fastcall__
-Graphix_render_irq(void)
+_Graphix_render_isr(void)
 {
+#ifdef DEBUG_IRQ_RENDERTIME
+  VIC.bordercolor = COLOR_RED;
+#endif
+
   _singleton.scroll_x &= _VIC_CTRL2_XSCROLL_MASK;
   _singleton.scroll_y &= _VIC_CTRL1_YSCROLL_MASK;
 
   VIC.ctrl2 = _VIC_CTRL2_MODE | _singleton.scroll_x;
   VIC.ctrl1 = _VIC_CTRL1_MODE | _singleton.scroll_y;
+
+#ifdef DEBUG_IRQ_RENDERTIME
+  VIC.bordercolor = COLOR_BLACK;
+#endif
 }

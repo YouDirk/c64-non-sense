@@ -45,6 +45,9 @@ D64EXT := d64
 ifeq (1,$(DEBUG_BUILD))
   DEBUGFLAGS := -g -T
   CCDEFINES += -DDEBUG
+  ifeq (1,$(DEBUG_OPT_IRQ_RENDERTIME))
+    CCDEFINES += -DDEBUG_IRQ_RENDERTIME
+  endif
 else
   DEBUGFLAGS :=
   CCDEFINES +=
@@ -57,9 +60,9 @@ DEPFILES := $(OBJ:=.$(DEPEXT))
 
 FLAGS := $(DEBUGFLAGS) $(OPTFLAG) -tc64
 CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
-           $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
+    $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
 ASFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
-           -Wa $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
+    $(addprefix -Wa ,$(CCDEFINES)) $(addprefix -I,$(INCLUDE_PATHS))
 LDFLAGS := $(FLAGS) $(addprefix -L,$(LD_PATHS))
 
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))

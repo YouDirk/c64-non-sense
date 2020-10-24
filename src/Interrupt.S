@@ -40,13 +40,13 @@
 .proc _Interrupt_init: near
 
         lda #_CIA1_ICR_MASKALL_MASK     ; disabling timer IRQs from CIA1
-        sta _CIA1_ICR                   ; for now
+        sta _CIA1_ICR                   ;   for now
 
         sei                                ; mask all IRQs
 
-        lda #<(Interrupt_irq)
+        lda #<(Interrupt_irq_isr)
         sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
-        lda #>(Interrupt_irq)
+        lda #>(Interrupt_irq_isr)
         sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
         cli                                ; unmask all IRQs
@@ -67,29 +67,29 @@
         cli                                ; unmask all IRQs
 
         lda #_CIA1_ICR_UNMASKALL_MASK   ; restoring timer IRQs from CIA1
-        sta _CIA1_ICR                   ; for now
+        sta _CIA1_ICR                   ;   for now
 
         rts
 
-.endproc                                   ; _Interrupt_release
+.endproc                                ; _Interrupt_release
 
-.import _Graphix_render_irq
-.proc Interrupt_irq: near
+.import __Graphix_render_isr
+.proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
         lda #_VIC_IRR_RASTERLINE_MASK
-        bit _VIC_IRR
+        bit _VIC_IRR                    ; is raster line IRQ?
         beq not_served
 
-        jsr _Graphix_render_irq
+        jsr __Graphix_render_isr
 
-        lda #_VIC_IRR_RASTERLINE_MASK
-        sta _VIC_IRR
-        jmp _KERNAL_IRQ_RETURN_ADDR
+        lda #_VIC_IRR_RASTERLINE_MASK   ; tell VIC that we served the
+        sta _VIC_IRR                    ;   IRQ
+        jmp _KERNAL_IRQ_RETURN_ADDR     ; (rti) return as fast as possible
 
 not_served:
-.ifdef DEBUG                            ; increment bg color if an
-        inc _VIC_BORDERCOLOR            ; unexpected IRQ occurs
+.ifdef DEBUG                            ; increment border color if an
+        inc _VIC_BORDERCOLOR            ;   unexpected IRQ occurs
 .endif
-        jmp _KERNAL_IRQ_DEFAULT_ADDR
+        jmp _KERNAL_IRQ_DEFAULT_ADDR    ; jump to default Kernal ISR
 
-.endproc                                ; Interrupt_irq
+.endproc                                ; Interrupt_irq_isr

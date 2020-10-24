@@ -17,12 +17,24 @@
 
 # ********************************************************************
 
-# Set to 1 for enabling debugging symbols and debug code. (recommended
-# during development)
+# Enable debugging symbols and debug code, such like
+#
+# * include <std*.h> files
+#
+# * indicate interrupts which have been not served
+#
+# If disabled then the DEBUG_OPT_* options will be disabled too.
 #
 # values: [1 0]
 #
 DEBUG_BUILD := 1
+
+# Mark as border color at which position the Graphix_render_isr()
+# routine will be executed.
+#
+# values: [1 0]
+#
+DEBUG_OPT_IRQ_RENDERTIME := 0
 
 # The removable disk (i.e. USB storage) where to copy the D64 file.
 #
