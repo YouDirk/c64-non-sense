@@ -102,7 +102,8 @@ clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
 %.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ) | $(DEF_GENHFILES)
-	@-$(CC) $(CCFLAGS) --create-full-dep $@ --dep-target $*.$(OEXT) $<
+	@-$(CC) $(CCFLAGS) --create-full-dep $@ -o $*.$(OEXT) $< \
+	  2> /dev/null; rm -f $*.$(OEXT)
 %.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ) | $(DEF_GENSFILES)
 	@-$(AS) $(ASFLAGS) --create-full-dep $@ -o $*.$(OEXT) $< \
 	  2> /dev/null; rm -f $*.$(OEXT)
@@ -148,8 +149,8 @@ else
 	$(EBROWSE_OPT) $(EBROWSEFLAGS) -o $@ $^
 endif
 
-$(OUTPUT).$(PRGEXT): $(OBJFILES)
-	$(LD) $(LDFLAGS) -o $@ $^ $(addprefix -l,$(LIBS))
+$(OUTPUT).$(PRGEXT): $(OBJFILES) $(DEF_GENFILES)
+	$(LD) $(LDFLAGS) -o $@ $(OBJFILES) $(addprefix -l,$(LIBS))
 
 %.$(D64EXT): %.$(PRGEXT)
 	$(D64PACK) -format "$* disk",aa d64 $@ -attach $@ -write $< $*

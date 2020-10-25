@@ -15,10 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-# C files to be compiled
+# C files to be compile
 OBJ = main Interrupt Graphix
 
-# inc.[hs] to be generated
+# *.gen.[hs] to be generate
 DEFH = Graphix
 
 include ../makeinc/makefile.inc.mk
