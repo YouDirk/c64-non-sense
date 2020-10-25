@@ -13,8 +13,9 @@
 ;;
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-;;
 
+
+.include "Graphix.gen.s"
 
 .define _KERNAL_IRQ_USERENTRY_ADDR      $0314
 
@@ -25,14 +26,6 @@
 
 .define _CIA1_ICR_MASKALL_MASK          $7f
 .define _CIA1_ICR_UNMASKALL_MASK        $ff
-
-.define _VIC_IRR                        $d019
-.define _VIC_IRR_RASTERLINE_MASK        $01
-.define _VIC_IRR_SHCOLLOSION_MASK       $02
-.define _VIC_IRR_SSCOLLOSION_MASK       $04
-.define _VIC_IRR_LIGHTPEN_MASK          $08
-
-.define _VIC_BORDERCOLOR                $d020
 
 .code
 
@@ -76,19 +69,20 @@
 .import __Graphix_render_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
-        lda #_VIC_IRR_RASTERLINE_MASK
-        bit _VIC_IRR                    ; is raster line IRQ?
+        lda #GRAPHIX_VIC_IRR_RASTERLINE_MASK
+        bit GRAPHIX_VIC_IRR             ; is raster line IRQ?
         beq not_served
 
         jsr __Graphix_render_isr
 
-        lda #_VIC_IRR_RASTERLINE_MASK   ; tell VIC that we served the
-        sta _VIC_IRR                    ;   IRQ
+        lda #GRAPHIX_VIC_IRR_RASTERLINE_MASK
+                                        ; tell VIC that we served the
+        sta GRAPHIX_VIC_IRR             ;   IRQ
         jmp _KERNAL_IRQ_RETURN_ADDR     ; (rti) return as fast as possible
 
 not_served:
 .ifdef DEBUG                            ; increment border color if an
-        inc _VIC_BORDERCOLOR            ;   unexpected IRQ occurs
+        inc GRAPHIX_VIC_BORDERCOLOR     ;   unexpected IRQ occurs
 .endif
         jmp _KERNAL_IRQ_DEFAULT_ADDR    ; jump to default Kernal ISR
 

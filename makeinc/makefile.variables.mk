@@ -39,6 +39,11 @@ LOGEXT := log
 PRGEXT := prg
 D64EXT := d64
 
+DEF_HEXT := def.h
+DEF_DEPEXT := def.d
+DEF_GENHEXT := gen.h
+DEF_GENSEXT := gen.s
+
 # --------------------------------------------------------------------
 
 # Debug build?
@@ -59,6 +64,11 @@ endif
 
 OBJFILES := $(OBJ:=.$(OEXT))
 DEPFILES := $(OBJ:=.$(DEPEXT))
+
+DEF_GENHFILES := $(DEFH:=.$(DEF_GENHEXT))
+DEF_GENSFILES := $(DEFH:=.$(DEF_GENSEXT))
+DEF_GENFILES := $(DEF_GENHFILES) $(DEF_GENSFILES)
+DEF_DEPFILES := $(DEFH:=.$(DEF_DEPEXT))
 
 FLAGS := -tc64
 CCFLAGS := $(CCDEBUGFLAGS) $(OPTFLAG) $(FLAGS) --standard $(CCSTDFLAG) \

@@ -90,7 +90,7 @@ clean-tags:
 .PHONY: clean
 clean: clean-deps
 	-rm -rf *.$(CCEXT) *.$(ASMEXT) *.$(OEXT) *.$(LOGEXT) *~ *.bak \
-	  *.$(PRGEXT)
+	  *.$(PRGEXT) *.$(DEF_GENHEXT) *.$(DEF_GENSEXT)
 
 # _CLEAN_MAKECACHE must be the last one in the dependency list,
 # because it will be regenerated during recursive CLEAN calls
@@ -101,11 +101,13 @@ _clean-makecache:
 clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
-%.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ)
+%.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ) | $(DEF_GENHFILES)
 	@-$(CC) $(CCFLAGS) --create-full-dep $@ --dep-target $*.$(OEXT) $<
-%.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
+%.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ) | $(DEF_GENSFILES)
 	@-$(AS) $(ASFLAGS) --create-full-dep $@ -o $*.$(OEXT) $< \
 	  2> /dev/null; rm -f $*.$(OEXT)
+%.$(DEF_DEPEXT): %.$(DEF_HEXT) $(MAKEFILEZ)
+	@-echo "$*.$(DEF_GENHEXT) $*.$(DEF_GENSEXT): $< define.h" > $@
 
 %.$(CCEXT): %.$(CEXT) $(MAKEFILEZ)
 	$(LD) -E $(CCFLAGS) -o $@ $<
@@ -115,6 +117,11 @@ clean-all: clean clean-tags _clean-makecache
 	$(LD) -c $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(SEXT) $(MAKEFILEZ)
 	$(AS) $(ASFLAGS) -o $@ $<
+
+%.$(DEF_GENHEXT): %.$(DEF_HEXT) $(MAKEFILEZ)
+	$(CC) -E $(CCFLAGS) -DGEN_C_HEADER -o $*.$(DEF_GENHEXT) $<
+%.$(DEF_GENSEXT): %.$(DEF_HEXT) $(MAKEFILEZ)
+	$(CC) -E $(CCFLAGS) -DGEN_ASM_HEADER -o $*.$(DEF_GENSEXT) $<
 
 $(CTAGSFILE): $(TAGEDFILES)
 ifeq (,$(CTAGS_OPT))
@@ -157,6 +164,7 @@ _cache:
 # will not generated (empty string) in the current MAKE instance,
 # before generating $(DEPFILES)
 ifeq (,$(if $(D64PACK),$(_CACHE_FILE),1))
+-include $(DEF_DEPFILES)
 -include $(DEPFILES)
 endif
 

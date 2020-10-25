@@ -21,6 +21,8 @@
 
 #include "common.h"
 
+#include "Graphix.gen.h"
+
 #define GRAPHIX_CELL_WIDTH_HIRES        8
 #define GRAPHIX_CELL_WIDTH_MULTICOLOR   4
 #define GRAPHIX_CELL_HEIGHT             8

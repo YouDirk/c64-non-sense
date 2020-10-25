@@ -25,6 +25,8 @@
 
 # Make stuff
 /.makefile.cache.mk
+/src/**/*.gen.h
+/src/**/*.gen.s
 
 # Auto completion stuff
 /src/**/tags
