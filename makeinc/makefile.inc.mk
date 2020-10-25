@@ -30,7 +30,8 @@ include ../makeinc/makefile.variables.mk
 all: $(OUTPUT).$(D64EXT)
 
 .PHONY: recompile
-recompile: clean all
+recompile: clean
+	$(MAKE) all
 
 .PHONY: run run-load run-mount8
 ifeq (,$(EMULATOR_OPT))
