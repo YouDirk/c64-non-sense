@@ -64,8 +64,9 @@ typedef struct Graphix_t {
   int8_t scroll_y;
 } Graphix_t;
 
+
 /* Returns a singleton.  So it´s not needed to pass it as argument
- * into other functions.
+ * into other functions of this Graphix module.
  */
 extern Graphix_t* __fastcall__
   Graphix_new(Graphix_initCallback_t init_callback);

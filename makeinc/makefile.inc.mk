@@ -102,20 +102,19 @@ clean-all: clean clean-tags _clean-makecache
 	-rm -f $(OUTPUT).$(D64EXT)
 
 %.$(DEPEXT): %.$(CEXT) $(MAKEFILEZ)
-	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; \
-	  rm -f $*.$(OEXT)
+	@-$(CC) $(CCFLAGS) --create-full-dep $@ --dep-target $*.$(OEXT) $<
 %.$(DEPEXT): %.$(SEXT) $(MAKEFILEZ)
-	@-$(MAKEDEP) $@ -c -o $*.$(OEXT) $< 2> /dev/null; \
-	  rm -f $*.$(OEXT)
+	@-$(AS) $(ASFLAGS) --create-full-dep $@ -o $*.$(OEXT) $< \
+	  2> /dev/null; rm -f $*.$(OEXT)
 
 %.$(CCEXT): %.$(CEXT) $(MAKEFILEZ)
-	$(CC) -E $(CCFLAGS) -o $@ $<
+	$(LD) -E $(CCFLAGS) -o $@ $<
 %.$(ASMEXT): %.$(CEXT) $(MAKEFILEZ)
-	$(CC) -S $(CCFLAGS) -o $@ $<
+	$(LD) -S $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(CEXT) $(MAKEFILEZ)
-	$(CC) -c $(CCFLAGS) -o $@ $<
+	$(LD) -c $(CCFLAGS) -o $@ $<
 %.$(OEXT): %.$(SEXT) $(MAKEFILEZ)
-	$(AS) -c $(ASFLAGS) -o $@ $<
+	$(AS) $(ASFLAGS) -o $@ $<
 
 $(CTAGSFILE): $(TAGEDFILES)
 ifeq (,$(CTAGS_OPT))

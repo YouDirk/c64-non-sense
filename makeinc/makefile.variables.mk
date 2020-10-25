@@ -43,13 +43,15 @@ D64EXT := d64
 
 # Debug build?
 ifeq (1,$(DEBUG_BUILD))
-  DEBUGFLAGS := -g -T
+  ASDEBUGFLAGS := -g
+  CCDEBUGFLAGS := $(ASDEBUGFLAGS) -T
   CCDEFINES += -DDEBUG
   ifeq (1,$(DEBUG_OPT_IRQ_RENDERTIME))
     CCDEFINES += -DDEBUG_IRQ_RENDERTIME
   endif
 else
-  DEBUGFLAGS :=
+  ASDEBUGFLAGS :=
+  CCDEBUGFLAGS :=
   CCDEFINES +=
 endif
 
@@ -58,17 +60,16 @@ endif
 OBJFILES := $(OBJ:=.$(OEXT))
 DEPFILES := $(OBJ:=.$(DEPEXT))
 
-FLAGS := $(DEBUGFLAGS) $(OPTFLAG) -tc64
-CCFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
-    $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
-ASFLAGS := $(FLAGS) --standard $(CCSTDFLAG) -W-unused-param \
-    $(addprefix -Wa ,$(CCDEFINES)) $(addprefix -I,$(INCLUDE_PATHS))
-LDFLAGS := $(FLAGS) $(addprefix -L,$(LD_PATHS))
+FLAGS := -tc64
+CCFLAGS := $(CCDEBUGFLAGS) $(OPTFLAG) $(FLAGS) --standard $(CCSTDFLAG) \
+  -W-unused-param $(CCDEFINES) $(addprefix -I,$(INCLUDE_PATHS))
+ASFLAGS := $(ASDEBUGFLAGS) $(FLAGS) $(CCDEFINES) \
+  $(addprefix -I,$(INCLUDE_PATHS))
+LDFLAGS := $(CCDEBUGFLAGS) $(OPTFLAG) $(FLAGS) \
+  $(addprefix -L,$(LD_PATHS))
 
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
 
 CTAGSFLAGS :=
 ETAGSFLAGS :=
 EBROWSEFLAGS :=
-
-MAKEDEP := $(CC) $(CCFLAGS) --create-full-dep

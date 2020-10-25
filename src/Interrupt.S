@@ -44,9 +44,9 @@
 
         sei                                ; mask all IRQs
 
-        lda #<(Interrupt_irq_isr)
+        lda #<Interrupt_irq_isr
         sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
-        lda #>(Interrupt_irq_isr)
+        lda #>Interrupt_irq_isr
         sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
         cli                                ; unmask all IRQs
@@ -59,9 +59,9 @@
 
         sei                                ; mask all IRQs
 
-        lda #<(_KERNAL_IRQ_DEFAULT_ADDR)
+        lda #<_KERNAL_IRQ_DEFAULT_ADDR
         sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
-        lda #>(_KERNAL_IRQ_DEFAULT_ADDR)
+        lda #>_KERNAL_IRQ_DEFAULT_ADDR
         sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
 
         cli                                ; unmask all IRQs

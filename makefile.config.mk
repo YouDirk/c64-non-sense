@@ -21,7 +21,7 @@
 #
 # * include <std*.h> files
 #
-# * indicate interrupts which have been not served
+# * indicate not served interrupts
 #
 # If disabled then the DEBUG_OPT_* options will be disabled too.
 #
@@ -42,8 +42,7 @@ DEBUG_OPT_IRQ_RENDERTIME := 0
 #
 DISK_DEVICE := /dev/sdc1
 
-# Only used if DEBUG_BUILD = 1, otherwise the best opimization level
-# will be used.
+# Optimization flags for compiler
 #
 # values: [-O -Oi -Or -Os]
 #

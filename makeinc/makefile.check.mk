@@ -35,7 +35,7 @@ _CMD_TEST_NOOUT = $(shell which $(1) 2> /dev/null)
 _CMD_TEST_RESULT = $(info $(_CMD_TEST_BUF)$(1))
 _CMD_TEST_RESNO = $(info $(_CMD_TEST_BUF)no - Debian package $(1))
 
-CC := $(call _CMD_TEST,cl65,C64 C cross-compiler)
+CC := $(call _CMD_TEST,cc65,C64 C cross-compiler)
 ifeq (,$(CC))
   $(shell rm -f $(_CACHE_FILE))
   $(error $(ERRB) C64 C cross-compiler not found!  Try Debian '$$> \
@@ -46,7 +46,7 @@ else
   $(shell echo 'CC = $(CC)' >> $(_CACHE_FILE))
 endif
 
-AS := $(call _CMD_TEST,cl65,C64 ASM cross-compiler)
+AS := $(call _CMD_TEST,ca65,C64 ASM cross-compiler)
 ifeq (,$(AS))
   $(shell rm -f $(_CACHE_FILE))
   $(error $(ERRB) C64 ASM cross-compiler not found!  Try Debian '$$> \
