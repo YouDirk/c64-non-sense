@@ -28,6 +28,17 @@
 #define HASH                            #
 
 #if defined(GEN_C_HEADER)
+# define BC /##*
+
+BC ******************************************************************
+ *
+ * !!! THIS FILE WAS GENERATED !!!
+ *
+ * Do not change it, change the corresponding %.def.h file instead!
+ *
+ * *******************************************************************
+ *
+ */
 
 #  define define(name, value) HASH define name value
 
@@ -35,6 +46,16 @@
 #  define define_dec(name, value) define(name, value)
 
 #elif defined(GEN_ASM_HEADER)
+
+;; *******************************************************************
+;;
+;; !!! THIS FILE WAS GENERATED !!!
+;;
+;; Do not change it, change the corresponding %.def.h file instead!
+;;
+;; *******************************************************************
+;
+;
 
 #  define define(name, value) .define name value
 
