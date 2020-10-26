@@ -15,8 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.PHONY: all recompile run run-load run-mount8 disk tags-ctags
-all recompile run run-load run-mount8 disk tags-ctags:
+.PHONY: all recompile run run-load run-attach8 disk tags-ctags
+all recompile run run-load run-attach8 disk tags-ctags:
 	$(MAKE) -C src $@
 .PHONY: tags-etags tags-ebrowse tags-all
 tags-etags tags-ebrowse tags-all:

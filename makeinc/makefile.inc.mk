@@ -33,9 +33,9 @@ all: $(OUTPUT).$(D64EXT)
 recompile: clean
 	$(MAKE) all
 
-.PHONY: run run-load run-mount8
+.PHONY: run run-load run-attach8
 ifeq (,$(EMULATOR_OPT))
-run run-load run-mount8: all
+run run-load run-attach8: all
 	$(error $(ERRB) C64 emulator not found!  Try Debian '$$> \
 	  apt-get install vice' in Debian CONTRIB packages for \
 	  installation.  After install run '$$> make clean-all')
@@ -44,7 +44,7 @@ run: all
 	$(EMULATOR_OPT) -autostart $(OUTPUT).$(D64EXT)
 run-load: all
 	$(EMULATOR_OPT) -autoload $(OUTPUT).$(D64EXT)
-run-mount8: all
+run-attach8: all
 	$(EMULATOR_OPT) -8 $(OUTPUT).$(D64EXT)
 endif
 

@@ -29,31 +29,31 @@
 #define GRAPHIX_CELL_CNT_X              40
 #define GRAPHIX_CELL_CNT_Y              25
 
-#define GRAPHIX_RES_X_HIRES                                           \
+#define GRAPHIX_RES_X_HIRES                                          \
   (GRAPHIX_CELL_WIDTH_HIRES*GRAPHIX_CELL_CNT_X)
-#define GRAPHIX_RES_X_MULTICOLOR                                      \
+#define GRAPHIX_RES_X_MULTICOLOR                                     \
   (GRAPHIX_CELL_WIDTH_MULTICOLOR*GRAPHIX_CELL_CNT_X)
-#define GRAPHIX_RES_Y                                                 \
+#define GRAPHIX_RES_Y                                                \
   (GRAPHIX_CELL_HEIGHT*GRAPHIX_CELL_CNT_Y)
 
 #define GRAPHIX_BYTES_PER_CELL          8
-#define GRAPHIX_PIXEL_PER_CELL_HIRES                                  \
+#define GRAPHIX_PIXEL_PER_CELL_HIRES                                 \
   (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELL_WIDTH_HIRES)
-#define GRAPHIX_PIXEL_PER_CELL_MULTICOLOR                             \
+#define GRAPHIX_PIXEL_PER_CELL_MULTICOLOR                            \
   (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELL_WIDTH_MULTICOLOR)
 
 #define GRAPHIX_CELLS_PER_SCREEN (GRAPHIX_CELL_CNT_X*GRAPHIX_CELL_CNT_Y)
-#define GRAPHIX_BYTES_PER_SCREEN                                      \
+#define GRAPHIX_BYTES_PER_SCREEN                                     \
   (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELLS_PER_SCREEN)
 
-#define GRAPHIX_PIXEL_PER_SCREEN_HIRES                                \
+#define GRAPHIX_PIXEL_PER_SCREEN_HIRES                               \
   (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_HIRES)
-#define GRAPHIX_PIXEL_PER_SCREEN_MULTICOLOR                           \
+#define GRAPHIX_PIXEL_PER_SCREEN_MULTICOLOR                          \
   (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_MULTICOLOR)
 
 
 /* Colors are defined in <c64.h>  */
-#define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)                \
+#define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
   ((set_color << 4) | zero_color)
 
 
