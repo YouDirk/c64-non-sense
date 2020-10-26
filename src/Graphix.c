@@ -19,22 +19,20 @@
 #include "Graphix.h"
 
 #include "chip_vic.gen.h"
+#include "chip_cia.gen.h"
 
-#define _CIA2_PRA_BANK_MASK             0x03
+/* default is CIA2_PRA_VICBANK_MEM0  */
+#define _VICBANK                        CIA2_PRA_VICBANK_MEMC
+/* default is VIC_ADDR_DEFAULT_SCREENRAM  */
+#define _SCREENRAM_x0X40                0x00
+/* default just 0x00 or 0x08 possible  */
+#define _BITMAPRAM_x0X400               0x08
 
-/* default is 0x03  */
-#define _BANK_NUMBER_VIC_REG            0x00
-/* default is 0x10  */
-#define _SCREENRAM_ADDR_REG             0x00
-/* default is 0x07, but 0x00 or 0x08 should be used  */
-#define _BITMAP_ADDR_REG                0x08
-
-#define _VIC_RAM                                                     \
-  ((void*) (0xc000 - _BANK_NUMBER_VIC_REG*0x4000))
+#define _VIC_RAM              ((void*) (0xc000 - _VICBANK*0x4000))
 #define _SCREEN_RAM                                                  \
-  ((uint8_t*) ((unsigned) _VIC_RAM + _SCREENRAM_ADDR_REG*0x40))
+  ((uint8_t*) ((unsigned) _VIC_RAM + _SCREENRAM_x0X40*0x40))
 #define _BITMAP_RAM                                                  \
-  ((uint8_t*) ((unsigned) _VIC_RAM + _BITMAP_ADDR_REG*0x0400))
+  ((uint8_t*) ((unsigned) _VIC_RAM + _BITMAPRAM_x0X400*0x0400))
 
 
 static struct {
@@ -56,10 +54,9 @@ Graphix_new(Graphix_initCallback_t init_callback)
   VIC.bordercolor = VIC_COLOR_BLACK;
 
   /* remap VIC memory  */
-  CIA2.pra = (_cia2_backups.pra & ~_CIA2_PRA_BANK_MASK)
-    | _BANK_NUMBER_VIC_REG;
-  VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_ADDR_REG)
-    | (VIC_ADDR_BITMAP_MASK & _BITMAP_ADDR_REG);
+  CIA2.pra = (_cia2_backups.pra & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
+  VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_x0X40)
+    | (VIC_ADDR_BITMAP_MASK & _BITMAPRAM_x0X400);
 
   /* initialize all video rams  */
   init_callback(_SCREEN_RAM, _BITMAP_RAM);

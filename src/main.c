@@ -21,6 +21,8 @@
 #include "Interrupt.h"
 #include "Graphix.h"
 
+#include "chip_cia.gen.h"
+
 static void __fastcall__
 _init_graphic_rams(uint8_t* screen_ram, uint8_t* bitmap_ram)
 {
@@ -45,31 +47,30 @@ main(void)
   Interrupt_init();
   graphix = Graphix_new(_init_graphic_rams);
 
-  joy_cntrl = 0x1f;
+  joy_cntrl = CIA1_PRAB_JOY_MASK;
   prev_time = -1;
-  while (joy_cntrl & JOY_BTN_1_MASK) {
+  while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
 
     /* CIA1 timers are currently disabled for better IRQ control
      * during development.
      */
 #if 0
-    while (prev_time >= 0
-           || !(~(*(unsigned char*) 0xdc00) & 0x1f)) {
+    while (prev_time >= 0 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
       if (prev_time >= 0
           && (prev_time + 1) % 256 == *(unsigned char*) 0x00a2)
         prev_time = -1;
     }
     prev_time = *(unsigned char*) 0x00a2;
 #else
-    while (!(~(*(unsigned char*) 0xdc00) & 0x1f));
+    while (!(~CIA1.pra & CIA1_PRAB_JOY_MASK));
 #endif
 
-    joy_cntrl = *(unsigned char*) 0xdc00;
+    joy_cntrl = CIA1.pra;
 
-    if (~joy_cntrl & JOY_UP_MASK)    ++graphix->scroll_y;
-    if (~joy_cntrl & JOY_DOWN_MASK)  --graphix->scroll_y;
-    if (~joy_cntrl & JOY_LEFT_MASK)  ++graphix->scroll_x;
-    if (~joy_cntrl & JOY_RIGHT_MASK) --graphix->scroll_x;
+    if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++graphix->scroll_y;
+    if (~joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --graphix->scroll_y;
+    if (~joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++graphix->scroll_x;
+    if (~joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --graphix->scroll_x;
 
     Graphix_swapBuffers();
   }

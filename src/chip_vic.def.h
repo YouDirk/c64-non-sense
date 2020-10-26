@@ -22,7 +22,7 @@
 #include "define.h"
 
 /* *******************************************************************
- * colors of the C64
+ * colors of C64
  */
 
 define_hex(VIC_COLOR_BLACK,             00)
@@ -43,8 +43,10 @@ define_hex(VIC_COLOR_LIGHTBLUE,         0e)
 define_hex(VIC_COLOR_GRAY3,             0f)
 
 /*
- *End of colors
+ * end of colors
  * ***************************************************************  */
+
+define_hex(VIC_BASE,                    d000)
 
 define_hex(VIC_CTRL1,                   d011)
 define_hex(VIC_CTRL1_RASTERLINE_MASK,   80)
