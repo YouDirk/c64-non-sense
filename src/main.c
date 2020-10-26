@@ -29,8 +29,9 @@ _init_graphic_rams(uint8_t* screen_ram, uint8_t* bitmap_ram)
   unsigned i;
 
   /* set screen ram  */
-  memset(screen_ram, GRAPHIX_SCREENRAM_COLOR(COLOR_GREEN, COLOR_BLACK),
-         GRAPHIX_CELLS_PER_SCREEN);
+  memset(screen_ram,
+    GRAPHIX_SCREENRAM_COLOR(GRAPHIX_COLOR_GREEN, GRAPHIX_COLOR_BLACK),
+    GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
   memset(bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);

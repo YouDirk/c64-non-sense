@@ -21,6 +21,34 @@
 
 #include "common.h"
 
+/* *******************************************************************
+ * colors of C64
+ *
+ * Already defined in chip_vic.def.h, but for higher level programming
+ * again at this position.
+ */
+
+#define GRAPHIX_COLOR_BLACK             0x00
+#define GRAPHIX_COLOR_WHITE             0x01
+#define GRAPHIX_COLOR_RED               0x02
+#define GRAPHIX_COLOR_CYAN              0x03
+#define GRAPHIX_COLOR_VIOLET            0x04
+#define GRAPHIX_COLOR_GREEN             0x05
+#define GRAPHIX_COLOR_BLUE              0x06
+#define GRAPHIX_COLOR_YELLOW            0x07
+#define GRAPHIX_COLOR_ORANGE            0x08
+#define GRAPHIX_COLOR_BROWN             0x09
+#define GRAPHIX_COLOR_LIGHTRED          0x0a
+#define GRAPHIX_COLOR_GRAY1             0x0b
+#define GRAPHIX_COLOR_GRAY2             0x0c
+#define GRAPHIX_COLOR_LIGHTGREEN        0x0d
+#define GRAPHIX_COLOR_LIGHTBLUE         0x0e
+#define GRAPHIX_COLOR_GRAY3             0x0f
+
+/*
+ * end of colors
+ * ***************************************************************  */
+
 #define GRAPHIX_CELL_WIDTH_HIRES        8
 #define GRAPHIX_CELL_WIDTH_MULTICOLOR   4
 #define GRAPHIX_CELL_HEIGHT             8
@@ -50,7 +78,6 @@
   (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_MULTICOLOR)
 
 
-/* Colors are defined in <c64.h>  */
 #define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
   ((set_color << 4) | zero_color)
 
