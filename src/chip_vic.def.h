@@ -82,12 +82,21 @@ define_hex(VIC_CTRL2_MODE,                                           \
 
 define_hex(VIC_ADDR,                    d018)
 define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)
+define_hex(VIC_ADDR_SCREENRAM_STEP,     0040)
 define_hex(VIC_ADDR_BITMAP_MASK,        0f)
+define_hex(VIC_ADDR_BITMAP_STEP,        0400)
 define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
 define_hex(VIC_ADDR_DEFAULT_SCREENRAM,  10)
 define(VIC_ADDR_DEFAULT,                                             \
        (VIC_ADDR_DEFAULT_SCREENRAM | VIC_ADDR_BITMAP_CHARSET1))
+
+/* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
+macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
+                (arg1 + arg2*VIC_ADDR_SCREENRAM_STEP))
+/* VIC_ADDR_BITMAP_ADDR(VICBANK_ADDR, VIC_ADDR_BITMAP)  */
+macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
+                (arg1 + arg2*VIC_ADDR_BITMAP_STEP))
 
 define_hex(VIC_IRR,                     d019)
 define_hex(VIC_IMR,                     d01a)

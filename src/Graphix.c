@@ -22,23 +22,18 @@
 #include "chip_cia.gen.h"
 
 /* default is CIA2_PRA_VICBANK_MEM0  */
-#define _VICBANK                        CIA2_PRA_VICBANK_MEMC
+#define _VICBANK                   CIA2_PRA_VICBANK_MEMC
 /* default is VIC_ADDR_DEFAULT_SCREENRAM  */
-#define _SCREENRAM_x0X40                0x00
-/* default just 0x00 or 0x08 possible  */
-#define _BITMAPRAM_x0X400               0x08
+#define _SCREENRAM_x0X40           0x00
+/* default 0x07, but just 0x00 or 0x08 possible  */
+#define _BITMAPRAM_x0X400          0x08
 
-#define _VIC_RAM              ((void*) (0xc000 - _VICBANK*0x4000))
+#define _VIC_RAM_ADDR              CIA2_PRA_VICBANK_ADDR(_VICBANK)
+#define _VIC_RAM                   ((void*) _VIC_RAM_ADDR)
 #define _SCREEN_RAM                                                  \
-  ((uint8_t*) ((unsigned) _VIC_RAM + _SCREENRAM_x0X40*0x40))
+  ((uint8_t*) VIC_ADDR_SCREENRAM_ADDR(_VIC_RAM_ADDR, _SCREENRAM_x0X40))
 #define _BITMAP_RAM                                                  \
-  ((uint8_t*) ((unsigned) _VIC_RAM + _BITMAPRAM_x0X400*0x0400))
-
-
-static struct {
-  uint8_t pra;                          /* port A, VIC bank address  */
-} _cia2_backups;
-
+  ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
 /* 'this' and a shadow copy of it  */
 static Graphix_t _singleton, _shadow_4_isr;
@@ -46,15 +41,12 @@ static Graphix_t _singleton, _shadow_4_isr;
 Graphix_t* __fastcall__
 Graphix_new(Graphix_initCallback_t init_callback)
 {
-  /* backup needed registers  */
-  _cia2_backups.pra = CIA2.pra;
-
   /* black screen during initialization  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
 
   /* remap VIC memory  */
-  CIA2.pra = (_cia2_backups.pra & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
+  CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
   VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_x0X40)
     | (VIC_ADDR_BITMAP_MASK & _BITMAPRAM_x0X400);
 
@@ -99,7 +91,7 @@ Graphix_release(void)
    * (symbols, no lower case).
    */
   VIC.addr = VIC_ADDR_DEFAULT;
-  CIA2.pra = _cia2_backups.pra;
+  CIA2.pra = CIA2_PRA_DEFAULT;
 
   /* switch back into text mode  */
   VIC.bordercolor = VIC_BORDERCOLOR_DEFAULT;

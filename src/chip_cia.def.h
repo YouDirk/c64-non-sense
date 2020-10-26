@@ -64,9 +64,24 @@ define_hex(CIA1_PRB_TIMERBTOGGLE_MASK,  80)
 define_hex(CIA2_PRA,                    dd00)
 define_hex(CIA2_PRA_VICBANK_MASK,       03)
 define_hex(CIA2_PRA_VICBANK_MEM0,       03)
+define_hex(CIA2_PRA_VICBANK_ADDR0,      0000)
 define_hex(CIA2_PRA_VICBANK_MEM4,       02)
+define_hex(CIA2_PRA_VICBANK_ADDR4,      4000)
 define_hex(CIA2_PRA_VICBANK_MEM8,       01)
+define_hex(CIA2_PRA_VICBANK_ADDR8,      8000)
 define_hex(CIA2_PRA_VICBANK_MEMC,       00)
+define_hex(CIA2_PRA_VICBANK_ADDRC,      c000)
+define_hex(CIA2_PRA_VICBANK_STEP,       4000)
+define_hex(CIA2_PRA_USERPORT_MASK,      04)
+define_hex(CIA2_PRA_SERIALOUT_MASK,     38)
+define_hex(CIA2_PRA_SERIALIN_MASK,      c0)
+define(CIA2_PRA_DEFAULT, \
+       (CIA2_PRA_SERIALIN_MASK | CIA2_PRA_USERPORT_MASK
+        | CIA2_PRA_VICBANK_MEM0))
+
+/* CIA2_PRA_VICBANK_ADDR(CIA2_PRA_VICBANK_MEM?)  */
+macro_arg1(CIA2_PRA_VICBANK_ADDR,                                    \
+           (CIA2_PRA_VICBANK_ADDRC - arg1*CIA2_PRA_VICBANK_STEP))
 
 /* ***************************************************************  */
 

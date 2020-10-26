@@ -46,6 +46,10 @@ BC ******************************************************************
 #  define define_hex(name, value) _define(name, 0x##value)
 #  define define_dec(name, value) _define(name, value)
 
+#  define macro_arg1(name, value) HASH define name(arg1) value
+#  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2) \
+          value
+
 #elif defined(GEN_ASM_HEADER)
 
 ;; *******************************************************************
@@ -63,6 +67,10 @@ BC ******************************************************************
 #  define define(name, value) _define(name, HASH##(value))
 #  define define_hex(name, value) _define(name, $value)
 #  define define_dec(name, value) _define(name, HASH##(value))
+
+#  define macro_arg1(name, value) .define name(arg1) HASH##(value)
+#  define macro_arg1_arg2(name, value) .define name(arg1, arg2) \
+          HASH##(value)
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"
