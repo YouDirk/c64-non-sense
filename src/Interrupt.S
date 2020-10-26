@@ -15,7 +15,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.include "Graphix.gen.s"
+.include "chip_vic.gen.s"
 
 .define _KERNAL_IRQ_USERENTRY_ADDR      $0314
 
@@ -69,20 +69,20 @@
 .import __Graphix_render_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
-        lda #GRAPHIX_VIC_IRR_RASTERLINE_MASK
-        bit GRAPHIX_VIC_IRR             ; is raster line IRQ?
+        lda #VIC_IMR_RASTERLINE_MASK
+        bit VIC_IRR                     ; is raster line IRQ?
         beq not_served
 
         jsr __Graphix_render_isr
 
-        lda #GRAPHIX_VIC_IRR_RASTERLINE_MASK
+        lda #VIC_IMR_RASTERLINE_MASK
                                         ; tell VIC that we served the
-        sta GRAPHIX_VIC_IRR             ;   IRQ
+        sta VIC_IRR                     ;   IRQ
         jmp _KERNAL_IRQ_RETURN_ADDR     ; (rti) return as fast as possible
 
 not_served:
 .ifdef DEBUG                            ; increment border color if an
-        inc GRAPHIX_VIC_BORDERCOLOR     ;   unexpected IRQ occurs
+        inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
 .endif
         jmp _KERNAL_IRQ_DEFAULT_ADDR    ; jump to default Kernal ISR
 

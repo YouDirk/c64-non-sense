@@ -40,10 +40,11 @@ BC ******************************************************************
  *
  */
 
-#  define define(name, value) HASH define name value
+#  define _define(name, value) HASH define name value
 
-#  define define_hex(name, value) define(name, 0x##value)
-#  define define_dec(name, value) define(name, value)
+#  define define(name, value) _define(name, value)
+#  define define_hex(name, value) _define(name, 0x##value)
+#  define define_dec(name, value) _define(name, value)
 
 #elif defined(GEN_ASM_HEADER)
 
@@ -57,10 +58,11 @@ BC ******************************************************************
 ;
 ;
 
-#  define define(name, value) .define name value
+#  define _define(name, value) .define name value
 
-#  define define_hex(name, value) define(name, $value)
-#  define define_dec(name, value) define(name, value)
+#  define define(name, value) _define(name, HASH##(value))
+#  define define_hex(name, value) _define(name, $value)
+#  define define_dec(name, value) _define(name, HASH##(value))
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"

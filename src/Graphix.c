@@ -18,44 +18,9 @@
 
 #include "Graphix.h"
 
-#define _VIC_CTRL1_RASTERLINE_MASK      0x80
-#define _VIC_CTRL1_EXTCOLOR_MASK        0x40
-#define _VIC_CTRL1_BITMAPMODE_MASK      0x20
-#define _VIC_CTRL1_SCREEN_ON_MASK       0x10
-#define _VIC_CTRL1_25ROWS_MASK          0x08
-#define _VIC_CTRL1_YSCROLL_MASK         0x07
-
-/* rasterline=0, bitmap mode, enable screen, no 25 rows, yscroll=0  */
-#define _VIC_CTRL1_MODE                                              \
-  (_VIC_CTRL1_BITMAPMODE_MASK | _VIC_CTRL1_SCREEN_ON_MASK)
-
-#define _VIC_RASTERLINE_SCREENBEGIN     50
-#define _VIC_RASTERLINE_SCREENEND       250
-
-#define _VIC_CTRL2_MULTICOLOR_MASK      0x10
-#define _VIC_CTRL2_40COLS_MASK          0x08
-#define _VIC_CTRL2_XSCROLL_MASK         0x07
-
-/* no multicolor, no 40 cols in x, xscroll=0  */
-#define _VIC_CTRL2_MODE                                              \
-  (0x00)
-
-#define _VIC_ADDR_SCREENRAM_MASK        0xf0
-#define _VIC_ADDR_BITMAP_MASK           0x0f
-
-#define _VIC_IMR_RASTERLINE_MASK        0x01
-#define _VIC_IMR_SHCOLLOSION_MASK       0x02
-#define _VIC_IMR_SSCOLLOSION_MASK       0x04
-#define _VIC_IMR_LIGHTPEN_MASK          0x08
-#define _VIC_IMR_DISABLEALL_MASK        0x00
-
-#define _VIC_IMR_IRQS                                                \
-  (_VIC_IMR_RASTERLINE_MASK)
+#include "chip_vic.gen.h"
 
 #define _CIA2_PRA_BANK_MASK             0x03
-
-#define _VIC_ADDR_BITMAP_CHARSET1       0x05  /* (default) symbols    */
-#define _VIC_ADDR_BITMAP_CHARSET2       0x07  /* lower case possible  */
 
 /* default is 0x03  */
 #define _BANK_NUMBER_VIC_REG            0x00
@@ -98,26 +63,26 @@ Graphix_new(Graphix_initCallback_t init_callback)
   _cia2_backups.pra = CIA2.pra;
 
   /* black screen during initialization  */
-  VIC.ctrl1 = _vic_backups.ctrl1 & ~_VIC_CTRL1_SCREEN_ON_MASK;
+  VIC.ctrl1 = _vic_backups.ctrl1 & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = COLOR_BLACK;
 
   /* remap VIC memory  */
   CIA2.pra = (_cia2_backups.pra & ~_CIA2_PRA_BANK_MASK)
     | _BANK_NUMBER_VIC_REG;
-  VIC.addr = (_VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_ADDR_REG)
-    | (_VIC_ADDR_BITMAP_MASK & _BITMAP_ADDR_REG);
+  VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_ADDR_REG)
+    | (VIC_ADDR_BITMAP_MASK & _BITMAP_ADDR_REG);
 
   /* initialize all video rams  */
   init_callback(_SCREEN_RAM, _BITMAP_RAM);
 
   /* mode description above  */
-  VIC.ctrl2 = _VIC_CTRL2_MODE;
+  VIC.ctrl2 = VIC_CTRL2_MODE;
 
   /* (no backup needed) rasterline, where an IRQ is triggered  */
-  VIC.rasterline = _VIC_RASTERLINE_SCREENEND;
+  VIC.rasterline = VIC_RASTERLINE_SCREENEND;
 
   /* mode description above  */
-  VIC.ctrl1 = _VIC_CTRL1_MODE;
+  VIC.ctrl1 = VIC_CTRL1_MODE;
 
   /* initialize 'this'  */
   _singleton.scroll_x = 0;
@@ -127,7 +92,7 @@ Graphix_new(Graphix_initCallback_t init_callback)
   Graphix_swapBuffers();
 
   /* (no backup needed) VIC IRQs GO!  */
-  VIC.imr = _VIC_IMR_IRQS;
+  VIC.imr = VIC_IMR_IRQS;
 
   return &_singleton;
 }
@@ -136,10 +101,10 @@ void __fastcall__
 Graphix_release(void)
 {
   /* Disable VIC IRQs first!  */
-  VIC.imr = _VIC_IMR_DISABLEALL_MASK;
+  VIC.imr = VIC_IMR_DISABLEALL_MASK;
 
   /* black screen during deinitialization  */
-  VIC.ctrl1 = _VIC_CTRL1_MODE & ~_VIC_CTRL1_SCREEN_ON_MASK;
+  VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
   /* used for xscroll and multicolor stuff  */
   VIC.ctrl2 = _vic_backups.ctrl2;
@@ -147,8 +112,8 @@ Graphix_release(void)
   /* restore VIC memory mapping AND set character-set back to 1
    * (symbols, no lower case).
    */
-  VIC.addr = (_vic_backups.addr & _VIC_ADDR_SCREENRAM_MASK)
-    | (_VIC_ADDR_BITMAP_MASK & _VIC_ADDR_BITMAP_CHARSET1);
+  VIC.addr = (_vic_backups.addr & VIC_ADDR_SCREENRAM_MASK)
+    | (VIC_ADDR_BITMAP_MASK & VIC_ADDR_BITMAP_CHARSET1);
   CIA2.pra = _cia2_backups.pra;
 
   /* switch back into text mode  */
@@ -159,8 +124,8 @@ Graphix_release(void)
 void __fastcall__
 Graphix_swapBuffers(void)
 {
-  _singleton.scroll_x &= _VIC_CTRL2_XSCROLL_MASK;
-  _singleton.scroll_y &= _VIC_CTRL1_YSCROLL_MASK;
+  _singleton.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
+  _singleton.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
 
   /* Disable Rasterline IRQs.  Do not use the SEI and CLI assembler
@@ -168,14 +133,14 @@ Graphix_swapBuffers(void)
    * which causes lags to the whole system.
    */
   /* commented out, too inaccurate timing of the raster line  */
-  /* VIC.imr = _VIC_IMR_IRQS & ~_VIC_IMR_RASTERLINE_MASK;  */
+  /* VIC.imr = VIC_IMR_IRQS & ~VIC_IMR_RASTERLINE_MASK;  */
 
   memcpy(&_shadow_4_isr, &_singleton, sizeof(Graphix_t));
 
   /* Rasterline IRQs can come back
    */
   /* commented out, too inaccurate timing of the raster line  */
-  /* VIC.imr = _VIC_IMR_IRQS;  */
+  /* VIC.imr = VIC_IMR_IRQS;  */
 }
 
 void __fastcall__
@@ -185,8 +150,8 @@ _Graphix_render_isr(void)
   VIC.bordercolor = COLOR_RED;
 #endif
 
-  VIC.ctrl2 = _VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
-  VIC.ctrl1 = _VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
+  VIC.ctrl2 = VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
+  VIC.ctrl1 = VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
 
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = COLOR_BLACK;
