@@ -21,6 +21,31 @@
 
 #include "define.h"
 
+/* *******************************************************************
+ * colors of the C64
+ */
+
+define_hex(VIC_COLOR_BLACK,             00)
+define_hex(VIC_COLOR_WHITE,             01)
+define_hex(VIC_COLOR_RED,               02)
+define_hex(VIC_COLOR_CYAN,              03)
+define_hex(VIC_COLOR_VIOLET,            04)
+define_hex(VIC_COLOR_GREEN,             05)
+define_hex(VIC_COLOR_BLUE,              06)
+define_hex(VIC_COLOR_YELLOW,            07)
+define_hex(VIC_COLOR_ORANGE,            08)
+define_hex(VIC_COLOR_BROWN,             09)
+define_hex(VIC_COLOR_LIGHTRED,          0a)
+define_hex(VIC_COLOR_GRAY1,             0b)
+define_hex(VIC_COLOR_GRAY2,             0c)
+define_hex(VIC_COLOR_LIGHTGREEN,        0d)
+define_hex(VIC_COLOR_LIGHTBLUE,         0e)
+define_hex(VIC_COLOR_GRAY3,             0f)
+
+/*
+ *End of colors
+ * ***************************************************************  */
+
 define_hex(VIC_CTRL1,                   d011)
 define_hex(VIC_CTRL1_RASTERLINE_MASK,   80)
 define_hex(VIC_CTRL1_EXTCOLOR_MASK,     40)
@@ -28,6 +53,10 @@ define_hex(VIC_CTRL1_BITMAPMODE_MASK,   20)
 define_hex(VIC_CTRL1_SCREEN_ON_MASK,    10)
 define_hex(VIC_CTRL1_25ROWS_MASK,       08)
 define_hex(VIC_CTRL1_YSCROLL_MASK,      07)
+define_hex(VIC_CTRL1_DEFAULT_YSCROLL,   03)
+define(VIC_CTRL1_DEFAULT,                                            \
+       (VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK             \
+        | VIC_CTRL1_DEFAULT_YSCROLL))
 
 /* rasterline=0, bitmap mode, enable screen, no 25 rows, yscroll=0  */
 define(VIC_CTRL1_MODE,                                               \
@@ -41,6 +70,9 @@ define_hex(VIC_CTRL2,                   d016)
 define_hex(VIC_CTRL2_MULTICOLOR_MASK,   10)
 define_hex(VIC_CTRL2_40COLS_MASK,       08)
 define_hex(VIC_CTRL2_XSCROLL_MASK,      07)
+define_hex(VIC_CTRL2_DEFAULT_HIGH,      c0)
+define(VIC_CTRL2_DEFAULT,                                            \
+       (VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK))
 
 /* no multicolor, no 40 cols in x, xscroll=0  */
 define_hex(VIC_CTRL2_MODE,                                           \
@@ -51,6 +83,9 @@ define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)
 define_hex(VIC_ADDR_BITMAP_MASK,        0f)
 define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
+define_hex(VIC_ADDR_DEFAULT_SCREENRAM,  10)
+define(VIC_ADDR_DEFAULT,                                             \
+       (VIC_ADDR_DEFAULT_SCREENRAM | VIC_ADDR_BITMAP_CHARSET1))
 
 define_hex(VIC_IRR,                     d019)
 define_hex(VIC_IMR,                     d01a)
@@ -64,5 +99,6 @@ define(VIC_IMR_IRQS,                                                 \
        (VIC_IMR_RASTERLINE_MASK))
 
 define_hex(VIC_BORDERCOLOR,             d020)
+define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)
 
 #endif /* CHIP_VIC_DEF_H__  */

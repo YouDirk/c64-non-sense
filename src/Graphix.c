@@ -38,13 +38,6 @@
 
 
 static struct {
-  uint8_t ctrl1;                        /* control reg 1  */
-  uint8_t ctrl2;                        /* control reg 2  */
-  uint8_t addr;                         /* mapping: screen ram & bitmap  */
-  uint8_t bordercolor;                  /* border color  */
-} _vic_backups;
-
-static struct {
   uint8_t pra;                          /* port A, VIC bank address  */
 } _cia2_backups;
 
@@ -56,15 +49,11 @@ Graphix_t* __fastcall__
 Graphix_new(Graphix_initCallback_t init_callback)
 {
   /* backup needed registers  */
-  _vic_backups.ctrl1 = VIC.ctrl1;
-  _vic_backups.ctrl2 = VIC.ctrl2;
-  _vic_backups.addr = VIC.addr;
-  _vic_backups.bordercolor = VIC.bordercolor;
   _cia2_backups.pra = CIA2.pra;
 
   /* black screen during initialization  */
-  VIC.ctrl1 = _vic_backups.ctrl1 & ~VIC_CTRL1_SCREEN_ON_MASK;
-  VIC.bordercolor = COLOR_BLACK;
+  VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
+  VIC.bordercolor = VIC_COLOR_BLACK;
 
   /* remap VIC memory  */
   CIA2.pra = (_cia2_backups.pra & ~_CIA2_PRA_BANK_MASK)
@@ -107,18 +96,17 @@ Graphix_release(void)
   VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
   /* used for xscroll and multicolor stuff  */
-  VIC.ctrl2 = _vic_backups.ctrl2;
+  VIC.ctrl2 = VIC_CTRL2_DEFAULT;
 
   /* restore VIC memory mapping AND set character-set back to 1
    * (symbols, no lower case).
    */
-  VIC.addr = (_vic_backups.addr & VIC_ADDR_SCREENRAM_MASK)
-    | (VIC_ADDR_BITMAP_MASK & VIC_ADDR_BITMAP_CHARSET1);
+  VIC.addr = VIC_ADDR_DEFAULT;
   CIA2.pra = _cia2_backups.pra;
 
   /* switch back into text mode  */
-  VIC.bordercolor = _vic_backups.bordercolor;
-  VIC.ctrl1 = _vic_backups.ctrl1;
+  VIC.bordercolor = VIC_BORDERCOLOR_DEFAULT;
+  VIC.ctrl1 = VIC_CTRL1_DEFAULT;
 }
 
 void __fastcall__
@@ -147,13 +135,13 @@ void __fastcall__
 _Graphix_render_isr(void)
 {
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = COLOR_RED;
+  VIC.bordercolor = VIC_COLOR_RED;
 #endif
 
   VIC.ctrl2 = VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
   VIC.ctrl1 = VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
 
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = COLOR_BLACK;
+  VIC.bordercolor = VIC_COLOR_BLACK;
 #endif
 }
