@@ -16,51 +16,44 @@
 
 
 .include "chip_vic.gen.s"
+.include "chip_cia.gen.s"
 
-.define _KERNAL_IRQ_USERENTRY_ADDR      $0314
-
-.define _KERNAL_IRQ_DEFAULT_ADDR        $ea31
-.define _KERNAL_IRQ_RETURN_ADDR         $ea81
-
-.define _CIA1_ICR                       $dc0d
-
-.define _CIA1_ICR_MASKALL_MASK          $7f
-.define _CIA1_ICR_UNMASKALL_MASK        $ff
+.include "kernal.gen.s"
 
 .code
 
 .export _Interrupt_init
 .proc _Interrupt_init: near
 
-        lda #_CIA1_ICR_MASKALL_MASK     ; disabling timer IRQs from CIA1
-        sta _CIA1_ICR                   ;   for now
+        lda CIA_ICR_MASKALL_MASK        ; disabling timer IRQs from CIA1
+        sta CIA1_ICR                    ;   for now
 
-        sei                                ; mask all IRQs
+        sei                             ; mask all IRQs
 
         lda #<Interrupt_irq_isr
-        sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
+        sta KERNAL_IRQ_USERENTRY        ; set lower byte of isr
         lda #>Interrupt_irq_isr
-        sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
+        sta KERNAL_IRQ_USERENTRY+1      ; set higher byte of isr
 
-        cli                                ; unmask all IRQs
+        cli                             ; unmask all IRQs
         rts
 
-.endproc                                   ; _Interrupt_init
+.endproc                                ; _Interrupt_init
 
 .export _Interrupt_release
 .proc _Interrupt_release: near
 
-        sei                                ; mask all IRQs
+        sei                             ; mask all IRQs
 
-        lda #<_KERNAL_IRQ_DEFAULT_ADDR
-        sta _KERNAL_IRQ_USERENTRY_ADDR     ; set lower byte of isr
-        lda #>_KERNAL_IRQ_DEFAULT_ADDR
-        sta _KERNAL_IRQ_USERENTRY_ADDR+1   ; set higher byte of isr
+        lda #<KERNAL_IRQ_DEFAULT
+        sta KERNAL_IRQ_USERENTRY        ; set lower byte of isr
+        lda #>KERNAL_IRQ_DEFAULT
+        sta KERNAL_IRQ_USERENTRY+1      ; set higher byte of isr
 
-        cli                                ; unmask all IRQs
+        cli                             ; unmask all IRQs
 
-        lda #_CIA1_ICR_UNMASKALL_MASK   ; restoring timer IRQs from CIA1
-        sta _CIA1_ICR                   ;   for now
+        lda CIA_ICR_UNMASKALL_MASK      ; restoring timer IRQs from CIA1
+        sta CIA1_ICR                    ;   for now
 
         rts
 
@@ -78,12 +71,12 @@
         lda #VIC_IMR_RASTERLINE_MASK
                                         ; tell VIC that we served the
         sta VIC_IRR                     ;   IRQ
-        jmp _KERNAL_IRQ_RETURN_ADDR     ; (rti) return as fast as possible
+        jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
 
 not_served:
 .ifdef DEBUG                            ; increment border color if an
         inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
 .endif
-        jmp _KERNAL_IRQ_DEFAULT_ADDR    ; jump to default Kernal ISR
+        jmp KERNAL_IRQ_DEFAULT          ; jump to default Kernal ISR
 
 .endproc                                ; Interrupt_irq_isr

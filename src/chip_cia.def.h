@@ -91,4 +91,19 @@ define_hex(CIA2_DDRA,                   dd02)
 define_hex(CIA1_DDRB,                   dc03)
 define_hex(CIA2_DDRB,                   dd03)
 
+define_hex(CIA1_ICR,                    dc0d)
+define_hex(CIA2_ICR,                    dd0d)
+define_hex(CIA_ICR_TIMERAZERO_MASK,     01)
+define_hex(CIA_ICR_TIMERBZERO_MASK,     02)
+define_hex(CIA_ICR_RTCALARM_MASK,       04)
+define_hex(CIA_ICR_SDREMPTY_MASK,       08)
+define_hex(CIA1_ICR_CASS_SERIAL_MASK,   10)
+define_hex(CIA2_ICR_RS232_MASK,         10)
+define_hex(CIA1_ICR_IRQGLOBAL_MASK,     80)
+define_hex(CIA2_ICR_NMIGLOBAL_MASK,     80)
+define_hex(CIA_ICR_ALL,                 1f)
+
+define(CIA_ICR_MASKALL_MASK,   (CIA_ICR_ALL & ~CIA1_ICR_IRQGLOBAL_MASK))
+define(CIA_ICR_UNMASKALL_MASK, (CIA_ICR_ALL | CIA1_ICR_IRQGLOBAL_MASK))
+
 #endif /* CHIP_CIA_DEF_H__  */

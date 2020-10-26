@@ -19,6 +19,6 @@
 OBJ = main Interrupt Graphix
 
 # *.gen.[hs] to be generated
-DEFH = chip_vic chip_cia
+DEFH = chip_vic chip_cia kernal
 
 include ../makeinc/makefile.inc.mk

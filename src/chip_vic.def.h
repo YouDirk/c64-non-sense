@@ -105,6 +105,7 @@ define_hex(VIC_IMR_RASTERLINE_MASK,     01)
 define_hex(VIC_IMR_SHCOLLOSION_MASK,    02)
 define_hex(VIC_IMR_SSCOLLOSION_MASK,    04)
 define_hex(VIC_IMR_LIGHTPEN_MASK,       08)
+define_hex(VIC_IRR_IRQGLOBAL_MASK,      80)
 
 define(VIC_IMR_IRQS,                                                 \
        (VIC_IMR_RASTERLINE_MASK))
