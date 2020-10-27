@@ -58,15 +58,16 @@ Graphix_new(Graphix_initCallback_t init_callback)
           "    cmp %w\n"
           "    beq rasterline_not_inc\n"
           "    bmi rasterline_not_overflow\n"
-          /* akku = rasterline_max
-           * 0x37 -> 312 rasterlines (PAL with VIC 6569)
-           * 0x06 -> 263 rasterlines (NTSC with VIC 6567R8)
-           * 0x05 -> 262 rasterlines (NTSC with VIC 6567R56A)
+          /* akku = rasterline_max (without bit 8)
+           * 0x37 -> 0..311 rasterlines (PAL with VIC 6569)
+           * 0x06 -> 0..262 rasterlines (NTSC with VIC 6567R8)
+           * 0x05 -> 0..261 rasterlines (NTSC with VIC 6567R56A)
            */
-          "    and #$f0\n"
+          "    and #%b\n"
           /* akku = 0x30 if PAL, 0x00 if NTSC  */
           "    sta %v\n",
-          VIC_RASTERLINE, VIC_RASTERLINE, Graphix_ispal);
+          VIC_RASTERLINE, VIC_RASTERLINE,
+          (uint8_t) VIC_RASTERLINE_PAL_MASK, Graphix_ispal);
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
@@ -89,7 +90,7 @@ Graphix_new(Graphix_initCallback_t init_callback)
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
-  VIC.imr = VIC_IMR_IRQS;
+  VIC.imr = VIC_IMR_IRQMODE;
 
   return &_singleton;
 }

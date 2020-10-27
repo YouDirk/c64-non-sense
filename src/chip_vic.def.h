@@ -65,6 +65,10 @@ define(VIC_CTRL1_MODE,                                               \
        (VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK))
 
 define_hex(VIC_RASTERLINE,              d012)
+define_hex(VIC_RASTERLINE_PAL_MASK,     f0)
+define_hex(VIC_RASTERLINE_PAL_6569,     37)
+define_hex(VIC_RASTERLINE_NTSC_6567R8,  06)
+define_hex(VIC_RASTERLINE_NTSC_6567R56A,05)
 define_dec(VIC_RASTERLINE_SCREENBEGIN,  50)
 define_dec(VIC_RASTERLINE_SCREENEND,    250)
 
@@ -107,8 +111,8 @@ define_hex(VIC_IMR_SSCOLLOSION_MASK,    04)
 define_hex(VIC_IMR_LIGHTPEN_MASK,       08)
 define_hex(VIC_IRR_IRQGLOBAL_MASK,      80)
 
-define(VIC_IMR_IRQS,                                                 \
-       (VIC_IMR_RASTERLINE_MASK))
+define(VIC_IMR_IRQMODE,                                              \
+       (VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK))
 
 define_hex(VIC_BORDERCOLOR,             d020)
 define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)

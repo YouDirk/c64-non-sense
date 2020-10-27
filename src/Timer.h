@@ -21,9 +21,21 @@
 
 #include "common.h"
 
-#define TIMER_A_FREQ_HZ                 100
+#define TIMER_A_FREQUENCY_HZ            100
 
+/* System clock of the MOS 6510 CPU.  Depending if we are on a PAL or
+ * NTSC system.
+ *
+ * 16 bit is not wide enough to store 1 Mhz
+ */
+extern uint32_t Timer_system_clk;
+
+/* Initialize the timers on CIA1 and CIA2 which we are using.
+ */
 extern void __fastcall__ Timer_init(void);
+
+/* Restore timer configuration on CIA1 and CIA2 which we had used.
+ */
 extern void __fastcall__ Timer_release(void);
 
 #endif /* TIMER_H__  */

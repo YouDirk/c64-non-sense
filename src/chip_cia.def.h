@@ -91,6 +91,20 @@ define_hex(CIA2_DDRA,                   dd02)
 define_hex(CIA1_DDRB,                   dc03)
 define_hex(CIA2_DDRB,                   dd03)
 
+define_hex(CIA1_TA_LO,                  dc04)
+define_hex(CIA1_TA_HI,                  dc05)
+define_hex(CIA1_TA_DEFAULT_PAL,         4025) /* default (PAL) setting  */
+define_hex(CIA1_TA_DEFAULT_NTSC,        4295) /* (NTSC)  */
+
+define_hex(CIA2_TA_LO,                  dd04)
+define_hex(CIA2_TA_HI,                  dd05)
+
+define_hex(CIA1_TB_LO,                  dc06)
+define_hex(CIA1_TB_HI,                  dc07)
+
+define_hex(CIA2_TB_LO,                  dd06)
+define_hex(CIA2_TB_HI,                  dd07)
+
 define_hex(CIA1_ICR,                    dc0d)
 define_hex(CIA2_ICR,                    dd0d)
 define_hex(CIA_ICR_TIMERAZERO_MASK,     01)
@@ -105,5 +119,33 @@ define_hex(CIA_ICR_ALL,                 1f)
 
 define(CIA_ICR_MASKALL_MASK,   (CIA_ICR_ALL & ~CIA1_ICR_IRQGLOBAL_MASK))
 define(CIA_ICR_UNMASKALL_MASK, (CIA_ICR_ALL | CIA1_ICR_IRQGLOBAL_MASK))
+
+define(CIA1_ICR_IRQMODE,                                                \
+       (CIA1_ICR_IRQGLOBAL_MASK | CIA_ICR_TIMERAZERO_MASK))
+
+define_hex(CIA1_CRA,                    dc0e)
+define_hex(CIA2_CRA,                    dd0e)
+define_hex(CIA_CRA_CLKCNT_MASK,         20)
+define_hex(CIA_CRA_SPWRITE_MASK,        40)
+define_hex(CIA_CRA_50HZ_MASK,           80)
+
+define_hex(CIA1_CRB,                    dc0f)
+define_hex(CIA2_CRB,                    dd0f)
+define_hex(CIA_CRB_CLK_MASK,            60)
+define_hex(CIA_CRB_CLK_SYS,             00)
+define_hex(CIA_CRB_CLK_CNT,             20)
+define_hex(CIA_CRB_CLK_TA,              40)
+define_hex(CIA_CRB_CLK_TACNT,           60)
+define_hex(CIA_CRB_TODALARM_MASK,       80)
+
+define_hex(CIA_CRAB_START_MASK,         01)
+define_hex(CIA_CRAB_PBENABLE_MASK,      02)
+define_hex(CIA_CRAB_PBHIGH_MASK,        04)
+define_hex(CIA_CRAB_UNDERSTOP_MASK,     08)
+define_hex(CIA_CRAB_LDLATCH_MASK,       10)
+
+define(CIA1_CRA_MODE,                                                \
+       (CIA_CRAB_START_MASK | CIA_CRAB_PBENABLE_MASK                 \
+        | CIA_CRAB_LDLATCH_MASK))
 
 #endif /* CHIP_CIA_DEF_H__  */
