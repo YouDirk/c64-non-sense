@@ -60,20 +60,44 @@
 .endproc                                ; _Interrupt_release
 
 .import __Graphix_render_isr
+.import __Timer_timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
+vic:
+        lda #VIC_IRR_IRQGLOBAL_MASK
+        bit VIC_IRR                     ; is VIC IRQ?
+        beq not_vic
+rasterline:
         lda #VIC_IMR_RASTERLINE_MASK
         bit VIC_IRR                     ; is raster line IRQ?
-        beq not_served
+        beq _not_rasterline
 
         jsr __Graphix_render_isr
 
-        lda #VIC_IMR_RASTERLINE_MASK
-                                        ; tell VIC that we served the
+        lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC that we served the
         sta VIC_IRR                     ;   IRQ
         jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
+_not_rasterline:
+not_vic:
 
-not_served:
+cia1:
+        lda #CIA1_ICR_IRQGLOBAL_MASK
+        bit CIA1_ICR                    ; is CIA1 IRQ?
+        beq not_cia1
+timer_a:
+        lda #CIA_ICR_TIMERAZERO_MASK
+        bit CIA1_ICR                    ; is timer A IRQ?
+        beq not_timer_a
+
+        jsr __Timer_timer_a_isr
+
+        lda #CIA_ICR_TIMERAZERO_MASK    ; tell CIA1 that we served the IRQ
+        sta CIA1_ICR
+
+        jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
+not_timer_a:
+not_cia1:
+
 .ifdef DEBUG                            ; increment border color if an
         inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
 .endif

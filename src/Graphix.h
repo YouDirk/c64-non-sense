@@ -81,6 +81,9 @@
 #define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
   ((set_color << 4) | zero_color)
 
+/* *******************************************************************
+ * type declarations
+ */
 
 /* callbacks are defined here  */
 typedef void __fastcall__
@@ -93,6 +96,10 @@ typedef struct Graphix_t {
   int8_t scroll_y;
 } Graphix_t;
 
+/* ***************************************************************  */
+
+/* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine.  */
+extern bool Graphix_ispal;
 
 /* Returns a singleton.  So it´s not needed to pass it as argument
  * into other functions of this Graphix module.

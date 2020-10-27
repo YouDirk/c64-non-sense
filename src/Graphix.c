@@ -35,8 +35,11 @@
 #define _BITMAP_RAM                                                  \
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
+
 /* 'this' and a shadow copy of it  */
 static Graphix_t _singleton, _shadow_4_isr;
+
+bool Graphix_ispal;
 
 Graphix_t* __fastcall__
 Graphix_new(Graphix_initCallback_t init_callback)
@@ -44,6 +47,26 @@ Graphix_new(Graphix_initCallback_t init_callback)
   /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
+
+  /* find out if we are on a PAL or NTSC machine?  Needed for Timer
+   * configuration.
+   */
+  __asm__(
+          "rasterline_not_overflow:\n"
+          "    lda %w\n"
+          "rasterline_not_inc:\n"
+          "    cmp %w\n"
+          "    beq rasterline_not_inc\n"
+          "    bmi rasterline_not_overflow\n"
+          /* akku = rasterline_max
+           * 0x37 -> 312 rasterlines (PAL with VIC 6569)
+           * 0x06 -> 263 rasterlines (NTSC with VIC 6567R8)
+           * 0x05 -> 262 rasterlines (NTSC with VIC 6567R56A)
+           */
+          "    and #$f0\n"
+          /* akku = 0x30 if PAL, 0x00 if NTSC  */
+          "    sta %v\n",
+          VIC_RASTERLINE, VIC_RASTERLINE, Graphix_ispal);
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;

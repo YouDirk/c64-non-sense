@@ -20,6 +20,7 @@
 
 #include "Interrupt.h"
 #include "Graphix.h"
+#include "Timer.h"
 
 #include "chip_cia.gen.h"
 
@@ -41,11 +42,14 @@ _main_init(uint8_t* screen_ram, uint8_t* bitmap_ram)
   /* set bitmap  */
   memset(bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8) bitmap_ram[i] = 0xff;
+
+  Timer_init();
 }
 
 static void __fastcall__
 _main_release(void)
 {
+  Timer_release();
 
   /* must be the last of all  */
   Interrupt_release();
