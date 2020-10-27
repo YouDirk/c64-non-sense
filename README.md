@@ -128,8 +128,8 @@ Credits
       *instruction set, opcodes* http://www.6502.org/tutorials/6502opcodes.html
 
 * CC65 compiler specifications
-    - (2x C Stack: return & parameter) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
-    - (C Calling Conventions) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
+    - (2x C stack: return & parameter) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
+    - (C calling conventions) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
 
 
 [sponsor-link]: https://github.com/sponsors/YouDirk

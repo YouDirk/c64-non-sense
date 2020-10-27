@@ -41,7 +41,7 @@ static Graphix_t _singleton, _shadow_4_isr;
 Graphix_t* __fastcall__
 Graphix_new(Graphix_initCallback_t init_callback)
 {
-  /* black screen during initialization  */
+  /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
 
@@ -50,50 +50,47 @@ Graphix_new(Graphix_initCallback_t init_callback)
   VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_x0X40)
     | (VIC_ADDR_BITMAP_MASK & _BITMAPRAM_x0X400);
 
-  /* initialize all video rams  */
-  init_callback(_SCREEN_RAM, _BITMAP_RAM);
-
-  /* mode description above  */
+  /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_MODE;
 
-  /* (no backup needed) rasterline, where an IRQ is triggered  */
+  /* (no restore) rasterline, where an IRQ is triggered  */
   VIC.rasterline = VIC_RASTERLINE_SCREENEND;
-
-  /* mode description above  */
-  VIC.ctrl1 = VIC_CTRL1_MODE;
 
   /* initialize 'this'  */
   _singleton.scroll_x = 0;
   _singleton.scroll_y = 0;
-
-  /* initialize _shadow_4_isr  */
   Graphix_swapBuffers();
 
-  /* (no backup needed) VIC IRQs GO!  */
+  /* initialize all other stuff  */
+  init_callback(_SCREEN_RAM, _BITMAP_RAM);
+
+  /* set screen on and VIC IRQs go!  */
+  VIC.ctrl1 = VIC_CTRL1_MODE;
   VIC.imr = VIC_IMR_IRQS;
 
   return &_singleton;
 }
 
 void __fastcall__
-Graphix_release(void)
+Graphix_release(Graphix_releaseCallback_t release_callback)
 {
-  /* Disable VIC IRQs first!  */
+  /* Disable VIC IRQs first, then black screen  */
   VIC.imr = VIC_IMR_DISABLEALL_MASK;
-
-  /* black screen during deinitialization  */
   VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
-  /* used for xscroll and multicolor stuff  */
+  /* release all other stuff  */
+  release_callback();
+
+  /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;
 
   /* restore VIC memory mapping AND set character-set back to 1
-   * (symbols, no lower case).
+   * (symbols, no lower case)
    */
   VIC.addr = VIC_ADDR_DEFAULT;
   CIA2.pra = CIA2_PRA_DEFAULT;
 
-  /* switch back into text mode  */
+  /* switch back into text mode, set screen on   */
   VIC.bordercolor = VIC_BORDERCOLOR_DEFAULT;
   VIC.ctrl1 = VIC_CTRL1_DEFAULT;
 }

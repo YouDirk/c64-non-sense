@@ -28,22 +28,22 @@
  * again at this position.
  */
 
-#define GRAPHIX_COLOR_BLACK             0x00
-#define GRAPHIX_COLOR_WHITE             0x01
-#define GRAPHIX_COLOR_RED               0x02
-#define GRAPHIX_COLOR_CYAN              0x03
-#define GRAPHIX_COLOR_VIOLET            0x04
-#define GRAPHIX_COLOR_GREEN             0x05
-#define GRAPHIX_COLOR_BLUE              0x06
-#define GRAPHIX_COLOR_YELLOW            0x07
-#define GRAPHIX_COLOR_ORANGE            0x08
-#define GRAPHIX_COLOR_BROWN             0x09
-#define GRAPHIX_COLOR_LIGHTRED          0x0a
-#define GRAPHIX_COLOR_GRAY1             0x0b
-#define GRAPHIX_COLOR_GRAY2             0x0c
-#define GRAPHIX_COLOR_LIGHTGREEN        0x0d
-#define GRAPHIX_COLOR_LIGHTBLUE         0x0e
-#define GRAPHIX_COLOR_GRAY3             0x0f
+#define GRAPHIX_BLACK                   0x00
+#define GRAPHIX_WHITE                   0x01
+#define GRAPHIX_RED                     0x02
+#define GRAPHIX_CYAN                    0x03
+#define GRAPHIX_VIOLET                  0x04
+#define GRAPHIX_GREEN                   0x05
+#define GRAPHIX_BLUE                    0x06
+#define GRAPHIX_YELLOW                  0x07
+#define GRAPHIX_ORANGE                  0x08
+#define GRAPHIX_BROWN                   0x09
+#define GRAPHIX_LIGHTRED                0x0a
+#define GRAPHIX_GRAY1                   0x0b
+#define GRAPHIX_GRAY2                   0x0c
+#define GRAPHIX_LIGHTGREEN              0x0d
+#define GRAPHIX_LIGHTBLUE               0x0e
+#define GRAPHIX_GRAY3                   0x0f
 
 /*
  * end of colors
@@ -82,8 +82,10 @@
   ((set_color << 4) | zero_color)
 
 
+/* callbacks are defined here  */
 typedef void __fastcall__
   (*Graphix_initCallback_t)(uint8_t* screen_ram, uint8_t* bitmap_ram);
+typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
 
 /* 'this' structure  */
 typedef struct Graphix_t {
@@ -94,13 +96,21 @@ typedef struct Graphix_t {
 
 /* Returns a singleton.  So it´s not needed to pass it as argument
  * into other functions of this Graphix module.
+ *
+ * init_callback: Is called after all graphic initialization is done,
+ *                but SCREEN IS STILL BLACK and VIC ORQs ARE DISABLED.
  */
 extern Graphix_t* __fastcall__
   Graphix_new(Graphix_initCallback_t init_callback);
 
 /* Release all resources, restore regiters and disable interrupts.
+ *
+ * release_callback: Is called before all graphic will be released,
+ *                   but SCREEN IS ALREADY BLACK and VIC ORQs ARE
+ *                   DISABLED.
  */
-extern void __fastcall__ Graphix_release(void);
+extern void __fastcall__
+  Graphix_release(Graphix_releaseCallback_t release_callback);
 
 /* Should feels like a swap in a double buffered system of Graphix_t*,
  * which was returned by Graphix_new().

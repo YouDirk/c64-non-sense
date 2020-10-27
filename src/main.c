@@ -23,20 +23,35 @@
 
 #include "chip_cia.gen.h"
 
+/* ***************************************************************  */
+
 static void __fastcall__
-_init_graphic_rams(uint8_t* screen_ram, uint8_t* bitmap_ram)
+_main_init(uint8_t* screen_ram, uint8_t* bitmap_ram)
 {
   unsigned i;
 
+  /* must be the first of all  */
+  Interrupt_init();
+
   /* set screen ram  */
   memset(screen_ram,
-    GRAPHIX_SCREENRAM_COLOR(GRAPHIX_COLOR_GREEN, GRAPHIX_COLOR_BLACK),
+    GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
     GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
   memset(bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8) bitmap_ram[i] = 0xff;
 }
+
+static void __fastcall__
+_main_release(void)
+{
+
+  /* must be the last of all  */
+  Interrupt_release();
+}
+
+/* ***************************************************************  */
 
 int
 main(void)
@@ -45,8 +60,7 @@ main(void)
   unsigned char joy_cntrl;
   int prev_time;
 
-  Interrupt_init();
-  graphix = Graphix_new(_init_graphic_rams);
+  graphix = Graphix_new(_main_init);
 
   joy_cntrl = CIA1_PRAB_JOY_MASK;
   prev_time = -1;
@@ -76,8 +90,6 @@ main(void)
     Graphix_swapBuffers();
   }
 
-  Graphix_release();
-  Interrupt_release();
-
+  Graphix_release(_main_release);
   return 0;
 }
