@@ -63,27 +63,22 @@ main(void)
   Graphix_t* graphix;
   unsigned char joy_cntrl;
   int prev_time;
+  bool change_border;
 
   graphix = Graphix_new(_main_init);
 
-  joy_cntrl = CIA1_PRAB_JOY_MASK;
-  prev_time = -1;
+  joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1, change_border = true;
   while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
-
-    /* CIA1 timers are currently disabled for better IRQ control
-     * during development.
-     */
-#if 0
     while (prev_time >= 0 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
-      if (prev_time >= 0
-          && (prev_time + 1) % 256 == *(unsigned char*) 0x00a2)
-        prev_time = -1;
-    }
-    prev_time = *(unsigned char*) 0x00a2;
-#else
-    while (!(~CIA1.pra & CIA1_PRAB_JOY_MASK));
-#endif
+      if (prev_time >= 0 && prev_time < Timer_A) prev_time = -1;
+      if (change_border && Timer_A % 100 == 0) {
+        ++VIC.bordercolor;
+        change_border = false;
+      }
 
+      if (!change_border && Timer_A % 100 == 50) change_border = true;
+    }
+    prev_time = Timer_A;
     joy_cntrl = CIA1.pra;
 
     if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++graphix->scroll_y;
@@ -95,5 +90,10 @@ main(void)
   }
 
   Graphix_release(_main_release);
+
+#ifdef DEBUG
+  printf("timer a: 0x%04x = %u0ms\n", Timer_A, Timer_A);
+#endif
+
   return 0;
 }

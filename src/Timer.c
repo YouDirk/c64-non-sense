@@ -37,9 +37,13 @@ uint32_t Timer_system_clk;
  */
 uint16_t _ta_default;
 
+uint32_t Timer_A;
+
 void __fastcall__
 Timer_init(void)
 {
+  Timer_A = 0;
+
   /* Set CIA1 Timer A interval to 1/TIMER_A_FREQUENCY_HZ ms, depending
    * on PAL/NTSC.  Graphix_ispal was initialized before
    */
@@ -48,13 +52,13 @@ Timer_init(void)
     _ta_default = CIA1_TA_DEFAULT_PAL;
 
     /* writing TA LO and TA HI in one command  */
-    *(uint16_t*) CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_A_FREQUENCY_HZ;
+    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_A_FREQUENCY_HZ;
   } else {
     Timer_system_clk = _TIMER_CLK_NTSC_HZ;
     _ta_default = CIA1_TA_DEFAULT_NTSC;
 
     /* writing TA LO and TA HI in one command  */
-    *(uint16_t*) CIA1.ta_lo = _TIMER_CLK_NTSC_HZ/TIMER_A_FREQUENCY_HZ;
+    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_NTSC_HZ/TIMER_A_FREQUENCY_HZ;
   }
 
   /* Start Timer, Port B cycle, auto-restart, load latch initial,
@@ -71,10 +75,10 @@ void __fastcall__
 Timer_release(void)
 {
   /* restore interval for CIA1 Timer A  */
-  *(uint16_t*) CIA1.ta_lo = _ta_default;
+  *(uint16_t*) &CIA1.ta_lo = _ta_default;
 
   /* load the set latch  */
-  CIA1.cra = 0x11;
+  CIA1.cra = CIA1_CRA_DEFAULT;
 
   /* mask all CIA1 IRQs  */
   CIA1.icr = CIA_ICR_MASKALL_MASK;
@@ -86,6 +90,8 @@ _Timer_timer_a_isr(void)
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = VIC_COLOR_LIGHTBLUE;
 #endif
+
+  ++Timer_A;
 
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = VIC_COLOR_BLACK;

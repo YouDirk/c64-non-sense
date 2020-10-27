@@ -21,7 +21,15 @@
 
 #include "common.h"
 
+/* ***************************************************************  */
+
 #define TIMER_A_FREQUENCY_HZ            100
+#define TIMER_A_PERIODICTIME_MS         10
+
+/* The Timer A :)  */
+extern uint32_t Timer_A;
+
+/* ***************************************************************  */
 
 /* System clock of the MOS 6510 CPU.  Depending if we are on a PAL or
  * NTSC system.

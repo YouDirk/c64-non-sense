@@ -144,6 +144,9 @@ define_hex(CIA_CRAB_PBHIGH_MASK,        04)
 define_hex(CIA_CRAB_UNDERSTOP_MASK,     08)
 define_hex(CIA_CRAB_LDLATCH_MASK,       10)
 
+define(CIA1_CRA_DEFAULT,                                             \
+       (CIA_CRAB_START_MASK | CIA_CRAB_LDLATCH_MASK))
+
 define(CIA1_CRA_MODE,                                                \
        (CIA_CRAB_START_MASK | CIA_CRAB_PBENABLE_MASK                 \
         | CIA_CRAB_LDLATCH_MASK))
