@@ -63,20 +63,20 @@ main(void)
   Graphix_t* graphix;
   unsigned char joy_cntrl;
   int prev_time;
-  bool change_border;
 
   graphix = Graphix_new(_main_init);
 
-  joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1, change_border = true;
+  joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
   while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
     while (prev_time >= 0 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
-      if (prev_time >= 0 && prev_time < Timer_A) prev_time = -1;
-      if (change_border && Timer_A % 100 == 0) {
-        ++VIC.bordercolor;
-        change_border = false;
-      }
+      if (prev_time >= 0 && prev_time + 0 < Timer_A) prev_time = -1;
 
-      if (!change_border && Timer_A % 100 == 50) change_border = true;
+      /* CC65 optimizer issue: (Timer_A % 100 == 0) will be optimized
+       * out?
+       */
+      if (Timer_A % 100 == 50) {
+        ++VIC.bordercolor; while (Timer_A % 100 == 50);
+      }
     }
     prev_time = Timer_A;
     joy_cntrl = CIA1.pra;
@@ -92,7 +92,7 @@ main(void)
   Graphix_release(_main_release);
 
 #ifdef DEBUG
-  printf("timer a: 0x%04x = %u0ms\n", Timer_A, Timer_A);
+  printf("timer a: 0x%08lx = %lu0ms\n", Timer_A*10, Timer_A);
 #endif
 
   return 0;

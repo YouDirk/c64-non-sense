@@ -27,7 +27,7 @@
 #define TIMER_A_PERIODICTIME_MS         10
 
 /* The Timer A :)  */
-extern uint32_t Timer_A;
+extern volatile uint32_t Timer_A;
 
 /* ***************************************************************  */
 

@@ -37,7 +37,7 @@ uint32_t Timer_system_clk;
  */
 uint16_t _ta_default;
 
-uint32_t Timer_A;
+volatile uint32_t Timer_A;
 
 void __fastcall__
 Timer_init(void)
