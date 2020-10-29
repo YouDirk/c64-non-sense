@@ -25,7 +25,7 @@
 .export _Interrupt_init
 .proc _Interrupt_init: near
 
-        lda CIA_ICR_MASKALL_MASK        ; disabling timer IRQs from CIA1
+        lda CIA_ICR_MASK(CIA_ICR_ALL)   ; disabling timer IRQs from CIA1
         sta CIA1_ICR                    ;   for now
 
         sei                             ; mask all IRQs
@@ -52,7 +52,7 @@
 
         cli                             ; unmask all IRQs
 
-        lda CIA_ICR_UNMASKALL_MASK      ; restoring timer IRQs from CIA1
+        lda CIA_ICR_UNMASK(CIA_ICR_ALL) ; restoring timer IRQs from CIA1
         sta CIA1_ICR                    ;   for now
 
         rts
@@ -69,11 +69,11 @@ vic:
         beq not_vic                     ; is VIC IRQ?
 rasterline:
         and #VIC_IMR_RASTERLINE_MASK
-        beq _not_rasterline             ; is raster line IRQ?
+        beq _not_rasterline             ; is rasterline IRQ?
 
         jsr __Graphix_render_isr
 
-        lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC that we served the IRQ
+        lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC served rasterline IRQ
         sta VIC_IRR
         jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
 _not_rasterline:
@@ -83,16 +83,16 @@ cia1:
         lda CIA1_ICR_IRQMODE
         and CIA1_ICR                    ; is CIA1 IRQ?
         beq not_cia1
-timer_a:
+cia1_timer_a:
         and #CIA_ICR_TIMERAZERO_MASK
-        beq not_timer_a                 ; is Timer A IRQ?
+        beq not_cia1_timer_a            ; is CIA1 timer A IRQ?
 
         jsr __Timer_a_isr
 
-        lda CIA1_ICR_IRQMODE            ; tell CIA1 that we served the IRQ
-        sta CIA1_ICR
+        lda CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
+        sta CIA1_ICR                    ; tell CIA1 served timer A IRQ
         jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
-not_timer_a:
+not_cia1_timer_a:
 not_cia1:
 
 .ifdef DEBUG                            ; increment border color if an

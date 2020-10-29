@@ -21,13 +21,15 @@
 
 #include "common.h"
 
-/* ***************************************************************  */
+/* *******************************************************************
+ *
+ * Logical timers (1, 2, ...) are controlled by physical timers (CIA1
+ * A B, CIA2 A B).
+ */
 
-#define TIMER_A_FREQUENCY_HZ            100
-#define TIMER_A_PERIODICTIME_MS         10
-
-/* The Timer A :)  */
-extern volatile uint32_t Timer_A;
+#define TIMER_1_FREQUENCY_HZ            100   /* 100 Hz  */
+#define TIMER_1_PERIODICTIME_MS         (1000/TIMER_A_FREQUENCY_HZ)
+                                              /* 10 ms  */
 
 /* ***************************************************************  */
 
@@ -45,5 +47,14 @@ extern void __fastcall__ Timer_init(void);
 /* Restore timer configuration on CIA1 and CIA2 which we had used.
  */
 extern void __fastcall__ Timer_release(void);
+
+/* *******************************************************************
+ *
+ * Access to logical timers (1, 2, ...), controlled by physical timers
+ * (CIA1 A B, CIA2 A B).
+ */
+
+/* Return the current value of the logical timer 1.  */
+extern uint32_t __fastcall__ Timer_1_get32(void);
 
 #endif /* TIMER_H__  */

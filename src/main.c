@@ -63,24 +63,23 @@ main(void)
 {
   Graphix_t* graphix;
   unsigned char joy_cntrl;
-  int prev_time;
+  int32_t cur_time, prev_time;
 
   graphix = Graphix_new(_main_init);
 
   joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
   while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
     while (prev_time >= 0 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
-      if (prev_time >= 0 && prev_time + 0 < Timer_A) prev_time = -1;
+      cur_time = Timer_1_get32();
 
-      /* CC65 optimizer issue: (Timer_A % 100 == 0) will be optimized
-       * out?
-       */
-      if (Timer_A % 100 == 50) {
+      if (prev_time >= 0 && prev_time + 0 < cur_time) prev_time = -1;
+
+      if (cur_time % 100 == 50) {
         ++graphix->bordercolor; Graphix_swapBuffers();
-        while (Timer_A % 100 == 50);
+        while (Timer_1_get32() % 100 == 50);
       }
     }
-    prev_time = Timer_A;
+    prev_time = cur_time;
     joy_cntrl = CIA1.pra;
 
     if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++graphix->scroll_y;
@@ -94,7 +93,8 @@ main(void)
   Graphix_release(_main_release);
 
 #ifdef DEBUG
-  printf("timer a: 0x%08lx = %lu0ms\n", Timer_A*10, Timer_A);
+  cur_time = Timer_1_get32();
+  printf("timer a: 0x%08lx = %lu0ms\n", cur_time*10, cur_time);
 #endif
 
   return 0;

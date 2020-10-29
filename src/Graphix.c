@@ -133,7 +133,7 @@ Graphix_swapBuffers(void)
   _singleton.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
 
-  /* Disable Rasterline IRQs.  Do not use the SEI and CLI assembler
+  /* Disable rasterline IRQs.  Do not use the SEI and CLI assembler
    * instructions!  SEI/CLI does also disable the timer interrupts
    * which causes lags to the whole system.
    */
@@ -142,7 +142,7 @@ Graphix_swapBuffers(void)
 
   memcpy(&_shadow_4_isr, &_singleton, sizeof(Graphix_t));
 
-  /* Rasterline IRQs can come back
+  /* rasterline IRQs can come back
    */
   /* commented out, too inaccurate timing of the raster line  */
   /* VIC.imr = VIC_IMR_IRQS;  */

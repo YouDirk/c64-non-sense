@@ -16,7 +16,7 @@
 
 
 # C files to be compiled
-OBJ = main Interrupt Graphix Timer
+OBJ = Timer Graphix Interrupt main
 
 # *.gen.[hs] to be generated
 DEFH = chip_vic chip_cia kernal
