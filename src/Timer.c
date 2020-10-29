@@ -40,7 +40,7 @@ uint32_t Timer_system_clk;
 static uint16_t _ta_default;
 
 /* the logical timers :)  */
-static volatile uint32_t _timer_1;
+static uint32_t _timer_1;
 
 void __fastcall__
 Timer_init(void)
@@ -91,13 +91,27 @@ void __fastcall__
 _Timer_a_isr(void)
 {
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = VIC_COLOR_LIGHTBLUE;
+  __asm__("lda %w\n"
+          "pha\n"
+          "lda #%b\n"
+          "sta %w\n",
+          VIC_BORDERCOLOR, VIC_COLOR_LIGHTBLUE, VIC_BORDERCOLOR);
 #endif
 
-  ++_timer_1;
+  __asm__("    ldx #0\n"
+          "timer_next_byte:\n"
+          "    inc %v,x\n"
+          "    bne timer_incr_done\n"
+          "    inx\n"
+          "    cpx #%b\n"
+          "    bne timer_next_byte\n"
+          "timer_incr_done:",
+          _timer_1, sizeof(_timer_1));
 
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = VIC_COLOR_BLACK;
+  __asm__("pla\n"
+          "sta %w\n",
+          VIC_BORDERCOLOR);
 #endif
 }
 

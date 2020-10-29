@@ -132,20 +132,15 @@ Graphix_swapBuffers(void)
   _singleton.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
   _singleton.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
-
-  /* Disable rasterline IRQs.  Do not use the SEI and CLI assembler
-   * instructions!  SEI/CLI does also disable the timer interrupts
-   * which causes lags to the whole system.
-   */
-  /* commented out, too inaccurate timing of the raster line  */
-  /* VIC.imr = VIC_IMR_IRQS & ~VIC_IMR_RASTERLINE_MASK;  */
+  /* mask VIC rasterline IRQs  */
+  /* commented out, too inaccurate raster timing  */
+  /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
 
   memcpy(&_shadow_4_isr, &_singleton, sizeof(Graphix_t));
 
-  /* rasterline IRQs can come back
-   */
-  /* commented out, too inaccurate timing of the raster line  */
-  /* VIC.imr = VIC_IMR_IRQS;  */
+  /* unmask VIC rasterline IRQs  */
+  /* commented out, too inaccurate raster timing  */
+  /*VIC.imr = VIC_IMR_IRQMODE;  */
 }
 
 void __fastcall__
@@ -155,11 +150,12 @@ _Graphix_render_isr(void)
   VIC.bordercolor = VIC_COLOR_RED;
 #endif
 
-  VIC.bordercolor = _shadow_4_isr.bordercolor;
   VIC.ctrl2 = VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
   VIC.ctrl1 = VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
 
+  /* last statement, for correct DEBUG_IRQ_RENDERTIME  */
+  VIC.bordercolor = _shadow_4_isr.bordercolor;
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = VIC_COLOR_BLACK;
+  /* nothing to do, because VIC.bordercolor will be set above  */
 #endif
 }

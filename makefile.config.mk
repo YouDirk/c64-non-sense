@@ -55,6 +55,6 @@ OPTFLAG := -O
 #
 # values: -W[-]<warning>
 #
-CCWARNINGS := -W-unused-param
+CCWARNINGS :=
 
 # ********************************************************************
