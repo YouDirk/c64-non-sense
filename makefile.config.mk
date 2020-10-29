@@ -48,10 +48,13 @@ DISK_DEVICE := /dev/sdc1
 #
 OPTFLAG := -O
 
-# Ansi C standard
+# CC65 -W[-]<warning> warning flags.  To find out what is <warning>,
+# see
 #
-# values: [c99 c89 c65]
+#   $> cc65 --list-warnings
 #
-CCSTDFLAG := c99
+# values: -W[-]<warning>
+#
+CCWARNINGS := -W-unused-param
 
 # ********************************************************************

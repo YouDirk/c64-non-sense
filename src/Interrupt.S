@@ -60,7 +60,7 @@
 .endproc                                ; _Interrupt_release
 
 .import __Graphix_render_isr
-.import __Timer_timer_a_isr
+.import __Timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
 vic:
@@ -87,7 +87,7 @@ timer_a:
         and #CIA_ICR_TIMERAZERO_MASK
         beq not_timer_a                 ; is Timer A IRQ?
 
-        jsr __Timer_timer_a_isr
+        jsr __Timer_a_isr
 
         lda CIA1_ICR_IRQMODE            ; tell CIA1 that we served the IRQ
         sta CIA1_ICR

@@ -27,7 +27,7 @@
 /* ***************************************************************  */
 
 static void __fastcall__
-_main_init(uint8_t* screen_ram, uint8_t* bitmap_ram)
+_main_init(Graphix_t* graphix)
 {
   unsigned i;
 
@@ -35,13 +35,14 @@ _main_init(uint8_t* screen_ram, uint8_t* bitmap_ram)
   Interrupt_init();
 
   /* set screen ram  */
-  memset(screen_ram,
+  memset(graphix->screen_ram,
     GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
     GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
-  memset(bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
-  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8) bitmap_ram[i] = 0xff;
+  memset(graphix->bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
+  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
+    graphix->bitmap_ram[i] = 0xff;
 
   Timer_init();
 }
@@ -75,7 +76,8 @@ main(void)
        * out?
        */
       if (Timer_A % 100 == 50) {
-        ++VIC.bordercolor; while (Timer_A % 100 == 50);
+        ++graphix->bordercolor; Graphix_swapBuffers();
+        while (Timer_A % 100 == 50);
       }
     }
     prev_time = Timer_A;

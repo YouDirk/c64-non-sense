@@ -51,8 +51,7 @@ Graphix_new(Graphix_initCallback_t init_callback)
   /* find out if we are on a PAL or NTSC machine?  Needed for Timer
    * configuration.
    */
-  __asm__(
-          "rasterline_not_overflow:\n"
+  __asm__("rasterline_not_overflow:\n"
           "    lda %w\n"
           "rasterline_not_inc:\n"
           "    cmp %w\n"
@@ -81,12 +80,20 @@ Graphix_new(Graphix_initCallback_t init_callback)
   VIC.rasterline = VIC_RASTERLINE_SCREENEND;
 
   /* initialize 'this'  */
+  _singleton.screen_ram = _SCREEN_RAM;
+  _singleton.bitmap_ram = _BITMAP_RAM;
+
+  _singleton.bordercolor = GRAPHIX_BLACK;
   _singleton.scroll_x = 0;
   _singleton.scroll_y = 0;
-  Graphix_swapBuffers();
 
   /* initialize all other stuff  */
-  init_callback(_SCREEN_RAM, _BITMAP_RAM);
+  init_callback(&_singleton);
+
+  /* after init_callback(), so it´s possible to initizialize it
+   * inside
+   */
+  Graphix_swapBuffers();
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
@@ -148,6 +155,7 @@ _Graphix_render_isr(void)
   VIC.bordercolor = VIC_COLOR_RED;
 #endif
 
+  VIC.bordercolor = _shadow_4_isr.bordercolor;
   VIC.ctrl2 = VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
   VIC.ctrl1 = VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
 

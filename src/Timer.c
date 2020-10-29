@@ -85,7 +85,7 @@ Timer_release(void)
 }
 
 void __fastcall__
-_Timer_timer_a_isr(void)
+_Timer_a_isr(void)
 {
 #ifdef DEBUG_IRQ_RENDERTIME
   VIC.bordercolor = VIC_COLOR_LIGHTBLUE;

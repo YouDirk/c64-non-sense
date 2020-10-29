@@ -85,16 +85,19 @@
  * type declarations
  */
 
-/* callbacks are defined here  */
-typedef void __fastcall__
-  (*Graphix_initCallback_t)(uint8_t* screen_ram, uint8_t* bitmap_ram);
-typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
-
 /* 'this' structure  */
 typedef struct Graphix_t {
+  uint8_t* screen_ram;
+  uint8_t* bitmap_ram;
+
+  uint8_t bordercolor;
   int8_t scroll_x;
   int8_t scroll_y;
 } Graphix_t;
+
+/* callbacks are defined here  */
+typedef void __fastcall__ (*Graphix_initCallback_t)(Graphix_t* graphix);
+typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
 
 /* ***************************************************************  */
 
