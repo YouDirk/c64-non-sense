@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-# C files to be compiled
+# C and S files to be compiled
 OBJ = Timer_asm Timer Graphix Interrupt main
 
 # *.gen.[hs] to be generated

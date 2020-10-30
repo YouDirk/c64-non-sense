@@ -39,7 +39,6 @@
 
         cli                             ; unmask all IRQs
         rts
-
 .endproc                                ; _Interrupt_init
 
 .export _Interrupt_release
@@ -58,10 +57,9 @@
         sta CIA1_ICR                    ;   for now
 
         rts
-
 .endproc                                ; _Interrupt_release
 
-.import __Graphix_render_isr
+.import _Graphix_rasterline_isr
 .import Timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
@@ -73,7 +71,7 @@ rasterline:
         and #VIC_IMR_RASTERLINE_MASK
         beq _not_rasterline             ; is rasterline IRQ?
 
-        jsr __Graphix_render_isr
+        jsr _Graphix_rasterline_isr
 
         lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC served rasterline IRQ
         sta VIC_IRR
@@ -101,5 +99,4 @@ not_cia1:
         inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
 .endif
         jmp KERNAL_IRQ_DEFAULT          ; jump to default Kernal ISR
-
 .endproc                                ; Interrupt_irq_isr

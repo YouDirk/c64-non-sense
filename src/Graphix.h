@@ -108,7 +108,7 @@ extern bool Graphix_ispal;
  * into other functions of this Graphix module.
  *
  * init_callback: Is called after all graphic initialization is done,
- *                but SCREEN IS STILL BLACK and VIC ORQs ARE DISABLED.
+ *                but SCREEN IS STILL BLACK and VIC IRQs ARE DISABLED.
  */
 extern Graphix_t* __fastcall__
   Graphix_new(Graphix_initCallback_t init_callback);

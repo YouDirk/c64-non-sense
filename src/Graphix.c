@@ -36,8 +36,10 @@
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
 
-/* 'this' and a shadow copy of it  */
-static Graphix_t _singleton, _shadow_4_isr;
+/* 'this'  */
+static Graphix_t _singleton;
+/* the shadow copy of this.  Read by ISR.  */
+static Graphix_t _shadow_isr;
 
 bool Graphix_ispal;
 
@@ -136,25 +138,45 @@ Graphix_swapBuffers(void)
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
 
-  memcpy(&_shadow_4_isr, &_singleton, sizeof(Graphix_t));
+  memcpy(&_shadow_isr, &_singleton, sizeof(Graphix_t));
 
   /* unmask VIC rasterline IRQs  */
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE;  */
 }
 
+/* Just use inline assembler instructions here.  This function will be
+ * called by ISR during IRQ.  Maybe the compiler generate calls to the
+ * runtime library, these are NOT MULTI-THREADING COMPATIBLE.
+ *
+ * We are using inline assembler here to have access to the members of
+ * _shadow_isr, what is not possible with clean assembler code.
+ */
 void __fastcall__
-_Graphix_render_isr(void)
+Graphix_rasterline_isr(void)
 {
 #ifdef DEBUG_IRQ_RENDERTIME
-  VIC.bordercolor = VIC_COLOR_RED;
+  __asm__("    lda #%b\n"
+          "    sta %w\n",
+          VIC_COLOR_RED, VIC_BORDERCOLOR);
 #endif
 
-  VIC.ctrl2 = VIC_CTRL2_MODE | _shadow_4_isr.scroll_x;
-  VIC.ctrl1 = VIC_CTRL1_MODE | _shadow_4_isr.scroll_y;
+  __asm__("    lda %v+%w\n"
+          "    ora #%b\n"
+          "    sta %w\n",
+          _shadow_isr, offsetof(Graphix_t, scroll_y), VIC_CTRL1_MODE,
+          VIC_CTRL1);
+  __asm__("    lda %v+%w\n"
+          "    ora #%b\n"
+          "    sta %w\n",
+          _shadow_isr, offsetof(Graphix_t, scroll_x), VIC_CTRL2_MODE,
+          VIC_CTRL2);
 
-  /* last statement, for correct DEBUG_IRQ_RENDERTIME  */
-  VIC.bordercolor = _shadow_4_isr.bordercolor;
+  /* must be the last statement, for correct DEBUG_IRQ_RENDERTIME  */
+  __asm__("    lda %v+%w\n"
+          "    sta %w\n",
+          _shadow_isr, offsetof(Graphix_t, bordercolor),
+          VIC_BORDERCOLOR);
 #ifdef DEBUG_IRQ_RENDERTIME
   /* nothing to do, because VIC.bordercolor will be set above  */
 #endif

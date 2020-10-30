@@ -21,8 +21,13 @@
 
 #include "define.h"
 
+header_ifndef(KERNAL)
+header_define(KERNAL)
+
 define_hex(KERNAL_IRQ_USERENTRY,        0314)
 define_hex(KERNAL_IRQ_DEFAULT,          ea31)
 define_hex(KERNAL_IRQ_RETURN,           ea81)
+
+header_endif(KERNAL)
 
 #endif /* KERNAL_DEF_H__  */
