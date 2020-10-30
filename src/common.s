@@ -15,7 +15,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifndef COMMON_S__
+.ifnblank COMMON_S__
 .define COMMON_S__
 
 .include "chip_vic.gen.s"

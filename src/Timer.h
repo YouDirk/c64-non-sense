@@ -54,7 +54,16 @@ extern void __fastcall__ Timer_release(void);
  * (CIA1 A B, CIA2 A B).
  */
 
-/* Return the current value of the logical timer 1.  */
+/* Reset the logical timer 1 to t=0.  */
+extern void __fastcall__ Timer_1_reset(void);
+
+/* Return just the lowest byte of logical timer 1.  */
+extern uint8_t __fastcall__ Timer_1_get8(void);
+
+/* Return the lower 16 bit of logical timer 1.  */
+extern uint16_t __fastcall__ Timer_1_get16(void);
+
+/* Return the whole 32 bit of logical timer 1.  */
 extern uint32_t __fastcall__ Timer_1_get32(void);
 
 #endif /* TIMER_H__  */

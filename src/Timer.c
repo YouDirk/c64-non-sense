@@ -42,10 +42,14 @@ static uint16_t _ta_default;
 /* the logical timers :) ...  incremented by ISR  */
 volatile uint32_t timer_1_32;
 
+/* ***************************************************************  */
+
 void __fastcall__
 Timer_init(void)
 {
-  /* initialize timers  */
+  /* initialize timers.  Do not call Timer_?_reset() here, it unmask
+   * IRQ before it was initialized.
+   */
   timer_1_32 = 0;
 
   /* Set CIA1 timer A interval to 1/TIMER_1_FREQUENCY_HZ ms, depending
@@ -87,6 +91,52 @@ Timer_release(void)
   CIA1.icr = CIA_ICR_MASK(CIA_ICR_ALL);
 }
 
+/* ***************************************************************  */
+
+void __fastcall__
+Timer_1_reset(void)
+{
+  /* mask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
+
+  timer_1_32 = 0;
+
+  /* unmask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
+}
+
+uint8_t __fastcall__
+Timer_1_get8(void)
+{
+  uint8_t result;
+
+  /* mask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
+
+  result = (uint8_t) timer_1_32;
+
+  /* unmask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
+
+  return result;
+}
+
+uint16_t __fastcall__
+Timer_1_get16(void)
+{
+  uint16_t result;
+
+  /* mask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
+
+  result = (uint16_t) timer_1_32;
+
+  /* unmask CIA1 timer A IRQs  */
+  CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
+
+  return result;
+}
+
 uint32_t __fastcall__
 Timer_1_get32(void)
 {
@@ -94,7 +144,9 @@ Timer_1_get32(void)
 
   /* mask CIA1 timer A IRQs  */
   CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
+
   result = timer_1_32;
+
   /* unmask CIA1 timer A IRQs  */
   CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
 

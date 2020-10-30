@@ -26,16 +26,16 @@
 .proc Timer_a_isr: near
         isr_rendertime_begin #VIC_COLOR_BLUE
 
-;;; smaller but slower.  Unrolled loop below.
-;        ldx #0                          ; x = offset = 0
-;next_byte:
-;        inc _timer_1_32,x               ; *(timer+x) += 1
-;        bne not_overflow
-;        inx                             ; ++x
-;        cpx #4
-;        bne next_byte                   ; if (x != 4) goto next_byte
-;not_overflow:
-
+.if 0
+        ; smaller code but slower, urolled loop below
+        ldx #0                          ; x = offset = 0
+next_byte:
+        inc _timer_1_32,x               ; *(timer+x) += 1
+        bne not_overflow
+        inx                             ; ++x
+        cpx #4
+        bne next_byte                   ; if (x != 4) goto next_byte
+.else
         inc _timer_1_32
         bne not_overflow
         inc _timer_1_32+1
@@ -43,6 +43,7 @@
         inc _timer_1_32+2
         bne not_overflow
         inc _timer_1_32+3
+.endif
 not_overflow:
 
         isr_rendertime_end

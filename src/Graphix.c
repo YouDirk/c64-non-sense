@@ -43,6 +43,8 @@ static Graphix_t _shadow_isr;
 
 bool Graphix_ispal;
 
+/* ***************************************************************  */
+
 Graphix_t* __fastcall__
 Graphix_new(Graphix_initCallback_t init_callback)
 {
@@ -128,6 +130,8 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   VIC.ctrl1 = VIC_CTRL1_DEFAULT;
 }
 
+/* ***************************************************************  */
+
 void __fastcall__
 Graphix_swapBuffers(void)
 {
@@ -144,6 +148,8 @@ Graphix_swapBuffers(void)
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE;  */
 }
+
+/* ***************************************************************  */
 
 /* Just use inline assembler instructions here.  This function will be
  * called by ISR during IRQ.  Maybe the compiler generate calls to the
