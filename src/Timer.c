@@ -108,17 +108,8 @@ Timer_1_reset(void)
 uint8_t __fastcall__
 Timer_1_get8(void)
 {
-  uint8_t result;
-
-  /* mask CIA1 timer A IRQs  */
-  CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
-
-  result = (uint8_t) timer_1_32;
-
-  /* unmask CIA1 timer A IRQs  */
-  CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
-
-  return result;
+  /* atomic operation, so we don´t need to mask IRQs  */
+  return (uint8_t) timer_1_32;
 }
 
 uint16_t __fastcall__
