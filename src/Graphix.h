@@ -79,7 +79,7 @@
 
 
 #define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
-  ((set_color << 4) | zero_color)
+  (((set_color) << 4) | (zero_color))
 
 /* *******************************************************************
  * type declarations

@@ -15,6 +15,8 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+.include "common.s"
+
 .include "chip_vic.gen.s"
 .include "chip_cia.gen.s"
 
@@ -60,7 +62,7 @@
 .endproc                                ; _Interrupt_release
 
 .import __Graphix_render_isr
-.import __Timer_a_isr
+.import Timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
 vic:
@@ -87,7 +89,7 @@ cia1_timer_a:
         and #CIA_ICR_TIMERAZERO_MASK
         beq not_cia1_timer_a            ; is CIA1 timer A IRQ?
 
-        jsr __Timer_a_isr
+        jsr Timer_a_isr
 
         lda CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
         sta CIA1_ICR                    ; tell CIA1 served timer A IRQ

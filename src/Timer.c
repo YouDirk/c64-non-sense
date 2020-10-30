@@ -39,16 +39,16 @@ uint32_t Timer_system_clk;
  */
 static uint16_t _ta_default;
 
-/* the logical timers :)  */
-static uint32_t _timer_1;
+/* the logical timers :) ...  incremented by ISR  */
+volatile uint32_t timer_1_32;
 
 void __fastcall__
 Timer_init(void)
 {
   /* initialize timers  */
-  _timer_1 = 0;
+  timer_1_32 = 0;
 
-  /* Set CIA1 timer A interval to 1/TIMER_A_FREQUENCY_HZ ms, depending
+  /* Set CIA1 timer A interval to 1/TIMER_1_FREQUENCY_HZ ms, depending
    * on PAL/NTSC.  Graphix_ispal was initialized before
    */
   if (Graphix_ispal) {
@@ -87,34 +87,6 @@ Timer_release(void)
   CIA1.icr = CIA_ICR_MASK(CIA_ICR_ALL);
 }
 
-void __fastcall__
-_Timer_a_isr(void)
-{
-#ifdef DEBUG_IRQ_RENDERTIME
-  __asm__("lda %w\n"
-          "pha\n"
-          "lda #%b\n"
-          "sta %w\n",
-          VIC_BORDERCOLOR, VIC_COLOR_LIGHTBLUE, VIC_BORDERCOLOR);
-#endif
-
-  __asm__("    ldx #0\n"
-          "timer_next_byte:\n"
-          "    inc %v,x\n"
-          "    bne timer_incr_done\n"
-          "    inx\n"
-          "    cpx #%b\n"
-          "    bne timer_next_byte\n"
-          "timer_incr_done:",
-          _timer_1, sizeof(_timer_1));
-
-#ifdef DEBUG_IRQ_RENDERTIME
-  __asm__("pla\n"
-          "sta %w\n",
-          VIC_BORDERCOLOR);
-#endif
-}
-
 uint32_t __fastcall__
 Timer_1_get32(void)
 {
@@ -122,7 +94,7 @@ Timer_1_get32(void)
 
   /* mask CIA1 timer A IRQs  */
   CIA1.icr = CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK);
-  result = _timer_1;
+  result = timer_1_32;
   /* unmask CIA1 timer A IRQs  */
   CIA1.icr = CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK);
 

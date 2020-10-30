@@ -94,7 +94,7 @@ main(void)
 
 #ifdef DEBUG
   cur_time = Timer_1_get32();
-  printf("timer a: 0x%08lx = %lu0ms\n", cur_time*10, cur_time);
+  printf("timer 1: 0x%08lx = %lu0ms\n", cur_time*10, cur_time);
 #endif
 
   return 0;

@@ -40,6 +40,10 @@ BC ******************************************************************
  *
  */
 
+#  define header_ifndef(name) HASH ifndef name##_GEN_H__
+#  define header_define(name) HASH define name##_GEN_H__
+#  define header_endif(name) HASH endif    BC name##_GEN_H__  */
+
 #  define _define(name, value) HASH define name value
 
 #  define define(name, value) _define(name, value)
@@ -61,6 +65,10 @@ BC ******************************************************************
 ;; *******************************************************************
 ;
 ;
+
+#  define header_ifndef(name) .ifnblank name##_GEN_S__
+#  define header_define(name) .define name##_GEN_S__
+#  define header_endif(name) .endif    ; name##_GEN_S__
 
 #  define _define(name, value) .define name value
 

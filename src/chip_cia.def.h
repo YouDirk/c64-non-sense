@@ -21,6 +21,9 @@
 
 #include "define.h"
 
+header_ifndef(CHIP_CIA)
+header_define(CHIP_CIA)
+
 define_hex(CIA1_BASE,                   dc00)
 define_hex(CIA2_BASE,                   dd00)
 
@@ -81,7 +84,7 @@ define(CIA2_PRA_DEFAULT, \
 
 /* CIA2_PRA_VICBANK_ADDR(CIA2_PRA_VICBANK_MEM?)  */
 macro_arg1(CIA2_PRA_VICBANK_ADDR,                                    \
-           (CIA2_PRA_VICBANK_ADDRC - arg1*CIA2_PRA_VICBANK_STEP))
+           (CIA2_PRA_VICBANK_ADDRC - (arg1)*CIA2_PRA_VICBANK_STEP))
 
 /* ***************************************************************  */
 
@@ -118,9 +121,9 @@ define_hex(CIA2_ICR_NMIGLOBAL_MASK,     80)
 define_hex(CIA_ICR_ALL,                 1f)
 
 /* CIA_ICR_MASK(CIA_ICR_*_MASK)  */
-macro_arg1(CIA_ICR_MASK,       (arg1 & ~CIA1_ICR_IRQGLOBAL_MASK))
+macro_arg1(CIA_ICR_MASK,       ((arg1) & ~CIA1_ICR_IRQGLOBAL_MASK))
 /* CIA_ICR_UNMASK(CIA_ICR_*_MASK)  */
-macro_arg1(CIA_ICR_UNMASK,     (arg1 | CIA1_ICR_IRQGLOBAL_MASK))
+macro_arg1(CIA_ICR_UNMASK,     ((arg1) | CIA1_ICR_IRQGLOBAL_MASK))
 
 define(CIA1_ICR_IRQMODE,                                                \
        (CIA1_ICR_IRQGLOBAL_MASK | CIA_ICR_TIMERAZERO_MASK))
@@ -152,5 +155,7 @@ define(CIA1_CRA_DEFAULT,                                             \
 define(CIA1_CRA_MODE,                                                \
        (CIA_CRAB_START_MASK | CIA_CRAB_PBENABLE_MASK                 \
         | CIA_CRAB_LDLATCH_MASK))
+
+header_endif(CHIP_CIA)
 
 #endif /* CHIP_CIA_DEF_H__  */

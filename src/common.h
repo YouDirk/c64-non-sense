@@ -28,14 +28,10 @@
 #include <stdint.h>
 #include <string.h>
 
+/* For fast implementing stuff for tests, not productive  */
 #ifdef DEBUG
-
-/* To fast implementing stuff for tests, not productive  */
 #  include <stdio.h>
 #  include <stdlib.h>
-
-#else /* #ifdef DEBUG  */
-
 #endif /* #ifdef DEBUG  */
 
 #define STRING_LEN                 256

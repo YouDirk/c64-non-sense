@@ -21,6 +21,9 @@
 
 #include "define.h"
 
+header_ifndef(CHIP_VIC)
+header_define(CHIP_VIC)
+
 /* *******************************************************************
  * colors of C64
  */
@@ -97,10 +100,10 @@ define(VIC_ADDR_DEFAULT,                                             \
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
 macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
-                (arg1 + arg2*VIC_ADDR_SCREENRAM_STEP))
+                ((arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP))
 /* VIC_ADDR_BITMAP_ADDR(VICBANK_ADDR, VIC_ADDR_BITMAP)  */
 macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
-                (arg1 + arg2*VIC_ADDR_BITMAP_STEP))
+                ((arg1) + (arg2)*VIC_ADDR_BITMAP_STEP))
 
 define_hex(VIC_IRR,                     d019)
 define_hex(VIC_IMR,                     d01a)
@@ -116,5 +119,7 @@ define(VIC_IMR_IRQMODE,                                              \
 
 define_hex(VIC_BORDERCOLOR,             d020)
 define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)
+
+header_endif(CHIP_VIC)
 
 #endif /* CHIP_VIC_DEF_H__  */
