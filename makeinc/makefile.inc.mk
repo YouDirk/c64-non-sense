@@ -33,7 +33,7 @@ all: $(OUTPUT).$(D64EXT)
 recompile: clean
 	$(MAKE) all
 
-.PHONY: run run-load run-attach8
+.PHONY: run run-load run-attach8 debug
 ifeq (,$(EMULATOR_OPT))
 run run-load run-attach8: all
 	$(error $(ERRB) C64 emulator not found!  Try Debian '$$> \
@@ -41,11 +41,14 @@ run run-load run-attach8: all
 	  installation.  After install run '$$> make clean-all')
 else
 run: all
-	$(EMULATOR_OPT) -autostart $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -autostart $(OUTPUT).$(D64EXT)
 run-load: all
-	$(EMULATOR_OPT) -autoload $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -autoload $(OUTPUT).$(D64EXT)
 run-attach8: all
-	$(EMULATOR_OPT) -8 $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -8 $(OUTPUT).$(D64EXT)
+debug: $(OUTPUT).$(LABEXT_DEBUG) all
+	$(EMULATOR_OPT) -moncommands $< -keepmonopen -autostart \
+	  $(OUTPUT).$(D64EXT)
 endif
 
 .PHONY: disk
@@ -91,7 +94,8 @@ clean-tags:
 .PHONY: clean
 clean: clean-deps
 	-rm -rf *.$(CCEXT) *.$(ASMEXT) *.$(OEXT) *.$(LOGEXT) *~ *.bak \
-	  *.$(PRGEXT) *.$(DEF_GENHEXT) *.$(DEF_GENSEXT)
+	  *.$(PRGEXT) *.$(DEF_GENHEXT) *.$(DEF_GENSEXT) *.$(MAPEXT) \
+	  *.$(LABEXT)
 
 # _CLEAN_MAKECACHE must be the last one in the dependency list,
 # because it will be regenerated during recursive CLEAN calls
@@ -150,8 +154,13 @@ else
 	$(EBROWSE_OPT) $(EBROWSEFLAGS) -o $@ $^
 endif
 
-$(OUTPUT).$(PRGEXT): $(OBJFILES) $(DEF_GENFILES)
-	$(LD) $(LDFLAGS) -o $@ $(OBJFILES) $(addprefix -l,$(LIBS))
+$(OUTPUT).$(PRGEXT) $(OUTPUT).$(MAPEXT) $(OUTPUT).$(LABEXT): \
+  $(OBJFILES) $(DEF_GENFILES)
+	$(LD) $(LDFLAGS) -m $(OUTPUT).$(MAPEXT) -Ln $(OUTPUT).$(LABEXT) \
+	  -o $@ $(OBJFILES) $(addprefix -l,$(LIBS))
+
+%.$(LABEXT_DEBUG): %.$(LABEXT)
+	cp -f $< $@ && echo 'break $(BREAKPOINT)' >> $@
 
 %.$(D64EXT): %.$(PRGEXT)
 	$(D64PACK) -format "$* disk",aa d64 $@ -attach $@ -write $< $*

@@ -20,6 +20,8 @@
 /src/**/*.asm
 /src/**/*.o
 /src/**/*.d
+/src/**/*.map
+/src/**/*.lab
 /src/**/*.prg
 /src/**/*.d64
 

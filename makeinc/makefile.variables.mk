@@ -36,6 +36,9 @@ ASMEXT := asm
 OEXT := o
 DEPEXT := d
 LOGEXT := log
+MAPEXT := map
+LABEXT := lab
+LABEXT_DEBUG := debug.$(LABEXT)
 PRGEXT := prg
 D64EXT := d64
 
@@ -79,6 +82,8 @@ LDFLAGS := $(CCDEBUGFLAGS) $(OPTFLAG) $(FLAGS) \
   $(addprefix -L,$(LD_PATHS))
 
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
+
+EMUFLAGS := -moncommands $(OUTPUT).$(LABEXT)
 
 CTAGSFLAGS :=
 ETAGSFLAGS :=

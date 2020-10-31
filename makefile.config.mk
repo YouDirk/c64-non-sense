@@ -36,6 +36,19 @@ DEBUG_BUILD := 1
 #
 DEBUG_OPT_IRQ_RENDERTIME := 0
 
+# Symbol (beginning with '.') or address (beginning with '$$') of the
+# initial break point for Make target DEBUG.  It´s also possible to
+# override this value using Make like this
+#
+#   $> make BREAKPOINT=._Timer_1_get32 debug
+#
+# Additionally C symbols are beginning with an underscore '_', see
+# example values below.
+#
+# values: [.asm_symbol ._c_symbol $$<hex-address>]
+#
+BREAKPOINT := ._main
+
 # The removable disk (i.e. USB storage) where to copy the D64 file.
 #
 # values, such like: /dev/sdc1
