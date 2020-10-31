@@ -24,13 +24,14 @@
 
 /* ***************************************************************  */
 
-typedef enum {
-  error_e, warn_e, note_e
-} Debug_msgtype_t;
+#define _error_e                   ((_msgtype_t) 1)
+#define _warn_e                    ((_msgtype_t) 2)
+#define _note_e                    ((_msgtype_t) 3)
+typedef uint8_t _msgtype_t;
 
 typedef struct Debug_entry_t {
   uint32_t time;
-  Debug_msgtype_t type;
+  _msgtype_t type;
   const char* msg;
 } Debug_entry_t;
 
@@ -56,18 +57,19 @@ Debug_release_print(void)
 {
   uint8_t i; const char* type_str;
 
-  printf("debug: %u%s messages%s\n", Debug.count,
-         Debug.count == _LIST_SIZE? "+": "",
-         Debug.count == 0? " :)": "...");
+  printf("debug: %u%c message%c%s\n",
+         Debug.count, Debug.count == _LIST_SIZE? '+': '\0',
+         Debug.count == 1? '\0': 's', Debug.count == 0? " :)": "...");
 
   for (i=0; i<Debug.count; ++i) {
     switch (Debug.entry[i].type) {
-    case error_e: type_str = "error"; break;
-    case warn_e: type_str = "warn"; break;
-    case note_e: type_str = "note"; break;
+    case _error_e: type_str = "error"; break;
+    case _warn_e: type_str = "warn"; break;
+    case _note_e: type_str = "note"; break;
+    default: type_str = "<unknown>"; break;
     }
 
-    printf("[%lu] %s: %s\n",
+    printf(" [%lu] %s: %s\n",
            Debug.entry[i].time, type_str, Debug.entry[i].msg);
   }
 }
@@ -78,7 +80,7 @@ Debug_error(const char* msg)
   if (Debug.count == _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
-  Debug.entry[Debug.count].type = error_e;
+  Debug.entry[Debug.count].type = _error_e;
   Debug.entry[Debug.count].msg = msg;
 
   ++Debug.count;
@@ -90,7 +92,7 @@ Debug_warn(const char* msg)
   if (Debug.count == _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
-  Debug.entry[Debug.count].type = warn_e;
+  Debug.entry[Debug.count].type = _warn_e;
   Debug.entry[Debug.count].msg = msg;
 
   ++Debug.count;
@@ -102,7 +104,7 @@ Debug_note(const char* msg)
   if (Debug.count == _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
-  Debug.entry[Debug.count].type = note_e;
+  Debug.entry[Debug.count].type = _note_e;
   Debug.entry[Debug.count].msg = msg;
 
   ++Debug.count;
