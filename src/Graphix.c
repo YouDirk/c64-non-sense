@@ -35,24 +35,22 @@
 #define _BITMAP_RAM                                                  \
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
-
-/* 'this'  */
-static Graphix_t _singleton;
-/* the shadow copy of this.  Read by ISR.  */
-static Graphix_t _shadow_isr;
-
-bool Graphix_ispal;
+/* The shadow copy Graphix.buffer, read by ISR.  */
+static Graphix_buffer_t _shadow_isr;
 
 /* ***************************************************************  */
 
-Graphix_t* __fastcall__
-Graphix_new(Graphix_initCallback_t init_callback)
+/* Static members of this module.  */
+Graphix_t Graphix;
+
+void __fastcall__
+Graphix_init(Graphix_initCallback_t init_callback)
 {
   /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
 
-  /* find out if we are on a PAL or NTSC machine?  Needed for Timer
+  /* Find out if we are on a PAL or NTSC machine?  Needed for Timer
    * configuration.
    */
   __asm__("rasterline_not_overflow:\n"
@@ -68,9 +66,10 @@ Graphix_new(Graphix_initCallback_t init_callback)
            */
           "    and #%b\n"
           /* akku = 0x30 if PAL, 0x00 if NTSC  */
-          "    sta %v\n",
+          "    sta %v+%w\n",
           VIC_RASTERLINE, VIC_RASTERLINE,
-          (uint8_t) VIC_RASTERLINE_PAL_MASK, Graphix_ispal);
+          (uint8_t) VIC_RASTERLINE_PAL_MASK,
+          Graphix, offsetof(Graphix_t, is_pal));
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
@@ -83,16 +82,16 @@ Graphix_new(Graphix_initCallback_t init_callback)
   /* (no restore) rasterline, where an IRQ is triggered  */
   VIC.rasterline = VIC_RASTERLINE_SCREENEND;
 
-  /* initialize 'this'  */
-  _singleton.screen_ram = _SCREEN_RAM;
-  _singleton.bitmap_ram = _BITMAP_RAM;
+  /* initialize Graphix.buffer  */
+  Graphix.buffer.screen_ram = _SCREEN_RAM;
+  Graphix.buffer.bitmap_ram = _BITMAP_RAM;
 
-  _singleton.bordercolor = GRAPHIX_BLACK;
-  _singleton.scroll_x = 0;
-  _singleton.scroll_y = 0;
+  Graphix.buffer.bordercolor = GRAPHIX_BLACK;
+  Graphix.buffer.scroll_x = 0;
+  Graphix.buffer.scroll_y = 0;
 
   /* initialize all other stuff  */
-  init_callback(&_singleton);
+  init_callback(&Graphix.buffer);
 
   /* after init_callback(), so it´s possible to initizialize it
    * inside
@@ -102,8 +101,6 @@ Graphix_new(Graphix_initCallback_t init_callback)
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
   VIC.imr = VIC_IMR_IRQMODE;
-
-  return &_singleton;
 }
 
 void __fastcall__
@@ -135,14 +132,14 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 void __fastcall__
 Graphix_swapBuffers(void)
 {
-  _singleton.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
-  _singleton.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
+  Graphix.buffer.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
+  Graphix.buffer.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
   /* mask VIC rasterline IRQs  */
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
 
-  memcpy(&_shadow_isr, &_singleton, sizeof(Graphix_t));
+  memcpy(&_shadow_isr, &Graphix.buffer, sizeof(Graphix_buffer_t));
 
   /* unmask VIC rasterline IRQs  */
   /* commented out, too inaccurate raster timing  */
@@ -170,18 +167,18 @@ Graphix_rasterline_isr(void)
   __asm__("    lda %v+%w\n"
           "    ora #%b\n"
           "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_t, scroll_y), VIC_CTRL1_MODE,
-          VIC_CTRL1);
+          _shadow_isr, offsetof(Graphix_buffer_t, scroll_y),
+          VIC_CTRL1_MODE, VIC_CTRL1);
   __asm__("    lda %v+%w\n"
           "    ora #%b\n"
           "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_t, scroll_x), VIC_CTRL2_MODE,
-          VIC_CTRL2);
+          _shadow_isr, offsetof(Graphix_buffer_t, scroll_x),
+          VIC_CTRL2_MODE, VIC_CTRL2);
 
   /* must be the last statement, for correct DEBUG_IRQ_RENDERTIME  */
   __asm__("    lda %v+%w\n"
           "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_t, bordercolor),
+          _shadow_isr, offsetof(Graphix_buffer_t, bordercolor),
           VIC_BORDERCOLOR);
 #ifdef DEBUG_IRQ_RENDERTIME
   /* nothing to do, because VIC.bordercolor will be set above  */

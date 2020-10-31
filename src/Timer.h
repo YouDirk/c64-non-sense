@@ -33,12 +33,22 @@
 
 /* ***************************************************************  */
 
-/* System clock of the MOS 6510 CPU.  Depending if we are on a PAL or
- * NTSC system.
- *
- * 16 bit is not wide enough to store 1 Mhz
- */
-extern uint32_t Timer_system_clk;
+/* Structure of static members for module.  */
+typedef struct Timer_t {
+
+  /* System clock of the MOS 6510 CPU.  Depending if we are on a PAL or
+   * NTSC system.
+   *
+   * 16 bit is not wide enough to store 1 Mhz
+   */
+  uint32_t system_clk;
+
+} Timer_t;
+
+/* ***************************************************************  */
+
+/* Static members of this module.  */
+extern Timer_t Timer;
 
 /* Initialize the timers on CIA1 and CIA2 which we are using.
  */

@@ -81,28 +81,38 @@
 #define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
   (((set_color) << 4) | (zero_color))
 
-/* *******************************************************************
- * type declarations
- */
+/* ***************************************************************  */
 
-/* 'this' structure  */
-typedef struct Graphix_t {
+/* graphic buffer structure  */
+typedef struct Graphix_buffer_t {
   uint8_t* screen_ram;
   uint8_t* bitmap_ram;
 
   uint8_t bordercolor;
   int8_t scroll_x;
   int8_t scroll_y;
-} Graphix_t;
+} Graphix_buffer_t;
 
 /* callbacks are defined here  */
-typedef void __fastcall__ (*Graphix_initCallback_t)(Graphix_t* graphix);
+typedef void __fastcall__
+  (*Graphix_initCallback_t)(Graphix_buffer_t* graphix);
 typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
+
+/* Structure of static members for module.  */
+typedef struct Graphix_t {
+
+  /* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine.  */
+  bool is_pal;
+
+  /* The logical graphic buffer.  */
+  Graphix_buffer_t buffer;
+
+} Graphix_t;
 
 /* ***************************************************************  */
 
-/* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine.  */
-extern bool Graphix_ispal;
+/* Static members of this module.  */
+extern Graphix_t Graphix;
 
 /* Returns a singleton.  So it´s not needed to pass it as argument
  * into other functions of this Graphix module.
@@ -110,8 +120,8 @@ extern bool Graphix_ispal;
  * init_callback: Is called after all graphic initialization is done,
  *                but SCREEN IS STILL BLACK and VIC IRQs ARE DISABLED.
  */
-extern Graphix_t* __fastcall__
-  Graphix_new(Graphix_initCallback_t init_callback);
+extern void __fastcall__
+  Graphix_init(Graphix_initCallback_t init_callback);
 
 /* Release all resources, restore regiters and disable interrupts.
  *
@@ -122,11 +132,8 @@ extern Graphix_t* __fastcall__
 extern void __fastcall__
   Graphix_release(Graphix_releaseCallback_t release_callback);
 
-/* Should feels like a swap in a double buffered system of Graphix_t*,
- * which was returned by Graphix_new().
- *
- * The pointer and it´s values of Graphix_t* will not be affected,
- * instead it values will be copied to a private shadow struct.
+/* Should feels like a swap in a double buffered system of
+ * Graphix.buffer
  */
 extern void __fastcall__ Graphix_swapBuffers(void);
 

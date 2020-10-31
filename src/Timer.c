@@ -31,18 +31,18 @@
 #define _TIMER_CLK_PAL_HZ          985249 /* system clock 1 MHz (PAL) */
 #define _TIMER_CLK_NTSC_HZ        1022727 /* (NTSC)  */
 
-/* 16 bit is not wide enough to store 1 Mhz  */
-uint32_t Timer_system_clk;
-
 /* Default CIA1 timer A configuration.  Depending if we are on a PAL
  * or NTSC system.
  */
 static uint16_t _ta_default;
 
-/* the logical timers :) ...  incremented by ISR  */
+/* The logical timers :) ...  Will be incremented by ISR.  */
 volatile uint32_t timer_1_32;
 
 /* ***************************************************************  */
+
+/* Static members of this module.  */
+Timer_t Timer;
 
 void __fastcall__
 Timer_init(void)
@@ -55,14 +55,14 @@ Timer_init(void)
   /* Set CIA1 timer A interval to 1/TIMER_1_FREQUENCY_HZ ms, depending
    * on PAL/NTSC.  Graphix_ispal was initialized before
    */
-  if (Graphix_ispal) {
-    Timer_system_clk = _TIMER_CLK_PAL_HZ;
+  if (Graphix.is_pal) {
+    Timer.system_clk = _TIMER_CLK_PAL_HZ;
     _ta_default = CIA1_TA_DEFAULT_PAL;
 
     /* writing TA LO and TA HI in one command  */
     *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_1_FREQUENCY_HZ;
   } else {
-    Timer_system_clk = _TIMER_CLK_NTSC_HZ;
+    Timer.system_clk = _TIMER_CLK_NTSC_HZ;
     _ta_default = CIA1_TA_DEFAULT_NTSC;
 
     /* writing TA LO and TA HI in one command  */

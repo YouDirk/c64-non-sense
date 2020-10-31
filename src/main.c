@@ -27,7 +27,7 @@
 /* ***************************************************************  */
 
 static void __fastcall__
-_main_init(Graphix_t* graphix)
+_main_init(Graphix_buffer_t* graphix)
 {
   unsigned i;
 
@@ -61,11 +61,10 @@ _main_release(void)
 int
 main(void)
 {
-  Graphix_t* graphix;
   unsigned char joy_cntrl;
   int32_t cur_time, prev_time;
 
-  graphix = Graphix_new(_main_init);
+  Graphix_init(_main_init);
 
   joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
   while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
@@ -75,17 +74,17 @@ main(void)
       if (prev_time >= 0 && prev_time + 0 < cur_time) prev_time = -1;
 
       if (cur_time % 100 == 50) {
-        ++graphix->bordercolor; Graphix_swapBuffers();
+        ++Graphix.buffer.bordercolor; Graphix_swapBuffers();
         while (Timer_1_get32() % 100 == 50);
       }
     }
     prev_time = cur_time;
     joy_cntrl = CIA1.pra;
 
-    if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++graphix->scroll_y;
-    if (~joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --graphix->scroll_y;
-    if (~joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++graphix->scroll_x;
-    if (~joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --graphix->scroll_x;
+    if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++Graphix.buffer.scroll_y;
+    if (~joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --Graphix.buffer.scroll_y;
+    if (~joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
+    if (~joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
 
     Graphix_swapBuffers();
   }
