@@ -28,11 +28,7 @@
 #include <stdint.h>
 #include <string.h>
 
-/* For fast implementing stuff for tests, not productive  */
-#ifdef DEBUG
-#  include <stdio.h>
-#  include <stdlib.h>
-#endif /* #ifdef DEBUG  */
+#include "Debug.h"
 
 #define STRING_LEN                 256
 typedef char                       string_t[STRING_LEN];

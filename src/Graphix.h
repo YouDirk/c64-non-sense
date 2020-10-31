@@ -135,6 +135,6 @@ extern void __fastcall__
 /* Should feels like a swap in a double buffered system of
  * Graphix.buffer
  */
-extern void __fastcall__ Graphix_swapBuffers(void);
+extern void __fastcall__ Graphix_buffers_swap(void);
 
 #endif /* GRAPHIX_H__  */

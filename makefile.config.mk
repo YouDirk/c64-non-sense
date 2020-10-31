@@ -19,9 +19,11 @@
 
 # Enable debugging symbols and debug code, such like
 #
-# * include <std*.h> files
+# * print debug messages if C64 NonSense terminates regularly
 #
-# * indicate not served interrupts
+# * indicate not served interrupts by changing the border color
+#
+# * include <std*.h> files
 #
 # If disabled then the DEBUG_OPT_* options will be disabled too.
 #

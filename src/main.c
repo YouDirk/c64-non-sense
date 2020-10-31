@@ -64,6 +64,8 @@ main(void)
   unsigned char joy_cntrl;
   int32_t cur_time, prev_time;
 
+  DEBUG_INIT();
+
   Graphix_init(_main_init);
 
   joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
@@ -74,7 +76,7 @@ main(void)
       if (prev_time >= 0 && prev_time + 0 < cur_time) prev_time = -1;
 
       if (cur_time % 100 == 50) {
-        ++Graphix.buffer.bordercolor; Graphix_swapBuffers();
+        ++Graphix.buffer.bordercolor; Graphix_buffers_swap();
         while (Timer_1_get32() % 100 == 50);
       }
     }
@@ -86,15 +88,11 @@ main(void)
     if (~joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
     if (~joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
 
-    Graphix_swapBuffers();
+    Graphix_buffers_swap();
   }
 
   Graphix_release(_main_release);
 
-#ifdef DEBUG
-  cur_time = Timer_1_get32();
-  printf("timer 1: 0x%08lx = %lu0ms\n", cur_time*10, cur_time);
-#endif
-
+  DEBUG_RELEASE_PRINT();
   return 0;
 }
