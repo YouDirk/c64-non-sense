@@ -69,14 +69,14 @@ vic:
         beq not_vic                     ; is VIC IRQ?
 rasterline:
         and #VIC_IMR_RASTERLINE_MASK
-        beq _not_rasterline             ; is rasterline IRQ?
+        beq not_rasterline              ; is rasterline IRQ?
 
         jsr _Graphix_rasterline_isr
 
         lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC served rasterline IRQ
         sta VIC_IRR
         jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
-_not_rasterline:
+not_rasterline:
 not_vic:
 
 cia1:
@@ -97,6 +97,7 @@ not_cia1:
 
 .ifdef DEBUG                            ; increment border color if an
         inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
+        DEBUG_WARN "interrupt, irq not served!"
 .endif
         jmp KERNAL_IRQ_DEFAULT          ; jump to default Kernal ISR
 .endproc                                ; Interrupt_irq_isr

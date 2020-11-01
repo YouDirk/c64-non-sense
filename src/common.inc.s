@@ -20,7 +20,7 @@
 
 .include "chip-vic.gen.s"
 
-;; .include "Debug.inc.s"
+.include "Debug.inc.s"
 
 ;; *******************************************************************
 
