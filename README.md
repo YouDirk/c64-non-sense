@@ -23,7 +23,10 @@ Just playing around with C64 cross-compile tools.
 * Interesting stuff?  Then **Donate/Sponsor**  
   [![Donate/Sponsor][sponsor-pic]][sponsor-link] https://github.com/sponsors/YouDirk
 
-![Screenshot][trunk/screenshot-promo.jpg]
+![The Screenshot](trunk/screenshot-promo.jpg)
+
+The progression of C64 NonSense is also vlogged at [Youtube
+here][youtube-list] :)
 
 Development toolchain
 ---------------------
@@ -138,3 +141,4 @@ Credits
 
 [sponsor-link]: https://github.com/sponsors/YouDirk
 [sponsor-pic]: trunk/button-sponsor.20.png
+[youtube-list]: https://www.youtube.com/playlist?list=PLSC2VXOJyxP01kz__GU2nvx4RmgCN4ZwO
