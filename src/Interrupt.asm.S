@@ -15,10 +15,10 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.include "common.s"
+.include "common.inc.s"
 
-.include "chip_vic.gen.s"
-.include "chip_cia.gen.s"
+.include "chip-vic.gen.s"
+.include "chip-cia.gen.s"
 
 .include "kernal.gen.s"
 

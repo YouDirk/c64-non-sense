@@ -16,10 +16,10 @@
 
 
 # C and S files to be compiled
-OBJ = Timer_asm Timer Graphix Interrupt main
+OBJ = Timer.asm Timer Graphix Interrupt.asm main
 
 # *.gen.[hs] to be generated
-DEFH = chip_vic chip_cia kernal
+DEFH = chip-vic chip-cia kernal
 
 # compile and link only if DEBUG_BUILD=1 in makefile.config.mk
 OBJ_DEBUG = Debug

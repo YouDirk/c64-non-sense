@@ -18,8 +18,8 @@
 
 #include "Graphix.h"
 
-#include "chip_vic.gen.h"
-#include "chip_cia.gen.h"
+#include "chip-vic.gen.h"
+#include "chip-cia.gen.h"
 
 /* default is CIA2_PRA_VICBANK_MEM0  */
 #define _VICBANK                   CIA2_PRA_VICBANK_MEMC

@@ -20,8 +20,8 @@
 
 #include "Graphix.h"
 
-#include "chip_vic.gen.h"
-#include "chip_cia.gen.h"
+#include "chip-vic.gen.h"
+#include "chip-cia.gen.h"
 
 /* The default CIA1 timer A frequency is around
  *

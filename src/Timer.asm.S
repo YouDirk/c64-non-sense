@@ -15,16 +15,16 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.include "common.s"
+.include "common.inc.s"
 
-.include "chip_vic.gen.s"
+.include "chip-vic.gen.s"
 
 .code
 
 .import _timer_1_32
 .export Timer_a_isr
 .proc Timer_a_isr: near
-        isr_rendertime_begin #VIC_COLOR_BLUE
+        ISR_RENDERTIME_BEGIN #VIC_COLOR_BLUE
 
 .if 0
         ; smaller code but slower, urolled loop below
@@ -46,6 +46,6 @@ next_byte:
 .endif
 not_overflow:
 
-        isr_rendertime_end
+        ISR_RENDERTIME_END
         rts
 .endproc                                ; Timer_a_isr

@@ -22,7 +22,7 @@
 #include "Graphix.h"
 #include "Timer.h"
 
-#include "chip_cia.gen.h"
+#include "chip-cia.gen.h"
 
 /* ***************************************************************  */
 

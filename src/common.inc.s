@@ -15,29 +15,31 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifnblank COMMON_S__
-.define COMMON_S__
+.ifnblank COMMON_INC_S__
+.define COMMON_INC_S__
 
-.include "chip_vic.gen.s"
+.include "chip-vic.gen.s"
+
+;; .include "Debug.inc.s"
 
 ;; *******************************************************************
 
-.macro isr_rendertime_begin color
+.macro ISR_RENDERTIME_BEGIN color
 .ifdef DEBUG_IRQ_RENDERTIME
         lda VIC_BORDERCOLOR             ; push current border color to
         pha                             ;   stack
         lda color
         sta VIC_BORDERCOLOR             ; set debug color
 .endif
-.endmacro                               ; isr_rendertime_begin
+.endmacro                               ; ISR_RENDERTIME_BEGIN
 
-.macro isr_rendertime_end
+.macro ISR_RENDERTIME_END
 .ifdef DEBUG_IRQ_RENDERTIME
         pla
         sta VIC_BORDERCOLOR             ; pop backup and restore color
 .endif
-.endmacro                               ; isr_rendertime_end
+.endmacro                               ; ISR_RENDERTIME_END
 
 ;; *******************************************************************
 
-.endif                                  ; COMMON_S__
+.endif                                  ; COMMON_INC_S__
