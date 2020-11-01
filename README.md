@@ -61,7 +61,7 @@ need to download manually the Kernal, BASIC and CharGen ROMs of the
 emulator due to copyright purposes.  Here an how-to:
 
 Download the source tarball `vice-3.x.tar.gz` (replace `3.x` with your
-installed VICE version shown in `$> dpkg -l vice*`) from
+installed VICE version as listed in `$> dpkg -l 'vice*'`) from
 
 * *ftp://ftp.zimmers.net/pub/cbm/crossplatform/emulators/VICE/*
 
@@ -131,7 +131,7 @@ Credits
 
 * CC65 compiler specifications
     - (2x C stack: return & parameter) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
-    - (C calling conventions) https://github.com/cc65/wiki/wiki/Parameter-and-return-stacks
+    - (C calling conventions) https://github.com/cc65/wiki/wiki/Parameter-passing-and-calling-conventions
 
 
 [sponsor-link]: https://github.com/sponsors/YouDirk

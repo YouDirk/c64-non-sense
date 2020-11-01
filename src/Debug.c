@@ -77,35 +77,29 @@ Debug_release_print(void)
 void __fastcall__
 Debug_error(const char* msg)
 {
-  if (Debug.count == _LIST_SIZE) return;
+  if (Debug.count >= _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
   Debug.entry[Debug.count].type = _error_e;
-  Debug.entry[Debug.count].msg = msg;
-
-  ++Debug.count;
+  Debug.entry[Debug.count++].msg = msg;
 }
 
 void __fastcall__
 Debug_warn(const char* msg)
 {
-  if (Debug.count == _LIST_SIZE) return;
+  if (Debug.count >= _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
   Debug.entry[Debug.count].type = _warn_e;
-  Debug.entry[Debug.count].msg = msg;
-
-  ++Debug.count;
+  Debug.entry[Debug.count++].msg = msg;
 }
 
 void __fastcall__
 Debug_note(const char* msg)
 {
-  if (Debug.count == _LIST_SIZE) return;
+  if (Debug.count >= _LIST_SIZE) return;
 
   Debug.entry[Debug.count].time = Timer_1_get32();
   Debug.entry[Debug.count].type = _note_e;
-  Debug.entry[Debug.count].msg = msg;
-
-  ++Debug.count;
+  Debug.entry[Debug.count++].msg = msg;
 }
