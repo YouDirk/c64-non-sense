@@ -38,6 +38,13 @@ DEBUG_BUILD := 1
 #
 DEBUG_OPT_IRQ_RENDERTIME := 0
 
+# Output debug warnings if the logical Timer 1 ISR is not in sync with
+# physical CIA1 timer A.
+#
+# values: [1 0]
+#
+DEBUG_OPT_TIMER1_SYNCCHECK := 0
+
 # Symbol (prefixed with '.') or address (prefixed with '$$') of the
 # initial break point for `make` target DEBUG.  It´s also possible to
 # override this value using `make` like this

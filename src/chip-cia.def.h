@@ -145,7 +145,7 @@ define_hex(CIA_CRB_TODALARM_MASK,       80)
 
 define_hex(CIA_CRAB_START_MASK,         01)
 define_hex(CIA_CRAB_PBENABLE_MASK,      02)
-define_hex(CIA_CRAB_PBHIGH_MASK,        04)
+define_hex(CIA_CRAB_PBTOGGLE_MASK,      04)
 define_hex(CIA_CRAB_UNDERSTOP_MASK,     08)
 define_hex(CIA_CRAB_LDLATCH_MASK,       10)
 
@@ -154,7 +154,7 @@ define(CIA1_CRA_DEFAULT,                                             \
 
 define(CIA1_CRA_MODE,                                                \
        (CIA_CRAB_START_MASK | CIA_CRAB_PBENABLE_MASK                 \
-        | CIA_CRAB_LDLATCH_MASK))
+        | CIA_CRAB_PBTOGGLE_MASK | CIA_CRAB_LDLATCH_MASK))
 
 header_endif(CHIP_CIA)
 

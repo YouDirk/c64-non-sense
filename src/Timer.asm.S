@@ -17,7 +17,7 @@
 
 .include "common.inc.s"
 
-.include "chip-vic.gen.s"
+.include "chip-cia.gen.s"
 
 .code
 
@@ -26,24 +26,34 @@
 .proc Timer_a_isr: near
         ISR_RENDERTIME_BEGIN #VIC_COLOR_BLUE
 
-.if 0
-        ; smaller code but slower, urolled loop below
-        ldx #0                          ; x = offset = 0
-next_byte:
-        inc _timer_1_32,x               ; *(timer+x) += 1
+.ifdef DEBUG_TIMER1_SYNCCHECK
+        .pushseg                        ; push current segment ("CODE")
+        .bss                            ; org zero-initialized segment
+cia1_portb_backup:
+        .res 1                          ; space for CIA1 port B backup
+        .popseg                         ; restore "CODE" segment
+
+        ldx CIA1_PRB                    ; X = portB
+        txa                             ; A = portB
+        eor cia1_portb_backup           ; A = B xor prevB = toggled
+        and #CIA1_PRB_TIMERATOGGLE_MASK ; A = not zero, if portB toggled
+        stx cia1_portb_backup           ; prevB = portB
+        bne timer_1_sync                ; if toggled then a_is_sync
+        DEBUG_WARN "timer 1, isr async with cia1"
+timer_1_sync:
+.endif ; DEBUG_TIMER1_SYNCCHECK
+
+        inc _timer_1_32                 ; ++byte 0
+        bne not_overflow                ; ready, if not overflow
+        inc _timer_1_32+1               ; ++byte 1
+        bne not_overflow                ; ready, if not overflow
+        inc _timer_1_32+2               ; ++byte 2
+        bne not_overflow                ; ready, if not overflow
+        inc _timer_1_32+3               ; ++byte 3
+.ifdef DEBUG
         bne not_overflow
-        inx                             ; ++x
-        cpx #4
-        bne next_byte                   ; if (x != 4) goto next_byte
-.else
-        inc _timer_1_32
-        bne not_overflow
-        inc _timer_1_32+1
-        bne not_overflow
-        inc _timer_1_32+2
-        bne not_overflow
-        inc _timer_1_32+3
-.endif
+        DEBUG_NOTE "timer 1, overflows"
+.endif ; .ifdef DEBUG
 not_overflow:
 
         ISR_RENDERTIME_END

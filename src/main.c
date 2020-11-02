@@ -62,7 +62,7 @@ int
 main(void)
 {
   unsigned char joy_cntrl;
-  int32_t cur_time, prev_time;
+  uint32_t cur_time, prev_time;
 
   DEBUG_INIT();
 
@@ -70,10 +70,10 @@ main(void)
 
   joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
   while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
-    while (prev_time >= 0 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
+    while (prev_time != -1 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
       cur_time = Timer_1_get32();
 
-      if (prev_time >= 0 && prev_time + 0 < cur_time) prev_time = -1;
+      if (prev_time != -1 && prev_time + 0 < cur_time) prev_time = -1;
 
       if (cur_time % 100 == 50) {
         ++Graphix.buffer.bordercolor; Graphix_buffers_swap();

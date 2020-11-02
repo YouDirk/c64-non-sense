@@ -42,15 +42,15 @@
 
   .macro _DEBUG_HELPER msg, function
   .scope
-        .pushseg
-        .rodata
+        .pushseg                        ; push current segment ("CODE")
+        .rodata                         ; org read-only segment
 debug_msg:
-        .byte msg, $0
-        .popseg
+        .byte msg, $0                   ; dump message & null-terminate
+        .popseg                         ; restore "CODE" segment
 
-        lda #<debug_msg
-        ldx #>debug_msg
-        jsr function
+        lda #<debug_msg                 ; fast call: A=arg1, low byte
+        ldx #>debug_msg                 ; fast call: X=arg1, high byte
+        jsr function                    ; call it
   .endscope
   .endmacro                             ; _DEBUG_HELPER
   ;; *****************************************************************
