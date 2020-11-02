@@ -40,15 +40,15 @@ run run-load run-attach8: all
 	  apt-get install vice' in Debian CONTRIB packages for \
 	  installation.  After install run '$$> make clean-all')
 else
-run: all
-	$(EMULATOR_OPT) $(EMUFLAGS) -autostart $(OUTPUT).$(D64EXT)
-run-load: all
-	$(EMULATOR_OPT) $(EMUFLAGS) -autoload $(OUTPUT).$(D64EXT)
-run-attach8: all
-	$(EMULATOR_OPT) $(EMUFLAGS) -8 $(OUTPUT).$(D64EXT)
-debug: $(OUTPUT).$(LABEXT_DEBUG) all
-	$(EMULATOR_OPT) -moncommands $< -keepmonopen -autostart \
-	  $(OUTPUT).$(D64EXT)
+run: $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -autostart $<
+run-load: $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -autoload $<
+run-attach8: $(OUTPUT).$(D64EXT)
+	$(EMULATOR_OPT) $(EMUFLAGS) -8 $<
+debug: $(OUTPUT).$(D64EXT) $(OUTPUT).$(LABEXT_DEBUG)
+	$(EMULATOR_OPT) -moncommands $(word 2,$^) -keepmonopen \
+	  -autostart $<
 endif
 
 .PHONY: disk
@@ -154,10 +154,10 @@ else
 	$(EBROWSE_OPT) $(EBROWSEFLAGS) -o $@ $^
 endif
 
-$(OUTPUT).$(PRGEXT) $(OUTPUT).$(MAPEXT) $(OUTPUT).$(LABEXT): \
+$(OUTPUT).$(PRGEXT) $(OUTPUT).$(MAPEXT) $(OUTPUT).$(LABEXT)&: \
   $(OBJFILES) $(DEF_GENFILES)
 	$(LD) $(LDFLAGS) -m $(OUTPUT).$(MAPEXT) -Ln $(OUTPUT).$(LABEXT) \
-	  -o $@ $(OBJFILES) $(addprefix -l,$(LIBS))
+	  -o $(OUTPUT).$(PRGEXT) $(OBJFILES) $(addprefix -l,$(LIBS))
 
 %.$(LABEXT_DEBUG): %.$(LABEXT)
 	cp -f $< $@ && echo 'break $(BREAKPOINT)' >> $@
