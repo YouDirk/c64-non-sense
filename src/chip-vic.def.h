@@ -84,8 +84,8 @@ define(VIC_CTRL2_DEFAULT,                                            \
        (VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK))
 
 /* no multicolor, no 40 cols in x, xscroll=0  */
-define_hex(VIC_CTRL2_MODE,                                           \
-           00)
+define(VIC_CTRL2_MODE,                                               \
+       (00))
 
 define_hex(VIC_ADDR,                    d018)
 define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)

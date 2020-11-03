@@ -36,7 +36,7 @@
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
 /* The shadow copy Graphix.buffer, read by ISR.  */
-static Graphix_buffer_t _shadow_isr;
+Graphix_buffer_t shadow_isr;
 
 /* ***************************************************************  */
 
@@ -139,48 +139,9 @@ Graphix_buffers_swap(void)
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
 
-  memcpy(&_shadow_isr, &Graphix.buffer, sizeof(Graphix_buffer_t));
+  memcpy(&shadow_isr, &Graphix.buffer, sizeof(Graphix_buffer_t));
 
   /* unmask VIC rasterline IRQs  */
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE;  */
-}
-
-/* ***************************************************************  */
-
-/* Just use inline assembler instructions here.  This function will be
- * called by ISR during IRQ.  Maybe the compiler generate calls to the
- * runtime library, these are NOT MULTI-THREADING COMPATIBLE.
- *
- * We are using inline assembler here to have access to the members of
- * _shadow_isr, what is not possible with clean assembler code.
- */
-void __fastcall__
-Graphix_rasterline_isr(void)
-{
-#ifdef DEBUG_IRQ_RENDERTIME
-  __asm__("    lda #%b\n"
-          "    sta %w\n",
-          VIC_COLOR_RED, VIC_BORDERCOLOR);
-#endif
-
-  __asm__("    lda %v+%w\n"
-          "    ora #%b\n"
-          "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_buffer_t, scroll_y),
-          VIC_CTRL1_MODE, VIC_CTRL1);
-  __asm__("    lda %v+%w\n"
-          "    ora #%b\n"
-          "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_buffer_t, scroll_x),
-          VIC_CTRL2_MODE, VIC_CTRL2);
-
-  /* must be the last statement, for correct DEBUG_IRQ_RENDERTIME  */
-  __asm__("    lda %v+%w\n"
-          "    sta %w\n",
-          _shadow_isr, offsetof(Graphix_buffer_t, bordercolor),
-          VIC_BORDERCOLOR);
-#ifdef DEBUG_IRQ_RENDERTIME
-  /* nothing to do, because VIC.bordercolor will be set above  */
-#endif
 }

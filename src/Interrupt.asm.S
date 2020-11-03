@@ -59,7 +59,7 @@
         rts
 .endproc                                ; _Interrupt_release
 
-.import _Graphix_rasterline_isr
+.import Graphix_rasterline_isr
 .import Timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
@@ -71,7 +71,7 @@ rasterline:
         and #VIC_IMR_RASTERLINE_MASK
         beq not_rasterline              ; is rasterline IRQ?
 
-        jsr _Graphix_rasterline_isr
+        jsr Graphix_rasterline_isr
 
         lda #VIC_IMR_RASTERLINE_MASK    ; tell VIC served rasterline IRQ
         sta VIC_IRR

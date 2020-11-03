@@ -16,7 +16,7 @@
 
 
 # C and S files to be compiled
-OBJ = Timer.asm Timer Graphix Interrupt.asm main
+OBJ = Timer.asm Timer Graphix.asm Graphix Interrupt.asm main
 
 # *.gen.[hs] to be generated
 DEFH = chip-vic chip-cia kernal Graphix
