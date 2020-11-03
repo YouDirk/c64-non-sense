@@ -22,7 +22,6 @@
 
 .code
 
-.import _Graphix
 .import _shadow_isr
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
@@ -40,7 +39,7 @@
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
-        lda _Graphix + Graphix_t::buffer + Graphix_buffer_t::bordercolor
+        lda _shadow_isr + Graphix_buffer_t::bordercolor
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
