@@ -45,7 +45,7 @@
         .pushseg                        ; push current segment ("CODE")
         .rodata                         ; org read-only segment
 debug_msg:
-        .byte msg, $0                   ; dump message & null-terminate
+        .byte msg, $00                  ; dump message & null-terminate
         .popseg                         ; restore "CODE" segment
 
         lda #<debug_msg                 ; fast call: A=arg1, low byte

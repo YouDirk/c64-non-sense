@@ -40,19 +40,41 @@ BC ******************************************************************
  *
  */
 
-#  define header_ifndef(name) HASH ifndef name##_GEN_H__
-#  define header_define(name) HASH define name##_GEN_H__
-#  define header_endif(name) HASH endif    BC name##_GEN_H__  */
+#  define header_ifndef(name)      HASH ifndef name##_GEN_H__
+#  define header_define(name)      HASH define name##_GEN_H__
+#  define header_endif(name)       HASH endif    BC name##_GEN_H__  */
 
-#  define _define(name, value) HASH define name value
+#  define _define(name, value)     HASH define name value
 
-#  define define(name, value) _define(name, value)
-#  define define_hex(name, value) _define(name, 0x##value)
-#  define define_dec(name, value) _define(name, value)
+#  define define(name, value)      _define(name, value)
+#  define define_hex(name, value)  _define(name, 0x##value)
+#  define define_dec(name, value)  _define(name, value)
 
-#  define macro_arg1(name, value) HASH define name(arg1) value
+#  define macro_arg1(name, value)      HASH define name(arg1) value
 #  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2) \
           value
+
+#  define typedef_struct_begin(name)    typedef struct name {
+#  define typedef_struct_end(name)      } name;
+#  define typedef_struct_nested(other, name)      other name;
+#  define typedef_struct_nested_ptr(other, name)  other* name;
+#  define typedef_struct_bool(name)               bool name;
+#  define typedef_struct_bool_ptr(name)           bool* name;
+#  define typedef_struct_uint8(name)              uint8_t name;
+#  define typedef_struct_uint8_ptr(name)          uint8_t* name;
+#  define typedef_struct_uint16(name)             uint16_t name;
+#  define typedef_struct_uint16_ptr(name)         uint16_t* name;
+#  define typedef_struct_uint32(name)             uint32_t name;
+#  define typedef_struct_uint32_ptr(name)         uint32_t* name;
+#  define typedef_struct_int8(name)               int8_t name;
+#  define typedef_struct_int8_ptr(name)           int8_t* name;
+#  define typedef_struct_int16(name)              int16_t name;
+#  define typedef_struct_int16_ptr(name)          int16_t* name;
+#  define typedef_struct_int32(name)              int32_t name;
+#  define typedef_struct_int32_ptr(name)          int32_t* name;
+#  define typedef_struct_void_ptr(name)           void* name;
+#  define typedef_struct_char_ptr(name)           char* name;
+#  define typedef_struct_constchar_ptr(name)      const char* name;
 
 #elif defined(GEN_ASM_HEADER)
 
@@ -66,19 +88,41 @@ BC ******************************************************************
 ;
 ;
 
-#  define header_ifndef(name) .ifnblank name##_GEN_S__
-#  define header_define(name) .define name##_GEN_S__
-#  define header_endif(name) .endif    ; name##_GEN_S__
+#  define header_ifndef(name)           .ifnblank name##_GEN_S__
+#  define header_define(name)           .define name##_GEN_S__
+#  define header_endif(name)            .endif    ; name##_GEN_S__
 
-#  define _define(name, value) .define name value
+#  define _define(name, value)          .define name value
 
-#  define define(name, value) _define(name, HASH##(value))
-#  define define_hex(name, value) _define(name, $value)
-#  define define_dec(name, value) _define(name, HASH##(value))
+#  define define(name, value)           _define(name, HASH##(value))
+#  define define_hex(name, value)       _define(name, $value)
+#  define define_dec(name, value)       _define(name, HASH##(value))
 
-#  define macro_arg1(name, value) .define name(arg1) HASH##(value)
-#  define macro_arg1_arg2(name, value) .define name(arg1, arg2) \
+#  define macro_arg1(name, value)       .define name(arg1) HASH##(value)
+#  define macro_arg1_arg2(name, value)  .define name(arg1, arg2) \
           HASH##(value)
+
+#  define typedef_struct_begin(name)    .struct name
+#  define typedef_struct_end(name)      .endstruct ; struct name
+#  define typedef_struct_nested(other, name)      name .tag other
+#  define typedef_struct_nested_ptr(other, name)  name .addr
+#  define typedef_struct_bool(name)               name .byte
+#  define typedef_struct_bool_ptr(name)           name .addr
+#  define typedef_struct_uint8(name)              name .byte
+#  define typedef_struct_uint8_ptr(name)          name .addr
+#  define typedef_struct_uint16(name)             name .word
+#  define typedef_struct_uint16_ptr(name)         name .addr
+#  define typedef_struct_uint32(name)             name .dword
+#  define typedef_struct_uint32_ptr(name)         name .addr
+#  define typedef_struct_int8(name)               name .byte
+#  define typedef_struct_int8_ptr(name)           name .addr
+#  define typedef_struct_int16(name)              name .word
+#  define typedef_struct_int16_ptr(name)          name .addr
+#  define typedef_struct_int32(name)              name .dword
+#  define typedef_struct_int32_ptr(name)          name .addr
+#  define typedef_struct_void_ptr(name)           name .addr
+#  define typedef_struct_char_ptr(name)           name .addr
+#  define typedef_struct_constchar_ptr(name)      name .addr
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"
