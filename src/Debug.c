@@ -58,7 +58,7 @@ Debug_release_print(void)
   uint8_t i; const char* type_str;
 
   printf("debug: %u%c message%c%s\n",
-         Debug.count, Debug.count == _LIST_SIZE? '+': '\0',
+         Debug.count, Debug.count >= _LIST_SIZE? '+': '\0',
          Debug.count == 1? '\0': 's', Debug.count == 0? " :)": "...");
 
   for (i=0; i<Debug.count; ++i) {

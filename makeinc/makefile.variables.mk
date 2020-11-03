@@ -88,6 +88,7 @@ LDFLAGS := $(CCDEBUGFLAGS) $(OPTFLAG) $(FLAGS) \
 TAGEDFILES := $(wildcard *.$(CEXT) *.$(HEXT) *.$(SEXT))
 
 EMUFLAGS := -moncommands $(OUTPUT).$(LABEXT)
+EMUFLAGS_DBG := -moncommands $(OUTPUT).$(LABEXT_DEBUG) -keepmonopen
 
 CTAGSFLAGS :=
 ETAGSFLAGS :=

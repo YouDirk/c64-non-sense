@@ -33,22 +33,23 @@ all: $(OUTPUT).$(D64EXT)
 recompile: clean
 	$(MAKE) all
 
-.PHONY: run run-load run-attach8 debug
+.PHONY: run run-ntsc run-load run-attach8 debug debug-ntsc
 ifeq (,$(EMULATOR_OPT))
-run run-load run-attach8: all
+run run-ntsc run-load run-attach8 debug debug-ntsc: all
 	$(error $(ERRB) C64 emulator not found!  Try Debian '$$> \
 	  apt-get install vice' in Debian CONTRIB packages for \
 	  installation.  After install run '$$> make clean-all')
 else
-run: $(OUTPUT).$(D64EXT)
-	$(EMULATOR_OPT) $(EMUFLAGS) -autostart $<
-run-load: $(OUTPUT).$(D64EXT)
-	$(EMULATOR_OPT) $(EMUFLAGS) -autoload $<
-run-attach8: $(OUTPUT).$(D64EXT)
-	$(EMULATOR_OPT) $(EMUFLAGS) -8 $<
-debug: $(OUTPUT).$(D64EXT) $(OUTPUT).$(LABEXT_DEBUG)
-	$(EMULATOR_OPT) -moncommands $(word 2,$^) -keepmonopen \
-	  -autostart $<
+run: EMUFLAGS += -pal -autostart
+run-ntsc: EMUFLAGS += -ntsc -autostart
+run-load: EMUFLAGS += -pal -autoload
+run-attach8: EMUFLAGS += -pal -8
+run run-ntsc run-load run-attach8: all
+	$(EMULATOR_OPT) $(EMUFLAGS) $(OUTPUT).$(D64EXT)
+debug: EMUFLAGS_DBG += -pal -autostart
+debug-ntsc: EMUFLAGS_DBG += -ntsc -autostart
+debug debug-ntsc: all $(OUTPUT).$(LABEXT_DEBUG)
+	$(EMULATOR_OPT) $(EMUFLAGS_DBG) $(OUTPUT).$(D64EXT)
 endif
 
 .PHONY: disk
@@ -171,9 +172,9 @@ _cache:
 	echo '' > $@
 	$(MAKE) _CACHE_FILE=$@ _cache
 
-# Make sure that $(CC) was set by makefile.check.mk && _CACHE_FILE
-# will not generated (empty string) in the current MAKE instance,
-# before generating $(DEPFILES)
+# Make sure that $(CC) was set by makefile.check.mk and that
+# _CACHE_FILE will not be generated (empty string) in the current MAKE
+# instance, before generating $(DEPFILES)
 ifeq (,$(if $(D64PACK),$(_CACHE_FILE),1))
 -include $(DEF_DEPFILES)
 -include $(DEPFILES)

@@ -15,11 +15,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.PHONY: all recompile run run-load run-attach8 debug disk tags-ctags
-all recompile run run-load run-attach8 debug disk tags-ctags:
+.PHONY: all recompile run run-ntsc run-load run-attach8 debug debug-ntsc
+all recompile run run-ntsc run-load run-attach8 debug debug-ntsc:
 	$(MAKE) -C src $@
-.PHONY: tags-etags tags-ebrowse tags-all
-tags-etags tags-ebrowse tags-all:
+.PHONY: disk tags-ctags tags-etags tags-ebrowse tags-all
+disk tags-ctags tags-etags tags-ebrowse tags-all:
 	$(MAKE) -C src $@
 
 .PHONY: clean _clean

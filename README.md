@@ -23,10 +23,10 @@ Just playing around with C64 cross-compile tools.
 * Interesting stuff?  Then **Donate/Sponsor**  
   [![Donate/Sponsor][sponsor-pic]][sponsor-link] https://github.com/sponsors/YouDirk
 
-![The Screenshot](trunk/screenshot-promo.jpg)
+The progression of C64 NonSense is vlogged at [Youtube here
+(German)][youtube-list], too :)
 
-The progression of C64 NonSense is also vlogged at [Youtube
-here][youtube-list] :)
+![The Screenshot](trunk/screenshot-promo.jpg)
 
 Development toolchain
 ---------------------
@@ -88,11 +88,13 @@ recompile:     Runs 'clean' followed by 'all'
 clean:         Deletes temporary files / prepare for recompilation
                Useful on 'Header file not found' compilation errors
 clean-all:     Deletes all files which are not under version control
-run:           Make 'all' and `RUN` NonSense in VICE emulator
-run-load:      Make 'all' and `LOAD"*",8,1` NonSense in VICE emulator
-run-attach8:   Make 'all' and run VICE emulator (no `LOAD`, no `RUN`)
-debug:         Make 'all', as configured in makefile.config.mk set
-               break point and `RUN` NonSense with debugger attached
+run:           Make 'all' and `RUN` NonSense in VICE, use PAL (VIC 6561)
+run-ntsc:      Same as 'run', but using NTSC version of VIC (VIC 6560)
+run-load:      Same as 'run', but just `LOAD"*",8,1` NonSense, no `RUN`
+run-attach8:   Same as 'run', but no `LOAD`, no `RUN`
+debug:         Make 'all', then as configured in makefile.config.mk set
+               breakpoint and `RUN` NonSense with debugger attached (PAL)
+debug-ntsc:    Same as 'debug', but using NTSC version of VIC emulated
 disk:          Make 'all' and copy the D64 file to a removable disk
                (i.e. USB storage) as configured in makefile.config.mk
 tags-all:      Make 'tags-ctags', 'tags-etags' and 'tags-ebrowse'
