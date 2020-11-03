@@ -41,7 +41,7 @@
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
         lda _Graphix + Graphix_t::buffer + Graphix_buffer_t::bordercolor
-        sta VIC_BORDERCOLOR
+        sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
 .endif
