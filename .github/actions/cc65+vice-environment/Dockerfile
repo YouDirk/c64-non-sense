@@ -15,34 +15,14 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-name: CI
+# Docker container image
+FROM debian:testing
 
-on:
-  push:
-    branches:
-    - 'master'
-    paths:
-    - '**'
-  pull_request:
-    branches:
-    - 'master'
-    paths:
-    - '**'
+# To execute in docker container
+COPY entrypoint.sh /entrypoint.sh
 
-# Jobs are running in parallel
-jobs:
-  compile-linux:
-    name: Compiles on Linux
-    runs-on: ubuntu-latest
-    steps:
-      # Checking out to $GITHUB_WORKSPACE
-    - name: Checking out...
-      uses: actions/checkout@v2.3.4
-      with:
-        clean: true
-        lfs: false
-        submodules: false
-    - name: Running Make...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make all
+# Install required packages
+RUN apt-get install make cc65 vice
+
+# Go!
+ENTRYPOINT ["/entrypoint.sh"]

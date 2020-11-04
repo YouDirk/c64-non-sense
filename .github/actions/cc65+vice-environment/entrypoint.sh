@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # C64 NonSense, just playing around with C64 cross-compile tools.
 # Copyright (C) 2020  Dirk "YouDirk" Lehmann
 #
@@ -15,34 +17,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-name: CI
+if [ -z $@ ]; then
+  echo "$0: No command to execute given!" >&2;
+  exit 1;
+fi
 
-on:
-  push:
-    branches:
-    - 'master'
-    paths:
-    - '**'
-  pull_request:
-    branches:
-    - 'master'
-    paths:
-    - '**'
-
-# Jobs are running in parallel
-jobs:
-  compile-linux:
-    name: Compiles on Linux
-    runs-on: ubuntu-latest
-    steps:
-      # Checking out to $GITHUB_WORKSPACE
-    - name: Checking out...
-      uses: actions/checkout@v2.3.4
-      with:
-        clean: true
-        lfs: false
-        submodules: false
-    - name: Running Make...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make all
+$@

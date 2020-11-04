@@ -15,34 +15,15 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-name: CI
-
-on:
-  push:
-    branches:
-    - 'master'
-    paths:
-    - '**'
-  pull_request:
-    branches:
-    - 'master'
-    paths:
-    - '**'
-
-# Jobs are running in parallel
-jobs:
-  compile-linux:
-    name: Compiles on Linux
-    runs-on: ubuntu-latest
-    steps:
-      # Checking out to $GITHUB_WORKSPACE
-    - name: Checking out...
-      uses: actions/checkout@v2.3.4
-      with:
-        clean: true
-        lfs: false
-        submodules: false
-    - name: Running Make...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make all
+name: 'C64 NonSense, CC65+VICE environment'
+description: 'Environment to cross-compile C64 code with CC65 compiler.'
+inputs:
+  exec:
+    description: 'Bash command to execute'
+    required: true
+    default: 'make'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.exec }}
