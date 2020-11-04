@@ -53,7 +53,7 @@ timer_1_sync:
 .ifdef DEBUG
         bne not_overflow
         DEBUG_NOTE "timer 1, overflows"
-.endif ; .ifdef DEBUG
+.endif ; DEBUG
 not_overflow:
 
         ISR_RENDERTIME_END

@@ -28,14 +28,14 @@
 .ifdef DEBUG_IRQ_RENDERTIME
         lda #VIC_COLOR_RED              ; we don´t need to push border
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
-.endif
+.endif ; DEBUG_IRQ_RENDERTIME
 
         lda _shadow_isr + Graphix_buffer_t::scroll_y
-        ora #VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK
+        ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set x scroll
 
         lda _shadow_isr + Graphix_buffer_t::scroll_x
-        ora #VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK
+        ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
@@ -43,6 +43,6 @@
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
-.endif
+.endif ; DEBUG_IRQ_RENDERTIME
         rts
 .endproc                                ; Graphix_rasterline_isr

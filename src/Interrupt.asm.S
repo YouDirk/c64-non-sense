@@ -98,6 +98,6 @@ not_cia1:
 .ifdef DEBUG                            ; increment border color if an
         inc VIC_BORDERCOLOR             ;   unexpected IRQ occurs
         DEBUG_WARN "interrupt, irq not served!"
-.endif
+.endif ; DEBUG
         jmp KERNAL_IRQ_DEFAULT          ; jump to default Kernal ISR
 .endproc                                ; Interrupt_irq_isr

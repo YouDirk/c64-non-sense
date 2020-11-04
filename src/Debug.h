@@ -45,12 +45,12 @@ extern void __fastcall__ Debug_warn(const char* msg);
 extern void __fastcall__ Debug_note(const char* msg);
 /* ***************************************************************  */
 
-#else /* #ifdef DEBUG  */
+#else /* DEBUG  */
 #  define DEBUG_INIT()
 #  define DEBUG_RELEASE_PRINT()
 #  define DEBUG_ERROR(msg)
 #  define DEBUG_WARN(msg)
 #  define DEBUG_NOTE(msg)
-#endif /* #ifdef DEBUG  */
+#endif /* DEBUG  */
 
 #endif /* DEBUG_H__  */
