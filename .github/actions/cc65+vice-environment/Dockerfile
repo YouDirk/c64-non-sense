@@ -22,7 +22,10 @@ FROM debian:testing
 COPY entrypoint.sh /entrypoint.sh
 
 # Install required packages
-RUN apt-get -y update && apt-get -y install make cc65 vice
+RUN                                                                  \
+     sed -i 's/main/main contrib/' /etc/apt/sources.list             \
+  && apt-get -y update                                               \
+  && apt-get -y install make cc65 vice
 
 # Go!
 ENTRYPOINT ["/entrypoint.sh"]
