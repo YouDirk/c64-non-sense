@@ -50,8 +50,8 @@ jobs:
       uses: ./.github/actions/cc65+vice-environment
       with:
         exec: make DEBUG_BUILD=0 recompile
-    - name: All Debug enabled config, `make recompile`...
+    - name: All Debug config, `make recompile`...
       uses: ./.github/actions/cc65+vice-environment
       with:
-        exec: sed -i 's/^\\(DEBUG.*\\)=.*\$/\\1= 1/' makefile.config.mk
+        exec: sed -i 's/^\(DEBUG.*\)=.*/\1= 1/' makefile.config.mk
               && make recompile
