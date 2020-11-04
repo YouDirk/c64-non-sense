@@ -42,7 +42,16 @@ jobs:
         clean: true
         lfs: false
         submodules: false
-    - name: Running Make...
+    - name: Default debug config, `make all`...
       uses: ./.github/actions/cc65+vice-environment
       with:
         exec: make all
+    - name: Productive config, `make all`...
+      uses: ./.github/actions/cc65+vice-environment
+      with:
+        exec: make DEBUG_BUILD=0 recompile
+    - name: Debug all enabled config, `make all`...
+      uses: ./.github/actions/cc65+vice-environment
+      with:
+        exec: sed -i 's/^\(DEBUG.*\)=.*$/\1= 1/' makefile.config.mk \
+              && make recompile
