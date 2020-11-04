@@ -17,7 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-if [ -z $@ ]; then
+if [ -z "$@" ]; then
   echo "$0: No command to execute given!" >&2;
   exit 1;
 fi
