@@ -23,7 +23,6 @@
  * better performance, instead of implementing copy-loops.
  */
 #include <c64.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

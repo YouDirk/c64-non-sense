@@ -31,11 +31,11 @@
 .endif
 
         lda _shadow_isr + Graphix_buffer_t::scroll_y
-        ora VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK
+        ora #VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK
         sta VIC_CTRL1                   ; set x scroll
 
         lda _shadow_isr + Graphix_buffer_t::scroll_x
-        ora VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK
+        ora #VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME

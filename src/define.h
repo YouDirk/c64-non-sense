@@ -46,13 +46,13 @@ BC ******************************************************************
 
 #  define _define(name, value)     HASH define name value
 
-#  define define(name, value)      _define(name, value)
+#  define define(name, value)      _define(name, (value))
 #  define define_hex(name, value)  _define(name, 0x##value)
 #  define define_dec(name, value)  _define(name, value)
 
-#  define macro_arg1(name, value)      HASH define name(arg1) value
-#  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2) \
-          value
+#  define macro_arg1(name, value)      HASH define name(arg1) (value)
+#  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2)  \
+                                       (value)
 
 #  define typedef_struct_begin(name)    typedef struct name {
 #  define typedef_struct_end(name)      } name;
@@ -94,13 +94,12 @@ BC ******************************************************************
 
 #  define _define(name, value)          .define name value
 
-#  define define(name, value)           _define(name, HASH##(value))
+#  define define(name, value)           _define(name, value)
 #  define define_hex(name, value)       _define(name, $value)
-#  define define_dec(name, value)       _define(name, HASH##(value))
+#  define define_dec(name, value)       _define(name, value)
 
-#  define macro_arg1(name, value)       .define name(arg1) HASH##(value)
-#  define macro_arg1_arg2(name, value)  .define name(arg1, arg2) \
-          HASH##(value)
+#  define macro_arg1(name, value)       .define name(arg1) value
+#  define macro_arg1_arg2(name, value)  .define name(arg1, arg2) value
 
 #  define typedef_struct_begin(name)    .struct name
 #  define typedef_struct_end(name)      .endstruct ; struct name

@@ -27,7 +27,7 @@
 .export _Interrupt_init
 .proc _Interrupt_init: near
 
-        lda CIA_ICR_MASK(CIA_ICR_ALL)   ; disabling timer IRQs from CIA1
+        lda #CIA_ICR_MASK(CIA_ICR_ALL)  ; disabling timer IRQs from CIA1
         sta CIA1_ICR                    ;   for now
 
         sei                             ; mask all IRQs
@@ -53,7 +53,7 @@
 
         cli                             ; unmask all IRQs
 
-        lda CIA_ICR_UNMASK(CIA_ICR_ALL) ; restoring timer IRQs from CIA1
+        lda #CIA_ICR_UNMASK(CIA_ICR_ALL); restoring timer IRQs from CIA1
         sta CIA1_ICR                    ;   for now
 
         rts
@@ -64,7 +64,7 @@
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
 vic:
-        lda VIC_IMR_IRQMODE
+        lda #VIC_IMR_IRQMODE
         and VIC_IRR
         beq not_vic                     ; is VIC IRQ?
 rasterline:
@@ -80,7 +80,7 @@ not_rasterline:
 not_vic:
 
 cia1:
-        lda CIA1_ICR_IRQMODE
+        lda #CIA1_ICR_IRQMODE
         and CIA1_ICR                    ; is CIA1 IRQ?
         beq not_cia1
 cia1_timer_a:
@@ -89,7 +89,7 @@ cia1_timer_a:
 
         jsr Timer_a_isr
 
-        lda CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
+        lda #CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
         sta CIA1_ICR                    ; tell CIA1 served timer A IRQ
         jmp KERNAL_IRQ_RETURN           ; (rti) return as fast as possible
 not_cia1_timer_a:

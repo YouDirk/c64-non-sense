@@ -60,12 +60,12 @@ define_hex(VIC_CTRL1_25ROWS_MASK,       08)
 define_hex(VIC_CTRL1_YSCROLL_MASK,      07)
 define_hex(VIC_CTRL1_DEFAULT_YSCROLL,   03)
 define(VIC_CTRL1_DEFAULT,                                            \
-       (VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK             \
-        | VIC_CTRL1_DEFAULT_YSCROLL))
+       VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
+       | VIC_CTRL1_DEFAULT_YSCROLL)
 
 /* rasterline=0, bitmap mode, enable screen, no 25 rows, yscroll=0  */
 define(VIC_CTRL1_MODE,                                               \
-       (VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK))
+       VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK)
 
 define_hex(VIC_RASTERLINE,              d012)
 define_hex(VIC_RASTERLINE_PAL_MASK,     f0)
@@ -81,11 +81,11 @@ define_hex(VIC_CTRL2_40COLS_MASK,       08)
 define_hex(VIC_CTRL2_XSCROLL_MASK,      07)
 define_hex(VIC_CTRL2_DEFAULT_HIGH,      c0)
 define(VIC_CTRL2_DEFAULT,                                            \
-       (VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK))
+       VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK)
 
 /* no multicolor, no 40 cols in x, xscroll=0  */
 define(VIC_CTRL2_MODE,                                               \
-       (00))
+       00)
 
 define_hex(VIC_ADDR,                    d018)
 define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)
@@ -96,14 +96,14 @@ define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
 define_hex(VIC_ADDR_DEFAULT_SCREENRAM,  10)
 define(VIC_ADDR_DEFAULT,                                             \
-       (VIC_ADDR_DEFAULT_SCREENRAM | VIC_ADDR_BITMAP_CHARSET1))
+       VIC_ADDR_DEFAULT_SCREENRAM | VIC_ADDR_BITMAP_CHARSET1)
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
 macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
-                ((arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP))
+                (arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP)
 /* VIC_ADDR_BITMAP_ADDR(VICBANK_ADDR, VIC_ADDR_BITMAP)  */
 macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
-                ((arg1) + (arg2)*VIC_ADDR_BITMAP_STEP))
+                (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
 
 define_hex(VIC_IRR,                     d019)
 define_hex(VIC_IMR,                     d01a)
@@ -115,7 +115,7 @@ define_hex(VIC_IMR_LIGHTPEN_MASK,       08)
 define_hex(VIC_IRR_IRQGLOBAL_MASK,      80)
 
 define(VIC_IMR_IRQMODE,                                              \
-       (VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK))
+       VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
 
 define_hex(VIC_BORDERCOLOR,             d020)
 define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)
