@@ -22,4 +22,4 @@ if [ -z "$@" ]; then
   exit 1;
 fi
 
-$@
+/bin/sh -c "$@"
