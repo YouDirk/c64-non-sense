@@ -32,7 +32,7 @@
 
         lda _shadow_isr + Graphix_buffer_t::scroll_y
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
-        sta VIC_CTRL1                   ; set x scroll
+        sta VIC_CTRL1                   ; set y scroll
 
         lda _shadow_isr + Graphix_buffer_t::scroll_x
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)

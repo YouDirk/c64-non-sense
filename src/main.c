@@ -18,6 +18,7 @@
 
 #include "common.h"
 
+#include "Engine.h"
 #include "Interrupt.h"
 #include "Graphix.h"
 #include "Timer.h"
@@ -62,36 +63,38 @@ int
 main(void)
 {
   unsigned char joy_cntrl;
-  uint32_t cur_time, prev_time;
 
   DEBUG_INIT();
 
+  Engine_init();
   Graphix_init(_main_init);
 
-  joy_cntrl = CIA1_PRAB_JOY_MASK, prev_time = -1;
-  while (joy_cntrl & CIA1_PRAB_JOYBTN1_MASK) {
-    while (prev_time != -1 || !(~CIA1.pra & CIA1_PRAB_JOY_MASK)) {
-      cur_time = Timer_1_get32();
+  do {
+    joy_cntrl = 0x00;
 
-      if (prev_time != -1 && prev_time + 0 < cur_time) prev_time = -1;
+    do {
+      /* polling stuff between Engine ticks  */
 
-      if (cur_time % 100 == 50) {
-        ++Graphix.buffer.bordercolor; Graphix_buffers_swap();
-        while (Timer_1_get32() % 100 == 50);
-      }
+      if (~CIA1.pra & CIA1_PRAB_JOY_MASK) joy_cntrl = ~CIA1.pra;
+
+    } while (!Engine_tick_poll());
+
+    /* ticking stuff  */
+
+    if (Engine.tick_timestamp % ENGINE_MS2TIMESTAMP(1000) == 0) {
+      ++Graphix.buffer.bordercolor;
     }
-    prev_time = cur_time;
-    joy_cntrl = CIA1.pra;
 
-    if (~joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++Graphix.buffer.scroll_y;
-    if (~joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --Graphix.buffer.scroll_y;
-    if (~joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
-    if (~joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
+    if (joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++Graphix.buffer.scroll_y;
+    if (joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --Graphix.buffer.scroll_y;
+    if (joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
+    if (joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
 
     Graphix_buffers_swap();
-  }
+  } while (~joy_cntrl & CIA1_PRAB_JOYBTN1_MASK);
 
   Graphix_release(_main_release);
+  Engine_release();
 
   DEBUG_RELEASE_PRINT();
   return 0;

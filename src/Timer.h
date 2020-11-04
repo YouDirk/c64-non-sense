@@ -27,17 +27,17 @@
  * A B, CIA2 A B).
  */
 
-#define TIMER_1_FREQUENCY_HZ            100   /* 100 Hz  */
-#define TIMER_1_PERIODICTIME_MS         (1000/TIMER_A_FREQUENCY_HZ)
-                                              /* 10 ms  */
+#define TIMER_1_FREQUENCY_HZ            100  /* 100 Hz  */
+#define TIMER_1_INTERVAL_MS             (1000/TIMER_1_FREQUENCY_HZ)
+                                             /* 10 ms  */
 
 /* ***************************************************************  */
 
 /* Structure of static members for module.  */
 typedef struct Timer_t {
 
-  /* System clock of the MOS 6510 CPU.  Depending if we are on a PAL or
-   * NTSC system.
+  /* System clock of the MOS 6510 CPU.  Depending if we are on a PAL
+   * or NTSC system.
    *
    * 16 bit is not wide enough to store 1 Mhz
    */
