@@ -34,9 +34,10 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
   /* must be the first of all  */
   Interrupt_init();
 
-  /* own Engine init stuff  */
-  Engine.poll_time = 0;
-  Engine.tick_time = 0;
+  /* Engine_t init stuff  */
+  Engine.poll_time = ENGINE_MS2TIMESTAMP(0);
+  Engine.tick_time = ENGINE_MS2TIMESTAMP(0);
+  Engine.tick_count = ENGINE_MS2TICKS(0);
 
   /* set screen ram  */
   memset(graphix->screen_ram,
@@ -97,5 +98,7 @@ Engine_tick_poll(void)
   }
 
   Engine.tick_time = Engine.poll_time;
+  ++Engine.tick_count;
+
   return true;
 }

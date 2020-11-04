@@ -23,35 +23,58 @@
 
 #include "Timer.h"
 
+/* Every multiple of the timer interval is an engine tick.  */
 #define ENGINE_TICK_FACTOR     1
 
+/* Every multiple of the timer interval is an engine tick.  */
 #define ENGINE_TICKINTERVAL_MS (TIMER_1_INTERVAL_MS*ENGINE_TICK_FACTOR)
                                              /* 10*1 ms  */
+
+/* Engine tickrate is calculated as TIMER_FREQUENCY/TICK_FACTOR.  */
 #define ENGINE_TICKRATE_HZ     (TIMER_1_FREQUENCY_HZ/ENGINE_TICK_FACTOR)
                                              /* 100/1 Hz  */
 
+/* Macros to convert ticks_t, timestamp_t and real world times
+ * (milliseconds) between each other.
+ */
 #define ENGINE_TIMESTAMP2MS(timestamp)                               \
                          ((uint32_t) (timestamp)*TIMER_1_INTERVAL_MS)
 #define ENGINE_MS2TIMESTAMP(time_ms)                                 \
                          ((timestamp_t) (time_ms)/TIMER_1_INTERVAL_MS)
 
+#define ENGINE_TICKS2MS(ticks)                                       \
+                         ((uint32_t) (ticks)*ENGINE_TICKINTERVAL_MS)
+#define ENGINE_MS2TICKS(time_ms)                                     \
+                         ((ticks_t) (time_ms)/ENGINE_TICKINTERVAL_MS)
+
+#define ENGINE_TICKS2TIMESTAMP(ticks)                                \
+                         ((timestamp_t) (ticks)*ENGINE_TICK_FACTOR)
+#define ENGINE_TIMESTAMP2TICKS(timestamp)                            \
+                         ((ticks_t) (timestamp)/ENGINE_TICK_FACTOR)
+
 /* ***************************************************************  */
 
-/* Datatype to store time.  Use the macros above to convert a
- * timestamp_t into a real world time, i.e. milliseconds.
+/* Primitive datatype to store time.  Use the macros above to convert
+ * a timestamp_t into a real world time, i.e. milliseconds.
  */
 typedef uint32_t                   timestamp_t;
+
+/* Primitive datatype to store counts of engine ticks.  Use the macros
+ * above to convert a ticks_t into a time, i.e. milliseconds.
+ */
+typedef uint32_t                   ticks_t;
 
 /* Structure of static members for module.  */
 typedef struct Engine_t {
 
-  /* The last time at which the Engine polls for a tick.
-   */
+  /* Time(-stamp) of the last poll for an engine tick.  */
   timestamp_t poll_time;
 
-  /* The time at which the last Engine tick occurs.
-   */
+  /* Time(-stamp) of the last engine tick.  */
   timestamp_t tick_time;
+
+  /* Number of engine ticks since init/reset.  */
+  ticks_t tick_count;
 
 } Engine_t;
 
@@ -71,9 +94,9 @@ extern void __fastcall__ Engine_release(void);
 
 /* ***************************************************************  */
 
-/* Let´s poll for an Engine tick.
+/* Let´s poll for an engine tick.
  *
- * returns: TRUE if an Engine tick occurs
+ * returns: TRUE if an engine tick occurs
  */
 extern bool __fastcall__ Engine_tick_poll(void);
 
