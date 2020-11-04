@@ -49,9 +49,9 @@ jobs:
     - name: Productive config, `make all`...
       uses: ./.github/actions/cc65+vice-environment
       with:
-        exec: make DEBUG_BUILD=0 recompile
+        exec: make DEBUG_BUILD=0 all
     - name: Debug all enabled config, `make all`...
       uses: ./.github/actions/cc65+vice-environment
       with:
-        exec: sed -i 's/^\(DEBUG.*\)=.*$/\1= 1/' makefile.config.mk \
+        exec: sed -i 's/^\\(DEBUG.*\\)=.*\$/\\1= 1/' makefile.config.mk
               && make recompile
