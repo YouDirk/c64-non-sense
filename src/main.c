@@ -19,43 +19,9 @@
 #include "common.h"
 
 #include "Engine.h"
-#include "Interrupt.h"
 #include "Graphix.h"
-#include "Timer.h"
 
 #include "chip-cia.gen.h"
-
-/* ***************************************************************  */
-
-static void __fastcall__
-_main_init(Graphix_buffer_t* graphix)
-{
-  unsigned i;
-
-  /* must be the first of all  */
-  Interrupt_init();
-
-  /* set screen ram  */
-  memset(graphix->screen_ram,
-    GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
-    GRAPHIX_CELLS_PER_SCREEN);
-
-  /* set bitmap  */
-  memset(graphix->bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
-  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
-    graphix->bitmap_ram[i] = 0xff;
-
-  Timer_init();
-}
-
-static void __fastcall__
-_main_release(void)
-{
-  Timer_release();
-
-  /* must be the last of all  */
-  Interrupt_release();
-}
 
 /* ***************************************************************  */
 
@@ -65,9 +31,7 @@ main(void)
   unsigned char joy_cntrl;
 
   DEBUG_INIT();
-
   Engine_init();
-  Graphix_init(_main_init);
 
   do {
     joy_cntrl = 0x00;
@@ -81,7 +45,8 @@ main(void)
 
     /* ticking stuff  */
 
-    if (Engine.tick_timestamp % ENGINE_MS2TIMESTAMP(1000) == 0) {
+    /* DEBUG_NOTE("tick");  */
+    if (Engine.tick_time % ENGINE_MS2TIMESTAMP(1000) == 0) {
       ++Graphix.buffer.bordercolor;
     }
 
@@ -93,9 +58,8 @@ main(void)
     Graphix_buffers_swap();
   } while (~joy_cntrl & CIA1_PRAB_JOYBTN1_MASK);
 
-  Graphix_release(_main_release);
   Engine_release();
-
   DEBUG_RELEASE_PRINT();
+
   return 0;
 }

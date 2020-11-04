@@ -30,21 +30,28 @@
 #define ENGINE_TICKRATE_HZ     (TIMER_1_FREQUENCY_HZ/ENGINE_TICK_FACTOR)
                                              /* 100/1 Hz  */
 
-#define ENGINE_TIMESTAMP2MS(timestamp) ((timestamp)*TIMER_1_INTERVAL_MS)
-#define ENGINE_MS2TIMESTAMP(time_ms)   ((time_ms)/TIMER_1_INTERVAL_MS)
+#define ENGINE_TIMESTAMP2MS(timestamp)                               \
+                         ((uint32_t) (timestamp)*TIMER_1_INTERVAL_MS)
+#define ENGINE_MS2TIMESTAMP(time_ms)                                 \
+                         ((timestamp_t) (time_ms)/TIMER_1_INTERVAL_MS)
 
 /* ***************************************************************  */
+
+/* Datatype to store time.  Use the macros above to convert a
+ * timestamp_t into a real world time, i.e. milliseconds.
+ */
+typedef uint32_t                   timestamp_t;
 
 /* Structure of static members for module.  */
 typedef struct Engine_t {
 
   /* The last time at which the Engine polls for a tick.
    */
-  uint32_t poll_timestamp;
+  timestamp_t poll_time;
 
   /* The time at which the last Engine tick occurs.
    */
-  uint32_t tick_timestamp;
+  timestamp_t tick_time;
 
 } Engine_t;
 
