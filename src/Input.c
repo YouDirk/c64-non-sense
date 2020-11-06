@@ -16,49 +16,29 @@
  */
 
 
-#include "common.h"
-
-#include "Engine.h"
-#include "Graphix.h"
+#include "Input.h"
 
 #include "chip-cia.gen.h"
 
 /* ***************************************************************  */
 
-int
-main(void)
+/* Static members of this module.  */
+Input_t Input;
+
+void __fastcall__
+Input_init(void)
 {
-  unsigned char joy_cntrl;
-
-  DEBUG_INIT();
-  Engine_init();
-
-  do {
-    joy_cntrl = 0x00;
-
-    do {
-      /* polling stuff between Engine ticks  */
-
-      if (~CIA1.pra & CIA1_PRAB_JOY_MASK) joy_cntrl = ~CIA1.pra;
-
-    } while (!Engine_tick_poll());
-
-    /* ticking stuff  */
-
-    if (Engine.tick_count % ENGINE_MS2TICKS(500) == 0) {
-      ++Graphix.buffer.bordercolor;
-    }
-
-    if (joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++Graphix.buffer.scroll_y;
-    if (joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --Graphix.buffer.scroll_y;
-    if (joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
-    if (joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
-
-    Graphix_buffer_swap();
-  } while (~joy_cntrl & CIA1_PRAB_JOYBTN1_MASK);
-
-  Engine_release();
-  DEBUG_RELEASE_PRINT();
-
-  return 0;
+  /* set data direction of port A and port B  */
+  CIA1.ddra = CIA_DDR_RONLY_ALL;
+  CIA1.ddrb = CIA_DDR_RONLY_ALL;
 }
+
+void __fastcall__
+Input_release(void)
+{
+  /* restore data direction of port A and port B  */
+  CIA1.ddrb = CIA1_DDRB_DEFAULT;
+  CIA1.ddra = CIA1_DDRA_DEFAULT;
+}
+
+/* ***************************************************************  */

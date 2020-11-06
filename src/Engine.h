@@ -23,6 +23,8 @@
 
 #include "Timer.h"
 
+/* ***************************************************************  */
+
 /* Every multiple of the timer tickrate is an engine tick.  */
 #define ENGINE_TICK_FACTOR    1
 

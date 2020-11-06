@@ -19,6 +19,7 @@
 #include "Engine.h"
 
 #include "Interrupt.h"
+#include "Input.h"
 #include "Graphix.h"
 
 /* ***************************************************************  */
@@ -49,7 +50,10 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     graphix->bitmap_ram[i] = 0xff;
 
-  /* Timer init as last as possible  */
+  /* init input stuff, such like joystick, keyboard, etc  */
+  Input_init();
+
+  /* init as last as possible  */
   Timer_init();
 }
 
@@ -66,6 +70,8 @@ _Engine_release_blackscreen(void)
 {
   /* reversed order of init  */
   Timer_release();
+
+  Input_release();
 
   /* must be the last of all  */
   Interrupt_release();

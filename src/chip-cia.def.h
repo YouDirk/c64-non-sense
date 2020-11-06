@@ -89,10 +89,14 @@ macro_arg1(CIA2_PRA_VICBANK_ADDR,                                    \
 /* ***************************************************************  */
 
 define_hex(CIA1_DDRA,                   dc02)
-define_hex(CIA2_DDRA,                   dd02)
-
 define_hex(CIA1_DDRB,                   dc03)
+define_hex(CIA2_DDRA,                   dd02)
 define_hex(CIA2_DDRB,                   dd03)
+define_hex(CIA_DDR_RONLY_ALL,           00)
+define_hex(CIA_DDR_RW_ALL,              ff)
+
+define(CIA1_DDRA_DEFAULT,               CIA_DDR_RW_ALL)
+define(CIA1_DDRB_DEFAULT,               CIA_DDR_RONLY_ALL)
 
 define_hex(CIA1_TA_LO,                  dc04)
 define_hex(CIA1_TA_HI,                  dc05)
