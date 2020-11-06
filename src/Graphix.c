@@ -96,7 +96,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* initialize _shadow_isr after init_callback(), so it´s possible to
      let adapt values by caller.
    */
-  Graphix_buffers_swap();
+  Graphix_buffer_swap();
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
@@ -130,7 +130,7 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 /* ***************************************************************  */
 
 void __fastcall__
-Graphix_buffers_swap(void)
+Graphix_buffer_swap(void)
 {
   Graphix.buffer.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
   Graphix.buffer.scroll_y &= VIC_CTRL1_YSCROLL_MASK;

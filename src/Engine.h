@@ -23,29 +23,29 @@
 
 #include "Timer.h"
 
-/* Every multiple of the timer interval is an engine tick.  */
-#define ENGINE_TICK_FACTOR     1
+/* Every multiple of the timer tickrate is an engine tick.  */
+#define ENGINE_TICK_FACTOR    1
 
-/* Every multiple of the timer interval is an engine tick.  */
-#define ENGINE_TICKINTERVAL_MS (TIMER_1_INTERVAL_MS*ENGINE_TICK_FACTOR)
+/* Every multiple of the timer tickrate is an engine tick.  */
+#define ENGINE_TICKRATE_MS    (TIMER_1_TICKRATE_MS*ENGINE_TICK_FACTOR)
                                              /* 10*1 ms  */
 
-/* Engine tickrate is calculated as TIMER_FREQUENCY/TICK_FACTOR.  */
-#define ENGINE_TICKRATE_HZ     (TIMER_1_FREQUENCY_HZ/ENGINE_TICK_FACTOR)
+/* Engine tick frequency is calculated as TIMER_FREQUENCY/TICK_FACTOR.  */
+#define ENGINE_TICKFREQ_HZ    (TIMER_1_FREQUENCY_HZ/ENGINE_TICK_FACTOR)
                                              /* 100/1 Hz  */
 
 /* Macros to convert ticks_t, timestamp_t and real world times
  * (milliseconds) between each other.
  */
 #define ENGINE_TIMESTAMP2MS(timestamp)                               \
-                         ((uint32_t) (timestamp)*TIMER_1_INTERVAL_MS)
+                         ((uint32_t) (timestamp)*TIMER_1_TICKRATE_MS)
 #define ENGINE_MS2TIMESTAMP(time_ms)                                 \
-                         ((timestamp_t) (time_ms)/TIMER_1_INTERVAL_MS)
+                         ((timestamp_t) (time_ms)/TIMER_1_TICKRATE_MS)
 
 #define ENGINE_TICKS2MS(ticks)                                       \
-                         ((uint32_t) (ticks)*ENGINE_TICKINTERVAL_MS)
+                         ((uint32_t) (ticks)*ENGINE_TICKRATE_MS)
 #define ENGINE_MS2TICKS(time_ms)                                     \
-                         ((ticks_t) (time_ms)/ENGINE_TICKINTERVAL_MS)
+                         ((ticks_t) (time_ms)/ENGINE_TICKRATE_MS)
 
 #define ENGINE_TICKS2TIMESTAMP(ticks)                                \
                          ((timestamp_t) (ticks)*ENGINE_TICK_FACTOR)
@@ -83,13 +83,10 @@ typedef struct Engine_t {
 /* Static members of this module.  */
 extern Engine_t Engine;
 
-/* Initialize the mystic NonSense Engine ^^
- */
+/* Initialize the mystic NonSense Engine ^^  */
 extern void __fastcall__ Engine_init(void);
 
-
-/* Undo the stuff which we´ve done in Engine_init().
- */
+/* Undo the stuff which we´ve done in Engine_init().  */
 extern void __fastcall__ Engine_release(void);
 
 /* ***************************************************************  */

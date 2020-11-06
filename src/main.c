@@ -55,7 +55,7 @@ main(void)
     if (joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
     if (joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
 
-    Graphix_buffers_swap();
+    Graphix_buffer_swap();
   } while (~joy_cntrl & CIA1_PRAB_JOYBTN1_MASK);
 
   Engine_release();

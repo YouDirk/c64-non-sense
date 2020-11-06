@@ -28,7 +28,7 @@
  */
 
 #define TIMER_1_FREQUENCY_HZ            100  /* 100 Hz  */
-#define TIMER_1_INTERVAL_MS             (1000/TIMER_1_FREQUENCY_HZ)
+#define TIMER_1_TICKRATE_MS             (1000/TIMER_1_FREQUENCY_HZ)
                                              /* 10 ms  */
 
 /* ***************************************************************  */
