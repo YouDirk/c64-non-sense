@@ -26,9 +26,9 @@
 Input_t Input;
 
 void __fastcall__
-Input_init(void)
+Input_init(Input_device_t devices)
 {
-  Input.enabled = Input_none_mask;
+  Input.enabled = devices;
 
   /* will be initialized with zero automatically by .BSS segment
   memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));

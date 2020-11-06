@@ -58,16 +58,18 @@ typedef struct Input_t {
 /* Static members of this module.  */
 extern Input_t Input;
 
-/* Initialize input devices, such like joysticks, keyboard, etc.  */
-extern void __fastcall__ Input_init(void);
+/* Select and initialize input devices, such like joysticks, keyboard,
+ * for polling and ticking.
+ */
+extern void __fastcall__ Input_init(Input_device_t devices);
 
 /* Restore input configuration.  */
 extern void __fastcall__ Input_release(void);
 
 /* ***************************************************************  */
 
-/* Devices which will be polled and are ticking.  If not called then
- * all input devices are disabled!
+/* Devices which will be polled and are ticking.  Initialized first
+ * time during Input_init().
  */
 extern void __fastcall__ Input_enable(Input_device_t devices);
 

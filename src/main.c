@@ -24,13 +24,17 @@
 
 /* ***************************************************************  */
 
+static Engine_config_t _main_engine_config;
+
+/* ***************************************************************  */
+
 int
 main(void)
 {
   DEBUG_INIT();
-  Engine_init();
 
-  Input_enable(Input_joy_port2_mask);
+  _main_engine_config.inputs_enabled = Input_joy_port2_mask;
+  Engine_init(&_main_engine_config);
 
   do {
     do {

@@ -27,6 +27,9 @@
 /* Static members of this module.  */
 Engine_t Engine;
 
+/* Config of the engine during initialization.  */
+static Engine_config_t* _Engine_config;
+
 static void __fastcall__
 _Engine_init_blackscreen(Graphix_buffer_t* graphix)
 {
@@ -51,15 +54,17 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
     graphix->bitmap_ram[i] = 0xff;
 
   /* init input stuff, such like joystick, keyboard, etc  */
-  Input_init();
+  Input_init(_Engine_config->inputs_enabled);
 
   /* init as last as possible  */
   Timer_init();
 }
 
 void __fastcall__
-Engine_init(void)
+Engine_init(Engine_config_t* config)
 {
+  _Engine_config = config;
+
   Graphix_init(_Engine_init_blackscreen);
 }
 
