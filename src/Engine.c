@@ -89,13 +89,20 @@ Engine_tick_poll(void)
 
   /* Time to poll is
    *
-   *   ENGINE_TICKINTERVAL/TIMER_INTERVAL
-   *     = (ENGINE_TICK_FACTOR*TIMER_INTERVAL)/TIMER_INTERVAL
+   *   delta Engine.tick_time
+   *     = ENGINE_TICKRATE/TIMER_TICKRATE
+   *     = (ENGINE_TICK_FACTOR*TIMER_TICKRATE)/TIMER_TICKRATE
    *     = ENGINE_TICK_FACTOR
    */
   if (Engine.poll_time < Engine.tick_time + ENGINE_TICK_FACTOR) {
     return false;
   }
+
+#ifdef DEBUG
+  if (Engine.poll_time >= Engine.tick_time + 2*ENGINE_TICK_FACTOR) {
+    DEBUG_WARN("engine tick, is lagging");
+  }
+#endif
 
   Engine.tick_time = Engine.poll_time;
   ++Engine.tick_count;

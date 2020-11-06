@@ -46,7 +46,7 @@ main(void)
     /* ticking stuff  */
 
     /* DEBUG_NOTE("tick");  */
-    if (Engine.tick_count % ENGINE_MS2TICKS(333) == 0) {
+    if (Engine.tick_count % ENGINE_MS2TICKS(500) == 0) {
       ++Graphix.buffer.bordercolor;
     }
 
