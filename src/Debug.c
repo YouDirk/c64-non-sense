@@ -27,7 +27,7 @@
 #define _error_e                   ((_msgtype_t) 1)
 #define _warn_e                    ((_msgtype_t) 2)
 #define _note_e                    ((_msgtype_t) 3)
-typedef uint8_t _msgtype_t;
+typedef uint8_t                    _msgtype_t;
 
 typedef struct Debug_entry_t {
   uint32_t time;

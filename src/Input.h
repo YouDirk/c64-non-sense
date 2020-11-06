@@ -23,6 +23,13 @@
 
 /* ***************************************************************  */
 
+/* Selectors for one or more specific input devices.  */
+#define Input_none_mask            ((Input_device_t) 0x00)
+#define Input_joy1_mask            ((Input_device_t) 0x01)
+#define Input_joy2_mask            ((Input_device_t) 0x02)
+#define Input_all_mask             ((Input_device_t) 0xff)
+typedef uint8_t                    Input_device_t;
+
 /* Structure of static members for module.  */
 typedef struct Input_t {
 
@@ -47,11 +54,21 @@ typedef struct Input_t {
 /* Static members of this module.  */
 extern Input_t Input;
 
-/* Initialize inputs, such like joysticks, keyboard, etc.  */
+/* Initialize input devices, such like joysticks, keyboard, etc.  */
 extern void __fastcall__ Input_init(void);
 
 /* Restore input configuration.  */
 extern void __fastcall__ Input_release(void);
+
+/* ***************************************************************  */
+
+/* Polls all input devices for state changes.
+ *
+ * returns: FALSE/INPUT_NONE if nothing is changed in static module
+ *          members Input.*.  Otherwise the device selectors are
+ *          returned which state changed.
+ */
+extern Input_device_t __fastcall__ Input_poll(Input_device_t devices);
 
 /* ***************************************************************  */
 

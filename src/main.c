@@ -19,27 +19,22 @@
 #include "common.h"
 
 #include "Engine.h"
+#include "Input.h"
 #include "Graphix.h"
-
-#include "chip-cia.gen.h"
 
 /* ***************************************************************  */
 
 int
 main(void)
 {
-  unsigned char joy_cntrl;
-
   DEBUG_INIT();
   Engine_init();
 
   do {
-    joy_cntrl = 0x00;
-
     do {
       /* polling stuff between Engine ticks  */
 
-      if (~CIA1.pra & CIA1_PRAB_JOY_MASK) joy_cntrl = ~CIA1.pra;
+      if (Input_poll(Input_joy1_mask)) break;
 
     } while (!Engine_tick_poll());
 
@@ -49,13 +44,11 @@ main(void)
       ++Graphix.buffer.bordercolor;
     }
 
-    if (joy_cntrl & CIA1_PRAB_JOYUP_MASK)    ++Graphix.buffer.scroll_y;
-    if (joy_cntrl & CIA1_PRAB_JOYDOWN_MASK)  --Graphix.buffer.scroll_y;
-    if (joy_cntrl & CIA1_PRAB_JOYLEFT_MASK)  ++Graphix.buffer.scroll_x;
-    if (joy_cntrl & CIA1_PRAB_JOYRIGHT_MASK) --Graphix.buffer.scroll_x;
+    Graphix.buffer.scroll_x += Input.joy1_pace_x;
+    Graphix.buffer.scroll_y += Input.joy1_pace_y;
 
     Graphix_buffer_swap();
-  } while (~joy_cntrl & CIA1_PRAB_JOYBTN1_MASK);
+  } while (!Input.joy1_button_1);
 
   Engine_release();
   DEBUG_RELEASE_PRINT();

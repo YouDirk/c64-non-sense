@@ -71,6 +71,7 @@ _Engine_release_blackscreen(void)
   /* reversed order of init  */
   Timer_release();
 
+  /* hmmmm ...  */
   Input_release();
 
   /* must be the last of all  */
