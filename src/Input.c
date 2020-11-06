@@ -28,13 +28,12 @@ Input_t Input;
 void __fastcall__
 Input_init(void)
 {
-  Input.joy1_pace_x = 0;
-  Input.joy1_pace_y = 0;
-  Input.joy1_button_1 = false;
+  Input.enabled = Input_none_mask;
 
-  Input.joy2_pace_x = 0;
-  Input.joy2_pace_y = 0;
-  Input.joy2_button_1 = false;
+  /* will be initialized with zero automatically by .BSS segment
+  memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));
+  memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
+  */
 
   /* set data direction of port A and port B  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;
@@ -51,22 +50,78 @@ Input_release(void)
 
 /* ***************************************************************  */
 
+void __fastcall__
+Input_enable(Input_device_t devices)
+{
+  Input.enabled = devices;
+}
+
 Input_device_t __fastcall__
-Input_poll(Input_device_t devices)
+Input_poll(void)
 {
   Input_device_t result = Input_none_mask;
   uint8_t reg_buf;
 
-  if (devices & Input_joy1_mask) {
+  if (Input.enabled & Input_joy_port2_mask) {
     reg_buf = ~CIA1.pra & CIA1_PRAB_JOY_MASK;
 
-    if (reg_buf & CIA1_PRAB_JOYUP_MASK)    Input.joy1_pace_y = 1;
-    if (reg_buf & CIA1_PRAB_JOYDOWN_MASK)  Input.joy1_pace_y = -1;
-    if (reg_buf & CIA1_PRAB_JOYLEFT_MASK)  Input.joy1_pace_x = 1;
-    if (reg_buf & CIA1_PRAB_JOYRIGHT_MASK) Input.joy1_pace_x = -1;
+    if (reg_buf & CIA1_PRAB_JOYUP_MASK) {
+      if (!Input.joy_port2.y_pressed) {
+        result |= Input_joy_port2_mask;
+        Input.joy_port2.y_pressed = true;
+      }
 
-    Input.joy1_button_1 = reg_buf & CIA1_PRAB_JOYBTN1_MASK;
+      Input.joy_port2.y_pace = 0x40;
+    } else if (reg_buf & CIA1_PRAB_JOYDOWN_MASK) {
+      if (!Input.joy_port2.y_pressed) {
+        result |= Input_joy_port2_mask;
+        Input.joy_port2.y_pressed = true;
+      }
+
+      Input.joy_port2.y_pace = -0x30;
+    } else {
+      Input.joy_port2.y_pressed = false;
+    }
+
+    if (reg_buf & CIA1_PRAB_JOYLEFT_MASK) {
+      if (!Input.joy_port2.x_pressed) {
+        result |= Input_joy_port2_mask;
+        Input.joy_port2.x_pressed = true;
+      }
+
+      Input.joy_port2.x_pace = 0x40;
+    } else if (reg_buf & CIA1_PRAB_JOYRIGHT_MASK) {
+      if (!Input.joy_port2.x_pressed) {
+        result |= Input_joy_port2_mask;
+        Input.joy_port2.x_pressed = true;
+      }
+
+      Input.joy_port2.x_pace = -0x30;
+    } else {
+      Input.joy_port2.x_pressed = false;
+    }
+
+    if (reg_buf & CIA1_PRAB_JOYBTN1_MASK) {
+      if (!Input.joy_port2.x_pressed) result |= Input_joy_port2_mask;
+
+      Input.joy_port2.button1_pressed = true;
+    } else {
+      Input.joy_port2.button1_pressed = false;
+    }
   }
 
   return result;
+}
+
+void __fastcall__
+Input_tick(void)
+{
+  if (!Input.joy_port2.y_pressed) {
+    if (Input.joy_port2.y_pace > 0)      --Input.joy_port2.y_pace;
+    else if (Input.joy_port2.y_pace < 0) ++Input.joy_port2.y_pace;
+  }
+  if (!Input.joy_port2.x_pressed) {
+    if (Input.joy_port2.x_pace > 0)      --Input.joy_port2.x_pace;
+    else if (Input.joy_port2.x_pace < 0) ++Input.joy_port2.x_pace;
+  }
 }

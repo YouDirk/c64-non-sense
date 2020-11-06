@@ -25,27 +25,31 @@
 
 /* Selectors for one or more specific input devices.  */
 #define Input_none_mask            ((Input_device_t) 0x00)
-#define Input_joy1_mask            ((Input_device_t) 0x01)
-#define Input_joy2_mask            ((Input_device_t) 0x02)
+#define Input_joy_port2_mask       ((Input_device_t) 0x01)
+#define Input_joy_port1_mask       ((Input_device_t) 0x02)
 #define Input_all_mask             ((Input_device_t) 0xff)
 typedef uint8_t                    Input_device_t;
+
+/* Information about a joystick  */
+typedef struct Input_joystick_t {
+  bool   x_pressed;
+  int8_t x_pace;
+  bool   y_pressed;
+  int8_t y_pace;
+  bool   button1_pressed;
+} Input_joystick_t;
 
 /* Structure of static members for module.  */
 typedef struct Input_t {
 
-  /* Logical joystick 1: horizontal speed, vertical speed and fire
-   * bottons.
+  /* Input devices which will be polled and are ticking in this
+   * module.
    */
-  int8_t joy1_pace_x;
-  int8_t joy1_pace_y;
-  bool   joy1_button_1;
+  Input_device_t enabled;
 
-  /* Logical joystick 2: horizontal speed, vertical speed and fire
-   * bottons.
-   */
-  int8_t joy2_pace_x;
-  int8_t joy2_pace_y;
-  bool   joy2_button_1;
+  /* The two joysticks on physical Port 1 and Port 2 :)  */
+  Input_joystick_t joy_port2;
+  Input_joystick_t joy_port1;
 
 } Input_t;
 
@@ -62,13 +66,21 @@ extern void __fastcall__ Input_release(void);
 
 /* ***************************************************************  */
 
-/* Polls all input devices for state changes.
- *
- * returns: FALSE/INPUT_NONE if nothing is changed in static module
- *          members Input.*.  Otherwise the device selectors are
- *          returned which state changed.
+/* Devices which will be polled and are ticking.  If not called then
+ * all input devices are disabled!
  */
-extern Input_device_t __fastcall__ Input_poll(Input_device_t devices);
+extern void __fastcall__ Input_enable(Input_device_t devices);
+
+/* Polls the enabled input devices for state changes.
+ *
+ * returns: FALSE/INPUT_NONE if no enabled device has changed it state
+ *          static module members Input.*.  Otherwise the device
+ *          selectors are returned which state changed.
+ */
+extern Input_device_t __fastcall__ Input_poll(void);
+
+/* Let the enabled input devices ticking to update paces, etc.  */
+extern void __fastcall__ Input_tick(void);
 
 /* ***************************************************************  */
 

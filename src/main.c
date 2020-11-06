@@ -30,25 +30,30 @@ main(void)
   DEBUG_INIT();
   Engine_init();
 
+  Input_enable(Input_joy_port2_mask);
+
   do {
     do {
-      /* polling stuff between Engine ticks  */
-
-      if (Input_poll(Input_joy1_mask)) break;
+      /* polling stuff between engine ticks  */
+      if (Input_poll() & Input_joy_port2_mask) {
+        DEBUG_NOTE("input break");
+        break;
+      }
 
     } while (!Engine_tick_poll());
 
     /* ticking stuff  */
+    Input_tick();
 
     if (Engine.tick_count % ENGINE_MS2TICKS(500) == 0) {
       ++Graphix.buffer.bordercolor;
     }
 
-    Graphix.buffer.scroll_x += Input.joy1_pace_x;
-    Graphix.buffer.scroll_y += Input.joy1_pace_y;
+    Graphix.buffer.scroll_x += Input.joy_port2.x_pace >> 5;
+    Graphix.buffer.scroll_y += Input.joy_port2.y_pace >> 5;
 
     Graphix_buffer_swap();
-  } while (!Input.joy1_button_1);
+  } while (!Input.joy_port2.button1_pressed);
 
   Engine_release();
   DEBUG_RELEASE_PRINT();

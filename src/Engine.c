@@ -46,7 +46,7 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
     GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
-  memset(graphix->bitmap_ram, 0x41, GRAPHIX_BYTES_PER_SCREEN);
+  memset(graphix->bitmap_ram, 0x01, GRAPHIX_BYTES_PER_SCREEN);
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     graphix->bitmap_ram[i] = 0xff;
 
