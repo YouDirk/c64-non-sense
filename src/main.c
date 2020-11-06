@@ -34,25 +34,44 @@ main(void)
 
   do {
     do {
-      /* polling stuff between engine ticks  */
+      /* *************************************************************
+       * polling stuff between engine ticks
+       */
+
       if (Input_poll() & Input_joy_port2_mask) {
         DEBUG_NOTE("input break");
         break;
       }
 
+      /*
+       * *********************************************************  */
     } while (!Engine_tick_poll());
 
-    /* ticking stuff  */
-    Input_tick();
+    /* ***************************************************************
+     * time critical ticking stuff (input delay)
+     */
+
+    Graphix.buffer.scroll_x += Input.joy_port2.x_pace >> 5;
+    Graphix.buffer.scroll_y += Input.joy_port2.y_pace >> 5;
+
+    /*
+     * ***********************************************************  */
+
+    /* *** render, what we´ve done ***  */
+    Graphix_buffer_swap();
+
+    /* ***************************************************************
+     * low priority ticking stuff
+     */
 
     if (Engine.tick_count % ENGINE_MS2TICKS(500) == 0) {
       ++Graphix.buffer.bordercolor;
     }
 
-    Graphix.buffer.scroll_x += Input.joy_port2.x_pace >> 5;
-    Graphix.buffer.scroll_y += Input.joy_port2.y_pace >> 5;
+    Input_tick();
 
-    Graphix_buffer_swap();
+    /*
+     * ***********************************************************  */
   } while (!Input.joy_port2.button1_pressed);
 
   Engine_release();
