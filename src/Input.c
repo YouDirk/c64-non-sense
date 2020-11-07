@@ -35,7 +35,7 @@ Input_init(Input_device_t devices)
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
   */
 
-  /* set data direction of port A and port B  */
+  /* set data direction of CIA1 port A and port B  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;
   CIA1.ddrb = CIA_DDR_RONLY_ALL;
 }
@@ -43,7 +43,7 @@ Input_init(Input_device_t devices)
 void __fastcall__
 Input_release(void)
 {
-  /* restore data direction of port A and port B  */
+  /* restore data direction of CIA1 port A and port B  */
   CIA1.ddrb = CIA1_DDRB_DEFAULT;
   CIA1.ddra = CIA1_DDRA_DEFAULT;
 }

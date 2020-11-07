@@ -42,24 +42,22 @@ main(void)
        * polling stuff between engine ticks
        */
 
+      /* should be the last poll, to reduce input delay  */
       if (Input_poll() & Input_joy_port2_mask) {
         DEBUG_NOTE("input break");
         break;
       }
-
-      /*
-       * *********************************************************  */
     } while (!Engine_tick_poll());
 
     /* ***************************************************************
      * time critical ticking stuff (input delay)
      */
 
+    /* first in time critical section  */
+    Input_tick();
+
     Graphix.buffer.scroll_x += Input.joy_port2.x_pace >> 5;
     Graphix.buffer.scroll_y += Input.joy_port2.y_pace >> 5;
-
-    /*
-     * ***********************************************************  */
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
@@ -68,11 +66,9 @@ main(void)
      * low priority ticking stuff
      */
 
-    if (Engine.tick_count % ENGINE_MS2TICKS(500) == 0) {
+    if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
       ++Graphix.buffer.bordercolor;
     }
-
-    Input_tick();
 
     /*
      * ***********************************************************  */
