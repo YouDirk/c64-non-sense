@@ -33,6 +33,7 @@ on:
 env:
   # ${{secrets.RELEASE_TOKEN}}
   WORKFL_SRC_PATH:                 'src'
+  WORKFL_DOCKER_USER:              'YouDirk'
 
 # Jobs are running in parallel
 jobs:
@@ -47,6 +48,13 @@ jobs:
         clean: true
         lfs: false
         submodules: false
+    - name: Initialzing Docker cache...
+    - uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: ${{env.WORKFL_DOCKER_USER}}
+        password: ${{secrets.RELEASE_TOKEN}}
+        registry: docker.pkg.github.com
+        image_name: cc65+vice-environment
     - name: Compiling with Default config, using `$> make all`...
       uses: ./.github/actions/cc65+vice-environment
       with:
@@ -62,7 +70,7 @@ jobs:
 
   publish-latest:
     if: ${{github.event_name == 'push'}}
-    name: Publishing release for latest commit...
+    name: Publishing 'Latest Commit' release...
     needs: [compile-linux]
     runs-on: ubuntu-latest
     steps:
