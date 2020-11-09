@@ -32,8 +32,8 @@ on:
 # Settings
 env:
   # ${{secrets.RELEASE_TOKEN}}
+  # ${{secrets.DOCKER_USER}}
   WORKFL_SRC_PATH:                 'src'
-  WORKFL_DOCKER_USER:              'YouDirk'
 
 # Jobs are running in parallel
 jobs:
@@ -50,16 +50,17 @@ jobs:
         submodules: false
     - name: Initialzing Docker cache...
       uses: whoan/docker-build-with-cache-action@v5
+      id: docker-cache
       with:
-        username: ${{env.WORKFL_DOCKER_USER}}
+        username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
         registry: docker.pkg.github.com
         image_name: cc65-vice-environment
         context: ./.github/actions/cc65+vice-environment
     - name: Compiling with Default config, using `$> make all`...
-      uses: ./.github/actions/cc65+vice-environment
+      uses: docker://docker.pkg.github.com/youdirk/c64-non-sense/cc65-vice-environment:latest
       with:
-        exec: make all
+        exec: make all && echo "${{steps.docker-cache.outputs.FULL_IMAGE_NAME}}"
     - name: Compiling with Productive config, using `$> make recompile`...
       uses: ./.github/actions/cc65+vice-environment
       with:
@@ -85,7 +86,7 @@ jobs:
     - name: Initialzing Docker cache...
       uses: whoan/docker-build-with-cache-action@v5
       with:
-        username: ${{env.WORKFL_DOCKER_USER}}
+        username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
         registry: docker.pkg.github.com
         image_name: cc65-vice-environment
