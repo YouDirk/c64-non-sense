@@ -58,7 +58,7 @@ jobs:
         image_name: cc65-vice-environment
         context: ./.github/actions/cc65+vice-environment
     - name: Compiling with Default config, using `$> make all`...
-      uses: ${{docker-cache.outputs.FULL_IMAGE_NAME}}
+      uses: docker://${{steps.docker-cache.outputs.FULL_IMAGE_NAME}}
       with:
         exec: make all
     - name: Compiling with Productive config, using `$> make recompile`...
