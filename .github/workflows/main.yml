@@ -49,7 +49,7 @@ jobs:
         lfs: false
         submodules: false
     - name: Initialzing Docker cache...
-    - uses: whoan/docker-build-with-cache-action@v5
+      uses: whoan/docker-build-with-cache-action@v5
       with:
         username: ${{env.WORKFL_DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
