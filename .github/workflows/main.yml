@@ -29,6 +29,11 @@ on:
     paths:
     - '**'
 
+# Settings
+env:
+  # ${{secrets.RELEASE_TOKEN}}
+  WORKFL_SRC_PATH:                 'src'
+
 # Jobs are running in parallel
 jobs:
   compile-linux:
@@ -53,5 +58,39 @@ jobs:
     - name: Compiling with Full Debug config, using `$> make recompile`...
       uses: ./.github/actions/cc65+vice-environment
       with:
-        exec: sed -i 's/^\(DEBUG.*\)=.*/\1= 1/' makefile.config.mk
-              && make recompile
+        exec: make DEBUG_BUILD=all recompile
+
+  publish-latest:
+    if: ${{github.event_name == 'push'}}
+    name: Publishing release for latest commit...
+    needs: [compile-linux]
+    runs-on: ubuntu-latest
+    steps:
+      # Checking out to $GITHUB_WORKSPACE
+    - name: Checking out...
+      uses: actions/checkout@v2.3.4
+      with:
+        clean: true
+        lfs: false
+        submodules: false
+    - name: Building Debug version, using `$> make all`...
+      uses: ./.github/actions/cc65+vice-environment
+      with:
+        exec: make DEBUG_BUILD=1
+              D64EXT=$(echo $GITHUB_SHA | head -c7).debug.d64
+              all && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Productive version, using `$> make recompile`...
+      uses: ./.github/actions/cc65+vice-environment
+      with:
+        exec: make DEBUG_BUILD=0
+              D64EXT=$(echo $GITHUB_SHA | head -c7).d64
+              recompile && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Full Debug version, using `$> make recompile`...
+      uses: ./.github/actions/cc65+vice-environment
+      with:
+        exec: make DEBUG_BUILD=all
+              D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64
+              recompile && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Updating TODO ...
+      run: |
+        ls -R

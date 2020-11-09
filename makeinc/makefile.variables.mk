@@ -49,21 +49,27 @@ DEF_GENSEXT := gen.s
 
 # --------------------------------------------------------------------
 
+2BOOL = $(subst 0,,$(1))
+2ALL = $(call 2BOOL,$(subst 1,all,$(1)))
+
 # Debug build?
-ifeq (1,$(DEBUG_BUILD))
+ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   ASDEBUGFLAGS := -g
   CCDEBUGFLAGS := $(ASDEBUGFLAGS) -T
-  CCDEFINES += -DDEBUG
   OBJ += $(OBJ_DEBUG)
-  ifeq (1,$(DEBUG_OPT_IRQ_RENDERTIME))
+  CCDEFINES += -DDEBUG
+  ifeq (all,$(or $(call 2ALL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
+                 $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_IRQ_RENDERTIME
   endif
-  ifeq (1,$(DEBUG_OPT_TIMER1_SYNCCHECK))
+  ifeq (all,$(or $(call 2ALL,$(DEBUG_OPT_TIMER1_SYNCCHECK)), \
+                 $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_TIMER1_SYNCCHECK
   endif
 else
   ASDEBUGFLAGS :=
   CCDEBUGFLAGS :=
+  OBJ +=
   CCDEFINES +=
 endif
 

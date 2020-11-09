@@ -25,9 +25,12 @@
 #
 # * include <std*.h> files
 #
-# If disabled then the DEBUG_OPT_* options will be disabled too.
+# If enabled (1) then you can configure the DEBUG_OPT_* options for
+# yourself.  If disabled (0) then the DEBUG_OPT_* options are disabled
+# too.  If ALL (all) is set then all DEBUG_OPT_* options are enabled
+# too.
 #
-# values: [1 0]
+# values: [all 1 0]
 #
 DEBUG_BUILD := 1
 
