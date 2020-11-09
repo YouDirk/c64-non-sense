@@ -50,7 +50,6 @@ jobs:
         submodules: false
     - name: Initialzing Docker cache...
       uses: whoan/docker-build-with-cache-action@v5
-      id: docker-cache
       with:
         username: ${{env.WORKFL_DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
@@ -58,7 +57,7 @@ jobs:
         image_name: cc65-vice-environment
         context: ./.github/actions/cc65+vice-environment
     - name: Compiling with Default config, using `$> make all`...
-      uses: docker://${{steps.docker-cache.outputs.FULL_IMAGE_NAME}}
+      uses: ./.github/actions/cc65+vice-environment
       with:
         exec: make all
     - name: Compiling with Productive config, using `$> make recompile`...
@@ -83,6 +82,14 @@ jobs:
         clean: true
         lfs: false
         submodules: false
+    - name: Initialzing Docker cache...
+      uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: ${{env.WORKFL_DOCKER_USER}}
+        password: ${{secrets.RELEASE_TOKEN}}
+        registry: docker.pkg.github.com
+        image_name: cc65-vice-environment
+        context: ./.github/actions/cc65+vice-environment
     - name: Building Debug version, using `$> make all`...
       uses: ./.github/actions/cc65+vice-environment
       with:
