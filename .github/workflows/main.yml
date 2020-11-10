@@ -131,6 +131,6 @@ jobs:
         draft: true
         prerelease: false
         tags: false
-        branches: [master]
+        branches: master
         tag_name: latest-commit
         update_latest_release: true
