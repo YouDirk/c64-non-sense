@@ -173,7 +173,7 @@ jobs:
       with:
         repo_token: ${{secrets.RELEASE_TOKEN}}
         file_glob: true
-        file: *.d64
+        file: "*.d64"
         tag: ${{github.ref}}
         overwrite: true
         prerelease: true
