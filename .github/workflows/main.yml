@@ -19,15 +19,12 @@ name: CI
 
 on:
   push:
-    branches:
-    - 'master'
-    paths:
-    - '**'
+    branches: [master]
+    tags: ['vlog-*']
+    paths: ['**']
   pull_request:
-    branches:
-    - 'master'
-    paths:
-    - '**'
+    branches: [master]
+    paths: ['**']
 
 # Settings
 env:
@@ -88,8 +85,8 @@ jobs:
         make DEBUG_BUILD=all recompile
 
   release-latest-commit:
-    name: Latest Commit released
-    if: ${{github.event_name == 'push'}}
+    name: Release: latest commit
+    if: contains(github.ref, "heads/master")
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
     container:
@@ -120,7 +117,7 @@ jobs:
         make DEBUG_BUILD=all \
           D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64 recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: Updating Latest Commit...
+    - name: Updating release: latest commit...
       uses: xresloader/upload-to-github-release@v1
       env:
         GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
@@ -134,3 +131,55 @@ jobs:
         branches: master
         tag_name: latest-commit
         update_latest_release: false
+
+  release-vlog:
+    name: Release: Vlog from ${{github.ref}}
+    if: contains(github.ref, "tags/vlog-")
+    needs: [docker-cache, compile-linux]
+    runs-on: ubuntu-latest
+    container:
+      image: ${{needs.docker-cache.outputs.DOCKER_IMAGE}}
+      credentials:
+        username: ${{secrets.DOCKER_USER}}
+        password: ${{secrets.RELEASE_TOKEN}}
+    steps:
+      # Checking out to $GITHUB_WORKSPACE
+    - name: Checking out...
+      uses: actions/checkout@v2.3.4
+      with:
+        clean: true
+        lfs: false
+        submodules: false
+    - name: Building Debug version, using `$> make all`...
+      run: |
+        make DEBUG_BUILD=1 \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug.d64 \
+          all
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Productive version, using `$> make recompile`...
+      run: |
+        make DEBUG_BUILD=0 \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').d64 \
+          recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Full Debug version, using `$> make recompile`...
+      run: |
+        make DEBUG_BUILD=all \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
+          recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Creating release: Vlog from ${{github.ref}}...
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{secrets.RELEASE_TOKEN}}
+        file_glob: true
+        file: *.d64
+        tag: ${{github.ref}}
+        overwrite: true
+        prerelease: true
+        release_name: Vlog from ${{github.ref}}
+        body: |
+          The version `non-sense.${{github.ref}}.debug-full.d64` is
+          the version that I used in the vlog from ${{github.ref}} at
+          
+          * https://www.youtube.com/playlist?list=PLSC2VXOJyxP01kz__GU2nvx4RmgCN4ZwO
