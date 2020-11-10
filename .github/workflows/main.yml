@@ -139,7 +139,7 @@ jobs:
         update_latest_release: false
 
   release-vlog:
-    name: "Release: Vlog template"
+    name: "Release: vlog template"
     if: contains(github.ref, 'tags/vlog-')
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
@@ -174,7 +174,7 @@ jobs:
           D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
           recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: "Creating release: Vlog..."
+    - name: "Creating release: vlog..."
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{secrets.RELEASE_TOKEN}}
