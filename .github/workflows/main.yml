@@ -85,7 +85,7 @@ jobs:
         make DEBUG_BUILD=all recompile
 
   release-latest-commit:
-    name: Release: latest commit
+    name: "Release: latest commit"
     if: contains(github.ref, "heads/master")
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
@@ -117,7 +117,7 @@ jobs:
         make DEBUG_BUILD=all \
           D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64 recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: Updating release: latest commit...
+    - name: "Updating release: latest commit..."
       uses: xresloader/upload-to-github-release@v1
       env:
         GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
@@ -133,7 +133,7 @@ jobs:
         update_latest_release: false
 
   release-vlog:
-    name: Release: Vlog from ${{github.ref}}
+    name: "Release: Vlog from ${{github.ref}}"
     if: contains(github.ref, "tags/vlog-")
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
@@ -168,7 +168,7 @@ jobs:
           D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
           recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: Creating release: Vlog from ${{github.ref}}...
+    - name: "Creating release: Vlog from ${{github.ref}}..."
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{secrets.RELEASE_TOKEN}}
