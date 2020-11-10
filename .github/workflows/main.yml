@@ -86,7 +86,7 @@ jobs:
 
   release-latest-commit:
     name: "Release: latest commit"
-    if: contains(github.ref, "heads/master")
+    if: contains(github.ref, 'heads/master')
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
     container:
@@ -134,7 +134,7 @@ jobs:
 
   release-vlog:
     name: "Release: Vlog from ${{github.ref}}"
-    if: contains(github.ref, "tags/vlog-")
+    if: contains(github.ref, 'tags/vlog-')
     needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
     container:
