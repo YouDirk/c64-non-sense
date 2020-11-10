@@ -117,20 +117,24 @@ jobs:
         make DEBUG_BUILD=all \
           D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64 recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: "Updating release: latest commit..."
-      uses: svenstaro/upload-release-action@v2
+    - name: Updating git tag latest-commit...
+      uses: richardsimko/update-tag@v1
       with:
-        repo_token: ${{secrets.RELEASE_TOKEN}}
-        file_glob: true
+        tag_name: latest-commit
+    - name: "Updating release: latest commit..."
+      uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+      with:
         file: "*.d64"
-        tag: latest-commit
+        delete_file: "*.d64"
         overwrite: true
+        draft: false
         prerelease: false
-        release_name: latest commit
-        body: |
-          These builds were made from the latest commit of the
-          [`master` branch](../../tree/master).  Check the commit SHA1
-          hash in the file names for that.
+        tags: false
+        branches: master
+        tag_name: latest-commit
+        update_latest_release: false
 
   release-vlog:
     name: "Release: Vlog template"
