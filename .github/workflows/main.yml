@@ -119,9 +119,11 @@ jobs:
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Updating git tag latest-commit...
       uses: richardsimko/update-tag@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
       with:
         tag_name: latest-commit
-    - name: "Updating release: latest commit..."
+    - name: "Updating release: latest-commit..."
       uses: xresloader/upload-to-github-release@v1
       env:
         GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
