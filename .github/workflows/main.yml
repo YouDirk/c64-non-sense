@@ -129,7 +129,7 @@ jobs:
         delete_file: "*.d64"
         overwrite: true
         draft: true
-        prerelease:false
+        prerelease: false
         tags: false
         branches: [master]
         tag_name: latest-commit
