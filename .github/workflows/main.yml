@@ -32,13 +32,13 @@ on:
 # Settings
 env:
   # ${{secrets.RELEASE_TOKEN}}
-  # ${{secrets.DOCKERCACHE_USER}}
+  # ${{secrets.DOCKER_USER}}
   WORKFL_SRC_PATH:                 'src'
 
 # Jobs are running in parallel
 jobs:
-  compile-linux:
-    name: Compiles on Linux
+  docker-cache:
+    name: Updating Docker cache...
     runs-on: ubuntu-latest
     steps:
       # Checking out to $GITHUB_WORKSPACE
@@ -48,32 +48,46 @@ jobs:
         clean: true
         lfs: false
         submodules: false
-    - name: Initialzing Docker cache...
+    - name: Updating 'actions/cc65+vice-environment'...
       uses: whoan/docker-build-with-cache-action@v5
-      id: docker-cache
       with:
-        username: ${{secrets.DOCKERCACHE_USER}}
+        username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
         registry: docker.pkg.github.com
         image_name: cc65-vice-environment
         context: ./.github/actions/cc65+vice-environment
+
+  compile-linux:
+    name: Compiles on Linux
+    runs-on: ubuntu-latest
+    needs: [docker-cache]
+    container:
+    image: ${{needs.docker-cache.outputs.FULL_IMAGE_NAME}}
+    credentials:
+      username: ${{secrets.DOCKER_USER}}
+      password: ${{secrets.RELEASE_TOKEN}}
+    steps:
+      # Checking out to $GITHUB_WORKSPACE
+    - name: Checking out...
+      uses: actions/checkout@v2.3.4
+      with:
+        clean: true
+        lfs: false
+        submodules: false
     - name: Compiling with Default config, using `$> make all`...
-      uses: docker://docker.pkg.github.com/youdirk/c64-non-sense/cc65-vice-environment:latest
-      with:
-        exec: make all && echo "${{steps.docker-cache.outputs.FULL_IMAGE_NAME}}"
+      run: |
+        make all
     - name: Compiling with Productive config, using `$> make recompile`...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make DEBUG_BUILD=0 recompile
+      run: |
+        make DEBUG_BUILD=0 recompile
     - name: Compiling with Full Debug config, using `$> make recompile`...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make DEBUG_BUILD=all recompile
+      run: |
+        make DEBUG_BUILD=all recompile
 
   publish-latest:
     if: ${{github.event_name == 'push'}}
     name: Publishing 'Latest Commit' release...
-    needs: [compile-linux]
+    needs: [docker-cache, compile-linux]
     runs-on: ubuntu-latest
     steps:
       # Checking out to $GITHUB_WORKSPACE
@@ -86,7 +100,7 @@ jobs:
     - name: Initialzing Docker cache...
       uses: whoan/docker-build-with-cache-action@v5
       with:
-        username: ${{secrets.DOCKERCACHE_USER}}
+        username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
         registry: docker.pkg.github.com
         image_name: cc65-vice-environment
