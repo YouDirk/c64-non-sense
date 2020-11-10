@@ -38,7 +38,7 @@ env:
 # Jobs are running in parallel
 jobs:
   docker-cache:
-    name: Updating Docker cache...
+    name: Docker cache updated
     runs-on: ubuntu-latest
     outputs:
       DOCKER_IMAGE: ${{steps.main.outputs.FULL_IMAGE_NAME}}
@@ -61,8 +61,8 @@ jobs:
         context: ./.github/actions/cc65+vice-environment
 
   compile-linux:
-    needs: [docker-cache]
     name: Compiles on Linux
+    needs: [docker-cache]
     runs-on: ubuntu-latest
     container:
       image: ${{needs.docker-cache.outputs.DOCKER_IMAGE}}
@@ -87,11 +87,16 @@ jobs:
       run: |
         make DEBUG_BUILD=all recompile
 
-  publish-latest:
+  release-latest-commit:
+    name: Latest Commit released
     if: ${{github.event_name == 'push'}}
     needs: [docker-cache, compile-linux]
-    name: Publishing 'Latest Commit' release...
     runs-on: ubuntu-latest
+    container:
+      image: ${{needs.docker-cache.outputs.DOCKER_IMAGE}}
+      credentials:
+        username: ${{secrets.DOCKER_USER}}
+        password: ${{secrets.RELEASE_TOKEN}}
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
@@ -100,32 +105,21 @@ jobs:
         clean: true
         lfs: false
         submodules: false
-    - name: Initialzing Docker cache...
-      uses: whoan/docker-build-with-cache-action@v5
-      with:
-        username: ${{secrets.DOCKER_USER}}
-        password: ${{secrets.RELEASE_TOKEN}}
-        registry: docker.pkg.github.com
-        image_name: cc65-vice-environment
-        context: ./.github/actions/cc65+vice-environment
     - name: Building Debug version, using `$> make all`...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make DEBUG_BUILD=1
-              D64EXT=$(echo $GITHUB_SHA | head -c7).debug.d64
-              all && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+      run: |
+        make DEBUG_BUILD=1 \
+          D64EXT=$(echo $GITHUB_SHA | head -c7).debug.d64 all
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Building Productive version, using `$> make recompile`...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make DEBUG_BUILD=0
-              D64EXT=$(echo $GITHUB_SHA | head -c7).d64
-              recompile && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+      run: |
+        make DEBUG_BUILD=0 \
+          D64EXT=$(echo $GITHUB_SHA | head -c7).d64 recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Building Full Debug version, using `$> make recompile`...
-      uses: ./.github/actions/cc65+vice-environment
-      with:
-        exec: make DEBUG_BUILD=all
-              D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64
-              recompile && cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+      run: |
+        make DEBUG_BUILD=all \
+          D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64 recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Updating TODO ...
       run: |
         ls -R
