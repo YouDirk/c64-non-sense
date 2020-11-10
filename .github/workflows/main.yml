@@ -128,9 +128,9 @@ jobs:
         file: "*.d64"
         delete_file: "*.d64"
         overwrite: true
-        draft: true
+        draft: false
         prerelease: false
         tags: false
         branches: master
         tag_name: latest-commit
-        update_latest_release: true
+        update_latest_release: false
