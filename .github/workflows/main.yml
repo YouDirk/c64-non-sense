@@ -40,6 +40,8 @@ jobs:
   docker-cache:
     name: Updating Docker cache...
     runs-on: ubuntu-latest
+    outputs:
+      DOCKER_IMAGE: ${{steps.main.outputs.FULL_IMAGE_NAME}}
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
@@ -50,6 +52,7 @@ jobs:
         submodules: false
     - name: Updating 'actions/cc65+vice-environment'...
       uses: whoan/docker-build-with-cache-action@v5
+      id: main
       with:
         username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
@@ -62,7 +65,7 @@ jobs:
     name: Compiles on Linux
     runs-on: ubuntu-latest
     container:
-      image: ${{needs.docker-cache.outputs.FULL_IMAGE_NAME}}
+      image: ${{needs.docker-cache.outputs.DOCKER_IMAGE}}
       credentials:
         username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.RELEASE_TOKEN}}
