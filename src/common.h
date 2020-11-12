@@ -32,4 +32,31 @@
 #define STRING_LEN                 256
 typedef char                       string_t[STRING_LEN];
 
+/*****************************************************************  */
+
+#define UINT16(uint16_struct)      ((uint16_t) (uint16_struct))
+#define INT16(int16_struct)        ((int16_t) (int16_struct))
+
+struct uint16_s {
+  uint8_t byte_low;
+  uint8_t byte_high;
+};
+
+typedef struct uint16_s            uint16_s;
+typedef struct uint16_s            int16_s;
+
+
+#define UINT32(uint32_struct)      ((uint32_t) (uint32_struct))
+#define INT32(int32_struct)        ((int32_t) (int32_struct))
+
+struct uint32_s {
+  uint16_s word_low;
+  uint16_s word_high;
+};
+
+typedef struct uint32_s            uint32_s;
+typedef struct uint32_s            int32_s;
+
+/*****************************************************************  */
+
 #endif /* COMMON_H__  */

@@ -22,8 +22,7 @@
 
 /* ***************************************************************  */
 
-static uint8_t _joy_port2_x_mode, _joy_port2_y_mode;
-static uint8_t _joy_port1_x_mode, _joy_port1_y_mode;
+static uint16_s _joy_port2_x_mode, _joy_port2_y_mode;
 
 /* ***************************************************************  */
 
@@ -55,10 +54,9 @@ Input_release(void)
 
 /* ***************************************************************  */
 
-void __fastcall__
-Input_enable(Input_device_t devices)
+static Input_device_t __fastcall__
+_Input_poll_joystick(uint8_t axis)
 {
-  Input.enabled = devices;
 }
 
 Input_device_t __fastcall__
@@ -76,24 +74,13 @@ Input_poll(void)
         Input.joy_port2.y_pressed = true;
       }
 
-      _joy_port2_y_mode = (0x40 & 0x60) | ((1 << 3) & 0x18) | (0x04 & 0x07);
+      _joy_port2_y_mode.byte_high = 0x04 & 0x0f;
+      _joy_port2_y_mode.byte_low = (1 << 4) & 0xf0 | (0x04 & 0x0f);
 
-      if (reg_buf & CIA1_PRAB_JOYDOWN_MASK) _joy_port2_y_mode |= 0x80;
+      if (reg_buf & CIA1_PRAB_JOYDOWN_MASK)
+        _joy_port2_y_mode.byte_high |= 0x80;
     } else {
       Input.joy_port2.y_pressed = false;
-    }
-
-    if (reg_buf & (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK)) {
-      if (!Input.joy_port2.x_pressed) {
-        result |= Input_joy_port2_mask;
-        Input.joy_port2.x_pressed = true;
-      }
-
-      _joy_port2_x_mode = (0x40 & 0x60) | ((1 << 3) & 0x18) | (0x04 & 0x07);
-
-      if (reg_buf & CIA1_PRAB_JOYRIGHT_MASK) _joy_port2_x_mode |= 0x80;
-    } else {
-      Input.joy_port2.x_pressed = false;
     }
 
     if (reg_buf & CIA1_PRAB_JOYBTN1_MASK) {
@@ -108,58 +95,55 @@ Input_poll(void)
   return result;
 }
 
+/* ***************************************************************  */
+
 void __fastcall__
 Input_tick(void)
 {
-  if (_joy_port2_y_mode) {
-    switch (_joy_port2_y_mode & 0x60) {
-    case 0x40:
-      Input.joy_port2.y_pace = (_joy_port2_y_mode >> 3) & 0x03;
+  uint8_t mode;
+
+  if (UINT16(_joy_port2_y_mode)) {
+    mode = _joy_port2_y_mode.byte_high & 0x0f;
+
+    switch (mode) {
+    case 0x04:
+      Input.joy_port2.y_pace = _joy_port2_y_mode.byte_low >> 4;
+
       break;
-    case 0x20:
-      Input.joy_port2.y_pace = _joy_port2_y_mode & (0x01 << 0);
+    case 0x03:
+    case 0x01:
+      Input.joy_port2.y_pace
+        = (_joy_port2_y_mode.byte_high & 0x70) < (mode << 4)
+        ? 1: 0;
+
       break;
-    case 0x00:
-      Input.joy_port2.y_pace = (_joy_port2_y_mode & (0x03 << 0)) == 0;
-      break;
-    case 0x60:
-      _joy_port2_y_mode = 0x00;
-      Input.joy_port2.y_pace = 0;
+    case 0x02:
+      Input.joy_port2.y_pace
+        = (_joy_port2_y_mode.byte_high & (0x10 & 0x70)) != 0;
+
       break;
     default:
       DEBUG_ERROR("input tick, joy mode y");
+    case 0x00:
+      Input.joy_port2.y_pace = 0;
+      UINT16(_joy_port2_y_mode) = (0x7000 & (1 << 12)) | (1 << 5);
+
       break;
     }
 
-    if (_joy_port2_y_mode & 0x80)
+    if (_joy_port2_y_mode.byte_high & 0x80)
       Input.joy_port2.y_pace = -Input.joy_port2.y_pace;
 
-    _joy_port2_y_mode -= (1 << 0);
+    if ((_joy_port2_y_mode.byte_high & 0x70) == 0)
+      _joy_port2_y_mode.byte_high |= 0x40;
+    UINT16(_joy_port2_y_mode) -= (0x7000 & (1 << 12)) | (1 << 5);
   }
+}
 
-  if (_joy_port2_x_mode) {
-    switch (_joy_port2_x_mode & 0x60) {
-    case 0x40:
-      Input.joy_port2.x_pace = (_joy_port2_x_mode >> 3) & 0x03;
-      break;
-    case 0x20:
-      Input.joy_port2.x_pace = _joy_port2_x_mode & (0x01 << 0);
-      break;
-    case 0x00:
-      Input.joy_port2.x_pace = (_joy_port2_x_mode & (0x03 << 0)) == 0;
-      break;
-    case 0x60:
-      _joy_port2_x_mode = 0x00;
-      Input.joy_port2.x_pace = 0;
-      break;
-    default:
-      DEBUG_ERROR("input tick, joy mode x");
-      break;
-    }
+/* ***************************************************************  */
 
-    if (_joy_port2_x_mode & 0x80)
-      Input.joy_port2.x_pace = -Input.joy_port2.x_pace;
-
-    _joy_port2_x_mode -= (1 << 0);
-  }
+void __fastcall__
+Input_enable(Input_device_t devices)
+{
+  Input.enabled = devices;
 }

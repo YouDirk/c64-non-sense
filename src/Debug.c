@@ -66,7 +66,7 @@ Debug_release_print(void)
     case _error_e: type_str = "error"; break;
     case _warn_e: type_str = "warn"; break;
     case _note_e: type_str = "note"; break;
-    default: type_str = "<unknown>"; break;
+    default: type_str = "<unknown>";
     }
 
     printf(" [%lu] %s: %s\n",
