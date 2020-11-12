@@ -22,6 +22,11 @@
 
 /* ***************************************************************  */
 
+static uint8_t _joy_port2_x_mode, _joy_port2_y_mode;
+static uint8_t _joy_port1_x_mode, _joy_port1_y_mode;
+
+/* ***************************************************************  */
+
 /* Static members of this module.  */
 Input_t Input;
 
@@ -65,38 +70,28 @@ Input_poll(void)
   if (Input.enabled & Input_joy_port2_mask) {
     reg_buf = ~CIA1.pra & CIA1_PRAB_JOY_MASK;
 
-    if (reg_buf & CIA1_PRAB_JOYUP_MASK) {
+    if (reg_buf & (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)) {
       if (!Input.joy_port2.y_pressed) {
         result |= Input_joy_port2_mask;
         Input.joy_port2.y_pressed = true;
       }
 
-      Input.joy_port2.y_pace = 0x40;
-    } else if (reg_buf & CIA1_PRAB_JOYDOWN_MASK) {
-      if (!Input.joy_port2.y_pressed) {
-        result |= Input_joy_port2_mask;
-        Input.joy_port2.y_pressed = true;
-      }
+      _joy_port2_y_mode = (0x40 & 0x60) | ((1 << 3) & 0x18) | (0x04 & 0x07);
 
-      Input.joy_port2.y_pace = -0x30;
+      if (reg_buf & CIA1_PRAB_JOYDOWN_MASK) _joy_port2_y_mode |= 0x80;
     } else {
       Input.joy_port2.y_pressed = false;
     }
 
-    if (reg_buf & CIA1_PRAB_JOYLEFT_MASK) {
+    if (reg_buf & (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK)) {
       if (!Input.joy_port2.x_pressed) {
         result |= Input_joy_port2_mask;
         Input.joy_port2.x_pressed = true;
       }
 
-      Input.joy_port2.x_pace = 0x40;
-    } else if (reg_buf & CIA1_PRAB_JOYRIGHT_MASK) {
-      if (!Input.joy_port2.x_pressed) {
-        result |= Input_joy_port2_mask;
-        Input.joy_port2.x_pressed = true;
-      }
+      _joy_port2_x_mode = (0x40 & 0x60) | ((1 << 3) & 0x18) | (0x04 & 0x07);
 
-      Input.joy_port2.x_pace = -0x30;
+      if (reg_buf & CIA1_PRAB_JOYRIGHT_MASK) _joy_port2_x_mode |= 0x80;
     } else {
       Input.joy_port2.x_pressed = false;
     }
@@ -116,12 +111,55 @@ Input_poll(void)
 void __fastcall__
 Input_tick(void)
 {
-  if (!Input.joy_port2.y_pressed) {
-    if (Input.joy_port2.y_pace > 0)      --Input.joy_port2.y_pace;
-    else if (Input.joy_port2.y_pace < 0) ++Input.joy_port2.y_pace;
+  if (_joy_port2_y_mode) {
+    switch (_joy_port2_y_mode & 0x60) {
+    case 0x40:
+      Input.joy_port2.y_pace = (_joy_port2_y_mode >> 3) & 0x03;
+      break;
+    case 0x20:
+      Input.joy_port2.y_pace = _joy_port2_y_mode & (0x01 << 0);
+      break;
+    case 0x00:
+      Input.joy_port2.y_pace = (_joy_port2_y_mode & (0x03 << 0)) == 0;
+      break;
+    case 0x60:
+      _joy_port2_y_mode = 0x00;
+      Input.joy_port2.y_pace = 0;
+      break;
+    default:
+      DEBUG_ERROR("input tick, joy mode y");
+      break;
+    }
+
+    if (_joy_port2_y_mode & 0x80)
+      Input.joy_port2.y_pace = -Input.joy_port2.y_pace;
+
+    _joy_port2_y_mode -= (1 << 0);
   }
-  if (!Input.joy_port2.x_pressed) {
-    if (Input.joy_port2.x_pace > 0)      --Input.joy_port2.x_pace;
-    else if (Input.joy_port2.x_pace < 0) ++Input.joy_port2.x_pace;
+
+  if (_joy_port2_x_mode) {
+    switch (_joy_port2_x_mode & 0x60) {
+    case 0x40:
+      Input.joy_port2.x_pace = (_joy_port2_x_mode >> 3) & 0x03;
+      break;
+    case 0x20:
+      Input.joy_port2.x_pace = _joy_port2_x_mode & (0x01 << 0);
+      break;
+    case 0x00:
+      Input.joy_port2.x_pace = (_joy_port2_x_mode & (0x03 << 0)) == 0;
+      break;
+    case 0x60:
+      _joy_port2_x_mode = 0x00;
+      Input.joy_port2.x_pace = 0;
+      break;
+    default:
+      DEBUG_ERROR("input tick, joy mode x");
+      break;
+    }
+
+    if (_joy_port2_x_mode & 0x80)
+      Input.joy_port2.x_pace = -Input.joy_port2.x_pace;
+
+    _joy_port2_x_mode -= (1 << 0);
   }
 }

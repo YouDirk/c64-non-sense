@@ -34,6 +34,8 @@ env:
 
 # Jobs are running in parallel
 jobs:
+
+# ********************************************************************
   docker-cache:
     name: Docker cache updated
     runs-on: ubuntu-latest
@@ -57,6 +59,7 @@ jobs:
         image_name: cc65-vice-environment
         context: ./.github/actions/cc65+vice-environment
 
+# ********************************************************************
   compile-linux:
     name: Compiles on Linux
     needs: [docker-cache]
@@ -84,6 +87,7 @@ jobs:
       run: |
         make DEBUG_BUILD=all recompile
 
+# ********************************************************************
   release-latest-commit:
     name: "Release: latest-commit"
     if: contains(github.ref, 'heads/master')
@@ -138,6 +142,7 @@ jobs:
         tag_name: latest-commit
         update_latest_release: false
 
+# ********************************************************************
   release-vlog:
     name: "Release: vlog template"
     if: contains(github.ref, 'tags/vlog-')
@@ -174,7 +179,7 @@ jobs:
           D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
           recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
-    - name: "Creating release: vlog..."
+    - name: "Creating release: vlog template..."
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{secrets.RELEASE_TOKEN}}
@@ -189,3 +194,5 @@ jobs:
           the version that I used in the vlog from ${{github.ref}} at
           
           * https://www.youtube.com/playlist?list=PLSC2VXOJyxP01kz__GU2nvx4RmgCN4ZwO
+
+# ********************************************************************

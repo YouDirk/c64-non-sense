@@ -47,7 +47,7 @@ typedef struct Input_t {
    */
   Input_device_t enabled;
 
-  /* The two joysticks on physical Port 1 and Port 2 :)  */
+  /* The two joysticks on physical Port 2 and Port 1 :)  */
   Input_joystick_t joy_port2;
   Input_joystick_t joy_port1;
 

@@ -43,10 +43,7 @@ main(void)
        */
 
       /* should be the last poll, to reduce input delay  */
-      if (Input_poll() & Input_joy_port2_mask) {
-        DEBUG_NOTE("input break");
-        break;
-      }
+      if (Input_poll() & Input_joy_port2_mask) break;
     } while (!Engine_tick_poll());
 
     /* ***************************************************************
@@ -56,8 +53,8 @@ main(void)
     /* first in time critical section  */
     Input_tick();
 
-    Graphix.buffer.scroll_x += Input.joy_port2.x_pace >> 5;
-    Graphix.buffer.scroll_y += Input.joy_port2.y_pace >> 5;
+    Graphix.buffer.scroll_x += Input.joy_port2.x_pace;
+    Graphix.buffer.scroll_y += Input.joy_port2.y_pace;
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
