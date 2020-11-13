@@ -30,12 +30,15 @@
 #define Input_all_mask             ((Input_device_t) 0xff)
 typedef uint8_t                    Input_device_t;
 
+#define Input_axis_y               ((Input_axis_t) 0)
+#define Input_axis_x               ((Input_axis_t) 1)
+#define Input_axis_count           ((Input_axis_t) 2)
+typedef uint8_t                    Input_axis_t;
+
 /* Information about a joystick  */
 typedef struct Input_joystick_t {
-  bool   x_pressed;
-  int8_t x_pace;
-  bool   y_pressed;
-  int8_t y_pace;
+  bool   axes_pressed[Input_axis_count];
+  int8_t axes_pace[Input_axis_count];
   bool   button1_pressed;
 } Input_joystick_t;
 
