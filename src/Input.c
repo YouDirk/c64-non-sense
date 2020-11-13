@@ -71,14 +71,75 @@ Input_release(void)
  *     sign bit
  */
 
-
-#if 0
 static Input_device_t __fastcall__
-_Input_poll_joystick(uint8_t axis)
+_joystick_axis_poll(uint8_t cia_port_inv_shifted, Input_axis_t axis)
 {
-
-}
+#if (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK) >> 2 \
+    != (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)
+#  error "_poll_joystick_axis(): CIA_PORT_INV_SHIFTED: Assertion failed!"
 #endif
+
+  if ((cia_port_inv_shifted
+       & (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)) == 0) {
+    Input.joy_port2.axes_pressed[axis] = false;
+    return Input_none_mask;
+  }
+
+  _joy_port2_axes_mode[axis].byte_high = 0x04 & 0x0f;
+  _joy_port2_axes_mode[axis].byte_low = (1 << 4) & 0xf0 | (0x04 & 0x0f);
+
+  if (cia_port_inv_shifted & CIA1_PRAB_JOYDOWN_MASK)
+    _joy_port2_axes_mode[axis].byte_high |= 0x80;
+
+  /* just trigger poll result one time per pressing down  */
+  if (Input.joy_port2.axes_pressed[axis]) return Input_none_mask;
+
+  Input.joy_port2.axes_pressed[axis] = true;
+  return Input_joy_port2_mask;
+}
+
+static void __fastcall__
+_joystick_axis_tick(Input_axis_t axis)
+{
+  if (!UINT16(_joy_port2_axes_mode[axis])) return;
+
+  switch (_joy_port2_axes_mode[axis].byte_high & 0x0f) {
+  case 0x04:
+    Input.joy_port2.axes_pace[axis]
+      = _joy_port2_axes_mode[axis].byte_low >> 4;
+
+    break;
+  case 0x03:
+    Input.joy_port2.axes_pace[axis]
+      = (_joy_port2_axes_mode[axis].byte_high & 0x70) != 0;
+
+    break;
+  case 0x02:
+    Input.joy_port2.axes_pace[axis]
+      = (_joy_port2_axes_mode[axis].byte_high & (0x10 & 0x70)) != 0;
+
+    break;
+  case 0x01:
+    Input.joy_port2.axes_pace[axis]
+      = (_joy_port2_axes_mode[axis].byte_high & 0x70) == 0;
+
+    break;
+  default:
+    DEBUG_ERROR("input tick, joy axis mode");
+  case 0x00:
+    Input.joy_port2.axes_pace[axis] = 0;
+    UINT16(_joy_port2_axes_mode[axis]) = (0x7000 & (1 << 12)) | (1 << 5);
+
+    break;
+  }
+
+  if (_joy_port2_axes_mode[axis].byte_high & 0x80)
+    Input.joy_port2.axes_pace[axis] = -Input.joy_port2.axes_pace[axis];
+
+  if ((_joy_port2_axes_mode[axis].byte_high & 0x70) == 0)
+    _joy_port2_axes_mode[axis].byte_high |= 0x40;
+  UINT16(_joy_port2_axes_mode[axis]) -= (0x7000 & (1 << 12)) | (1 << 5);
+}
 
 /* ***************************************************************  */
 
@@ -86,35 +147,20 @@ Input_device_t __fastcall__
 Input_poll(void)
 {
   Input_device_t result = Input_none_mask;
-  uint8_t reg_buf;
+  uint8_t cia_port_inv;
 
   if (Input.enabled & Input_joy_port2_mask) {
-    reg_buf = ~CIA1.pra & CIA1_PRAB_JOY_MASK;
+    cia_port_inv = ~CIA1.pra;
+    result |= _joystick_axis_poll(cia_port_inv, Input_axis_y);
+    result |= _joystick_axis_poll(cia_port_inv >> 2, Input_axis_x);
 
-    if (reg_buf & (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)) {
-      if (!Input.joy_port2.axes_pressed[Input_axis_y]) {
-        result |= Input_joy_port2_mask;
-        Input.joy_port2.axes_pressed[Input_axis_y] = true;
-      }
-
-      _joy_port2_axes_mode[Input_axis_y].byte_high = 0x04 & 0x0f;
-      _joy_port2_axes_mode[Input_axis_y].byte_low
-        = (1 << 4) & 0xf0 | (0x04 & 0x0f);
-
-      if (reg_buf & CIA1_PRAB_JOYDOWN_MASK)
-        _joy_port2_axes_mode[Input_axis_y].byte_high |= 0x80;
-    } else {
-      Input.joy_port2.axes_pressed[Input_axis_y] = false;
-    }
-
-    if (reg_buf & CIA1_PRAB_JOYBTN1_MASK) {
+    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
       if (!Input.joy_port2.axes_pressed[Input_axis_y])
         result |= Input_joy_port2_mask;
 
       Input.joy_port2.button1_pressed = true;
-    } else {
+    } else
       Input.joy_port2.button1_pressed = false;
-    }
   }
 
   return result;
@@ -123,51 +169,9 @@ Input_poll(void)
 void __fastcall__
 Input_tick(void)
 {
-  if (UINT16(_joy_port2_axes_mode[Input_axis_y])) {
-    switch (_joy_port2_axes_mode[Input_axis_y].byte_high & 0x0f) {
-    case 0x04:
-      Input.joy_port2.axes_pace[Input_axis_y]
-        = _joy_port2_axes_mode[Input_axis_y].byte_low >> 4;
-
-      break;
-    case 0x03:
-      Input.joy_port2.axes_pace[Input_axis_y]
-        = (_joy_port2_axes_mode[Input_axis_y].byte_high & 0x70)
-          != 0;
-
-      break;
-    case 0x02:
-      Input.joy_port2.axes_pace[Input_axis_y]
-        = (_joy_port2_axes_mode[Input_axis_y].byte_high & (0x10 & 0x70))
-          != 0;
-
-      break;
-    case 0x01:
-      Input.joy_port2.axes_pace[Input_axis_y]
-        = (_joy_port2_axes_mode[Input_axis_y].byte_high & 0x70)
-          == 0;
-
-      break;
-    default:
-      DEBUG_ERROR("input tick, joy mode y");
-    case 0x00:
-      Input.joy_port2.axes_pace[Input_axis_y] = 0;
-      UINT16(_joy_port2_axes_mode[Input_axis_y])
-        = (0x7000 & (1 << 12)) | (1 << 5);
-
-      break;
-    }
-
-    if (_joy_port2_axes_mode[Input_axis_y].byte_high & 0x80) {
-      Input.joy_port2.axes_pace[Input_axis_y]
-        = -Input.joy_port2.axes_pace[Input_axis_y];
-    }
-
-    if ((_joy_port2_axes_mode[Input_axis_y].byte_high & 0x70) == 0) {
-      _joy_port2_axes_mode[Input_axis_y].byte_high |= 0x40;
-    }
-    UINT16(_joy_port2_axes_mode[Input_axis_y])
-      -= (0x7000 & (1 << 12)) | (1 << 5);
+  if (Input.enabled & Input_joy_port2_mask) {
+    _joystick_axis_tick(Input_axis_y);
+    _joystick_axis_tick(Input_axis_x);
   }
 }
 
