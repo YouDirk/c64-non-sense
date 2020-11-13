@@ -51,6 +51,25 @@ define_hex(VIC_COLOR_GRAY3,             0f)
 
 define_hex(VIC_BASE,                    d000)
 
+define_hex(VIC_RASTERLINE,                   d012)
+define_hex(VIC_RASTERLINE_MASK,              ff)
+define_hex(VIC_RASTERL_MAX_PAL_MASK,         f0)
+define_hex(VIC_RASTERL_MAX_PAL_6569,        137)
+define_hex(VIC_RASTERL_MAX_NTSC_6567R8,     106)
+define_hex(VIC_RASTERL_MAX_NTSC_6567R56A,   105)
+define_hex(VIC_RASTERL_SCREENBEGIN,          34)
+define_hex(VIC_RASTERL_SCREENEND,            f7)
+define_hex(VIC_RASTERL_BACKPORCH_PAL_43,     0e)
+define_hex(VIC_RASTERL_BACKPORCH_PAL_169,    21)
+define_hex(VIC_RASTERL_BACKPORCH_NTSC_43,    1a)
+define_hex(VIC_RASTERL_FRONTPORCH_PAL_43,   11f)
+define_hex(VIC_RASTERL_FRONTPORCH_PAL_169,  10a)
+define    (VIC_RASTERL_FRONTPORCH_NTSC_43,  VIC_RASTERL_MAX_NTSC_6567R56A)
+
+define(VIC_RASTERLINE_VAL,              VIC_RASTERL_SCREENEND)
+define(VIC_RASTERLINE_MODE,                                          \
+       VIC_RASTERLINE_VAL & VIC_RASTERLINE_MASK)
+
 define_hex(VIC_CTRL1,                   d011)
 define_hex(VIC_CTRL1_RASTERLINE_MASK,   80)
 define_hex(VIC_CTRL1_EXTCOLOR_MASK,     40)
@@ -63,17 +82,10 @@ define(VIC_CTRL1_DEFAULT,                                            \
        VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
        | VIC_CTRL1_DEFAULT_YSCROLL)
 
-/* rasterline=0, bitmap mode, enable screen, no 25 rows, yscroll=0  */
+/* rasterline bit, bitmap mode, enable screen, no 25 rows, yscroll=0  */
 define(VIC_CTRL1_MODE,                                               \
-       VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK)
-
-define_hex(VIC_RASTERLINE,              d012)
-define_hex(VIC_RASTERLINE_PAL_MASK,     f0)
-define_hex(VIC_RASTERLINE_PAL_6569,     37)
-define_hex(VIC_RASTERLINE_NTSC_6567R8,  06)
-define_hex(VIC_RASTERLINE_NTSC_6567R56A,05)
-define_dec(VIC_RASTERLINE_SCREENBEGIN,  50)
-define_dec(VIC_RASTERLINE_SCREENEND,    250)
+       VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
+       | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VAL >> 1)))
 
 define_hex(VIC_CTRL2,                   d016)
 define_hex(VIC_CTRL2_MULTICOLOR_MASK,   10)

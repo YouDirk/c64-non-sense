@@ -68,7 +68,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
           /* akku = 0x30 if PAL, 0x00 if NTSC  */
           "    sta %v+%w\n",
           VIC_RASTERLINE, VIC_RASTERLINE,
-          (uint8_t) VIC_RASTERLINE_PAL_MASK,
+          (uint8_t) VIC_RASTERL_MAX_PAL_MASK,
           Graphix, offsetof(Graphix_t, is_pal));
 
   /* remap VIC memory  */
@@ -80,7 +80,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
   VIC.ctrl2 = VIC_CTRL2_MODE;
 
   /* (no restore) rasterline, where an IRQ is triggered  */
-  VIC.rasterline = VIC_RASTERLINE_SCREENEND;
+  VIC.rasterline = VIC_RASTERLINE_MODE;
 
   /* initialize Graphix.buffer  */
   Graphix.buffer.screen_ram = _SCREEN_RAM;
