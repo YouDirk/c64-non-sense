@@ -36,7 +36,7 @@
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
 /* The shadow copy Graphix.buffer, read by ISR.  */
-Graphix_buffer_t shadow_isr;
+Graphix_buffer_t _Graphix_shadow_isr;
 
 /* ***************************************************************  */
 
@@ -139,7 +139,8 @@ Graphix_buffer_swap(void)
   /* commented out, too inaccurate raster timing  */
   /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
 
-  memcpy(&shadow_isr, &Graphix.buffer, sizeof(Graphix_buffer_t));
+  memcpy(&_Graphix_shadow_isr, &Graphix.buffer,
+         sizeof(Graphix_buffer_t));
 
   /* unmask VIC rasterline IRQs  */
   /* commented out, too inaccurate raster timing  */

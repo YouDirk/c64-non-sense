@@ -22,7 +22,7 @@
 
 .code
 
-.import _shadow_isr
+.import __Graphix_shadow_isr
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME
@@ -30,16 +30,16 @@
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_IRQ_RENDERTIME
 
-        lda _shadow_isr + Graphix_buffer_t::scroll_y
+        lda __Graphix_shadow_isr + Graphix_buffer_t::scroll_y
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set y scroll
 
-        lda _shadow_isr + Graphix_buffer_t::scroll_x
+        lda __Graphix_shadow_isr + Graphix_buffer_t::scroll_x
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
-        lda _shadow_isr + Graphix_buffer_t::bordercolor
+        lda __Graphix_shadow_isr + Graphix_buffer_t::bordercolor
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
