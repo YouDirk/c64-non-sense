@@ -20,9 +20,11 @@
 
 .include "chip-vic.gen.s"
 
+.importzp ptr1                  ; zero page address of CC65 runtime
+
 .code
 
-.import __Graphix_shadow_isr
+.import _Graphix_buffer_back_ptr
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME
@@ -30,19 +32,38 @@
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_IRQ_RENDERTIME
 
-        lda __Graphix_shadow_isr + Graphix_buffer_t::scroll_y
+        lda ptr1
+        pha                             ; backup low byte of shared zp
+        lda ptr1+1
+        pha                             ; backup high byte of shared zp
+
+        lda _Graphix_buffer_back_ptr
+        sta ptr1
+        lda _Graphix_buffer_back_ptr+1
+        sta ptr1+1                      ; ptr1 = _Graphix_buffer_back_ptr
+
+        ldy #Graphix_buffer_t::scroll_y
+        lda (ptr1), y
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set y scroll
 
-        lda __Graphix_shadow_isr + Graphix_buffer_t::scroll_x
+        ldy #Graphix_buffer_t::scroll_x
+        lda (ptr1), y
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
-        lda __Graphix_shadow_isr + Graphix_buffer_t::bordercolor
+        ldy #Graphix_buffer_t::bordercolor
+        lda (ptr1), y
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
 .endif ; DEBUG_IRQ_RENDERTIME
+
+        pla
+        sta ptr1+1                      ; backup high byte of shared zp
+        pla
+        sta ptr1                        ; backup low byte of shared zp
+
         rts
 .endproc                                ; Graphix_rasterline_isr

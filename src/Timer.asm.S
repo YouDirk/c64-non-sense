@@ -21,6 +21,7 @@
 
 .code
 
+.import _Graphix_buffer_shared_ptr, _Graphix_buffer_back_ptr
 .import _timer_1_32
 .export Timer_a_isr
 .proc Timer_a_isr: near
@@ -43,6 +44,22 @@ cia1_portb_backup:
 timer_1_sync:
 .endif ; DEBUG_TIMER1_SYNCCHECK
 
+        ;; -----------------------------------------------------------
+        ;; swap shared/back buffer for triple buffering
+
+        ldx _Graphix_buffer_shared_ptr   ; lowB: backup shared buffer
+        lda _Graphix_buffer_back_ptr
+        sta _Graphix_buffer_shared_ptr   ; lowB: shared = back buffer
+        stx _Graphix_buffer_back_ptr     ; lowB: back = shared buffer
+
+        ldx _Graphix_buffer_shared_ptr+1 ; highB: backup shared buffer
+        lda _Graphix_buffer_back_ptr+1
+        sta _Graphix_buffer_shared_ptr+1 ; highB: shared = back buffer
+        stx _Graphix_buffer_back_ptr+1   ; highB: back = shared buffer
+
+        ;; *** end of swap ***
+        ;; -----------------------------------------------------------
+
         inc _timer_1_32                 ; ++byte 0
         bne not_overflow                ; ready, if not overflow
         inc _timer_1_32+1               ; ++byte 1
@@ -50,6 +67,7 @@ timer_1_sync:
         inc _timer_1_32+2               ; ++byte 2
         bne not_overflow                ; ready, if not overflow
         inc _timer_1_32+3               ; ++byte 3
+
 .ifdef DEBUG
         bne not_overflow
         DEBUG_NOTE "timer 1, overflows"

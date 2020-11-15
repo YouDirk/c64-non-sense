@@ -35,8 +35,15 @@
 #define _BITMAP_RAM                                                  \
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
-/* The shadow copy Graphix.buffer, read by ISR.  */
-Graphix_buffer_t _Graphix_shadow_isr;
+/* The shared and back buffer for triple buffering, read by ISR.  */
+static Graphix_buffer_t _Graphix_buffers_sharedback[2];
+
+/* Points to the current shared/back buffer of triple buffering.  Set
+ * by Timer_a_isr() to reduce random noise in timing.  Read by
+ * Graphix_rasterline_isr() for rendering.
+ */
+Graphix_buffer_t* Graphix_buffer_shared_ptr;
+Graphix_buffer_t* Graphix_buffer_back_ptr;
 
 /* ***************************************************************  */
 
@@ -93,9 +100,12 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* initialize all other stuff  */
   init_callback(&Graphix.buffer);
 
-  /* initialize _shadow_isr after init_callback(), so it´s possible to
-     let adapt values by caller.
+  /* Initialize buffers for triple buffering.  This is done after
+   * init_callback() to make it possible that the callee initialize
+   * these.
    */
+  Graphix_buffer_shared_ptr = &_Graphix_buffers_sharedback[0];
+  Graphix_buffer_back_ptr = &_Graphix_buffers_sharedback[1];
   Graphix_buffer_swap();
 
   /* set screen on and VIC IRQs go!  */
@@ -135,14 +145,16 @@ Graphix_buffer_swap(void)
   Graphix.buffer.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
   Graphix.buffer.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
-  /* mask VIC rasterline IRQs  */
-  /* commented out, too inaccurate raster timing  */
-  /*VIC.imr = VIC_IMR_IRQMODE & ~VIC_IMR_RASTERLINE_MASK;  */
-
-  memcpy(&_Graphix_shadow_isr, &Graphix.buffer,
+  /* -----------------------------------------------------------------
+   *
+   * Maybe a lock is needed here if something goes wrong with during
+   * triple buffering.
+   */
+  memcpy(Graphix_buffer_shared_ptr, &Graphix.buffer,
          sizeof(Graphix_buffer_t));
 
-  /* unmask VIC rasterline IRQs  */
-  /* commented out, too inaccurate raster timing  */
-  /*VIC.imr = VIC_IMR_IRQMODE;  */
+  /* End of critical section
+   *
+   * -----------------------------------------------------------------
+   */
 }

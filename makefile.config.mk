@@ -39,7 +39,7 @@ DEBUG_BUILD := 1
 #
 # values: [1 0]
 #
-DEBUG_OPT_IRQ_RENDERTIME := 0
+DEBUG_OPT_IRQ_RENDERTIME := 1
 
 # Output debug warnings if the logical Timer 1 ISR is not in sync with
 # physical CIA1 timer A.
