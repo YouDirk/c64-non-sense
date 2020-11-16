@@ -36,13 +36,19 @@
   ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
-static Graphix_buffer_t _Graphix_buffers_sharedback[2];
+#ifndef CONF_DOUBLE_BUFFERING
+  static Graphix_buffer_t _Graphix_buffers_sharedback[2];
+#else /* CONF_DOUBLE_BUFFERING  */
+  static Graphix_buffer_t _Graphix_buffers_sharedback[1];
+#endif /* CONF_DOUBLE_BUFFERING  */
 
 /* Points to the current shared/back buffer of triple buffering.  Set
  * by Timer_a_isr() to reduce random noise in timing.  Read by
  * Graphix_rasterline_isr() for rendering.
  */
-Graphix_buffer_t* Graphix_buffer_shared_ptr;
+#ifndef CONF_DOUBLE_BUFFERING
+  Graphix_buffer_t* Graphix_buffer_shared_ptr;
+#endif /* CONF_DOUBLE_BUFFERING  */
 Graphix_buffer_t* Graphix_buffer_back_ptr;
 
 /* ***************************************************************  */
@@ -104,18 +110,20 @@ Graphix_init(Graphix_initCallback_t init_callback)
    * init_callback() to make it possible that the callee initialize
    * these.
    */
-  Graphix_buffer_shared_ptr = &_Graphix_buffers_sharedback[0];
-  Graphix_buffer_back_ptr = &_Graphix_buffers_sharedback[1];
+#ifndef CONF_DOUBLE_BUFFERING
+  Graphix_buffer_shared_ptr = &_Graphix_buffers_sharedback[1];
+#endif /* CONF_DOUBLE_BUFFERING  */
+  Graphix_buffer_back_ptr = &_Graphix_buffers_sharedback[0];
   Graphix_buffer_swap();
   /* If the high bytes of GRAPHIX_BUFFER_SHARED/BACK_PTR are equal,
    * then reading these pointers are atomar operations.
    */
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)
   if (((uint16_s) Graphix_buffer_shared_ptr).byte_high
       != ((uint16_s) Graphix_buffer_back_ptr).byte_high) {
     DEBUG_ERROR("graphix swap, lock required");
   }
-#endif
+#endif /* defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)  */
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
@@ -164,10 +172,15 @@ Graphix_buffer_swap(void)
    * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
    * GRAPHIX_INIT()
    */
+#ifndef CONF_DOUBLE_BUFFERING
   memcpy(Graphix_buffer_shared_ptr, &Graphix.buffer,
          sizeof(Graphix_buffer_t));
+#else /* CONF_DOUBLE_BUFFERING  */
+  memcpy(Graphix_buffer_back_ptr, &Graphix.buffer,
+         sizeof(Graphix_buffer_t));
+#endif /* CONF_DOUBLE_BUFFERING  */
 
-  /* End of critical section
+  /* end of critical section
    *
    * -----------------------------------------------------------------
    */

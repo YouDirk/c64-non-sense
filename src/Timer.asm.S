@@ -48,6 +48,7 @@ timer_1_sync:
         ;; -----------------------------------------------------------
         ;; swap shared/back buffer for triple buffering
 
+.ifndef CONF_DOUBLE_BUFFERING
         ldx _Graphix_buffer_shared_ptr   ; lowB: backup shared buffer
         lda _Graphix_buffer_back_ptr
         sta _Graphix_buffer_shared_ptr   ; lowB: shared = back buffer
@@ -57,6 +58,7 @@ timer_1_sync:
         lda _Graphix_buffer_back_ptr+1
         sta _Graphix_buffer_shared_ptr+1 ; highB: shared = back buffer
         stx _Graphix_buffer_back_ptr+1   ; highB: back = shared buffer
+.endif ; CONF_DOUBLE_BUFFERING
 
         ;; *** end of swap ***
         ;; -----------------------------------------------------------

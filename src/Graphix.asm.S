@@ -61,9 +61,9 @@
 .endif ; DEBUG_IRQ_RENDERTIME
 
         pla
-        sta ptr1+1                      ; backup high byte of shared zp
+        sta ptr1+1                      ; restore high byte of shared zp
         pla
-        sta ptr1                        ; backup low byte of shared zp
+        sta ptr1                        ; restore low byte of shared zp
 
         rts
 .endproc                                ; Graphix_rasterline_isr

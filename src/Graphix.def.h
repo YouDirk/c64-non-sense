@@ -48,7 +48,9 @@ typedef_struct_end(Graphix_t)
 
 /* ***************************************************************  */
 
-extern_var(Graphix_buffer_t*, Graphix_buffer_shared_ptr)
+#ifndef CONF_DOUBLE_BUFFERING
+  extern_var(Graphix_buffer_t*, Graphix_buffer_shared_ptr)
+#endif /* CONF_DOUBLE_BUFFERING  */
 extern_var(Graphix_buffer_t*, Graphix_buffer_back_ptr)
 
 #endif /* GRAPHIX_DEF_H__  */

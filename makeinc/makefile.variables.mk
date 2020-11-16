@@ -52,6 +52,10 @@ DEF_GENSEXT := gen.s
 2BOOL = $(subst 0,,$(1))
 2ALL = $(call 2BOOL,$(subst 1,all,$(1)))
 
+ifneq (,$(call 2BOOL,$(CONF_DOUBLE_BUFFERING)))
+  CCDEFINES += -DCONF_DOUBLE_BUFFERING
+endif
+
 # Debug build?
 ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   ASDEBUGFLAGS := -g

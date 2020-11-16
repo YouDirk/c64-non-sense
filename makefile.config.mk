@@ -39,7 +39,7 @@ DEBUG_BUILD := 1
 #
 # values: [1 0]
 #
-DEBUG_OPT_IRQ_RENDERTIME := 1
+DEBUG_OPT_IRQ_RENDERTIME := 0
 
 # Output debug warnings if the logical Timer 1 ISR is not in sync with
 # physical CIA1 timer A.
@@ -47,6 +47,16 @@ DEBUG_OPT_IRQ_RENDERTIME := 1
 # values: [1 0]
 #
 DEBUG_OPT_TIMER1_SYNCCHECK := 0
+
+# Default is Triple Buffering (set value 0).
+#
+# Enable Double Buffering (set value 1) to reduce input delay.  But
+# double buffering does also results in a cyclic stuttering FPS,
+# depending on engine/timer tickrate.
+#
+# values: [1 0]
+#
+CONF_DOUBLE_BUFFERING := 0
 
 # Symbol (prefixed with '.') or address (prefixed with '$$') of the
 # initial break point for `make` target DEBUG.  It´s also possible to
