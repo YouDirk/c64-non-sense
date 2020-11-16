@@ -42,4 +42,21 @@
 
 ;; *******************************************************************
 
+.macro MUTEX_LOCK mutex
+        lda #$01
+        sta mutex
+.endmacro                               ; MUTEX_LOCK
+
+.macro MUTEX_UNLOCK mutex
+        lsr mutex
+.endmacro                               ; MUTEX_UNLOCK
+
+        ;; if locked then Z-bit will be cleared (non-zero)
+.macro MUTEX_ISLOCKED mutex
+        lda #$ff
+        bit mutex
+.endmacro                               ; MUTEX_ISLOCKED
+
+;; *******************************************************************
+
 .endif                                  ; COMMON_INC_S__

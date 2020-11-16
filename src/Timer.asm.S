@@ -17,11 +17,12 @@
 
 .include "common.inc.s"
 
+.include "Graphix.gen.s"
+
 .include "chip-cia.gen.s"
 
 .code
 
-.import _Graphix_buffer_shared_ptr, _Graphix_buffer_back_ptr
 .import _timer_1_32
 .export Timer_a_isr
 .proc Timer_a_isr: near

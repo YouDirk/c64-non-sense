@@ -76,6 +76,8 @@ BC ******************************************************************
 #  define typedef_struct_char_ptr(name)           char* name;
 #  define typedef_struct_constchar_ptr(name)      const char* name;
 
+#  define extern_var(type, name)                  extern type name;
+
 #elif defined(GEN_ASM_HEADER)
 
 ;; *******************************************************************
@@ -122,6 +124,8 @@ BC ******************************************************************
 #  define typedef_struct_void_ptr(name)           name .addr
 #  define typedef_struct_char_ptr(name)           name .addr
 #  define typedef_struct_constchar_ptr(name)      name .addr
+
+#  define extern_var(type, name)                  .import _##name
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"

@@ -107,6 +107,15 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix_buffer_shared_ptr = &_Graphix_buffers_sharedback[0];
   Graphix_buffer_back_ptr = &_Graphix_buffers_sharedback[1];
   Graphix_buffer_swap();
+  /* If the high bytes of GRAPHIX_BUFFER_SHARED/BACK_PTR are equal,
+   * then reading these pointers are atomar operations.
+   */
+#ifdef DEBUG
+  if (((uint16_s) Graphix_buffer_shared_ptr).byte_high
+      != ((uint16_s) Graphix_buffer_back_ptr).byte_high) {
+    DEBUG_ERROR("graphix swap, lock required");
+  }
+#endif
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
@@ -149,6 +158,11 @@ Graphix_buffer_swap(void)
    *
    * Maybe a lock is needed here if something goes wrong with during
    * triple buffering.
+   */
+
+  /* pushing GRAPHIX_BUFFER_SHARED_PTR to stack is atomar, because the
+   * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
+   * GRAPHIX_INIT()
    */
   memcpy(Graphix_buffer_shared_ptr, &Graphix.buffer,
          sizeof(Graphix_buffer_t));

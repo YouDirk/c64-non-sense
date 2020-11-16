@@ -20,7 +20,7 @@
 
 .include "chip-vic.gen.s"
 
-.importzp ptr1                  ; zero page address of CC65 runtime
+.importzp ptr1                  ; shared zero page address of CC65 runtime
 
 .code
 

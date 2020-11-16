@@ -55,9 +55,6 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
 
   /* init input stuff, such like joystick, keyboard, etc  */
   Input_init(_Engine_config->inputs_enabled);
-
-  /* init as last as possible  */
-  Timer_init();
 }
 
 void __fastcall__
@@ -66,6 +63,9 @@ Engine_init(Engine_config_t* config)
   _Engine_config = config;
 
   Graphix_init(_Engine_init_blackscreen);
+
+  /* init as last as possible  */
+  Timer_init();
 }
 
 /* ---------------------------------------------------------------  */
@@ -73,9 +73,6 @@ Engine_init(Engine_config_t* config)
 static void __fastcall__
 _Engine_release_blackscreen(void)
 {
-  /* reversed order of init  */
-  Timer_release();
-
   /* hmmmm ...  */
   Input_release();
 
@@ -86,6 +83,9 @@ _Engine_release_blackscreen(void)
 void __fastcall__
 Engine_release(void)
 {
+  /* reversed order of init  */
+  Timer_release();
+
   Graphix_release(_Engine_release_blackscreen);
 }
 

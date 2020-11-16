@@ -27,7 +27,7 @@
  * A B, CIA2 A B).
  */
 
-#define TIMER_1_FREQUENCY_HZ            100  /* 100 Hz  */
+#define TIMER_1_FREQUENCY_HZ            50  /* 100 Hz  */
 #define TIMER_1_TICKRATE_MS             (1000/TIMER_1_FREQUENCY_HZ)
                                              /* 10 ms  */
 
