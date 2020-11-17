@@ -23,7 +23,7 @@
 
 /* ***************************************************************  */
 
-#if defined(DEBUG) && defined(DEBUG_IRQ_RENDERTIME)
+#ifdef DEBUG_IRQ_RENDERTIME
 #  define DEBUG_RENDERTIME_BEGIN(color)                              \
   __asm__("  lda %w\n"                                               \
           "  pha\n"                                                  \

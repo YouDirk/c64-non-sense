@@ -22,7 +22,7 @@
 
 ;; *******************************************************************
 
-.if .defined(DEBUG_IRQ_RENDERTIME)
+.ifdef DEBUG_IRQ_RENDERTIME
   .macro DEBUG_RENDERTIME_BEGIN color
         lda VIC_BORDERCOLOR             ; push current border color to
         pha                             ;   stack

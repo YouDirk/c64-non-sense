@@ -44,8 +44,7 @@ main(void)
 
       /* should be the last poll, to reduce input delay  */
       if (Input_poll() & Input_joy_port2_mask) {
-        DEBUG_NOTE("joystick break");
-        break;
+        DEBUG_NOTE("joy port2 polled");
       }
     } while (!Engine_tick_poll());
 

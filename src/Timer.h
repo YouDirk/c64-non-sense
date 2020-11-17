@@ -31,6 +31,18 @@
 #define TIMER_1_TICKRATE_MS             (1000/TIMER_1_FREQUENCY_HZ)
                                              /* 10 ms  */
 
+/* These calibrationvalues are just useful if the Timer 1 frequency is
+ * a multiple of the PAL/NTSC frequency.  If you prefer accurate timer
+ * ticks then set these values to 0.
+ *
+ * Make sure that there is a small difference between Timer- and
+ * PAL/NTSC frequency (DEBUG_IRQ_RENDERTIME).  Otherwise the
+ * Graphix_buffer_swap() maybe called in worst case timing for a very
+ * long time.
+ */
+#define TIMER_1_CALBIBR_PAL_CLKS  -24 /* reduce buckings/sec (PAL)  */
+#define TIMER_1_CALBIBR_NTSC_CLKS   0 /* reduce buckings/sec (NTSC) */
+
 /* ***************************************************************  */
 
 /* Structure of static members for module.  */

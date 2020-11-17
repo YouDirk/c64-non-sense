@@ -28,8 +28,8 @@
  *  60 Hz = _TIMER_CLK_[PAL/NTSC]_HZ/CIA1_TA_DEFAULT_[PAL/NTSC]
  */
 
-#define _TIMER_CLK_PAL_HZ          985249 /* system clock 1 MHz (PAL) */
-#define _TIMER_CLK_NTSC_HZ        1022727 /* (NTSC)  */
+#define _TIMER_CLK_PAL_HZ      985249 /* system clock 1 MHz (PAL) */
+#define _TIMER_CLK_NTSC_HZ    1022727 /* (NTSC)  */
 
 /* Default CIA1 timer A configuration.  Depending if we are on a PAL
  * or NTSC system.
@@ -60,13 +60,15 @@ Timer_init(void)
     _ta_default = CIA1_TA_DEFAULT_PAL;
 
     /* writing TA LO and TA HI in one command  */
-    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_1_FREQUENCY_HZ;
+    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_1_FREQUENCY_HZ
+                               + TIMER_1_CALBIBR_PAL_CLKS;
   } else {
     Timer.system_clk = _TIMER_CLK_NTSC_HZ;
     _ta_default = CIA1_TA_DEFAULT_NTSC;
 
     /* writing TA LO and TA HI in one command  */
-    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_NTSC_HZ/TIMER_1_FREQUENCY_HZ;
+    *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_NTSC_HZ/TIMER_1_FREQUENCY_HZ
+                               + TIMER_1_CALBIBR_NTSC_CLKS;
   }
 
   /* Start Timer, Port B cycle, auto-restart, load latch initial,
