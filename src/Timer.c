@@ -61,14 +61,14 @@ Timer_init(void)
 
     /* writing TA LO and TA HI in one command  */
     *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_PAL_HZ/TIMER_1_FREQUENCY_HZ
-                               + TIMER_1_CALBIBR_PAL_CLKS;
+                               + TIMER_1_CALIBR_PAL_CLKS;
   } else {
     Timer.system_clk = _TIMER_CLK_NTSC_HZ;
     _ta_default = CIA1_TA_DEFAULT_NTSC;
 
     /* writing TA LO and TA HI in one command  */
     *(uint16_t*) &CIA1.ta_lo = _TIMER_CLK_NTSC_HZ/TIMER_1_FREQUENCY_HZ
-                               + TIMER_1_CALBIBR_NTSC_CLKS;
+                               + TIMER_1_CALIBR_NTSC_CLKS;
   }
 
   /* Start Timer, Port B cycle, auto-restart, load latch initial,

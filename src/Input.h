@@ -30,16 +30,24 @@
 #define Input_all_mask             ((Input_device_t) 0xff)
 typedef uint8_t                    Input_device_t;
 
-#define Input_axis_y               ((Input_axis_t) 0)
-#define Input_axis_x               ((Input_axis_t) 1)
-#define Input_axis_count           ((Input_axis_t) 2)
-typedef uint8_t                    Input_axis_t;
+/* Paces >= 1 or Paces <= -1 are unsigned integers.  Paces which are
+ * slower than 1 and greater than -1 will be alterate it´s pace to
+ * 1/-1 or 0 between engine ticks, depending on the pace.
+ *
+ * So you can use this value directly as increment for outputs in
+ * ticking components.
+ */
+typedef int8_t                     Input_pace_t;
 
 /* Information about a joystick  */
 typedef struct Input_joystick_t {
-  bool   axes_pressed[Input_axis_count];
-  int8_t axes_pace[Input_axis_count];
-  bool   button1_pressed;
+  bool         y_pressed;
+  bool         x_pressed;
+
+  Input_pace_t y_pace;
+  Input_pace_t x_pace;
+
+  bool         button1_pressed;
 } Input_joystick_t;
 
 /* Structure of static members for module.  */

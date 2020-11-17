@@ -46,11 +46,11 @@
  * timing for a very long time with a very huge stuttering.
  */
 #ifndef CONF_DOUBLE_BUFFERING
-#  define TIMER_1_CALBIBR_PAL_CLKS  -24 /* reduce buckings/sec (PAL)  */
-#  define TIMER_1_CALBIBR_NTSC_CLKS   0 /* reduce buckings/sec (NTSC) */
+#  define TIMER_1_CALIBR_PAL_CLKS  -24 /* reduce buckings/sec (PAL)  */
+#  define TIMER_1_CALIBR_NTSC_CLKS   0 /* reduce buckings/sec (NTSC) */
 #else /* CONF_DOUBLE_BUFFERING  */
-#  define TIMER_1_CALBIBR_PAL_CLKS  -10 /* triple buffering disabled  */
-#  define TIMER_1_CALBIBR_NTSC_CLKS   0
+#  define TIMER_1_CALIBR_PAL_CLKS  -10 /* triple buffering disabled  */
+#  define TIMER_1_CALIBR_NTSC_CLKS   0
 #endif /* CONF_DOUBLE_BUFFERING  */
 
 /* ***************************************************************  */

@@ -55,8 +55,8 @@ main(void)
     /* first in time critical section  */
     Input_tick();
 
-    Graphix.buffer.scroll_x += Input.joy_port2.axes_pace[Input_axis_x];
-    Graphix.buffer.scroll_y += Input.joy_port2.axes_pace[Input_axis_y];
+    Graphix.buffer.scroll_y += Input.joy_port2.y_pace;
+    Graphix.buffer.scroll_x += Input.joy_port2.x_pace;
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
