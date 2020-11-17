@@ -24,7 +24,6 @@
 
 .code
 
-.import _Graphix_buffer_back_ptr
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME

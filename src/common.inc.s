@@ -24,24 +24,6 @@
 
 ;; *******************************************************************
 
-.macro ISR_RENDERTIME_BEGIN color
-.ifdef DEBUG_IRQ_RENDERTIME
-        lda VIC_BORDERCOLOR             ; push current border color to
-        pha                             ;   stack
-        lda color
-        sta VIC_BORDERCOLOR             ; set debug color
-.endif
-.endmacro                               ; ISR_RENDERTIME_BEGIN
-
-.macro ISR_RENDERTIME_END
-.ifdef DEBUG_IRQ_RENDERTIME
-        pla
-        sta VIC_BORDERCOLOR             ; pop backup and restore color
-.endif
-.endmacro                               ; ISR_RENDERTIME_END
-
-;; *******************************************************************
-
 .macro MUTEX_LOCK mutex
         lda #$01
         sta mutex

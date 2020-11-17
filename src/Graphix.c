@@ -167,6 +167,7 @@ Graphix_buffer_swap(void)
    * Maybe a lock is needed here if something goes wrong with during
    * triple buffering.
    */
+  DEBUG_RENDERTIME_BEGIN(VIC_COLOR_VIOLET);
 
   /* pushing GRAPHIX_BUFFER_SHARED_PTR to stack is atomar, because the
    * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
@@ -180,6 +181,7 @@ Graphix_buffer_swap(void)
          sizeof(Graphix_buffer_t));
 #endif /* CONF_DOUBLE_BUFFERING  */
 
+  DEBUG_RENDERTIME_END();
   /* end of critical section
    *
    * -----------------------------------------------------------------

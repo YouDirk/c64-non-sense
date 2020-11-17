@@ -22,6 +22,25 @@
 
 ;; *******************************************************************
 
+.if .defined(DEBUG_IRQ_RENDERTIME)
+  .macro DEBUG_RENDERTIME_BEGIN color
+        lda VIC_BORDERCOLOR             ; push current border color to
+        pha                             ;   stack
+        lda color
+        sta VIC_BORDERCOLOR             ; set debug color
+  .endmacro                             ; DEBUG_RENDERTIME_BEGIN
+
+  .macro DEBUG_RENDERTIME_END
+        pla
+        sta VIC_BORDERCOLOR             ; pop backup and restore color
+  .endmacro                             ; DEBUG_RENDERTIME_END
+.else ; DEBUG_IRQ_RENDERTIME
+  .define DEBUG_RENDERTIME_BEGIN(color)
+  .define DEBUG_RENDERTIME_END
+.endif ; DEBUG_IRQ_RENDERTIME
+
+;; *******************************************************************
+
 .ifdef DEBUG
   ;; Call these macros for debugging output :)
   .define DEBUG_INIT               jsr _Debug_init
@@ -31,7 +50,7 @@
   .define DEBUG_WARN(msg)          _DEBUG_HELPER msg, _Debug_warn
   .define DEBUG_NOTE(msg)          _DEBUG_HELPER msg, _Debug_note
 
-  ;; *****************************************************************
+  ;; -----------------------------------------------------------------
   ;; Do not call directly!  Call the macros DEBUG_*() above instead.
   ;;
   .import _Debug_init
@@ -53,8 +72,8 @@ debug_msg:
         jsr function                    ; call it
   .endscope
   .endmacro                             ; _DEBUG_HELPER
-  ;; *****************************************************************
 
+;; *******************************************************************
 .else ; DEBUG
   .define DEBUG_INIT
   .define DEBUG_RELEASE_PRINT

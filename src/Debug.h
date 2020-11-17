@@ -21,6 +21,26 @@
 
 #include "common.h"
 
+/* ***************************************************************  */
+
+#if defined(DEBUG) && defined(DEBUG_IRQ_RENDERTIME)
+#  define DEBUG_RENDERTIME_BEGIN(color)                              \
+  __asm__("  lda %w\n"                                               \
+          "  pha\n"                                                  \
+          "  lda #%b\n"                                              \
+          "  sta %w\n"                                               \
+          , VIC_BORDERCOLOR, color, VIC_BORDERCOLOR)
+#  define DEBUG_RENDERTIME_END()                                     \
+  __asm__("  pla\n"                                                  \
+          "  sta %w\n"                                               \
+          , VIC_BORDERCOLOR)
+#else /* DEBUG_IRQ_RENDERTIME  */
+#  define DEBUG_RENDERTIME_BEGIN(color)
+#  define DEBUG_RENDERTIME_END()
+#endif /* DEBUG_IRQ_RENDERTIME  */
+
+/* ***************************************************************  */
+
 #ifdef DEBUG
 
 /* For fast implementing stuff for tests, not productive  */
@@ -35,7 +55,7 @@
 #  define DEBUG_WARN(msg)          Debug_warn(msg)
 #  define DEBUG_NOTE(msg)          Debug_note(msg)
 
-/* *******************************************************************
+/* -------------------------------------------------------------------
  * Do not call directly!  Call the macros DEBUG_*() above instead.
  */
 extern void __fastcall__ Debug_init(void);
@@ -43,8 +63,8 @@ extern void __fastcall__ Debug_release_print(void);
 extern void __fastcall__ Debug_error(const char* msg);
 extern void __fastcall__ Debug_warn(const char* msg);
 extern void __fastcall__ Debug_note(const char* msg);
-/* ***************************************************************  */
 
+/* ***************************************************************  */
 #else /* DEBUG  */
 #  define DEBUG_INIT()
 #  define DEBUG_RELEASE_PRINT()
