@@ -20,6 +20,39 @@
 
 #include "chip-cia.gen.h"
 
+
+/* *******************************************************************
+ *
+ * Every axis of an joystick has a 16 bit MODE variable which saves
+ * the current state between engine ticks.  It looks like this
+ *
+ *   | 15 | 14 13 12 | 11 10  9  8 || 7  6  5  4 |  3  2  1  0  |
+ *   |----------------------------------------------------------|
+ *   |    |          |     mode    ||    pace    | tick-counter |
+ *   '--|------|------------------------------------------------'
+ *      |      |
+ *      |     sequence-counter (for every n ticks to do sth.)
+ *     sign bit
+ */
+
+#define _MODE_LOW_TICKCOUNTER_MASK      0x0f
+#define _MODE_LOW_PACE_MASK             0xf0
+#define _MODE_LOW_PACE_SHIFT            4
+#define _MODE_HIGH_MODE_MASK            0x0f
+#define _MODE_HIGH_MODE_STOPPED          0x0
+#define _MODE_HIGH_MODE_1OF4             0x1
+#define _MODE_HIGH_MODE_1OF2             0x2
+#define _MODE_HIGH_MODE_3OF4             0x3
+#define _MODE_HIGH_MODE_PACE             0x4
+#define _MODE_HIGH_SEQCOUNTER_MASK      0x70
+#define _MODE_HIGH_SEQCOUNTER_SHIFT     4
+#define _MODE_HIGH_SEQCOUNTER_BIT0      0x10
+#define _MODE_HIGH_SIGN_MASK            0x80
+
+#define _MODE_16_DECREMENT(brake_const)                              \
+  ((_MODE_HIGH_SEQCOUNTER_MASK                                       \
+    & (1 << _MODE_HIGH_SEQCOUNTER_SHIFT)) << 8 | (brake_const))
+
 /* ***************************************************************  */
 
 typedef uint16_s                   _joy_axis_mode_t;
@@ -59,20 +92,6 @@ Input_release(void)
   CIA1.ddra = CIA1_DDRA_DEFAULT;
 }
 
-/* *******************************************************************
- *
- * Every axis of an joystick has a 16 bit MODE variable which saves
- * the current state between engine ticks.  It looks like this
- *
- *   | 15 | 14 13 12 | 11 10  9  8 || 7  6  5  4 |  3  2  1  0  |
- *   |----------------------------------------------------------|
- *   |    |          |     mode    ||    pace    | tick-counter |
- *   '--|------|------------------------------------------------'
- *      |      |
- *      |     sequence-counter (for every n ticks to do sth.)
- *     sign bit
- */
-
 static Input_device_t __fastcall__
 _joystick_axis_poll(_joy_axis_mode_t* result_mode, bool* result_pressed,
                     uint8_t cia_port_inv_shifted)
@@ -88,11 +107,12 @@ _joystick_axis_poll(_joy_axis_mode_t* result_mode, bool* result_pressed,
     return Input_none_mask;
   }
 
-  result_mode->byte_high = 0x04 & 0x0f;
-  result_mode->byte_low = (1 << 4) & 0xf0 | (0x04 & 0x0f);
+  result_mode->byte_high = 0x04 & _MODE_HIGH_MODE_MASK;
+  result_mode->byte_low = (1 << _MODE_LOW_PACE_SHIFT)
+    | (0x04 & _MODE_LOW_TICKCOUNTER_MASK);
 
   if (cia_port_inv_shifted & CIA1_PRAB_JOYDOWN_MASK)
-    result_mode->byte_high |= 0x80;
+    result_mode->byte_high |= _MODE_HIGH_SIGN_MASK;
 
   /* just trigger poll result one time per pressing down  */
   if (*result_pressed) return Input_none_mask;
@@ -102,35 +122,44 @@ _joystick_axis_poll(_joy_axis_mode_t* result_mode, bool* result_pressed,
 }
 
 static void __fastcall__
-_joystick_axis_tick(Input_pace_t* result_pace, _joy_axis_mode_t* axis_mode)
+_joystick_axis_tick(Input_pace_t* result_pace,
+                    _joy_axis_mode_t* axis_mode)
 {
   if (!UINT16(*axis_mode)) return;
 
-  switch (axis_mode->byte_high & 0x0f) {
-  case 0x04:
-    *result_pace = axis_mode->byte_low >> 4;
+  switch (axis_mode->byte_high & _MODE_HIGH_MODE_MASK) {
+  case _MODE_HIGH_MODE_PACE:
+    *result_pace = axis_mode->byte_low >> _MODE_LOW_PACE_SHIFT;
     break;
-  case 0x03:
-    *result_pace = (axis_mode->byte_high & 0x70) != 0;
+  case _MODE_HIGH_MODE_3OF4:
+    *result_pace = (axis_mode->byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
+      != 0;
     break;
-  case 0x02:
-    *result_pace = (axis_mode->byte_high & (0x10 & 0x70)) != 0;
+  case _MODE_HIGH_MODE_1OF2:
+    *result_pace = (axis_mode->byte_high
+      & (_MODE_HIGH_SEQCOUNTER_BIT0 & _MODE_HIGH_SEQCOUNTER_MASK))
+      != 0;
     break;
-  case 0x01:
-    *result_pace = (axis_mode->byte_high & 0x70) == 0;
+  case _MODE_HIGH_MODE_1OF4:
+    *result_pace = (axis_mode->byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
+      == 0;
     break;
   default:
     DEBUG_ERROR("input tick, joy axis mode");
-  case 0x00:
+  case _MODE_HIGH_MODE_STOPPED:
     *result_pace = 0;
-    UINT16(*axis_mode) = (0x7000 & (1 << 12)) | (1 << 5);
+    UINT16(*axis_mode) = _MODE_16_DECREMENT(32);
     break;
   }
 
-  if (axis_mode->byte_high & 0x80) *result_pace = -*result_pace;
+  if (axis_mode->byte_high & _MODE_HIGH_SIGN_MASK) {
+    /* same '*result_pace = -*result_pace', but better performance  */
+    *result_pace = ~*result_pace + 1;
+  }
 
-  if ((axis_mode->byte_high & 0x70) == 0) axis_mode->byte_high |= 0x40;
-  UINT16(*axis_mode) -= (0x7000 & (1 << 12)) | (1 << 5);
+  if ((axis_mode->byte_high & _MODE_HIGH_SEQCOUNTER_MASK) == 0)
+    axis_mode->byte_high |= 0x40;
+  UINT16(*axis_mode) -= _MODE_16_DECREMENT(32);
 }
 
 /* ***************************************************************  */

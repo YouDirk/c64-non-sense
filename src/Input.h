@@ -30,9 +30,9 @@
 #define Input_all_mask             ((Input_device_t) 0xff)
 typedef uint8_t                    Input_device_t;
 
-/* Paces >= 1 or Paces <= -1 are unsigned integers.  Paces which are
- * slower than 1 and greater than -1 will be alterate it´s pace to
- * 1/-1 or 0 between engine ticks, depending on the pace.
+/* Paces >= 1 or Paces <= -1 are integers.  Paces which are slower
+ * than 1 and greater than -1 will be alterate it´s pace to 1/-1 or 0
+ * between engine ticks, depending on the pace.
  *
  * So you can use this value directly as increment for outputs in
  * ticking components.
