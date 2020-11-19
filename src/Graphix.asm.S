@@ -24,6 +24,9 @@
 
 .code
 
+;; Just for vlog.  Is swap between font- and shared buffer locked?
+.import _test_frontshared_lock
+
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME
@@ -35,6 +38,11 @@
         pha                             ; backup low byte of shared zp
         lda ptr1+1
         pha                             ; backup high byte of shared zp
+
+        ;; --- Just for vlog ---
+        MUTEX_ISLOCKED _test_frontshared_lock
+        bne locked                      ; if locked, we do nothing here
+        ;; --- end: Just for vlog ---
 
         lda _Graphix_buffer_back_ptr
         sta ptr1
@@ -51,6 +59,7 @@
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
+locked:
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
         ldy #Graphix_buffer_t::bordercolor
         lda (ptr1), y

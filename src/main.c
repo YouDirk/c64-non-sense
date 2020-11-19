@@ -65,16 +65,7 @@ main(void)
      * low priority ticking stuff
      */
 
-    /* Just for testing here, but very unperformant code.  It calls
-     * the CC65 runtime functions
-     *
-     *   * .tosumod0ax and .udiv32
-     *
-     * which are dividing a 32 bit wide unsigned integer.
-     */
-    if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
-      ++Graphix.buffer.bordercolor;
-    }
+    /* Just for vlog.  Black border color only...  */
 
     /*
      * ***********************************************************  */

@@ -156,9 +156,16 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 
 /* ***************************************************************  */
 
+/* Just for vlog.  Locks the swap between font- and shared buffer.
+ */
+mutex_t test_frontshared_lock;
+
 void __fastcall__
 Graphix_buffer_swap(void)
 {
+  /* Just for vlog.  Increase call duration...  */
+  uint8_t i = 0x80;
+
   Graphix.buffer.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
   Graphix.buffer.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
 
@@ -173,6 +180,13 @@ Graphix_buffer_swap(void)
    * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
    * GRAPHIX_INIT()
    */
+
+  /* Just for vlog.  Lock this section...  */
+  MUTEX_LOCK(test_frontshared_lock);
+
+  /* Just for vlog.  Do nothing for a long time...  */
+  while (--i);
+
 #ifndef CONF_DOUBLE_BUFFERING
   memcpy(Graphix_buffer_shared_ptr, &Graphix.buffer,
          sizeof(Graphix_buffer_t));
@@ -180,6 +194,9 @@ Graphix_buffer_swap(void)
   memcpy(Graphix_buffer_back_ptr, &Graphix.buffer,
          sizeof(Graphix_buffer_t));
 #endif /* CONF_DOUBLE_BUFFERING  */
+
+  /* Just for vlog.  Unlock this section...  */
+  MUTEX_UNLOCK(test_frontshared_lock);
 
   DEBUG_RENDERTIME_END();
   /* end of critical section
