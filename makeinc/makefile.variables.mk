@@ -50,7 +50,7 @@ DEF_GENSEXT := gen.s
 # --------------------------------------------------------------------
 
 2BOOL = $(subst 0,,$(1))
-2ALL = $(call 2BOOL,$(subst 1,all,$(1)))
+2FULL = $(call 2BOOL,$(subst 1,full,$(1)))
 
 ifneq (,$(call 2BOOL,$(CONF_DOUBLE_BUFFERING)))
   CCDEFINES += -DCONF_DOUBLE_BUFFERING
@@ -62,12 +62,12 @@ ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   CCDEBUGFLAGS := $(ASDEBUGFLAGS) -T
   OBJ += $(OBJ_DEBUG)
   CCDEFINES += -DDEBUG
-  ifeq (all,$(or $(call 2ALL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
-                 $(call 2BOOL,$(DEBUG_BUILD))))
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
+                  $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_IRQ_RENDERTIME
   endif
-  ifeq (all,$(or $(call 2ALL,$(DEBUG_OPT_TIMER1_SYNCCHECK)), \
-                 $(call 2BOOL,$(DEBUG_BUILD))))
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_TIMER1_SYNCCHECK)), \
+                  $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_TIMER1_SYNCCHECK
   endif
 else

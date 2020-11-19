@@ -19,11 +19,11 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: ['**']
     tags: ['vlog-*']
     paths: ['**']
   pull_request:
-    branches: [master]
+    branches: ['**']
     paths: ['**']
 
 # Settings
@@ -46,6 +46,7 @@ jobs:
     - name: Checking out...
       uses: actions/checkout@v2.3.4
       with:
+        ref: heads/master
         clean: true
         lfs: false
         submodules: false
@@ -74,6 +75,7 @@ jobs:
     - name: Checking out...
       uses: actions/checkout@v2.3.4
       with:
+        ref: ${{github.ref}}
         clean: true
         lfs: false
         submodules: false
@@ -85,7 +87,7 @@ jobs:
         make DEBUG_BUILD=0 recompile
     - name: Compiling with Full Debug config, using `$> make recompile`...
       run: |
-        make DEBUG_BUILD=all recompile
+        make DEBUG_BUILD=full recompile
 
 # ********************************************************************
   release-latest-commit:
@@ -103,6 +105,7 @@ jobs:
     - name: Checking out...
       uses: actions/checkout@v2.3.4
       with:
+        ref: heads/master
         clean: true
         lfs: false
         submodules: false
@@ -118,7 +121,7 @@ jobs:
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Building Full Debug version, using `$> make recompile`...
       run: |
-        make DEBUG_BUILD=all \
+        make DEBUG_BUILD=full \
           D64EXT=$(echo $GITHUB_SHA | head -c7).debug-full.d64 recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Updating git tag latest-commit...
@@ -158,6 +161,7 @@ jobs:
     - name: Checking out...
       uses: actions/checkout@v2.3.4
       with:
+        ref: ${{github.ref}}
         clean: true
         lfs: false
         submodules: false
@@ -175,7 +179,7 @@ jobs:
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
     - name: Building Full Debug version, using `$> make recompile`...
       run: |
-        make DEBUG_BUILD=all \
+        make DEBUG_BUILD=full \
           D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
           recompile
         cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .

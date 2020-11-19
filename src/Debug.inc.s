@@ -40,6 +40,19 @@
 .endif ; DEBUG_IRQ_RENDERTIME
 
 ;; *******************************************************************
+;;
+;; If you get trouble during calling these output functions in ISRs
+;; then it is required to backup the virtual zero-page registers of
+;; the CC65 runtime.  Currently not implemented, because it´s just
+;; debugging stuff, it exist currently just one call from TIMER_A_ISR
+;; which seems to work for now and the big overhead in run-time is
+;; unjustifyable for now.  An example implemetation you can find in
+;; the CC65 sources
+;;
+;;   CC65/libsrc/dbg/dbgsupp.s(c59e827): .DbgBreak, .DbgSwapZP, .CTemp
+;;
+;; Another better solution is to implement an assembler version of
+;; _Debug_{error,warn,note}
 
 .ifdef DEBUG
   ;; Call these macros for debugging output :)

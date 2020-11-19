@@ -20,7 +20,6 @@
 
 #include "chip-cia.gen.h"
 
-
 /* *******************************************************************
  *
  * Every axis of an joystick has a 16 bit MODE variable which saves
