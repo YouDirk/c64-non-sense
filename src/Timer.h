@@ -47,10 +47,10 @@
  */
 #ifndef CONF_DOUBLE_BUFFERING
 #  define TIMER_1_CALIBR_PAL_CLKS  -22 /* reduce buckings/sec (PAL)  */
-#  define TIMER_1_CALIBR_NTSC_CLKS   0 /* reduce buckings/sec (NTSC) */
+#  define TIMER_1_CALIBR_NTSC_CLKS TIMER_1_CALIBR_PAL_CLKS /* (NTSC) */
 #else /* CONF_DOUBLE_BUFFERING  */
 #  define TIMER_1_CALIBR_PAL_CLKS  -10 /* triple buffering disabled  */
-#  define TIMER_1_CALIBR_NTSC_CLKS   0
+#  define TIMER_1_CALIBR_NTSC_CLKS TIMER_1_CALIBR_PAL_CLKS /* (NTSC) */
 #endif /* CONF_DOUBLE_BUFFERING  */
 
 /* ***************************************************************  */
