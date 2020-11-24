@@ -16,41 +16,32 @@
  */
 
 
-#ifndef GRAPHIX_DEF_H__
-#define GRAPHIX_DEF_H__
+#ifndef DEBUG_DEF_H__
+#define DEBUG_DEF_H__
 
 #include "define.h"
 
-/* ***************************************************************  */
-
-/* graphic buffer structure  */
-typedef_struct_begin(Graphix_buffer_t)
-  typedef_struct_uint8_ptr(screen_ram)
-  typedef_struct_uint8_ptr(bitmap_ram)
-
-  typedef_struct_uint8(bordercolor)
-  typedef_struct_int8(scroll_x)
-  typedef_struct_int8(scroll_y)
-typedef_struct_end(Graphix_buffer_t)
+define_dec(_DEBUG_LIST_SIZE,            15)
 
 /* ***************************************************************  */
+
+typedef_enum(_debug_msgtype_t)
+  typedef_enum_hex(_debug_msgtype_t, _debug_error_e, 01)
+  typedef_enum_hex(_debug_msgtype_t, _debug_warn_e,  02)
+  typedef_enum_hex(_debug_msgtype_t, _debug_note_e,  03)
+
+typedef_struct_begin(_Debug_entry_t)
+  typedef_struct_uint32(time)
+  typedef_struct_nested(_debug_msgtype_t, type)
+  typedef_struct_constchar_ptr(msg)
+typedef_struct_end(_Debug_entry_t)
 
 /* Structure of static members for module.  */
-typedef_struct_begin(Graphix_t)
-
-  /* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine. */
-  typedef_struct_uint8(is_pal)
-
-  /* The logical graphic buffer.  */
-  typedef_struct_nested(Graphix_buffer_t, buffer)
-
-typedef_struct_end(Graphix_t)
+typedef_struct_begin(_Debug_t)
+  typedef_struct_uint8(count)
+  typedef_struct_nested_array(_Debug_entry_t, entry, _DEBUG_LIST_SIZE)
+typedef_struct_end(_Debug_t)
 
 /* ***************************************************************  */
 
-#ifndef CONF_DOUBLE_BUFFERING
-  extern_var(Graphix_buffer_t*, Graphix_buffer_shared_ptr)
-#endif /* CONF_DOUBLE_BUFFERING  */
-extern_var(Graphix_buffer_t*, Graphix_buffer_back_ptr)
-
-#endif /* GRAPHIX_DEF_H__  */
+#endif /* DEBUG_DEF_H__  */

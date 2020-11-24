@@ -61,6 +61,7 @@ ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   ASDEBUGFLAGS := -g
   CCDEBUGFLAGS := $(ASDEBUGFLAGS) -T
   OBJ += $(OBJ_DEBUG)
+  DEFH += $(DEFH_DEBUG)
   CCDEFINES += -DDEBUG
   ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))

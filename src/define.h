@@ -76,6 +76,15 @@ BC ******************************************************************
 #  define typedef_struct_char_ptr(name)           char* name;
 #  define typedef_struct_constchar_ptr(name)      const char* name;
 
+#  define typedef_struct_nested_array(other, name, size)             \
+                                                  other name[size];
+
+#  define typedef_enum(name)                      typedef uint8_t name;
+#  define typedef_enum_hex(type, name, value) \
+                                   _define(name, ((type) (0x##value)))
+#  define typedef_enum_dec(type, name, value) \
+                                   _define(name, ((type) (value)))
+
 #  define extern_var(type, name)                  extern type name;
 
 #elif defined(GEN_ASM_HEADER)
@@ -124,6 +133,13 @@ BC ******************************************************************
 #  define typedef_struct_void_ptr(name)           name .addr
 #  define typedef_struct_char_ptr(name)           name .addr
 #  define typedef_struct_constchar_ptr(name)      name .addr
+
+#  define typedef_struct_nested_array(other, name, size)             \
+                                   name .res ((size) * (.sizeof(other)))
+
+#  define typedef_enum(name)                      name .byte
+#  define typedef_enum_hex(type, name, value)     _define(name, $value)
+#  define typedef_enum_dec(type, name, value)     _define(name, value)
 
 #  define extern_var(type, name)                  .import _##name
 
