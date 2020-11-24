@@ -134,6 +134,8 @@ define(VIC_IMR_IRQMODE,                                              \
 define_hex(VIC_BORDERCOLOR,             d020)
 define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)
 
+/* ***************************************************************  */
+
 header_endif(CHIP_VIC)
 
 #endif /* CHIP_VIC_DEF_H__  */

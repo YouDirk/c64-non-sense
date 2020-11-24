@@ -21,6 +21,9 @@
 
 #include "define.h"
 
+header_ifndef(GRAPHIX)
+header_define(GRAPHIX)
+
 /* ***************************************************************  */
 
 /* graphic buffer structure  */
@@ -52,5 +55,9 @@ typedef_struct_end(Graphix_t)
   extern_var(Graphix_buffer_t*, Graphix_buffer_shared_ptr)
 #endif /* CONF_DOUBLE_BUFFERING  */
 extern_var(Graphix_buffer_t*, Graphix_buffer_back_ptr)
+
+/* ***************************************************************  */
+
+header_endif(GRAPHIX)
 
 #endif /* GRAPHIX_DEF_H__  */

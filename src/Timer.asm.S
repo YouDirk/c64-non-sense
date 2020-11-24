@@ -15,13 +15,11 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.include "common.inc.s"
+.include "Timer.inc.s"
 
-.include "Graphix.gen.s"
+.include "Graphix.inc.s"
 
 .include "chip-cia.gen.s"
-
-.importzp sreg                ; shared virtual register of CC65 runtime
 
 .code
 

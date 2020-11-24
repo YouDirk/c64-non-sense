@@ -15,33 +15,28 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifnblank COMMON_INC_S__
-.define COMMON_INC_S__
+.ifnblank TIMER_INC_S__
+.define TIMER_INC_S__
 
-.include "Debug.inc.s"
-
-;; *******************************************************************
-
-.importzp ptr1           ; shared zero page address of CC65 runtime
-.importzp sreg           ; shared virtual register of CC65 runtime
+.include "common.inc.s"
 
 ;; *******************************************************************
 
-.macro MUTEX_LOCK mutex
-        lda #$01
-        sta mutex
-.endmacro                               ; MUTEX_LOCK
+;; extern void __fastcall__ Timer_a_isr(void);
+.global Timer_a_isr
 
-.macro MUTEX_UNLOCK mutex
-        lsr mutex
-.endmacro                               ; MUTEX_UNLOCK
+;; extern uint8_t __fastcall__ Timer_1_get8_isrsafe(void);
+.global Timer_1_get8_isrsafe
 
-        ;; if locked then Z-bit will be cleared (non-zero)
-.macro MUTEX_ISLOCKED mutex
-        lda #$ff
-        bit mutex
-.endmacro                               ; MUTEX_ISLOCKED
+;; extern uint16_t __fastcall__ Timer_1_get16_isrsafe(void);
+.global Timer_1_get16_isrsafe
+
+;; extern uint32_t __fastcall__ Timer_1_get32_isrsafe(void);
+.global Timer_1_get32_isrsafe
+
+;; extern void __fastcall__ Timer_1_reset_isrsafe(void);
+.global Timer_1_reset_isrsafe
 
 ;; *******************************************************************
 
-.endif                                  ; COMMON_INC_S__
+.endif                                  ; TIMER_INC_S__

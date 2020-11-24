@@ -20,6 +20,8 @@
 
 .include "common.inc.s"
 
+.include "chip-vic.gen.s"
+
 ;; *******************************************************************
 
 .ifdef DEBUG_IRQ_RENDERTIME
@@ -66,11 +68,11 @@
   ;; -----------------------------------------------------------------
   ;; Do not call directly!  Call the macros DEBUG_*() above instead.
   ;;
-  .import _Debug_init
-  .import _Debug_release_print
-  .import _Debug_error
-  .import _Debug_warn
-  .import _Debug_note
+  .global _Debug_init
+  .global _Debug_release_print
+  .global _Debug_error
+  .global _Debug_warn
+  .global _Debug_note
 
   .macro _DEBUG_HELPER msg, function
   .scope

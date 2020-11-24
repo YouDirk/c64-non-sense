@@ -15,33 +15,39 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifnblank COMMON_INC_S__
-.define COMMON_INC_S__
-
 .include "Debug.inc.s"
+.include "Debug.gen.s"
+
+.code
 
 ;; *******************************************************************
 
-.importzp ptr1           ; shared zero page address of CC65 runtime
-.importzp sreg           ; shared virtual register of CC65 runtime
+;; CC65 calling conventions: fastcall 16 bit, last argument
+;;
+;;   * [byte1, byte0] => [X, A]
+;;
+.export _Debug_note_TODO
+_Debug_note_TODO:
+
+.export Debug_note_isrsafe
+.proc Debug_note_isrsafe: near
+
+        pha                        ; backup lowB arg msg_ptr
+        txa
+        pha                        ; backup highB arg msg_ptr
+
+        ldy #_Debug_t::count
+        lda __Debug, y
+        cmp #_DEBUG_LIST_SIZE
+        bcs return                 ; if (_Debug.count >= size) return;
+
+        
+
+return:
+        pla                        ; restore highB arg msg_ptr
+        pla                        ; restore lowB arg msg_ptr
+
+        rts
+.endproc                                ; Debug_note_isrsafe
 
 ;; *******************************************************************
-
-.macro MUTEX_LOCK mutex
-        lda #$01
-        sta mutex
-.endmacro                               ; MUTEX_LOCK
-
-.macro MUTEX_UNLOCK mutex
-        lsr mutex
-.endmacro                               ; MUTEX_UNLOCK
-
-        ;; if locked then Z-bit will be cleared (non-zero)
-.macro MUTEX_ISLOCKED mutex
-        lda #$ff
-        bit mutex
-.endmacro                               ; MUTEX_ISLOCKED
-
-;; *******************************************************************
-
-.endif                                  ; COMMON_INC_S__

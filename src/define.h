@@ -58,6 +58,8 @@ BC ******************************************************************
 #  define typedef_struct_end(name)      } name;
 #  define typedef_struct_nested(other, name)      other name;
 #  define typedef_struct_nested_ptr(other, name)  other* name;
+#  define typedef_struct_enum(other, name)        other name;
+#  define typedef_struct_enum_ptr(other, name)    other* name;
 #  define typedef_struct_bool(name)               bool name;
 #  define typedef_struct_bool_ptr(name)           bool* name;
 #  define typedef_struct_uint8(name)              uint8_t name;
@@ -79,7 +81,8 @@ BC ******************************************************************
 #  define typedef_struct_nested_array(other, name, size)             \
                                                   other name[size];
 
-#  define typedef_enum(name)                      typedef uint8_t name;
+#  define typedef_enum_begin(name)                typedef uint8_t name;
+#  define typedef_enum_end(name)                  BC enum name  */
 #  define typedef_enum_hex(type, name, value) \
                                    _define(name, ((type) (0x##value)))
 #  define typedef_enum_dec(type, name, value) \
@@ -115,29 +118,32 @@ BC ******************************************************************
 #  define typedef_struct_begin(name)    .struct name
 #  define typedef_struct_end(name)      .endstruct ; struct name
 #  define typedef_struct_nested(other, name)      name .tag other
-#  define typedef_struct_nested_ptr(other, name)  name .addr
-#  define typedef_struct_bool(name)               name .byte
-#  define typedef_struct_bool_ptr(name)           name .addr
-#  define typedef_struct_uint8(name)              name .byte
-#  define typedef_struct_uint8_ptr(name)          name .addr
-#  define typedef_struct_uint16(name)             name .word
-#  define typedef_struct_uint16_ptr(name)         name .addr
-#  define typedef_struct_uint32(name)             name .dword
-#  define typedef_struct_uint32_ptr(name)         name .addr
-#  define typedef_struct_int8(name)               name .byte
-#  define typedef_struct_int8_ptr(name)           name .addr
-#  define typedef_struct_int16(name)              name .word
-#  define typedef_struct_int16_ptr(name)          name .addr
-#  define typedef_struct_int32(name)              name .dword
-#  define typedef_struct_int32_ptr(name)          name .addr
-#  define typedef_struct_void_ptr(name)           name .addr
-#  define typedef_struct_char_ptr(name)           name .addr
-#  define typedef_struct_constchar_ptr(name)      name .addr
+#  define typedef_struct_nested_ptr(other, name)  name .addr  ; other*
+#  define typedef_struct_enum(other, name)        name .byte  ; other
+#  define typedef_struct_enum_ptr(other, name)    name .addr  ; other*
+#  define typedef_struct_bool(name)               name .byte  ; bool
+#  define typedef_struct_bool_ptr(name)           name .addr  ; bool*
+#  define typedef_struct_uint8(name)              name .byte  ; uint8
+#  define typedef_struct_uint8_ptr(name)          name .addr  ; uint8*
+#  define typedef_struct_uint16(name)             name .word  ; uint16
+#  define typedef_struct_uint16_ptr(name)         name .addr  ; uint16*
+#  define typedef_struct_uint32(name)             name .dword ; uint32
+#  define typedef_struct_uint32_ptr(name)         name .addr  ; uint32*
+#  define typedef_struct_int8(name)               name .byte  ; int8
+#  define typedef_struct_int8_ptr(name)           name .addr  ; int8*
+#  define typedef_struct_int16(name)              name .word  ; int16
+#  define typedef_struct_int16_ptr(name)          name .addr  ; int16*
+#  define typedef_struct_int32(name)              name .dword ; int32
+#  define typedef_struct_int32_ptr(name)          name .addr  ; int32*
+#  define typedef_struct_void_ptr(name)           name .addr  ; void*
+#  define typedef_struct_char_ptr(name)           name .addr  ; char*
+#  define typedef_struct_constchar_ptr(name)      name .addr ; const char*
 
 #  define typedef_struct_nested_array(other, name, size)             \
-                                   name .res ((size) * (.sizeof(other)))
+                                                  name .tag other (size)
 
-#  define typedef_enum(name)                      name .byte
+#  define typedef_enum_begin(name)      _define(name, .sizeof(.byte))
+#  define typedef_enum_end(name)        ; enum name
 #  define typedef_enum_hex(type, name, value)     _define(name, $value)
 #  define typedef_enum_dec(type, name, value)     _define(name, value)
 

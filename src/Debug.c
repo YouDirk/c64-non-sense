@@ -24,7 +24,7 @@
 /* ***************************************************************  */
 
 /* Static members of this module.  */
-static _Debug_t _Debug;
+_Debug_t _Debug;
 
 void __fastcall__
 Debug_init(void)

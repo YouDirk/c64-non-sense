@@ -23,7 +23,7 @@ OBJ = Interrupt.asm Timer.asm Timer Input Graphix.asm Graphix Engine \
 DEFH = chip-vic chip-cia kernal Graphix
 
 # compile and link only if DEBUG_BUILD=1 in makefile.config.mk
-OBJ_DEBUG = Debug
+OBJ_DEBUG = Debug.asm Debug
 DEFH_DEBUG = Debug
 
 include ../makeinc/makefile.inc.mk

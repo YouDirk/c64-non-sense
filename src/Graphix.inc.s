@@ -15,33 +15,17 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifnblank COMMON_INC_S__
-.define COMMON_INC_S__
+.ifnblank GRAPHIX_INC_S__
+.define GRAPHIX_INC_S__
 
-.include "Debug.inc.s"
-
-;; *******************************************************************
-
-.importzp ptr1           ; shared zero page address of CC65 runtime
-.importzp sreg           ; shared virtual register of CC65 runtime
+.include "common.inc.s"
+.include "Graphix.gen.s"
 
 ;; *******************************************************************
 
-.macro MUTEX_LOCK mutex
-        lda #$01
-        sta mutex
-.endmacro                               ; MUTEX_LOCK
-
-.macro MUTEX_UNLOCK mutex
-        lsr mutex
-.endmacro                               ; MUTEX_UNLOCK
-
-        ;; if locked then Z-bit will be cleared (non-zero)
-.macro MUTEX_ISLOCKED mutex
-        lda #$ff
-        bit mutex
-.endmacro                               ; MUTEX_ISLOCKED
+;; extern void __fastcall__ Graphix_rasterline_isr(void);
+.global Graphix_rasterline_isr
 
 ;; *******************************************************************
 
-.endif                                  ; COMMON_INC_S__
+.endif                                  ; GRAPHIX_INC_S__

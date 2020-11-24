@@ -17,6 +17,9 @@
 
 .include "common.inc.s"
 
+.include "Timer.inc.s"
+.include "Graphix.inc.s"
+
 .include "chip-vic.gen.s"
 .include "chip-cia.gen.s"
 
@@ -59,8 +62,6 @@
         rts
 .endproc                                ; _Interrupt_release
 
-.import Graphix_rasterline_isr
-.import Timer_a_isr
 .proc Interrupt_irq_isr: near           ; ISR of IRQs begins here
 
 vic:

@@ -15,12 +15,9 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.include "common.inc.s"
-.include "Graphix.gen.s"
+.include "Graphix.inc.s"
 
 .include "chip-vic.gen.s"
-
-.importzp ptr1                ; shared zero page address of CC65 runtime
 
 .code
 

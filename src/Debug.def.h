@@ -21,18 +21,22 @@
 
 #include "define.h"
 
-define_dec(_DEBUG_LIST_SIZE,            15)
+header_ifndef(DEBUG)
+header_define(DEBUG)
 
 /* ***************************************************************  */
 
-typedef_enum(_debug_msgtype_t)
+define_dec(_DEBUG_LIST_SIZE,            15)
+
+typedef_enum_begin(_debug_msgtype_t)
   typedef_enum_hex(_debug_msgtype_t, _debug_error_e, 01)
   typedef_enum_hex(_debug_msgtype_t, _debug_warn_e,  02)
   typedef_enum_hex(_debug_msgtype_t, _debug_note_e,  03)
+typedef_enum_end(_debug_msgtype_t)
 
 typedef_struct_begin(_Debug_entry_t)
   typedef_struct_uint32(time)
-  typedef_struct_nested(_debug_msgtype_t, type)
+  typedef_struct_enum(_debug_msgtype_t, type)
   typedef_struct_constchar_ptr(msg)
 typedef_struct_end(_Debug_entry_t)
 
@@ -43,5 +47,12 @@ typedef_struct_begin(_Debug_t)
 typedef_struct_end(_Debug_t)
 
 /* ***************************************************************  */
+
+/* Static members of this module.  */
+extern_var(_Debug_t, _Debug)
+
+/* ***************************************************************  */
+
+header_endif(DEBUG)
 
 #endif /* DEBUG_DEF_H__  */
