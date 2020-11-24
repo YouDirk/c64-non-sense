@@ -44,6 +44,7 @@ typedef_struct_end(_Debug_entry_t)
 typedef_struct_begin(_Debug_t)
   typedef_struct_uint8(count)
   typedef_struct_nested_array(_Debug_entry_t, entry, _DEBUG_LIST_SIZE)
+  typedef_struct_nested_ptr(_Debug_entry_t, end)
 typedef_struct_end(_Debug_t)
 
 /* ***************************************************************  */

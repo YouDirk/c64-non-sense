@@ -27,6 +27,38 @@
 
 ;; *******************************************************************
 
+;; The high byte of the C64 processor stack address is hard wired to
+;; 0x0100.  The Stack Pointer Register (S register) of the MOS 6510
+;; CPU will be initialized to 0xff by the Kernal during RESET.
+;; Therefore, if the stack is empty it points to 0x01ff.  On pushing
+;; to it (PHA <VALUE> instruction) the VALUE will be saved to 0x01SS
+;; (SS: value of S register) and AFTER that, SS will be decrmented by
+;; 1.
+;;
+;; The top of C64 processor stack (TOS) can be calculated as
+;;
+;;   TOS = 0x0101 + SS
+;;
+;; In assembler the N-th byte of the processor stack can be ezly
+;; addressed via
+;;
+;; ```asm
+;;   tsx                      ; Transfer S register into X register
+;;   lda STACK_BASE + N, x    ; Load the N-th byte of TOS into accu
+;;   sta STACK_BASE + N, x    ; Store accu into the N-th byte of TOS
+;; ```
+;;
+.define STACK_BASE                 $0101
+
+;; *******************************************************************
+
+.define SIZEOF_BYTE                1
+.define SIZEOF_WORD                2
+.define SIZEOF_DWORD               4
+.define SIZEOF_ADDR                2
+
+;; *******************************************************************
+
 .macro MUTEX_LOCK mutex
         lda #$01
         sta mutex

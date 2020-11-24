@@ -30,13 +30,13 @@
 
         lda ptr1
         pha                             ; backup low byte of shared zp
-        lda ptr1+1
+        lda ptr1 + 1
         pha                             ; backup high byte of shared zp
 
         lda _Graphix_buffer_back_ptr
         sta ptr1
-        lda _Graphix_buffer_back_ptr+1
-        sta ptr1+1                      ; ptr1 = _Graphix_buffer_back_ptr
+        lda _Graphix_buffer_back_ptr + 1
+        sta ptr1 + 1                    ; ptr1 = _Graphix_buffer_back_ptr
 
         ldy #Graphix_buffer_t::scroll_y
         lda (ptr1), y
@@ -57,7 +57,7 @@
 .endif ; DEBUG_IRQ_RENDERTIME
 
         pla
-        sta ptr1+1                      ; restore high byte of shared zp
+        sta ptr1 + 1                    ; restore high byte of shared zp
         pla
         sta ptr1                        ; restore low byte of shared zp
 

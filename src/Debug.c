@@ -30,27 +30,28 @@ void __fastcall__
 Debug_init(void)
 {
   _Debug.count = 0;
+  _Debug.end = _Debug.entry;
 }
 
 void __fastcall__
 Debug_release_print(void)
 {
-  uint8_t i; const char* type_str;
+  _Debug_entry_t* cur;
+  const char* type_str;
 
   printf("debug: %u%c message%c%s\n",
          _Debug.count, _Debug.count >= _DEBUG_LIST_SIZE? '+': '\0',
          _Debug.count == 1? '\0': 's', _Debug.count == 0? " :)": "...");
 
-  for (i=0; i<_Debug.count; ++i) {
-    switch (_Debug.entry[i].type) {
+  for (cur=_Debug.entry; cur<_Debug.end; ++cur) {
+    switch (cur->type) {
     case _debug_error_e: type_str = "error"; break;
     case _debug_warn_e: type_str = "warn"; break;
     case _debug_note_e: type_str = "note"; break;
     default: type_str = "<unknown>";
     }
 
-    printf(" [%lu] %s: %s\n",
-           _Debug.entry[i].time, type_str, _Debug.entry[i].msg);
+    printf(" [%lu] %s: %s\n", cur->time, type_str, cur->msg);
   }
 }
 
@@ -61,9 +62,11 @@ Debug_error(const char* msg)
 {
   if (_Debug.count >= _DEBUG_LIST_SIZE) return;
 
-  _Debug.entry[_Debug.count].time = Timer_1_get32();
-  _Debug.entry[_Debug.count].type = _debug_error_e;
-  _Debug.entry[_Debug.count++].msg = msg;
+  _Debug.end->time = Timer_1_get32();
+  _Debug.end->type = _debug_error_e;
+  _Debug.end->msg = msg;
+
+  ++_Debug.end; ++_Debug.count;
 }
 
 void __fastcall__
@@ -71,17 +74,9 @@ Debug_warn(const char* msg)
 {
   if (_Debug.count >= _DEBUG_LIST_SIZE) return;
 
-  _Debug.entry[_Debug.count].time = Timer_1_get32();
-  _Debug.entry[_Debug.count].type = _debug_warn_e;
-  _Debug.entry[_Debug.count++].msg = msg;
-}
+  _Debug.end->time = Timer_1_get32();
+  _Debug.end->type = _debug_warn_e;
+  _Debug.end->msg = msg;
 
-void __fastcall__
-Debug_note(const char* msg)
-{
-  if (_Debug.count >= _DEBUG_LIST_SIZE) return;
-
-  _Debug.entry[_Debug.count].time = Timer_1_get32();
-  _Debug.entry[_Debug.count].type = _debug_note_e;
-  _Debug.entry[_Debug.count++].msg = msg;
+  ++_Debug.end; ++_Debug.count;
 }

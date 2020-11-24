@@ -142,7 +142,7 @@ BC ******************************************************************
 #  define typedef_struct_nested_array(other, name, size)             \
                                                   name .tag other (size)
 
-#  define typedef_enum_begin(name)      _define(name, .sizeof(.byte))
+#  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)
 #  define typedef_enum_end(name)        ; enum name
 #  define typedef_enum_hex(type, name, value)     _define(name, $value)
 #  define typedef_enum_dec(type, name, value)     _define(name, value)

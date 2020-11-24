@@ -25,7 +25,6 @@
 
 ;; *******************************************************************
 
-.import _timer_1_32
 .export Timer_a_isr
 .proc Timer_a_isr: near
         DEBUG_RENDERTIME_BEGIN #VIC_COLOR_BLUE
@@ -65,13 +64,13 @@ timer_1_sync:
         ;; *** end of swap ***
         ;; -----------------------------------------------------------
 
-        inc _timer_1_32                 ; ++byte 0
+        inc __timer_1_32                ; ++byte 0
         bne not_overflow                ; ready, if not overflow
-        inc _timer_1_32 + 1             ; ++byte 1
+        inc __timer_1_32 + 1            ; ++byte 1
         bne not_overflow                ; ready, if not overflow
-        inc _timer_1_32 + 2             ; ++byte 2
+        inc __timer_1_32 + 2            ; ++byte 2
         bne not_overflow                ; ready, if not overflow
-        inc _timer_1_32 + 3             ; ++byte 3
+        inc __timer_1_32 + 3            ; ++byte 3
 
 .ifdef DEBUG
         bne not_overflow
@@ -100,12 +99,12 @@ _Timer_1_get32:
         lda #CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK)
         sta CIA1_ICR                    ; mask CIA1 timer A IRQs
 
-        lda _timer_1_32 + 3
+        lda __timer_1_32 + 3
         sta sreg + 1                    ; return byte 3 of timer
-        lda _timer_1_32 + 2
+        lda __timer_1_32 + 2
         sta sreg                        ; return byte 2 of timer
-        ldx _timer_1_32 + 1             ; return byte 1 of timer
-        lda _timer_1_32                 ; return byte 0 of timer
+        ldx __timer_1_32 + 1            ; return byte 1 of timer
+        lda __timer_1_32                ; return byte 0 of timer
 
         ldy #CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
         sty CIA1_ICR                    ; unmask CIA1 timer A IRQs
@@ -124,8 +123,8 @@ _Timer_1_get16:
         lda #CIA_ICR_MASK(CIA_ICR_TIMERAZERO_MASK)
         sta CIA1_ICR                    ; mask CIA1 timer A IRQs
 
-        ldx _timer_1_32 + 1             ; return byte 1 of timer
-        lda _timer_1_32                 ; return byte 0 of timer
+        ldx __timer_1_32 + 1            ; return byte 1 of timer
+        lda __timer_1_32                ; return byte 0 of timer
 
         ldy #CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
         sty CIA1_ICR                    ; unmask CIA1 timer A IRQs
@@ -141,7 +140,7 @@ _Timer_1_get8:
 .export Timer_1_get8_isrsafe
 .proc Timer_1_get8_isrsafe: near
 
-        lda _timer_1_32                 ; return byte 0 of timer
+        lda __timer_1_32                ; return byte 0 of timer
 
         rts
 .endproc                                ; Timer_1_get8_isrsafe
@@ -158,10 +157,10 @@ _Timer_1_reset:
         sta CIA1_ICR                    ; mask CIA1 timer A IRQs
 
         lda #$00
-        sta _timer_1_32 + 3             ; reset byte 3 of timer
-        sta _timer_1_32 + 2             ; reset byte 2 of timer
-        sta _timer_1_32 + 1             ; reset byte 1 of timer
-        sta _timer_1_32                 ; reset byte 0 of timer
+        sta __timer_1_32 + 3            ; reset byte 3 of timer
+        sta __timer_1_32 + 2            ; reset byte 2 of timer
+        sta __timer_1_32 + 1            ; reset byte 1 of timer
+        sta __timer_1_32                ; reset byte 0 of timer
 
         lda #CIA_ICR_UNMASK(CIA_ICR_TIMERAZERO_MASK)
         sta CIA1_ICR                    ; unmask CIA1 timer A IRQs

@@ -37,7 +37,7 @@
 static uint16_t _ta_default;
 
 /* The logical timers :) ...  Will be incremented by ISR.  */
-volatile uint32_t timer_1_32;
+volatile uint32_t _timer_1_32;
 
 /* ***************************************************************  */
 
@@ -50,7 +50,7 @@ Timer_init(void)
   /* initialize timers.  Do not call Timer_?_reset() here, it unmask
    * IRQ before it was initialized.
    */
-  timer_1_32 = 0;
+  _timer_1_32 = 0;
 
   /* Set CIA1 timer A interval to 1/TIMER_1_FREQUENCY_HZ ms, depending
    * on PAL/NTSC.  Graphix_ispal was initialized before
