@@ -24,23 +24,12 @@
 
 ;; *******************************************************************
 
-;; CC65 calling conventions: fastcall 16 bit, last argument
-;;
-;;   * [byte1, byte0] => [X, A]
-;;
-.export _Debug_note
-_Debug_note:
-
-.export Debug_note_isrsafe
-.proc Debug_note_isrsafe: near
-
-        pha                             ; backup lowB arg msg_ptr
-        txa
-        pha                             ; backup highB arg msg_ptr
+;; void __Debug_msg_isrsafe([TOS+1, TOS+2] msg, TOS type)
+.proc __Debug_msg_isrsafe: near
 
         lda __Debug + _Debug_t::count
-        cmp #_DEBUG_LIST_SIZE
-        bcs return_fast            ; if (_Debug.count >= size) return;
+        cmp #_DEBUG_LIST_SIZE           ; if (_Debug.count >= size)
+        bcs return_fast                 ;   return;
 
         lda ptr1
         pha                             ; backup low byte of shared zp
@@ -52,7 +41,7 @@ _Debug_note:
         lda __Debug + _Debug_t::end
         sta ptr1
         lda __Debug + _Debug_t::end + 1
-        sta ptr1+1                      ; ptr1 = _Debug.end
+        sta ptr1 + 1                    ; ptr1 = &_Debug.end
 
 
         jsr Timer_1_get32_isrsafe       ; uint32 Timer_1_get32(void);
@@ -64,29 +53,30 @@ _Debug_note:
         lda sreg
         iny
         sta (ptr1), y
-        lda sreg + 1
+        lda sreg + 1                    ; _Debug.end->time = Timer_1_get32();
 
-        lda #_debug_note_e
+        tsx                             ; X = TOS
+
+        lda STACK_BASE + SIZEOF_ADDR, x
         ldy #_Debug_entry_t::type
-        sta (ptr1), y
+        sta (ptr1), y                   ; _Debug.end->type = arg1;
 
-        tsx
-        lda STACK_BASE + SIZEOF_ADDR + 1, x
+        lda STACK_BASE + SIZEOF_ADDR + _debug_msgtype_t + 1, x
         ldy #_Debug_entry_t::msg
         sta (ptr1), y
-        lda STACK_BASE + SIZEOF_ADDR, x
+        lda STACK_BASE + SIZEOF_ADDR + _debug_msgtype_t, x
         iny
-        sta (ptr1), y
+        sta (ptr1), y                   ; _Debug.end->msg = arg0;
 
         lda #.sizeof(_Debug_entry_t)
         clc
         adc __Debug + _Debug_t::end
         sta __Debug + _Debug_t::end
         bcc inc_endptr_done
-        inc __Debug + _Debug_t::end + 1
+        inc __Debug + _Debug_t::end + 1 ; ++_Debug.end;
 inc_endptr_done:
 
-        inc __Debug + _Debug_t::count
+        inc __Debug + _Debug_t::count   ; ++_Debug.count;
 
         ;; ---
 return:
@@ -96,10 +86,65 @@ return:
         sta ptr1                        ; restore low byte of shared zp
 
 return_fast:
-        pla                             ; pull highB arg msg_ptr
-        pla                             ; pull lowB arg msg_ptr
+        pla                             ; pull arg1 type
+        pla                             ; pull highB arg0 msg
+        pla                             ; pull lowB arg0 msg
 
         rts
+.endproc                                ; __Debug_msg_isrsafe
+
+;; *******************************************************************
+
+;; CC65 calling conventions: fastcall 16 bit, last argument
+;;
+;;   * [byte1, byte0] => [X, A]
+;;
+.export _Debug_error
+_Debug_error:
+
+.export Debug_error_isrsafe
+.proc Debug_error_isrsafe: near
+
+        pha                             ; __Debug_msg_isrsafe: lowB arg0
+        txa
+        pha                             ; __Debug_msg_isrsafe: highB arg0
+
+        lda #_debug_error_e
+        pha                             ; __Debug_msg_isrsafe: arg1
+
+        jmp __Debug_msg_isrsafe
+.endproc                                ; Debug_error_isrsafe
+
+.export _Debug_warn
+_Debug_warn:
+
+.export Debug_warn_isrsafe
+.proc Debug_warn_isrsafe: near
+
+        pha                             ; __Debug_msg_isrsafe: lowB arg0
+        txa
+        pha                             ; __Debug_msg_isrsafe: highB arg0
+
+        lda #_debug_warn_e
+        pha                             ; __Debug_msg_isrsafe: arg1
+
+        jmp __Debug_msg_isrsafe
+.endproc                                ; Debug_warn_isrsafe
+
+.export _Debug_note
+_Debug_note:
+
+.export Debug_note_isrsafe
+.proc Debug_note_isrsafe: near
+
+        pha                             ; __Debug_msg_isrsafe: lowB arg0
+        txa
+        pha                             ; __Debug_msg_isrsafe: highB arg0
+
+        lda #_debug_note_e
+        pha                             ; __Debug_msg_isrsafe: arg1
+
+        jmp __Debug_msg_isrsafe
 .endproc                                ; Debug_note_isrsafe
 
 ;; *******************************************************************

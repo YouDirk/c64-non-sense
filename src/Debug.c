@@ -56,27 +56,3 @@ Debug_release_print(void)
 }
 
 /* ***************************************************************  */
-
-void __fastcall__
-Debug_error(const char* msg)
-{
-  if (_Debug.count >= _DEBUG_LIST_SIZE) return;
-
-  _Debug.end->time = Timer_1_get32();
-  _Debug.end->type = _debug_error_e;
-  _Debug.end->msg = msg;
-
-  ++_Debug.end; ++_Debug.count;
-}
-
-void __fastcall__
-Debug_warn(const char* msg)
-{
-  if (_Debug.count >= _DEBUG_LIST_SIZE) return;
-
-  _Debug.end->time = Timer_1_get32();
-  _Debug.end->type = _debug_warn_e;
-  _Debug.end->msg = msg;
-
-  ++_Debug.end; ++_Debug.count;
-}

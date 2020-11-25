@@ -58,21 +58,21 @@
 
 .ifdef DEBUG
   ;; Call these macros for debugging output :)
-  .define DEBUG_INIT               jsr _Debug_init
-  .define DEBUG_RELEASE_PRINT      jsr _Debug_release_print
+  .define DEBUG_INIT           jsr _Debug_init
+  .define DEBUG_RELEASE_PRINT  jsr _Debug_release_print
 
-  .define DEBUG_ERROR(msg)         _DEBUG_HELPER msg, _Debug_error
-  .define DEBUG_WARN(msg)          _DEBUG_HELPER msg, _Debug_warn
-  .define DEBUG_NOTE(msg)          _DEBUG_HELPER msg, _Debug_note
+  .define DEBUG_ERROR(msg)     _DEBUG_HELPER msg, Debug_error_isrsafe
+  .define DEBUG_WARN(msg)      _DEBUG_HELPER msg, Debug_warn_isrsafe
+  .define DEBUG_NOTE(msg)      _DEBUG_HELPER msg, Debug_note_isrsafe
 
   ;; -----------------------------------------------------------------
   ;; Do not call directly!  Call the macros DEBUG_*() above instead.
   ;;
   .global _Debug_init
   .global _Debug_release_print
-  .global _Debug_error
-  .global _Debug_warn
-  .global _Debug_note
+  .global Debug_error_isrsafe
+  .global Debug_warn_isrsafe
+  .global Debug_note_isrsafe
 
   .macro _DEBUG_HELPER msg, function
   .scope
