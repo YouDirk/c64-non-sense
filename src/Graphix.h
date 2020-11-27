@@ -95,8 +95,7 @@ typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
 /* Static members of this module.  */
 extern Graphix_t Graphix;
 
-/* Returns a singleton.  So it´s not needed to pass it as argument
- * into other functions of this Graphix module.
+/* Initialize this module.
  *
  * init_callback: Is called after all graphic initialization is done,
  *                but SCREEN IS STILL BLACK and VIC IRQs ARE DISABLED.

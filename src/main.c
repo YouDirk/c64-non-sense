@@ -18,9 +18,10 @@
 
 #include "common.h"
 
-#include "Engine.h"
 #include "Input.h"
 #include "Graphix.h"
+#include "Engine.h"
+#include "Sandbox.h"
 
 /* ***************************************************************  */
 
@@ -38,21 +39,20 @@ main(void)
   _main_engine_config.inputs_enabled = Input_joy_all_mask;
   Engine_init(&_main_engine_config);
 
-  Input_joy_config(Input_joy_port2_mask, 2, 4, 4);
-
   do {
     do {
       /* *************************************************************
        * polling stuff between engine ticks
        */
 
+      /* poll test- and staging code  */
+      Sandbox_poll();
+
       /* should be the last poll, to reduce input delay  */
       polled = Input_poll();
-      if (polled & Input_joy_port2_mask) {
-        DEBUG_NOTE("joy port2 polled");
-      } else if (polled & Input_joy_port1_mask) {
-        DEBUG_NOTE("joy port1 polled");
-      }
+      if (polled & Input_joy_port2_mask) DEBUG_NOTE("joy port2 polled");
+      if (polled & Input_joy_port1_mask) DEBUG_NOTE("joy port1 polled");
+
     } while (!Engine_tick_poll());
 
     /* ***************************************************************
@@ -62,10 +62,8 @@ main(void)
     /* first in time critical section  */
     Input_tick();
 
-    Graphix.buffer.scroll_y
-      += Input.joy_port2.y_pace + Input.joy_port1.y_pace;
-    Graphix.buffer.scroll_x
-      += Input.joy_port2.x_pace + Input.joy_port1.x_pace;
+    /* poll test- and staging code  */
+    Sandbox_tick();
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
@@ -74,18 +72,8 @@ main(void)
      * low priority ticking stuff
      */
 
-    /* Just for testing here, but very unperformant code.  It calls
-     * the CC65 runtime functions
-     *
-     *   * .tosumod0ax and .udiv32
-     *
-     * which are dividing a 32 bit wide unsigned integer.
-     */
-    if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0)
-      ++Graphix.buffer.bordercolor;
-
-    if (Input.joy_port2.button1_pressed
-        || Input.joy_port1.button1_pressed) Engine.set.exit = 0;
+    /* poll test- and staging code  */
+    Sandbox_tick_low();
 
     /*
      * ***********************************************************  */

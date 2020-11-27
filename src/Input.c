@@ -64,15 +64,14 @@ typedef uint16_s                   _joy_axis_mode_t;
 
 typedef struct _joy_axis_t {
   _joy_axis_mode_t mode;
-  uint16_t initial;
-  uint16_t decrement;
+  uint16_t initial, decrement;
 } _joy_axis_t;
 
 typedef struct _joy_status_t {
   _joy_axis_t y, x;
 } _joy_status_t;
 
-static _joy_status_t _joy_port2, _joy_port1;
+static _joy_status_t               _joy_port2, _joy_port1;
 
 /* ***************************************************************  */
 
@@ -134,6 +133,9 @@ _joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
   return true;
 }
 
+/* Looks redundant and bad for understanding, but hopefully a bit
+ * performant.
+ */
 Input_device_t __fastcall__
 Input_poll(void)
 {
@@ -254,7 +256,7 @@ Input_joy_config(Input_device_t device, int4_t pace, uint8_t brakerate,
       joystick = &_joy_port1;
       device &= ~Input_joy_port1_mask;
     } else {
-      DEBUG_ERROR("input config, joy device!");
+      DEBUG_ERROR("input config, no joystick!");
       return;
     }
 

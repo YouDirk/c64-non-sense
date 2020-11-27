@@ -21,6 +21,7 @@
 #include "Interrupt.h"
 #include "Input.h"
 #include "Graphix.h"
+#include "Sandbox.h"
 
 /* ***************************************************************  */
 
@@ -56,6 +57,9 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
 
   /* init input stuff, such like joystick, keyboard, etc  */
   Input_init(_Engine_config->inputs_enabled);
+
+  /* test and staging code  */
+  Sandbox_init();
 }
 
 void __fastcall__
@@ -74,6 +78,9 @@ Engine_init(Engine_config_t* config)
 static void __fastcall__
 _Engine_release_blackscreen(void)
 {
+  /* also test- and staged code should be deinitialized  */
+  Sandbox_release();
+
   /* hmmmm ...  */
   Input_release();
 
