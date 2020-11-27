@@ -75,6 +75,7 @@ else
   ASDEBUGFLAGS :=
   CCDEBUGFLAGS :=
   OBJ +=
+  DEFH +=
   CCDEFINES +=
 endif
 

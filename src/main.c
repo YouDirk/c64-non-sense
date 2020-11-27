@@ -36,6 +36,8 @@ main(void)
   _main_engine_config.inputs_enabled = Input_joy_port2_mask;
   Engine_init(&_main_engine_config);
 
+  Input_joy_config(Input_joy_port1_mask | Input_joy_port2_mask, 2, 4, 4);
+
   do {
     do {
       /* *************************************************************

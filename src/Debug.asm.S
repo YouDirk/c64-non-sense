@@ -55,7 +55,7 @@
         sta (ptr1), y
         lda sreg + 1                    ; _Debug.end->time = Timer_1_get32();
 
-        tsx                             ; X = TOS
+        tsx                             ; X := TOS (Top Of processor Stack)
 
         lda STACK_BASE + SIZEOF_ADDR, x
         ldy #_Debug_entry_t::type

@@ -34,6 +34,14 @@ typedef char                       string_t[STRING_LEN];
 
 /*****************************************************************  */
 
+/* Not STDINT, but better assoziation for bit-width of integers.  A
+ * whole byte will be allocated, no checks for overflow.
+ */
+typedef uint8_t                    uint4_t;
+typedef int8_t                     int4_t;
+
+/*****************************************************************  */
+
 #define UINT16(uint16_struct)      ((uint16_t) (uint16_struct))
 #define INT16(int16_struct)        ((int16_t) (int16_struct))
 

@@ -21,6 +21,10 @@
 
 #include "common.h"
 
+#define INPUT_JOY_PACE_DEFAULT          1
+#define INPUT_JOY_BRAKERATE_DEFAULT     32
+#define INPUT_JOY_DELAY_DEFAULT         4
+
 /* ***************************************************************  */
 
 /* Selectors for one or more specific input devices.  */
@@ -41,26 +45,33 @@ typedef int8_t                     Input_pace_t;
 
 /* Information about a joystick  */
 typedef struct Input_joystick_t {
-  bool         y_pressed;
-  bool         x_pressed;
+  bool         y_pressed, x_pressed;
 
-  Input_pace_t y_pace;
-  Input_pace_t x_pace;
+  Input_pace_t y_pace, x_pace;
 
   bool         button1_pressed;
 } Input_joystick_t;
 
-/* Structure of static members for module.  */
-typedef struct Input_t {
+/* Configuration variables which can be set directly, without calling
+ * setter functions.
+ */
+typedef struct Input_config_t {
 
   /* Input devices which will be polled and are ticking in this
    * module.
    */
   Input_device_t enabled;
 
+} Input_config_t;
+
+/* Structure of static members for module.  */
+typedef struct Input_t {
+
+  /* Some direct configurations.  */
+  Input_config_t config;
+
   /* The two joysticks on physical Port 2 and Port 1 :)  */
-  Input_joystick_t joy_port2;
-  Input_joystick_t joy_port1;
+  Input_joystick_t joy_port2, joy_port1;
 
 } Input_t;
 
@@ -79,11 +90,6 @@ extern void __fastcall__ Input_release(void);
 
 /* ***************************************************************  */
 
-/* Devices which will be polled and are ticking.  Initialized first
- * time during Input_init().
- */
-extern void __fastcall__ Input_enable(Input_device_t devices);
-
 /* Polls the enabled input devices for state changes.
  *
  * returns: FALSE/INPUT_NONE if no enabled device has changed it state
@@ -96,5 +102,9 @@ extern Input_device_t __fastcall__ Input_poll(void);
 extern void __fastcall__ Input_tick(void);
 
 /* ***************************************************************  */
+
+/* Configure ONE joystick per call (no OR masks allowed).  */
+extern void __fastcall__ Input_joy_config(
+  Input_device_t device, int4_t pace, uint8_t brakerate, uint4_t delay);
 
 #endif /* INPUT_H__  */
