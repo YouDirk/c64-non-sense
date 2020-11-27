@@ -39,6 +39,7 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
   Interrupt_init();
 
   /* Engine_t init stuff  */
+  Engine.set.exit = -1;
   Engine.poll_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_count = ENGINE_MS2TICKS(0);

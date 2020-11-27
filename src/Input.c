@@ -72,7 +72,7 @@ typedef struct _joy_status_t {
   _joy_axis_t y, x;
 } _joy_status_t;
 
-static _joy_status_t _joy_port2;
+static _joy_status_t _joy_port2, _joy_port1;
 
 /* ***************************************************************  */
 
@@ -82,21 +82,10 @@ Input_t Input;
 void __fastcall__
 Input_init(Input_device_t devices)
 {
-  Input.config.enabled = devices;
+  Input.set.enabled = devices;
 
-  UINT16(_joy_port2.y.mode) = 0, UINT16(_joy_port2.x.mode) = 0;
-
-  _joy_port2.y.initial
-    = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, INPUT_JOY_PACE_DEFAULT,
-                       INPUT_JOY_DELAY_DEFAULT);
-  _joy_port2.x.initial
-    = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, INPUT_JOY_PACE_DEFAULT,
-                       INPUT_JOY_DELAY_DEFAULT);
-
-  _joy_port2.y.decrement
-    = _MODE_16_DECREMENT(INPUT_JOY_BRAKERATE_DEFAULT);
-  _joy_port2.x.decrement
-    = _MODE_16_DECREMENT(INPUT_JOY_BRAKERATE_DEFAULT);
+  Input_joy_config(Input_joy_all_mask, INPUT_JOY_PACE_DEFAULT,
+    INPUT_JOY_BRAKERATE_DEFAULT, INPUT_JOY_DELAY_DEFAULT);
 
   /* will be initialized with zero automatically by .BSS segment
   memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));
@@ -116,7 +105,9 @@ Input_release(void)
   CIA1.ddra = CIA1_DDRA_DEFAULT;
 }
 
-static Input_device_t __fastcall__
+/* ***************************************************************  */
+
+static bool __fastcall__
 _joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
                     uint8_t cia_port_inv_shifted)
 {
@@ -128,7 +119,7 @@ _joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
   if ((cia_port_inv_shifted
        & (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)) == 0) {
     *result_pressed = false;
-    return Input_none_mask;
+    return false;
   }
 
   UINT16(result->mode) = result->initial;
@@ -137,11 +128,59 @@ _joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
     result->mode.byte_high |= _MODE_HIGH_SIGN_MASK;
 
   /* just trigger poll result one time per pressing down  */
-  if (*result_pressed) return Input_none_mask;
+  if (*result_pressed) return false;
 
   *result_pressed = true;
-  return Input_joy_port2_mask;
+  return true;
 }
+
+Input_device_t __fastcall__
+Input_poll(void)
+{
+  Input_device_t result = Input_none_mask;
+  uint8_t cia_port_inv;
+  bool tmp;
+
+  if (Input.set.enabled & Input_joy_port2_mask) {
+    cia_port_inv = ~CIA1.pra;
+
+    tmp = _joystick_axis_poll(
+      &_joy_port2.y, &Input.joy_port2.y_pressed, cia_port_inv);
+    tmp |= _joystick_axis_poll(
+      &_joy_port2.x, &Input.joy_port2.x_pressed, cia_port_inv >> 2);
+    result |= tmp? Input_joy_port2_mask: Input_none_mask;
+
+    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
+      if (!Input.joy_port2.button1_pressed)
+        result |= Input_joy_port2_mask;
+
+      Input.joy_port2.button1_pressed = true;
+    } else
+      Input.joy_port2.button1_pressed = false;
+  }
+
+  if (Input.set.enabled & Input_joy_port1_mask) {
+    cia_port_inv = ~CIA1.prb;
+
+    tmp = _joystick_axis_poll(
+      &_joy_port1.y, &Input.joy_port1.y_pressed, cia_port_inv);
+    tmp |= _joystick_axis_poll(
+      &_joy_port1.x, &Input.joy_port1.x_pressed, cia_port_inv >> 2);
+    result |= tmp? Input_joy_port1_mask: Input_none_mask;
+
+    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
+      if (!Input.joy_port1.button1_pressed)
+        result |= Input_joy_port1_mask;
+
+      Input.joy_port1.button1_pressed = true;
+    } else
+      Input.joy_port1.button1_pressed = false;
+  }
+
+  return result;
+}
+
+/* ***************************************************************  */
 
 static void __fastcall__
 _joystick_axis_tick(Input_pace_t* result_pace, _joy_axis_t* axis)
@@ -186,40 +225,16 @@ _joystick_axis_tick(Input_pace_t* result_pace, _joy_axis_t* axis)
   UINT16(axis->mode) -= axis->decrement;
 }
 
-/* ***************************************************************  */
-
-Input_device_t __fastcall__
-Input_poll(void)
-{
-  Input_device_t result = Input_none_mask;
-  uint8_t cia_port_inv;
-
-  if (Input.config.enabled & Input_joy_port2_mask) {
-    cia_port_inv = ~CIA1.pra;
-
-    result |= _joystick_axis_poll(
-      &_joy_port2.y, &Input.joy_port2.y_pressed, cia_port_inv);
-    result |= _joystick_axis_poll(
-      &_joy_port2.x, &Input.joy_port2.x_pressed, cia_port_inv >> 2);
-
-    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
-      if (!Input.joy_port2.button1_pressed)
-        result |= Input_joy_port2_mask;
-
-      Input.joy_port2.button1_pressed = true;
-    } else
-      Input.joy_port2.button1_pressed = false;
-  }
-
-  return result;
-}
-
 void __fastcall__
 Input_tick(void)
 {
-  if (Input.config.enabled & Input_joy_port2_mask) {
+  if (Input.set.enabled & Input_joy_port2_mask) {
     _joystick_axis_tick(&Input.joy_port2.y_pace, &_joy_port2.y);
     _joystick_axis_tick(&Input.joy_port2.x_pace, &_joy_port2.x);
+  }
+  if (Input.set.enabled & Input_joy_port1_mask) {
+    _joystick_axis_tick(&Input.joy_port1.y_pace, &_joy_port1.y);
+    _joystick_axis_tick(&Input.joy_port1.x_pace, &_joy_port1.x);
   }
 }
 
@@ -235,6 +250,9 @@ Input_joy_config(Input_device_t device, int4_t pace, uint8_t brakerate,
     if (device & Input_joy_port2_mask) {
       joystick = &_joy_port2;
       device &= ~Input_joy_port2_mask;
+    } else if (device & Input_joy_port1_mask) {
+      joystick = &_joy_port1;
+      device &= ~Input_joy_port1_mask;
     } else {
       DEBUG_ERROR("input config, joy device!");
       return;

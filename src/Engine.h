@@ -77,8 +77,25 @@ typedef struct Engine_config_t {
 
 } Engine_config_t;
 
+/* Configuration variables which can be set directly, without needing
+ * to call setter functions.
+ */
+typedef struct Engine_set_t {
+
+  /* If >= 0 then the engine will terminate with this exit code at the
+   * end of the current/next tick.
+   *
+   * set: 0 for regularly termination
+   */
+  int8_t exit;
+
+} Engine_set_t;
+
 /* Structure of static members for module.  */
 typedef struct Engine_t {
+
+  /* Some writable member variables.  */
+  Engine_set_t set;
 
   /* Time(-stamp) of the last poll for an engine tick.  */
   timestamp_t poll_time;

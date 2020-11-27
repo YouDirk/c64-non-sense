@@ -31,12 +31,14 @@ static Engine_config_t _main_engine_config;
 int
 main(void)
 {
+  Input_device_t polled;
+
   DEBUG_INIT();
 
-  _main_engine_config.inputs_enabled = Input_joy_port2_mask;
+  _main_engine_config.inputs_enabled = Input_joy_all_mask;
   Engine_init(&_main_engine_config);
 
-  Input_joy_config(Input_joy_port1_mask | Input_joy_port2_mask, 2, 4, 4);
+  Input_joy_config(Input_joy_port2_mask, 2, 4, 4);
 
   do {
     do {
@@ -45,8 +47,11 @@ main(void)
        */
 
       /* should be the last poll, to reduce input delay  */
-      if (Input_poll() & Input_joy_port2_mask) {
+      polled = Input_poll();
+      if (polled & Input_joy_port2_mask) {
         DEBUG_NOTE("joy port2 polled");
+      } else if (polled & Input_joy_port1_mask) {
+        DEBUG_NOTE("joy port1 polled");
       }
     } while (!Engine_tick_poll());
 
@@ -57,8 +62,10 @@ main(void)
     /* first in time critical section  */
     Input_tick();
 
-    Graphix.buffer.scroll_y += Input.joy_port2.y_pace;
-    Graphix.buffer.scroll_x += Input.joy_port2.x_pace;
+    Graphix.buffer.scroll_y
+      += Input.joy_port2.y_pace + Input.joy_port1.y_pace;
+    Graphix.buffer.scroll_x
+      += Input.joy_port2.x_pace + Input.joy_port1.x_pace;
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
@@ -74,16 +81,18 @@ main(void)
      *
      * which are dividing a 32 bit wide unsigned integer.
      */
-    if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
+    if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0)
       ++Graphix.buffer.bordercolor;
-    }
+
+    if (Input.joy_port2.button1_pressed
+        || Input.joy_port1.button1_pressed) Engine.set.exit = 0;
 
     /*
      * ***********************************************************  */
-  } while (!Input.joy_port2.button1_pressed);
+  } while (Engine.set.exit < 0);
 
   Engine_release();
   DEBUG_RELEASE_PRINT();
 
-  return 0;
+  return Engine.set.exit;
 }

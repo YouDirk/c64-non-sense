@@ -31,6 +31,7 @@
 #define Input_none_mask            ((Input_device_t) 0x00)
 #define Input_joy_port2_mask       ((Input_device_t) 0x01)
 #define Input_joy_port1_mask       ((Input_device_t) 0x02)
+#define Input_joy_all_mask         ((Input_device_t) 0x03)
 #define Input_all_mask             ((Input_device_t) 0xff)
 typedef uint8_t                    Input_device_t;
 
@@ -52,23 +53,23 @@ typedef struct Input_joystick_t {
   bool         button1_pressed;
 } Input_joystick_t;
 
-/* Configuration variables which can be set directly, without calling
- * setter functions.
+/* Configuration variables which can be set directly, without needing
+ * to call setter functions.
  */
-typedef struct Input_config_t {
+typedef struct Input_set_t {
 
   /* Input devices which will be polled and are ticking in this
    * module.
    */
   Input_device_t enabled;
 
-} Input_config_t;
+} Input_set_t;
 
 /* Structure of static members for module.  */
 typedef struct Input_t {
 
-  /* Some direct configurations.  */
-  Input_config_t config;
+  /* Some writable member variables.  */
+  Input_set_t set;
 
   /* The two joysticks on physical Port 2 and Port 1 :)  */
   Input_joystick_t joy_port2, joy_port1;
@@ -103,7 +104,7 @@ extern void __fastcall__ Input_tick(void);
 
 /* ***************************************************************  */
 
-/* Configure ONE joystick per call (no OR masks allowed).  */
+/* Configure selected DEVICE joysticks.  */
 extern void __fastcall__ Input_joy_config(
   Input_device_t device, int4_t pace, uint8_t brakerate, uint4_t delay);
 
