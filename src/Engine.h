@@ -73,7 +73,7 @@ typedef uint32_t                   ticks_t;
 typedef struct Engine_config_t {
 
   /* Used as argument for Input_init().  */
-  Input_device_t inputs_enabled;
+  Input_devices_t inputs_enabled;
 
 } Engine_config_t;
 

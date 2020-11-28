@@ -32,7 +32,7 @@ static Engine_config_t _main_engine_config;
 int
 main(void)
 {
-  Input_device_t polled;
+  Input_devices_t polled;
 
   DEBUG_INIT();
 

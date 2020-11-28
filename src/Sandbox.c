@@ -27,7 +27,8 @@
 void __fastcall__
 Sandbox_init(void)
 {
-  Input_joy_config(Input_joy_port2_mask, 2, 4, 4);
+  Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
+  Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
 }
 
 void __fastcall__

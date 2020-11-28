@@ -28,12 +28,19 @@
 /* ***************************************************************  */
 
 /* Selectors for one or more specific input devices.  */
-#define Input_none_mask            ((Input_device_t) 0x00)
-#define Input_joy_port2_mask       ((Input_device_t) 0x01)
-#define Input_joy_port1_mask       ((Input_device_t) 0x02)
-#define Input_joy_all_mask         ((Input_device_t) 0x03)
-#define Input_all_mask             ((Input_device_t) 0xff)
-typedef uint8_t                    Input_device_t;
+#define Input_none_mask            ((Input_devices_t) 0x00)
+#define Input_joy_port2_mask       ((Input_devices_t) 0x01)
+#define Input_joy_port1_mask       ((Input_devices_t) 0x02)
+#define Input_joy_all_mask         ((Input_devices_t) 0x03)
+#define Input_all_mask             ((Input_devices_t) 0xff)
+typedef uint8_t                    Input_devices_t;
+
+/* Selectors for one or more specific axis of joystick devices.  */
+#define Input_axes_none_mask       ((Input_axes_t) 0x00)
+#define Input_axes_y_mask          ((Input_axes_t) 0x01)
+#define Input_axes_x_mask          ((Input_axes_t) 0x02)
+#define Input_axes_all_mask        ((Input_axes_t) 0xff)
+typedef uint8_t                    Input_axes_t;
 
 /* Paces >= 1 or Paces <= -1 are integers.  Paces which are slower
  * than 1 and greater than -1 will be alterate it´s pace to 1/-1 or 0
@@ -61,7 +68,7 @@ typedef struct Input_set_t {
   /* Input devices which will be polled and are ticking in this
    * module.
    */
-  Input_device_t enabled;
+  Input_devices_t enabled;
 
 } Input_set_t;
 
@@ -84,7 +91,7 @@ extern Input_t Input;
 /* Select and initialize input devices, such like joysticks, keyboard,
  * for polling and ticking.
  */
-extern void __fastcall__ Input_init(Input_device_t devices);
+extern void __fastcall__ Input_init(Input_devices_t devices);
 
 /* Restore input configuration.  */
 extern void __fastcall__ Input_release(void);
@@ -97,7 +104,7 @@ extern void __fastcall__ Input_release(void);
  *          static module members Input.*.  Otherwise the device
  *          selectors are returned which state changed.
  */
-extern Input_device_t __fastcall__ Input_poll(void);
+extern Input_devices_t __fastcall__ Input_poll(void);
 
 /* Let the enabled input devices ticking to update paces, etc.  */
 extern void __fastcall__ Input_tick(void);
@@ -106,6 +113,7 @@ extern void __fastcall__ Input_tick(void);
 
 /* Configure selected joystick DEVICEs.  */
 extern void __fastcall__ Input_joy_config(
-  Input_device_t device, int4_t pace, uint8_t brakerate, uint4_t delay);
+  Input_devices_t devices, Input_axes_t axes, int4_t pace,
+  uint8_t brakerate, uint4_t delay);
 
 #endif /* INPUT_H__  */

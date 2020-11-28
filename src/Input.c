@@ -79,12 +79,13 @@ static _joy_status_t               _joy_port2, _joy_port1;
 Input_t Input;
 
 void __fastcall__
-Input_init(Input_device_t devices)
+Input_init(Input_devices_t devices)
 {
   Input.set.enabled = devices;
 
-  Input_joy_config(Input_joy_all_mask, INPUT_JOY_PACE_DEFAULT,
-    INPUT_JOY_BRAKERATE_DEFAULT, INPUT_JOY_DELAY_DEFAULT);
+  Input_joy_config(Input_joy_all_mask, Input_axes_all_mask,
+    INPUT_JOY_PACE_DEFAULT, INPUT_JOY_BRAKERATE_DEFAULT,
+    INPUT_JOY_DELAY_DEFAULT);
 
   /* will be initialized with zero automatically by .BSS segment
   memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));
@@ -107,8 +108,8 @@ Input_release(void)
 /* ***************************************************************  */
 
 static bool __fastcall__
-_joystick_axis_poll(_joy_status_axis_t* result, bool* result_pressed,
-                    uint8_t cia_port_inv_shifted)
+_joystick_axis_poll(_joy_status_axis_t* result_status,
+                    bool* result_pressed, uint8_t cia_port_inv_shifted)
 {
 #if (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK) >> 2 \
     != (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)
@@ -121,10 +122,10 @@ _joystick_axis_poll(_joy_status_axis_t* result, bool* result_pressed,
     return false;
   }
 
-  UINT16(result->mode) = result->initial;
+  UINT16(result_status->mode) = result_status->initial;
 
   if (cia_port_inv_shifted & CIA1_PRAB_JOYDOWN_MASK)
-    result->mode.byte_high |= _MODE_HIGH_SIGN_MASK;
+    result_status->mode.byte_high |= _MODE_HIGH_SIGN_MASK;
 
   /* just trigger poll result one time per pressing down  */
   if (*result_pressed) return false;
@@ -136,10 +137,10 @@ _joystick_axis_poll(_joy_status_axis_t* result, bool* result_pressed,
 /* Looks redundant and bad for understanding, but hopefully a bit more
  * performant than calling sub-functions for every port.
  */
-Input_device_t __fastcall__
+Input_devices_t __fastcall__
 Input_poll(void)
 {
-  Input_device_t result = Input_none_mask;
+  Input_devices_t result = Input_none_mask;
   uint8_t cia_port_inv;
   bool tmp;
 
@@ -185,46 +186,49 @@ Input_poll(void)
 /* ***************************************************************  */
 
 static void __fastcall__
-_joystick_axis_tick(Input_pace_t* result_pace, _joy_status_axis_t* axis)
+_joystick_axis_tick(Input_pace_t* result_pace,
+                    _joy_status_axis_t* axis_status)
 {
-  if (!UINT16(axis->mode)) return;
+  if (!UINT16(axis_status->mode)) return;
 
-  switch (axis->mode.byte_high & _MODE_HIGH_MODE_MASK) {
+  switch (axis_status->mode.byte_high & _MODE_HIGH_MODE_MASK) {
   case _MODE_HIGH_MODE_PACE:
-    *result_pace = axis->mode.byte_low >> _MODE_LOW_PACE_SHIFT;
+    *result_pace = axis_status->mode.byte_low >> _MODE_LOW_PACE_SHIFT;
     break;
   case _MODE_HIGH_MODE_3OF4:
-    *result_pace = (axis->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
+    *result_pace
+      = (axis_status->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
       != 0;
     break;
   case _MODE_HIGH_MODE_1OF2:
-    *result_pace = (axis->mode.byte_high
+    *result_pace = (axis_status->mode.byte_high
       & (_MODE_HIGH_SEQCOUNTER_BIT0 & _MODE_HIGH_SEQCOUNTER_MASK))
       != 0;
     break;
   case _MODE_HIGH_MODE_1OF4:
-    *result_pace = (axis->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
+    *result_pace
+      = (axis_status->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK)
       == 0;
     break;
   default:
     DEBUG_ERROR("input tick, joy axis mode!");
   case _MODE_HIGH_MODE_STOPPED:
     *result_pace = 0;
-    UINT16(axis->mode) = axis->decrement;
+    UINT16(axis_status->mode) = axis_status->decrement;
     break;
   }
 
-  if (axis->mode.byte_high & _MODE_HIGH_SIGN_MASK) {
+  if (axis_status->mode.byte_high & _MODE_HIGH_SIGN_MASK) {
     /* same '*result_pace = -*result_pace', but better performance  */
     *result_pace = ~*result_pace + 1;
   }
 
-  if ((axis->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK) == 0) {
-    axis->mode.byte_high
+  if ((axis_status->mode.byte_high & _MODE_HIGH_SEQCOUNTER_MASK) == 0) {
+    axis_status->mode.byte_high
       |= _MODE_HIGH_SEQCOUNTER_MAX << _MODE_HIGH_SEQCOUNTER_SHIFT;
   }
 
-  UINT16(axis->mode) -= axis->decrement;
+  UINT16(axis_status->mode) -= axis_status->decrement;
 }
 
 void __fastcall__
@@ -243,31 +247,39 @@ Input_tick(void)
 /* ***************************************************************  */
 
 void __fastcall__
-Input_joy_config(Input_device_t device, int4_t pace, uint8_t brakerate,
-                 uint4_t delay)
+Input_joy_config(Input_devices_t devices, Input_axes_t axes,
+                 int4_t pace, uint8_t brakerate, uint4_t delay)
 {
   _joy_status_t* joystick;
 
-  while (device != 0) {
-    if (device & Input_joy_port2_mask) {
+  if (axes == Input_axes_none_mask) {
+    DEBUG_WARN("input config, nothing todo!");
+    return;
+  }
+
+  while (devices != 0) {
+    if (devices & Input_joy_port2_mask) {
       joystick = &_joy_port2;
-      device &= ~Input_joy_port2_mask;
-    } else if (device & Input_joy_port1_mask) {
+      devices &= ~Input_joy_port2_mask;
+    } else if (devices & Input_joy_port1_mask) {
       joystick = &_joy_port1;
-      device &= ~Input_joy_port1_mask;
+      devices &= ~Input_joy_port1_mask;
     } else {
       DEBUG_ERROR("input config, no joystick!");
       return;
     }
 
-    UINT16(joystick->y.mode) = 0, UINT16(joystick->x.mode) = 0;
-
-    joystick->y.initial
-      = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
-    joystick->x.initial
-      = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
-
-    joystick->y.decrement = _MODE_16_DECREMENT(brakerate);
-    joystick->x.decrement = _MODE_16_DECREMENT(brakerate);
+    if (axes & Input_axes_y_mask) {
+      UINT16(joystick->y.mode) = 0;
+      joystick->y.decrement = _MODE_16_DECREMENT(brakerate);
+      joystick->y.initial
+        = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
+    }
+    if (axes & Input_axes_x_mask) {
+      UINT16(joystick->x.mode) = 0;
+      joystick->x.decrement = _MODE_16_DECREMENT(brakerate);
+      joystick->x.initial
+        = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
+    }
   }
 }
