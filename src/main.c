@@ -77,10 +77,10 @@ main(void)
 
     /*
      * ***********************************************************  */
-  } while (Engine.set.exit < 0);
+  } while (Engine.set.exit_code < 0);
 
   Engine_release();
   DEBUG_RELEASE_PRINT();
 
-  return Engine.set.exit;
+  return Engine.set.exit_code;
 }

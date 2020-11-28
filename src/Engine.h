@@ -87,7 +87,7 @@ typedef struct Engine_set_t {
    *
    * set: 0 for regularly termination
    */
-  int8_t exit;
+  int8_t exit_code;
 
 } Engine_set_t;
 

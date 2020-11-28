@@ -41,7 +41,7 @@ extern void __fastcall__ Sandbox_poll(void);
 /* Let this module ticking.  */
 extern void __fastcall__ Sandbox_tick(void);
 
-/* Let this module ticking.  */
+/* Let this module ticking, graphix already rendered.  */
 extern void __fastcall__ Sandbox_tick_low(void);
 
 #endif /* SANDBOX_H__  */

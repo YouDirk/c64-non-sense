@@ -18,6 +18,7 @@
 
 #include "Sandbox.h"
 
+#include "Input.h"
 #include "Graphix.h"
 #include "Engine.h"
 
@@ -66,5 +67,5 @@ Sandbox_tick_low(void)
     ++Graphix.buffer.bordercolor;
 
   if (Input.joy_port2.button1_pressed
-      || Input.joy_port1.button1_pressed) Engine.set.exit = 0;
+      || Input.joy_port1.button1_pressed) Engine.set.exit_code = 0;
 }

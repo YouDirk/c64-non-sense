@@ -25,7 +25,7 @@ COPY entrypoint.sh /entrypoint.sh
 RUN \
      sed -i 's/main/main contrib/' /etc/apt/sources.list \
   && apt-get -y update \
-  && apt-get -y install --no-install-recommends make cc65 vice
+  && apt-get -y install make cc65 vice
 
 # Go!
 ENTRYPOINT ["/entrypoint.sh"]

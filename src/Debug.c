@@ -55,8 +55,8 @@ Debug_release_print(void)
     printf(" [%lu] %s: %s\n", cur->time, type_str, cur->msg);
   }
 
-  if (Engine.set.exit > 0)
-    printf("\n*** exit code: %u ***\n", Engine.set.exit);
+  if (Engine.set.exit_code > 0)
+    printf("\n*** exit code: %u ***\n", Engine.set.exit_code);
 }
 
 /* ***************************************************************  */

@@ -62,13 +62,13 @@
 
 typedef uint16_s                   _joy_axis_mode_t;
 
-typedef struct _joy_axis_t {
+typedef struct _joy_status_axis_t {
   _joy_axis_mode_t mode;
   uint16_t initial, decrement;
-} _joy_axis_t;
+} _joy_status_axis_t;
 
 typedef struct _joy_status_t {
-  _joy_axis_t y, x;
+  _joy_status_axis_t y, x;
 } _joy_status_t;
 
 static _joy_status_t               _joy_port2, _joy_port1;
@@ -107,7 +107,7 @@ Input_release(void)
 /* ***************************************************************  */
 
 static bool __fastcall__
-_joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
+_joystick_axis_poll(_joy_status_axis_t* result, bool* result_pressed,
                     uint8_t cia_port_inv_shifted)
 {
 #if (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK) >> 2 \
@@ -133,8 +133,8 @@ _joystick_axis_poll(_joy_axis_t* result, bool* result_pressed,
   return true;
 }
 
-/* Looks redundant and bad for understanding, but hopefully a bit
- * performant.
+/* Looks redundant and bad for understanding, but hopefully a bit more
+ * performant than calling sub-functions for every port.
  */
 Input_device_t __fastcall__
 Input_poll(void)
@@ -185,7 +185,7 @@ Input_poll(void)
 /* ***************************************************************  */
 
 static void __fastcall__
-_joystick_axis_tick(Input_pace_t* result_pace, _joy_axis_t* axis)
+_joystick_axis_tick(Input_pace_t* result_pace, _joy_status_axis_t* axis)
 {
   if (!UINT16(axis->mode)) return;
 
