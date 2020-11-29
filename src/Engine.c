@@ -17,6 +17,7 @@
 
 
 #include "Engine.h"
+#include "EngineConfig.h"
 
 #include "Interrupt.h"
 #include "Input.h"
@@ -28,16 +29,14 @@
 /* Static members of this module.  */
 Engine_t Engine;
 
-/* Config of the engine during initialization.  */
-static Engine_config_t* _Engine_config;
-
 static void __fastcall__
-_Engine_init_blackscreen(Graphix_buffer_t* graphix)
+_Engine_init_blackscreen(void)
 {
-  unsigned i;
-
   /* must be the first of all  */
   Interrupt_init();
+
+  /* init static member of EngineConfig  */
+  EngineConfig_init();
 
   /* Engine_t init stuff  */
   Engine.set.exit_code = -1;
@@ -45,28 +44,16 @@ _Engine_init_blackscreen(Graphix_buffer_t* graphix)
   Engine.tick_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_count = ENGINE_MS2TICKS(0);
 
-  /* set screen ram  */
-  memset(graphix->screen_ram,
-    GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
-    GRAPHIX_CELLS_PER_SCREEN);
-
-  /* set bitmap  */
-  memset(graphix->bitmap_ram, 0x01, GRAPHIX_BYTES_PER_SCREEN);
-  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
-    graphix->bitmap_ram[i] = 0xff;
-
   /* init input stuff, such like joystick, keyboard, etc  */
-  Input_init(_Engine_config->inputs_enabled);
+  Input_init(EngineConfig.inputs_enabled);
 
-  /* test and staging code  */
+  /* init test and staged code  */
   Sandbox_init();
 }
 
 void __fastcall__
-Engine_init(Engine_config_t* config)
+Engine_init(void)
 {
-  _Engine_config = config;
-
   Graphix_init(_Engine_init_blackscreen);
 
   /* init as last as possible  */
@@ -83,6 +70,9 @@ _Engine_release_blackscreen(void)
 
   /* hmmmm ...  */
   Input_release();
+
+  /* okay lul ...  */
+  EngineConfig_release();
 
   /* must be the last of all  */
   Interrupt_release();

@@ -104,7 +104,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.buffer.scroll_y = 0;
 
   /* initialize all other stuff  */
-  init_callback(&Graphix.buffer);
+  init_callback();
 
   /* Initialize buffers for triple buffering.  This is done after
    * init_callback() to make it possible that the callee initialize

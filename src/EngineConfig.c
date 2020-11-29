@@ -16,32 +16,25 @@
  */
 
 
-#ifndef SANDBOX_H__
-#define SANDBOX_H__
-
-#include "common.h"
-
-/* *******************************************************************
- *
- * Stuff which has currently no component structure can be implemented
- * here.  For fast testing and staging code.
- */
-
-/* Initialize this component.  */
-extern void __fastcall__ Sandbox_init(void);
-
-/* Deinitialize this component.  */
-extern void __fastcall__ Sandbox_release(void);
+#include "EngineConfig.h"
 
 /* ***************************************************************  */
 
-/* Polls this component between engine ticks.  */
-extern void __fastcall__ Sandbox_poll(void);
+/* Static members of this module.  */
+EngineConfig_t EngineConfig;
 
-/* Let this component ticking.  */
-extern void __fastcall__ Sandbox_tick(void);
+void __fastcall__
+EngineConfig_init(void)
+{
+  /* Set here game depending engine configurations.
+   */
 
-/* Let this component ticking, graphix already rendered.  */
-extern void __fastcall__ Sandbox_tick_low(void);
+  EngineConfig.inputs_enabled = Input_joy_all_mask;
+}
 
-#endif /* SANDBOX_H__  */
+void __fastcall__
+EngineConfig_release(void)
+{
+}
+
+/* ***************************************************************  */

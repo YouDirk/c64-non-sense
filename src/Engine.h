@@ -22,7 +22,6 @@
 #include "common.h"
 
 #include "Timer.h"
-#include "Input.h"
 
 /* ***************************************************************  */
 
@@ -67,16 +66,6 @@ typedef uint32_t                   timestamp_t;
  */
 typedef uint32_t                   ticks_t;
 
-/* Structure with configuration stuff, used as argument for
- * Engine_init().
- */
-typedef struct Engine_config_t {
-
-  /* Used as argument for Input_init().  */
-  Input_devices_t inputs_enabled;
-
-} Engine_config_t;
-
 /* Configuration variables which can be set directly, without needing
  * to call setter functions.
  */
@@ -114,7 +103,7 @@ typedef struct Engine_t {
 extern Engine_t Engine;
 
 /* Initialize the mystic NonSense Engine ^^  */
-extern void __fastcall__ Engine_init(Engine_config_t* config);
+extern void __fastcall__ Engine_init(void);
 
 /* Undo the stuff which we´ve done in Engine_init().  */
 extern void __fastcall__ Engine_release(void);

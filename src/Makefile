@@ -17,7 +17,7 @@
 
 # C and S files to be compiled
 OBJ = Interrupt.asm Timer.asm Timer Input Graphix.asm Graphix Engine \
-      Sandbox main
+      EngineConfig Sandbox main
 
 # *.gen.[hs] to be generated
 DEFH = chip-vic chip-cia kernal Graphix

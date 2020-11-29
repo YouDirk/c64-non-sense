@@ -27,6 +27,18 @@
 void __fastcall__
 Sandbox_init(void)
 {
+  unsigned i;
+
+  /* set screen ram  */
+  memset(Graphix.buffer.screen_ram,
+         GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
+         GRAPHIX_CELLS_PER_SCREEN);
+
+  /* set bitmap  */
+  memset(Graphix.buffer.bitmap_ram, 0x01, GRAPHIX_BYTES_PER_SCREEN);
+  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
+    Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
+
   Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
   Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
 }

@@ -86,8 +86,7 @@
 /* ***************************************************************  */
 
 /* callbacks are defined here  */
-typedef void __fastcall__
-  (*Graphix_initCallback_t)(Graphix_buffer_t* graphix);
+typedef void __fastcall__ (*Graphix_initCallback_t)(void);
 typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
 
 /* ***************************************************************  */

@@ -25,19 +25,11 @@
 
 /* ***************************************************************  */
 
-static Engine_config_t _main_engine_config;
-
-/* ***************************************************************  */
-
 int
 main(void)
 {
-  Input_devices_t polled;
-
   DEBUG_INIT();
-
-  _main_engine_config.inputs_enabled = Input_joy_all_mask;
-  Engine_init(&_main_engine_config);
+  Engine_init();
 
   do {
     do {
@@ -45,14 +37,11 @@ main(void)
        * polling stuff between engine ticks
        */
 
-      /* poll test- and staging code  */
+      /* poll test- and staged code  */
       Sandbox_poll();
 
       /* should be the last poll, to reduce input delay  */
-      polled = Input_poll();
-      if (polled & Input_joy_port2_mask) DEBUG_NOTE("joy port2 polled");
-      if (polled & Input_joy_port1_mask) DEBUG_NOTE("joy port1 polled");
-
+      Input_poll();
     } while (!Engine_tick_poll());
 
     /* ***************************************************************
@@ -62,7 +51,7 @@ main(void)
     /* first in time critical section  */
     Input_tick();
 
-    /* poll test- and staging code  */
+    /* poll test- and staged code  */
     Sandbox_tick();
 
     /* *** render, what we´ve done ***  */
@@ -72,7 +61,7 @@ main(void)
      * low priority ticking stuff
      */
 
-    /* poll test- and staging code  */
+    /* poll test- and staged code  */
     Sandbox_tick_low();
 
     /*

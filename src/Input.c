@@ -107,7 +107,7 @@ Input_release(void)
 
 /* ***************************************************************  */
 
-static bool __fastcall__
+static void __fastcall__
 _joystick_axis_poll(_joy_status_axis_t* result_status,
                     bool* result_pressed, uint8_t cia_port_inv_shifted)
 {
@@ -119,7 +119,7 @@ _joystick_axis_poll(_joy_status_axis_t* result_status,
   if ((cia_port_inv_shifted
        & (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK)) == 0) {
     *result_pressed = false;
-    return false;
+    return;
   }
 
   UINT16(result_status->mode) = result_status->initial;
@@ -127,60 +127,37 @@ _joystick_axis_poll(_joy_status_axis_t* result_status,
   if (cia_port_inv_shifted & CIA1_PRAB_JOYDOWN_MASK)
     result_status->mode.byte_high |= _MODE_HIGH_SIGN_MASK;
 
-  /* just trigger poll result one time per pressing down  */
-  if (*result_pressed) return false;
-
   *result_pressed = true;
-  return true;
 }
 
-/* Looks redundant and bad for understanding, but hopefully a bit more
- * performant than calling sub-functions for every port.
- */
-Input_devices_t __fastcall__
+void __fastcall__
 Input_poll(void)
 {
-  Input_devices_t result = Input_none_mask;
   uint8_t cia_port_inv;
-  bool tmp;
 
   if (Input.set.enabled & Input_joy_port2_mask) {
     cia_port_inv = ~CIA1.pra;
 
-    tmp = _joystick_axis_poll(
-      &_joy_port2.y, &Input.joy_port2.y_pressed, cia_port_inv);
-    tmp |= _joystick_axis_poll(
-      &_joy_port2.x, &Input.joy_port2.x_pressed, cia_port_inv >> 2);
-    result |= tmp? Input_joy_port2_mask: Input_none_mask;
+    _joystick_axis_poll(&_joy_port2.y, &Input.joy_port2.y_pressed,
+                        cia_port_inv);
+    _joystick_axis_poll(&_joy_port2.x, &Input.joy_port2.x_pressed,
+                        cia_port_inv >> 2);
 
-    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
-      if (!Input.joy_port2.button1_pressed)
-        result |= Input_joy_port2_mask;
-
-      Input.joy_port2.button1_pressed = true;
-    } else
-      Input.joy_port2.button1_pressed = false;
+    Input.joy_port2.button1_pressed
+      = cia_port_inv & CIA1_PRAB_JOYBTN1_MASK? true: false;
   }
 
   if (Input.set.enabled & Input_joy_port1_mask) {
     cia_port_inv = ~CIA1.prb;
 
-    tmp = _joystick_axis_poll(
-      &_joy_port1.y, &Input.joy_port1.y_pressed, cia_port_inv);
-    tmp |= _joystick_axis_poll(
-      &_joy_port1.x, &Input.joy_port1.x_pressed, cia_port_inv >> 2);
-    result |= tmp? Input_joy_port1_mask: Input_none_mask;
+    _joystick_axis_poll(&_joy_port1.y, &Input.joy_port1.y_pressed,
+                        cia_port_inv);
+    _joystick_axis_poll(&_joy_port1.x, &Input.joy_port1.x_pressed,
+                        cia_port_inv >> 2);
 
-    if (cia_port_inv & CIA1_PRAB_JOYBTN1_MASK) {
-      if (!Input.joy_port1.button1_pressed)
-        result |= Input_joy_port1_mask;
-
-      Input.joy_port1.button1_pressed = true;
-    } else
-      Input.joy_port1.button1_pressed = false;
+    Input.joy_port1.button1_pressed
+      = cia_port_inv & CIA1_PRAB_JOYBTN1_MASK? true: false;
   }
-
-  return result;
 }
 
 /* ***************************************************************  */

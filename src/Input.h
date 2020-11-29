@@ -98,13 +98,8 @@ extern void __fastcall__ Input_release(void);
 
 /* ***************************************************************  */
 
-/* Polls the enabled input devices for state changes.
- *
- * returns: FALSE/INPUT_NONE if no enabled device has changed it state
- *          static module members Input.*.  Otherwise the device
- *          selectors are returned which state changed.
- */
-extern Input_devices_t __fastcall__ Input_poll(void);
+/* Polls the enabled input devices for state changes.  */
+extern void __fastcall__ Input_poll(void);
 
 /* Let the enabled input devices ticking to update paces, etc.  */
 extern void __fastcall__ Input_tick(void);
