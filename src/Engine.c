@@ -65,6 +65,9 @@ Engine_init(void)
 static void __fastcall__
 _Engine_release_blackscreen(void)
 {
+  /* Reversed order of _Engine_init_blackscreen().
+   */
+
   /* also test- and staged code should be deinitialized  */
   Sandbox_release();
 
@@ -81,7 +84,9 @@ _Engine_release_blackscreen(void)
 void __fastcall__
 Engine_release(void)
 {
-  /* reversed order of init  */
+  /* Reversed order of Engine_init().
+   */
+
   Timer_release();
 
   Graphix_release(_Engine_release_blackscreen);

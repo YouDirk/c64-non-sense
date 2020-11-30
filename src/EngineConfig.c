@@ -26,7 +26,7 @@ EngineConfig_t EngineConfig;
 void __fastcall__
 EngineConfig_init(void)
 {
-  /* Set here game depending engine configurations.
+  /* Set game depending engine configurations here.
    */
 
   EngineConfig.inputs_enabled = Input_joy_all_mask;

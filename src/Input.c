@@ -49,22 +49,13 @@
 #define _MODE_HIGH_SEQCOUNTER_MAX        0x4
 #define _MODE_HIGH_SIGN_MASK            0x80
 
-#define _MODE_16_INITIAL(mode, pace, delay)                          \
-  ((mode & _MODE_HIGH_MODE_MASK) << 8                                \
-   | (pace << _MODE_LOW_PACE_SHIFT)                                  \
-   | (delay & _MODE_LOW_TICKCOUNTER_MASK))
-
-#define _MODE_16_DECREMENT(brakerate)                                \
-  ((_MODE_HIGH_SEQCOUNTER_MASK                                       \
-    & (1 << _MODE_HIGH_SEQCOUNTER_SHIFT)) << 8 | (brakerate))
-
 /* ***************************************************************  */
 
 typedef uint16_s                   _joy_axis_mode_t;
 
 typedef struct _joy_status_axis_t {
   _joy_axis_mode_t mode;
-  uint16_t initial, decrement;
+  uint16_s initial, decrement;
 } _joy_status_axis_t;
 
 typedef struct _joy_status_t {
@@ -122,7 +113,7 @@ _joystick_axis_poll(_joy_status_axis_t* result_status,
     return;
   }
 
-  UINT16(result_status->mode) = result_status->initial;
+  UINT16(result_status->mode) = UINT16(result_status->initial);
 
   if (cia_port_inv_shifted & CIA1_PRAB_JOYDOWN_MASK)
     result_status->mode.byte_high |= _MODE_HIGH_SIGN_MASK;
@@ -191,7 +182,7 @@ _joystick_axis_tick(Input_pace_t* result_pace,
     DEBUG_ERROR("input tick, joy axis mode!");
   case _MODE_HIGH_MODE_STOPPED:
     *result_pace = 0;
-    UINT16(axis_status->mode) = axis_status->decrement;
+    UINT16(axis_status->mode) = UINT16(axis_status->decrement);
     break;
   }
 
@@ -205,7 +196,7 @@ _joystick_axis_tick(Input_pace_t* result_pace,
       |= _MODE_HIGH_SEQCOUNTER_MAX << _MODE_HIGH_SEQCOUNTER_SHIFT;
   }
 
-  UINT16(axis_status->mode) -= axis_status->decrement;
+  UINT16(axis_status->mode) -= UINT16(axis_status->decrement);
 }
 
 void __fastcall__
@@ -228,11 +219,19 @@ Input_joy_config(Input_devices_t devices, Input_axes_t axes,
                  int4_t pace, uint8_t brakerate, uint4_t delay)
 {
   _joy_status_t* joystick;
+  uint16_s initial, decrement;
 
   if (axes == Input_axes_none_mask) {
     DEBUG_WARN("input config, nothing todo!");
     return;
   }
+
+  /* see layout of MODE variable above  */
+  initial.byte_high   = _MODE_HIGH_MODE_PACE & _MODE_HIGH_MODE_MASK;
+  initial.byte_low    = pace << _MODE_LOW_PACE_SHIFT
+                        | delay & _MODE_LOW_TICKCOUNTER_MASK;
+  decrement.byte_high = _MODE_HIGH_SEQCOUNTER_BIT0;
+  decrement.byte_low  = brakerate;
 
   while (devices != 0) {
     if (devices & Input_joy_port2_mask) {
@@ -248,15 +247,13 @@ Input_joy_config(Input_devices_t devices, Input_axes_t axes,
 
     if (axes & Input_axes_y_mask) {
       UINT16(joystick->y.mode) = 0;
-      joystick->y.decrement = _MODE_16_DECREMENT(brakerate);
-      joystick->y.initial
-        = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
+      UINT16(joystick->y.decrement) = UINT16(decrement);
+      UINT16(joystick->y.initial) = UINT16(initial);
     }
     if (axes & Input_axes_x_mask) {
       UINT16(joystick->x.mode) = 0;
-      joystick->x.decrement = _MODE_16_DECREMENT(brakerate);
-      joystick->x.initial
-        = _MODE_16_INITIAL(_MODE_HIGH_MODE_PACE, pace, delay);
+      UINT16(joystick->x.decrement) = UINT16(decrement);
+      UINT16(joystick->x.initial) = UINT16(initial);
     }
   }
 }
