@@ -71,11 +71,11 @@ installed VICE version as listed in `$> dpkg -l 'vice*'`) from
 * *ftp://ftp.zimmers.net/pub/cbm/crossplatform/emulators/VICE/*
 
 Unpack it and copy it´s whole `data/*` directory into
-`/usr/lib/vice/`.
+`/usr/share/vice/`.
 
 ```shell
 tmp/$> tar zxf vice-3.x.tar.gz
-tmp/$> sudo cp -rf vice-3.x/data/* /usr/lib/vice/
+tmp/$> sudo cp -rf vice-3.x/data/* /usr/share/vice/
 ```
 
 Done, now you can run VICE using `$> x64` :)
