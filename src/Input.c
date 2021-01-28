@@ -216,7 +216,7 @@ Input_tick(void)
 
 void __fastcall__
 Input_joy_config(Input_devices_t devices, Input_axes_t axes,
-                 int4_t pace, uint8_t brakerate, uint4_t delay)
+                 uint4_t pace, uint8_t brakerate, uint4_t delay)
 {
   _joy_status_t* joystick;
   uint16_s initial, decrement;

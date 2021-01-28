@@ -108,7 +108,7 @@ extern void __fastcall__ Input_tick(void);
 
 /* Configure selected joystick DEVICEs.  */
 extern void __fastcall__ Input_joy_config(
-  Input_devices_t devices, Input_axes_t axes, int4_t pace,
+  Input_devices_t devices, Input_axes_t axes, uint4_t pace,
   uint8_t brakerate, uint4_t delay);
 
 #endif /* INPUT_H__  */
