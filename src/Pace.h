@@ -39,17 +39,23 @@ typedef struct Pace_t {
   Pace_increment_t pace;
 
   /* Private internal use  */
-  uint16_s _status, _initial, _decrement;
+  uint16_s _status, _max, _decrement;
 } Pace_t;
 
 /* ***************************************************************  */
 
-/* Initialize the Pace structure.  */
+/* Initialize the pace structure.  */
 extern void __fastcall__ Pace_new(Pace_t* pace, uint8_t pace_max,
                                   uint8_t brakerate, uint8_t delay);
 
-/* Free the Pace structure.  */
-extern void __fastcall__ Pace_delete(Pace_t* pace);
+/* Free the pace structure.  */
+#define Pace_delete(pace)
+/* extern void __fastcall__ Pace_delete(Pace_t* pace);  */
+
+/* ***************************************************************  */
+
+/* Let´s the pace tick.  */
+extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* ***************************************************************  */
 
