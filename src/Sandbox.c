@@ -46,8 +46,8 @@ Sandbox_init(void)
   Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
   Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
 
-  Pace_new(&Sandbox_pace_init, 1<<2, 4, 0);
-  Pace_impulse_pos(&Sandbox_pace_init);
+  Pace_new(&Sandbox_pace_init, 1<<2, 4, 3*4);
+  Pace_impulse_neg(&Sandbox_pace_init);
 }
 
 void __fastcall__
@@ -67,6 +67,7 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
+  //Pace_impulse_neg(&Sandbox_pace_init);
   Pace_tick(&Sandbox_pace_init);
 
   Graphix.buffer.scroll_x += Sandbox_pace_init.pace;

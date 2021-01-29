@@ -37,8 +37,8 @@ Debug_init(void)
 void __fastcall__
 Debug_release_print(void)
 {
-  _Debug_entry_t* cur;
-  const char* type_str;
+  static _Debug_entry_t* cur;
+  static const char* type_str;
 
   printf("debug: %u%c message%c%s\n",
          _Debug.count, _Debug.count >= _DEBUG_LIST_SIZE? '+': '\0',

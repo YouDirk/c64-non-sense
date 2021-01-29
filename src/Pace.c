@@ -34,12 +34,14 @@
 
 #define _STATUS_HIGH_SIGN_MASK          0x80
 #define _STATUS_HIGH_PXLPACE_MASK       0x7c
+#define _STATUS_HIGH_PXLPACE_SHIFT      2
 #define _STATUS_HIGH_MODE_MASK          0x03
 #define _STATUS_HIGH_MODE_PACE           0x0
 #define _STATUS_HIGH_MODE_1OF4           0x1
 #define _STATUS_HIGH_MODE_1OF2           0x2
 #define _STATUS_HIGH_MODE_3OF4           0x3
 #define _STATUS_LOW_TICKCOUNTER_SHIFT   2
+#define _STATUS_LOW_FRACCOUNTER_MASK    0x03
 #define _STATUS_LOW_FRACCOUNTER_BIT0    0x01
 
 /* ***************************************************************  */
@@ -71,14 +73,46 @@ Pace_new(Pace_t* pace,
 void __fastcall__
 Pace_tick(Pace_t* pace)
 {
-  if ((UINT16(pace->_status) & 0xfffc) == 0) {
-    DEBUG_NOTE("pace zero");
+  static uint8_t pace_result, fraccounter, pacemode_abs;
+
+  fraccounter
+    = _STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low;
+  pacemode_abs
+    = ~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high;
+
+  if (pacemode_abs == 0) {
+    DEBUG_NOTE("stop");
     return;
   }
 
-  // TODO
-  pace->pace
-    = (~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high) >> 2;
+  pace_result = pacemode_abs >> _STATUS_HIGH_PXLPACE_SHIFT;
+
+  switch (_STATUS_HIGH_MODE_MASK & pacemode_abs) {
+  case _STATUS_HIGH_MODE_3OF4:
+    DEBUG_NOTE("3of4");
+    //pace_result += fraccounter != 0;
+    break;
+  case _STATUS_HIGH_MODE_1OF2:
+    DEBUG_NOTE("1of2");
+    break;
+  case _STATUS_HIGH_MODE_1OF4:
+    DEBUG_NOTE("1of4");
+    break;
+  case _STATUS_HIGH_MODE_PACE:
+    DEBUG_NOTE("pace");
+    pace_result += 0;
+    break;
+  default:
+    DEBUG_ERROR("pace tick, switch mode!");
+    pace_result = 0;
+    UINT16(pace->_status) = UINT16(pace->_decrement);
+  }
+
+  if (_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high) {
+    /* same 'pace_result = -pace_result', but better performance  */
+    pace_result = ~pace_result + 1;
+  }
+  pace->pace = pace_result;
 
   UINT16(pace->_status) -= UINT16(pace->_decrement);
 }

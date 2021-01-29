@@ -124,7 +124,7 @@ _joystick_axis_poll(_joy_status_axis_t* result_status,
 void __fastcall__
 Input_poll(void)
 {
-  uint8_t cia_port_inv;
+  static uint8_t cia_port_inv;
 
   if (Input.set.enabled & Input_joy_port2_mask) {
     cia_port_inv = ~CIA1.pra;
@@ -218,8 +218,8 @@ void __fastcall__
 Input_joy_config(Input_devices_t devices, Input_axes_t axes,
                  uint4_t pace, uint8_t brakerate, uint4_t delay)
 {
-  _joy_status_t* joystick;
-  uint16_s initial, decrement;
+  static _joy_status_t* joystick;
+  static uint16_s initial, decrement;
 
   if (axes == Input_axes_none_mask) {
     DEBUG_WARN("input config, nothing todo!");
