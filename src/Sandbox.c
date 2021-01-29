@@ -46,7 +46,7 @@ Sandbox_init(void)
   Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
   Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
 
-  Pace_new(&Sandbox_pace_init, 1<<2, 4, 3*4);
+  Pace_new(&Sandbox_pace_init, 8, 1, 16);
   Pace_impulse_neg(&Sandbox_pace_init);
 }
 
@@ -67,7 +67,6 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
-  //Pace_impulse_neg(&Sandbox_pace_init);
   Pace_tick(&Sandbox_pace_init);
 
   Graphix.buffer.scroll_x += Sandbox_pace_init.pace;
@@ -88,8 +87,12 @@ Sandbox_tick_low(void)
    *
    * which are dividing a 32 bit wide unsigned integer.
    */
-  if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0)
+  if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
     ++Graphix.buffer.bordercolor;
+
+    if ((Graphix.buffer.bordercolor & 0x03) == 3)
+      Pace_impulse_neg(&Sandbox_pace_init);
+  }
 
   if (Input.joy_port2.button1_pressed
       || Input.joy_port1.button1_pressed) Engine.set.exit_code = 0;

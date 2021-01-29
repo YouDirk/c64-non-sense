@@ -81,7 +81,7 @@ Pace_tick(Pace_t* pace)
     = ~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high;
 
   if (pacemode_abs == 0) {
-    DEBUG_NOTE("stop");
+    pace->pace = 0;
     return;
   }
 
@@ -89,17 +89,15 @@ Pace_tick(Pace_t* pace)
 
   switch (_STATUS_HIGH_MODE_MASK & pacemode_abs) {
   case _STATUS_HIGH_MODE_3OF4:
-    DEBUG_NOTE("3of4");
-    //pace_result += fraccounter != 0;
+    pace_result += fraccounter != 0;
     break;
   case _STATUS_HIGH_MODE_1OF2:
-    DEBUG_NOTE("1of2");
+    pace_result += (_STATUS_LOW_FRACCOUNTER_BIT0 & fraccounter) != 0;
     break;
   case _STATUS_HIGH_MODE_1OF4:
-    DEBUG_NOTE("1of4");
+    pace_result += fraccounter == 0;
     break;
   case _STATUS_HIGH_MODE_PACE:
-    DEBUG_NOTE("pace");
     pace_result += 0;
     break;
   default:
@@ -122,12 +120,20 @@ Pace_tick(Pace_t* pace)
 void __fastcall__
 Pace_impulse_pos(Pace_t* pace)
 {
-  UINT16(pace->_status) = UINT16(pace->_max);
+  pace->_status.byte_high = pace->_max.byte_high;
+
+  pace->_status.byte_low
+    = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
+    | pace->_max.byte_low;
 }
 
 void __fastcall__
 Pace_impulse_neg(Pace_t* pace)
 {
-  UINT16(pace->_status)
-    = UINT16(pace->_max) | _STATUS_HIGH_SIGN_MASK << 8;
+  pace->_status.byte_high =
+    _STATUS_HIGH_SIGN_MASK | pace->_max.byte_high;
+
+  pace->_status.byte_low
+    = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
+    | pace->_max.byte_low;
 }
