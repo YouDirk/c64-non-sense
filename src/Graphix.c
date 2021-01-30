@@ -121,7 +121,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
 #if defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)
   if (((uint16_s) Graphix_buffer_shared_ptr).byte_high
       != ((uint16_s) Graphix_buffer_back_ptr).byte_high) {
-    DEBUG_ERROR("graphix swap, lock required!");
+    DEBUG_ERROR("graphix, buffers not aligned!");
   }
 #endif /* defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)  */
 

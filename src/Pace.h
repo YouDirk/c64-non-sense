@@ -1,5 +1,5 @@
 /* C64 NonSense, just playing around with C64 cross-compile tools.
- * Copyright (C) 2020  Dirk "YouDirk" Lehmann
+ * Copyright (C) 2021  Dirk "YouDirk" Lehmann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -40,13 +40,14 @@ typedef struct Pace_t {
 
   /* Private internal use  */
   uint16_s _status, _max, _decrement;
+  uint16_s _decrement_brake, _decrement_accel;
 } Pace_t;
 
 /* ***************************************************************  */
 
 /* Initialize the pace structure.  */
 extern void __fastcall__ Pace_new(Pace_t* pace, uint8_t pace_max,
-                                  uint8_t brakerate, uint8_t delay);
+                uint8_t accelerate, uint8_t brakerate, uint8_t delay);
 
 /* Free the pace structure.  */
 #define Pace_delete(pace)
@@ -60,11 +61,21 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 /* ***************************************************************  */
 
 /* Add an positive impulse and accelerate to PACE_MAX immediately.
+ * After that break down to 0 pixel/s.
  */
 extern void __fastcall__ Pace_impulse_pos(Pace_t* pace);
 
-/* Add an negative impulse and accelerate to -PACE_MAX immediately.
+/* Add an negative impulse and accelerate to -PACE_MAX
+ * immediately.  After that break down to 0 pixel/s.
  */
 extern void __fastcall__ Pace_impulse_neg(Pace_t* pace);
+
+/* Accelerate from 0 pixel/s positive until PACE_MAX is reached.
+ */
+extern void __fastcall__ Pace_accelerate_pos(Pace_t* pace);
+
+/* Accelerate from 0 pixel/s negative until -PACE_MAX is reached.
+ */
+extern void __fastcall__ Pace_accelerate_neg(Pace_t* pace);
 
 #endif /* PACE_H__  */

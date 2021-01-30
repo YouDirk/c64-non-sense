@@ -1,5 +1,5 @@
 /* C64 NonSense, just playing around with C64 cross-compile tools.
- * Copyright (C) 2020  Dirk "YouDirk" Lehmann
+ * Copyright (C) 2021  Dirk "YouDirk" Lehmann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -48,19 +48,25 @@
 
 void __fastcall__
 Pace_new(Pace_t* pace,
-         uint8_t pace_max, uint8_t brakerate, uint8_t delay)
+         uint8_t pace_max, uint8_t accelerate, uint8_t brakerate,
+         uint8_t delay)
 {
   pace->pace = 0;
 
-  UINT16(pace->_status) = 0;
+  UINT16(pace->_status) = 0x0000;
 
   pace->_max.byte_high
     = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK) & pace_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
 
-  pace->_decrement.byte_high = 0;
-  pace->_decrement.byte_low = brakerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+  pace->_decrement_brake.byte_high = 0x00;
+  pace->_decrement_brake.byte_low
+    = brakerate << _STATUS_LOW_TICKCOUNTER_SHIFT
     | _STATUS_LOW_FRACCOUNTER_BIT0;
+
+  UINT16(pace->_decrement_accel)
+    = ~UINT16(accelerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+              | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
 }
 
 /* Nothing to do.  Just an empty-macro for now.
@@ -112,7 +118,10 @@ Pace_tick(Pace_t* pace)
   }
   pace->pace = pace_result;
 
-  UINT16(pace->_status) -= UINT16(pace->_decrement);
+  if (pacemode_abs <= pace->_max.byte_high)
+    UINT16(pace->_status) -= UINT16(pace->_decrement);
+  else
+    pace->_status.byte_low -= _STATUS_LOW_FRACCOUNTER_BIT0;
 }
 
 /* ***************************************************************  */
@@ -121,19 +130,40 @@ void __fastcall__
 Pace_impulse_pos(Pace_t* pace)
 {
   pace->_status.byte_high = pace->_max.byte_high;
-
   pace->_status.byte_low
     = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
     | pace->_max.byte_low;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
 }
 
 void __fastcall__
 Pace_impulse_neg(Pace_t* pace)
 {
-  pace->_status.byte_high =
-    _STATUS_HIGH_SIGN_MASK | pace->_max.byte_high;
-
+  pace->_status.byte_high
+    = _STATUS_HIGH_SIGN_MASK | pace->_max.byte_high;
   pace->_status.byte_low
     = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
     | pace->_max.byte_low;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
+}
+
+void __fastcall__
+Pace_accelerate_pos(Pace_t* pace)
+{
+  pace->_status.byte_high = _STATUS_HIGH_MODE_1OF4;
+  pace->_status.byte_low = 0x00;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
+}
+
+void __fastcall__
+Pace_accelerate_neg(Pace_t* pace)
+{
+  pace->_status.byte_high
+    = _STATUS_HIGH_SIGN_MASK | _STATUS_HIGH_MODE_1OF4;
+  pace->_status.byte_low = 0x00;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
 }

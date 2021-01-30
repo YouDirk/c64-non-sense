@@ -164,7 +164,7 @@ $(OUTPUT).$(PRGEXT) $(OUTPUT).$(MAPEXT) $(OUTPUT).$(LABEXT)&: \
 	cp -f $< $@ && echo 'break $(BREAKPOINT)' >> $@
 
 %.$(D64EXT): %.$(PRGEXT)
-	$(D64PACK) -format "$* disk",aa d64 $@ -attach $@ -write $< $*
+	$(D64PACK) -format "$* disk",aa d64 $@ -attach $@ -write $< $*,p
 
 .PHONY: _cache
 _cache:

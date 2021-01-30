@@ -24,7 +24,7 @@
 
 #include "Pace.h"
 
-Pace_t Sandbox_pace_init;
+static Pace_t Sandbox_pace;
 
 /* ***************************************************************  */
 
@@ -46,8 +46,8 @@ Sandbox_init(void)
   Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
   Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
 
-  Pace_new(&Sandbox_pace_init, 8, 1, 16);
-  Pace_impulse_neg(&Sandbox_pace_init);
+  Pace_new(&Sandbox_pace, 6, 8, 1, 16);
+  Pace_accelerate_pos(&Sandbox_pace);
 }
 
 void __fastcall__
@@ -67,9 +67,9 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
-  Pace_tick(&Sandbox_pace_init);
+  Pace_tick(&Sandbox_pace);
 
-  Graphix.buffer.scroll_x += Sandbox_pace_init.pace;
+  Graphix.buffer.scroll_x += Sandbox_pace.pace;
 
   Graphix.buffer.scroll_y
     += Input.joy_port2.y_pace + Input.joy_port1.y_pace;
@@ -88,10 +88,25 @@ Sandbox_tick_low(void)
    * which are dividing a 32 bit wide unsigned integer.
    */
   if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
-    ++Graphix.buffer.bordercolor;
 
-    if ((Graphix.buffer.bordercolor & 0x03) == 3)
-      Pace_impulse_neg(&Sandbox_pace_init);
+    switch (Graphix.buffer.bordercolor & 0x1f) {
+    case 0x03:
+      Pace_impulse_pos(&Sandbox_pace);
+      break;
+    case 0x07:
+      Pace_accelerate_neg(&Sandbox_pace);
+      break;
+    case 0x0f:
+      Pace_impulse_neg(&Sandbox_pace);
+      break;
+    case 0x18:
+      Pace_accelerate_pos(&Sandbox_pace);
+      break;
+    default:
+      break;
+    }
+
+    ++Graphix.buffer.bordercolor;
   }
 
   if (Input.joy_port2.button1_pressed
