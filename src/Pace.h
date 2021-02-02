@@ -60,21 +60,37 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* ***************************************************************  */
 
+/* Set PACE_MAX immediately.  Hold that pace until PACE_IMPULSE_*() or
+ * PACE_STOP() is called.
+ */
+extern void __fastcall__ Pace_start_pos(Pace_t* pace);
+
+/* Set -PACE_MAX immediately.  Hold that pace until PACE_IMPULSE_*()
+ * or PACE_STOP() is called.
+ */
+extern void __fastcall__ Pace_start_neg(Pace_t* pace);
+
+/* Set 0 pixel/s immediately.
+ */
+extern void __fastcall__ Pace_stop(Pace_t* pace);
+
 /* Add an positive impulse and accelerate to PACE_MAX immediately.
- * After that break down to 0 pixel/s.
+ * After that brake to 0 pixel/s.
  */
 extern void __fastcall__ Pace_impulse_pos(Pace_t* pace);
 
 /* Add an negative impulse and accelerate to -PACE_MAX
- * immediately.  After that break down to 0 pixel/s.
+ * immediately.  After that brake to 0 pixel/s.
  */
 extern void __fastcall__ Pace_impulse_neg(Pace_t* pace);
 
-/* Accelerate from 0 pixel/s positive until PACE_MAX is reached.
+/* Accelerate from 0 pixel/s positive until PACE_MAX is reached.  Hold
+ * that pace until PACE_IMPULSE_*() or PACE_STOP() is called.
  */
 extern void __fastcall__ Pace_accelerate_pos(Pace_t* pace);
 
 /* Accelerate from 0 pixel/s negative until -PACE_MAX is reached.
+ * Hold that pace until PACE_IMPULSE_*() or PACE_STOP() is called.
  */
 extern void __fastcall__ Pace_accelerate_neg(Pace_t* pace);
 

@@ -16,7 +16,7 @@
 
 
 # C and S files to be compiled
-OBJ = Interrupt.asm Timer.asm Timer Pace Input Graphix.asm Graphix \
+OBJ = Interrupt.asm Timer.asm Timer Graphix.asm Graphix Pace Input \
       Engine EngineConfig Sandbox main
 
 # *.gen.[hs] to be generated

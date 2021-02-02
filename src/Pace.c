@@ -127,6 +127,37 @@ Pace_tick(Pace_t* pace)
 /* ***************************************************************  */
 
 void __fastcall__
+Pace_start_pos(Pace_t* pace)
+{
+  pace->_status.byte_high = pace->_max.byte_high;
+  pace->_status.byte_low
+    = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
+    | pace->_max.byte_low;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
+}
+
+void __fastcall__
+Pace_start_neg(Pace_t* pace)
+{
+  pace->_status.byte_high
+    = _STATUS_HIGH_SIGN_MASK | pace->_max.byte_high;
+  pace->_status.byte_low
+    = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
+    | pace->_max.byte_low;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
+}
+
+void __fastcall__
+Pace_stop(Pace_t* pace)
+{
+  UINT16(pace->_status) = 0x0000;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
+}
+
+void __fastcall__
 Pace_impulse_pos(Pace_t* pace)
 {
   pace->_status.byte_high = pace->_max.byte_high;
