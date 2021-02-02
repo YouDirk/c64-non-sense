@@ -40,8 +40,6 @@ main(void)
       /* poll test- and staged code  */
       Sandbox_poll();
 
-      /* should be the last poll, to reduce input delay  */
-      Input_poll();
     } while (!Engine_tick_poll());
 
     /* ***************************************************************

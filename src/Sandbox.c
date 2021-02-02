@@ -18,13 +18,14 @@
 
 #include "Sandbox.h"
 
-#include "Input.h"
 #include "Graphix.h"
+#include "Input.h"
 #include "Engine.h"
-
 #include "Pace.h"
 
-static Pace_t Sandbox_pace;
+/* ***************************************************************  */
+
+static Pace_t Sandbox_pace_y, Sandbox_pace_x;
 
 /* ***************************************************************  */
 
@@ -43,17 +44,15 @@ Sandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Input_joy_config(Input_joy_port2_mask, Input_axes_y_mask, 2, 4, 0xf);
-  Input_joy_config(Input_joy_port2_mask, Input_axes_x_mask, 1, 64, 0);
-
-  Pace_new(&Sandbox_pace, 6, 8, 1, 16);
-  Pace_accelerate_pos(&Sandbox_pace);
+  Pace_new(&Sandbox_pace_y, 6, 12, 4, 16);
+  Pace_new(&Sandbox_pace_x, 2, 32, 16, 0);
+  Pace_impulse_pos(&Sandbox_pace_y);
 }
 
 void __fastcall__
 Sandbox_release(void)
 {
-  Pace_delete(&init_pace);
+  Pace_delete(&Sandbox_pace);
 }
 
 /* ***************************************************************  */
@@ -67,14 +66,48 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
-  Pace_tick(&Sandbox_pace);
+  if (Input.joy_port2.axis_y.changed) {
+    if (Input.joy_port2.axis_y.direction > 0) {
+      Pace_start_pos(&Sandbox_pace_y);
+      DEBUG_NOTE("forward");
+    }
+    else if (Input.joy_port2.axis_y.direction < 0) {
+      Pace_accelerate_neg(&Sandbox_pace_y);
+      DEBUG_NOTE("backward");
+    }
+    else {
+      Pace_brake(&Sandbox_pace_y);
+      DEBUG_NOTE("stop");
+    }
 
-  Graphix.buffer.scroll_x += Sandbox_pace.pace;
+  } else if (Input.joy_port1.axis_y.changed) {
+    if (Input.joy_port1.axis_y.direction > 0)
+      Pace_start_pos(&Sandbox_pace_y);
+    else if (Input.joy_port1.axis_y.direction < 0)
+      Pace_accelerate_neg(&Sandbox_pace_y);
+    else Pace_brake(&Sandbox_pace_y);
+  }
 
-  Graphix.buffer.scroll_y
-    += Input.joy_port2.y_pace + Input.joy_port1.y_pace;
-  Graphix.buffer.scroll_x
-    += Input.joy_port2.x_pace + Input.joy_port1.x_pace;
+  if (Input.joy_port2.axis_x.changed) {
+    if (Input.joy_port2.axis_x.direction > 0)
+      Pace_start_pos(&Sandbox_pace_x);
+    else if (Input.joy_port2.axis_x.direction < 0)
+      Pace_start_neg(&Sandbox_pace_x);
+    else Pace_brake(&Sandbox_pace_x);
+
+  } else if (Input.joy_port1.axis_x.changed) {
+    if (Input.joy_port1.axis_x.direction > 0)
+      Pace_start_pos(&Sandbox_pace_x);
+    else if (Input.joy_port1.axis_x.direction < 0)
+      Pace_start_neg(&Sandbox_pace_x);
+    else Pace_brake(&Sandbox_pace_x);
+  }
+
+  Pace_tick(&Sandbox_pace_y);
+  Pace_tick(&Sandbox_pace_x);
+
+  Graphix.buffer.scroll_y += Sandbox_pace_y.pace;
+  Graphix.buffer.scroll_x += Sandbox_pace_x.pace;
 }
 
 void __fastcall__
@@ -88,27 +121,9 @@ Sandbox_tick_low(void)
    * which are dividing a 32 bit wide unsigned integer.
    */
   if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
-
-    switch (Graphix.buffer.bordercolor & 0x1f) {
-    case 0x03:
-      Pace_impulse_pos(&Sandbox_pace);
-      break;
-    case 0x07:
-      Pace_accelerate_neg(&Sandbox_pace);
-      break;
-    case 0x0f:
-      Pace_impulse_neg(&Sandbox_pace);
-      break;
-    case 0x18:
-      Pace_accelerate_pos(&Sandbox_pace);
-      break;
-    default:
-      break;
-    }
-
     ++Graphix.buffer.bordercolor;
   }
 
-  if (Input.joy_port2.button1_pressed
-      || Input.joy_port1.button1_pressed) Engine.set.exit_code = 0;
+  if (Input.joy_port2.button1.pressed
+      || Input.joy_port1.button1.pressed) Engine.set.exit_code = 0;
 }

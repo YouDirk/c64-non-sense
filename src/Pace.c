@@ -118,6 +118,10 @@ Pace_tick(Pace_t* pace)
   }
   pace->pace = pace_result;
 
+  /* If we are counting up (acceleration) then stop at
+   *
+   *   PACE->_MAX.BYTE_HIGH + 1
+   */
   if (pacemode_abs <= pace->_max.byte_high)
     UINT16(pace->_status) -= UINT16(pace->_decrement);
   else
@@ -129,7 +133,7 @@ Pace_tick(Pace_t* pace)
 void __fastcall__
 Pace_start_pos(Pace_t* pace)
 {
-  pace->_status.byte_high = pace->_max.byte_high;
+  pace->_status.byte_high = pace->_max.byte_high + 1;
   pace->_status.byte_low
     = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
     | pace->_max.byte_low;
@@ -141,7 +145,7 @@ void __fastcall__
 Pace_start_neg(Pace_t* pace)
 {
   pace->_status.byte_high
-    = _STATUS_HIGH_SIGN_MASK | pace->_max.byte_high;
+    = _STATUS_HIGH_SIGN_MASK | (pace->_max.byte_high + 1);
   pace->_status.byte_low
     = (_STATUS_LOW_FRACCOUNTER_MASK & pace->_status.byte_low)
     | pace->_max.byte_low;
@@ -153,6 +157,15 @@ void __fastcall__
 Pace_stop(Pace_t* pace)
 {
   UINT16(pace->_status) = 0x0000;
+
+  UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
+}
+
+void __fastcall__
+Pace_brake(Pace_t* pace)
+{
+  /* Status may be PACE->_MAX.BYTE_HIGH + 1  */
+  --pace->_status.byte_high;
 
   UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
 }

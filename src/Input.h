@@ -21,10 +21,6 @@
 
 #include "common.h"
 
-#define INPUT_JOY_PACE_DEFAULT          1
-#define INPUT_JOY_BRAKERATE_DEFAULT     32
-#define INPUT_JOY_DELAY_DEFAULT         4
-
 /* ***************************************************************  */
 
 /* Selectors for one or more specific input devices.  */
@@ -42,22 +38,44 @@ typedef uint8_t                    Input_devices_t;
 #define Input_axes_all_mask        ((Input_axes_t) 0xff)
 typedef uint8_t                    Input_axes_t;
 
-/* Paces >= 1 or Paces <= -1 are integers.  Paces which are slower
- * than 1 and greater than -1 will be alterate it´s pace to 1/-1 or 0
- * between engine ticks, depending on the pace.
- *
- * So you can use this value directly as increment for outputs in
- * ticking components.
- */
-typedef int8_t                     Input_pace_t;
+/* Information of an axis  */
+typedef struct Input_axis_t {
+
+  /* 1 or -1 depending on push direction during this engine tick, if
+   * axis is pressed .
+   *
+   * Note: Must have SIZEOF 1 and be first member in this struct!
+   */
+  int8_t direction;
+
+  /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
+  bool changed;
+
+} Input_axis_t;
+
+/* Information of a button  */
+typedef struct Input_button_t {
+
+  /* TRUE if button is pressed during this engine tick.
+   *
+   * Note: Must have SIZEOF 1 and be first member in this struct!
+   */
+  bool pressed;
+
+  /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
+  bool changed;
+
+} Input_button_t;
 
 /* Information about a joystick  */
 typedef struct Input_joystick_t {
-  bool         y_pressed, x_pressed;
 
-  Input_pace_t y_pace, x_pace;
+  /* State of the axes.  */
+  Input_axis_t axis_y, axis_x;
 
-  bool         button1_pressed;
+  /* State of the fire button.  */
+  Input_button_t button1;
+
 } Input_joystick_t;
 
 /* Configuration variables which can be set directly, without needing
@@ -98,17 +116,7 @@ extern void __fastcall__ Input_release(void);
 
 /* ***************************************************************  */
 
-/* Polls the enabled input devices for state changes.  */
-extern void __fastcall__ Input_poll(void);
-
-/* Let the enabled input devices ticking to update paces, etc.  */
+/* Check the enabled input devices for state changes.  */
 extern void __fastcall__ Input_tick(void);
-
-/* ***************************************************************  */
-
-/* Configure selected joystick DEVICEs.  */
-extern void __fastcall__ Input_joy_config(
-  Input_devices_t devices, Input_axes_t axes, uint4_t pace,
-  uint8_t brakerate, uint4_t delay);
 
 #endif /* INPUT_H__  */
