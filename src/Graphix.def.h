@@ -36,13 +36,28 @@ typedef_struct_begin(Graphix_buffer_t)
   typedef_struct_int8(scroll_y)
 typedef_struct_end(Graphix_buffer_t)
 
+/* VIC-II revision structure  */
+typedef_enum_begin(Graphix_vicrev_t)
+  /* default PAL revision  (europe)*/
+  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_pal6569_e,      37)
+  /* Drean PAL-N revision (south america)  */
+  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_paln6572_e,     40)
+  /* default NTSC revision (usa)  */
+  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_ntsc6567r8_e,   06)
+  /* old NTSC revision  */
+  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_ntsc6567r56a_e, 05)
+typedef_enum_end(Graphix_vicrev_t)
+
 /* ***************************************************************  */
 
 /* Structure of static members for module.  */
 typedef_struct_begin(Graphix_t)
 
-  /* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine. */
+  /* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine.  */
   typedef_struct_uint8(is_pal)
+
+  /* Revision of VIC-II graphic chip.  */
+  typedef_struct_enum(Graphix_vicrev_t, vic_revision)
 
   /* The logical graphic buffer.  */
   typedef_struct_nested(Graphix_buffer_t, buffer)

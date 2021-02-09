@@ -52,7 +52,8 @@ Sandbox_init(void)
 void __fastcall__
 Sandbox_release(void)
 {
-  Pace_delete(&Sandbox_pace);
+  Pace_delete(&Sandbox_pace_x);
+  Pace_delete(&Sandbox_pace_y);
 }
 
 /* ***************************************************************  */

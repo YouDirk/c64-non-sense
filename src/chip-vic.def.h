@@ -54,9 +54,12 @@ define_hex(VIC_BASE,                    d000)
 define_hex(VIC_RASTERLINE,                   d012)
 define_hex(VIC_RASTERLINE_MASK,              ff)
 define_hex(VIC_RASTERL_MAX_PAL_MASK,         f0)
-define_hex(VIC_RASTERL_MAX_PAL_6569,        137)
-define_hex(VIC_RASTERL_MAX_NTSC_6567R8,     106)
-define_hex(VIC_RASTERL_MAX_NTSC_6567R56A,   105)
+define_hex(VIC_RASTERL_CYCLES_PAL6569_VAL,   7f)
+define_hex(VIC_RASTERL_CYCLES_PALN6572_VAL,  9b)
+define    (VIC_RASTERL_CYCLES_PAL_THRESHOLD,                         \
+           VIC_RASTERL_CYCLES_PAL6569_VAL                            \
+           + (VIC_RASTERL_CYCLES_PALN6572_VAL                        \
+              - VIC_RASTERL_CYCLES_PAL6569_VAL)/2)
 define_hex(VIC_RASTERL_SCREENBEGIN_24ROWS,   34)
 define_hex(VIC_RASTERL_SCREENEND_24ROWS,     f7)
 define_hex(VIC_RASTERL_SCREENBEGIN_25ROWS,   30)

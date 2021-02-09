@@ -31,24 +31,17 @@
 #define Input_all_mask             ((Input_devices_t) 0xff)
 typedef uint8_t                    Input_devices_t;
 
-/* Selectors for one or more specific axis of joystick devices.  */
-#define Input_axes_none_mask       ((Input_axes_t) 0x00)
-#define Input_axes_y_mask          ((Input_axes_t) 0x01)
-#define Input_axes_x_mask          ((Input_axes_t) 0x02)
-#define Input_axes_all_mask        ((Input_axes_t) 0xff)
-typedef uint8_t                    Input_axes_t;
-
 /* Information of an axis  */
 typedef struct Input_axis_t {
 
   /* 1 or -1 depending on push direction during this engine tick, if
    * axis is pressed .
    *
-   * Note: Must have SIZEOF 1 and be first member in this struct!
+   * Assert: Must have SIZEOF 1 and be first member in this struct!
    */
   int8_t direction;
 
-  /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
+  /* TRUE for exactly 1 tick, if DIRECTION has changed it´s value.  */
   bool changed;
 
 } Input_axis_t;
@@ -58,7 +51,7 @@ typedef struct Input_button_t {
 
   /* TRUE if button is pressed during this engine tick.
    *
-   * Note: Must have SIZEOF 1 and be first member in this struct!
+   * Assert: Must have SIZEOF 1 and be first member in this struct!
    */
   bool pressed;
 

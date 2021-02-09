@@ -23,6 +23,11 @@
 
 ;; *******************************************************************
 
+;; extern Graphix_t Graphix;
+.import _Graphix
+
+;; *******************************************************************
+
 ;; extern void __fastcall__ Graphix_rasterline_isr(void);
 .global Graphix_rasterline_isr
 

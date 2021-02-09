@@ -116,4 +116,12 @@ extern void __fastcall__
  */
 extern void __fastcall__ Graphix_buffer_swap(void);
 
+/* *******************************************************************
+ * private
+ */
+
+extern void __fastcall__ _Graphix_init_vic_detect(void);
+
+/* ***************************************************************  */
+
 #endif /* GRAPHIX_H__  */

@@ -63,26 +63,8 @@ Graphix_init(Graphix_initCallback_t init_callback)
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
 
-  /* Find out if we are on a PAL or NTSC machine?  Needed for Timer
-   * configuration.
-   */
-  __asm__("rasterline_not_overflow:\n"
-          "    lda %w\n"
-          "rasterline_not_inc:\n"
-          "    cmp %w\n"
-          "    beq rasterline_not_inc\n"
-          "    bmi rasterline_not_overflow\n"
-          /* akku = rasterline_max (without bit 8)
-           * 0x37 -> 0..311 rasterlines (PAL with VIC 6569)
-           * 0x06 -> 0..262 rasterlines (NTSC with VIC 6567R8)
-           * 0x05 -> 0..261 rasterlines (NTSC with VIC 6567R56A)
-           */
-          "    and #%b\n"
-          /* akku = 0x30 if PAL, 0x00 if NTSC  */
-          "    sta %v+%w\n",
-          VIC_RASTERLINE, VIC_RASTERLINE,
-          (uint8_t) VIC_RASTERL_MAX_PAL_MASK,
-          Graphix, offsetof(Graphix_t, is_pal));
+  _Graphix_init_vic_detect();
+  // TODO printf("%02x\n", Graphix.vic_revision);
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;

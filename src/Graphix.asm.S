@@ -21,6 +21,55 @@
 
 .code
 
+;; *******************************************************************
+
+;; Find out if we are on a PAL or NTSC machine?  Needed for Timer
+;; configuration.
+;;
+;; void __fastcall__ _Graphix_init_vic_detect(void)
+.export __Graphix_init_vic_detect
+.proc __Graphix_init_vic_detect: near
+
+        ldx #$00                        ; X := 0x00, cycle counter
+        sei                             ; race between vic and cpu measured
+rasterline_not_overflow:
+        lda VIC_RASTERLINE
+rasterline_not_inc:
+        cmp VIC_RASTERLINE
+        beq rasterline_not_inc          ; while not changed
+        bmi rasterline_not_overflow     ; while not overflows
+        ;; akku = rasterline_max (without bit 8)
+        ;; 0x37 -> 0..311 rasterlines (PAL with VIC 6569)
+        ;; 0x06 -> 0..262 rasterlines (NTSC with VIC 6567R8)
+        ;; 0x05 -> 0..261 rasterlines (old NTSC with VIC 6567R56A)
+        tay                             ; Y := rasterline_max
+        and #VIC_RASTERL_MAX_PAL_MASK   ; A := 0x30 if PAL, 0x00 if NTSC
+        sta _Graphix + Graphix_t::is_pal
+        beq done                        ; if (NTSC): Y = 0x05|0x06
+
+cycles_count:
+        inx                             ; X++ := cycle counter
+        lda VIC_RASTERLINE
+        bpl cycles_count                ; while (RASTERLINE >= 0)
+        ;; X := 0x7f cylces in VICE (PAL with VIC 6569)
+        ;; X := 0x9b cylces in VICE (PAL-N with VIC 6572)
+        txa                             ; A := cycles
+        cmp #VIC_RASTERL_CYCLES_PAL_THRESHOLD
+        bmi done                        ; if (cycles < 0): Y = 0x37
+        lda #Graphix_vicrev_paln6572_e
+        tay                             ; Y := 0x40
+
+done:
+        ;; Y = Graphix_vicrev_{ntsc/pal}_e
+        cli                             ; restore I status flag
+        tya                             ; A := rasterline_max
+        sta _Graphix + Graphix_t::vic_revision
+
+        rts
+.endproc                                ; __Graphix_vic_detect
+
+;; *******************************************************************
+
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME
