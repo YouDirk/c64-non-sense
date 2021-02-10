@@ -60,13 +60,13 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* ***************************************************************  */
 
-/* Set PACE_MAX immediately.  Hold that pace until PACE_IMPULSE_*(),
- * PACE_STOP() or PACE_BRAKE() is called.
+/* Set PACE_MAX immediately.  Hold that pace until PACE_STOP(),
+ * PACE_BRAKE() or PACE_IMPULSE_*() is called.
  */
 extern void __fastcall__ Pace_start_pos(Pace_t* pace);
 
-/* Set -PACE_MAX immediately.  Hold that pace until PACE_IMPULSE_*(),
- * PACE_STOP() or PACE_BRAKE() is called.
+/* Set -PACE_MAX immediately.  Hold that pace until PACE_STOP(),
+ * PACE_BRAKE() or PACE_IMPULSE_*() is called.
  */
 extern void __fastcall__ Pace_start_neg(Pace_t* pace);
 
@@ -74,7 +74,7 @@ extern void __fastcall__ Pace_start_neg(Pace_t* pace);
  */
 extern void __fastcall__ Pace_stop(Pace_t* pace);
 
-/* Brake to 0 pixel/s with BRAKERATE.
+/* Brake from current pace to 0 pixel/s with BRAKERATE.
  */
 extern void __fastcall__ Pace_brake(Pace_t* pace);
 
@@ -88,14 +88,14 @@ extern void __fastcall__ Pace_impulse_pos(Pace_t* pace);
  */
 extern void __fastcall__ Pace_impulse_neg(Pace_t* pace);
 
-/* Accelerate from 0 pixel/s positive until PACE_MAX is reached.  Hold
- * that pace until PACE_IMPULSE_*(), PACE_STOP() or PACE_BRAKE() is
- * called.
+/* Accelerate from current pace positive until PACE_MAX is reached.
+ * Hold that pace until PACE_STOP(), PACE_BRAKE() or PACE_IMPULSE_*()
+ * is called.
  */
 extern void __fastcall__ Pace_accelerate_pos(Pace_t* pace);
 
-/* Accelerate from 0 pixel/s negative until -PACE_MAX is reached.
- * Hold that pace until PACE_IMPULSE_*(), PACE_STOP() or PACE_BRAKE()
+/* Accelerate from current pace negative until -PACE_MAX is reached.
+ * Hold that pace until PACE_STOP(), PACE_BRAKE() or PACE_IMPULSE_*()
  * is called.
  */
 extern void __fastcall__ Pace_accelerate_neg(Pace_t* pace);

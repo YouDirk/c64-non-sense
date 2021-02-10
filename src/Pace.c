@@ -164,8 +164,8 @@ Pace_stop(Pace_t* pace)
 void __fastcall__
 Pace_brake(Pace_t* pace)
 {
-  /* Status may be PACE->_MAX.BYTE_HIGH + 1  */
-  --pace->_status.byte_high;
+  /* Max Status may be PACE->_MAX.BYTE_HIGH + 1  */
+  pace->_status.byte_high -= _STATUS_HIGH_MODE_1OF4;
 
   UINT16(pace->_decrement) = UINT16(pace->_decrement_brake);
 }
@@ -196,18 +196,29 @@ Pace_impulse_neg(Pace_t* pace)
 void __fastcall__
 Pace_accelerate_pos(Pace_t* pace)
 {
-  pace->_status.byte_high = _STATUS_HIGH_MODE_1OF4;
-  pace->_status.byte_low = 0x00;
+  static uint8_t status_high;
+  status_high = pace->_status.byte_high;
 
+  status_high &= ~_STATUS_HIGH_SIGN_MASK;
+
+  if (status_high == 0x00)
+    status_high += _STATUS_HIGH_MODE_1OF4;
+
+  pace->_status.byte_high = status_high;
   UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
 }
 
 void __fastcall__
 Pace_accelerate_neg(Pace_t* pace)
 {
-  pace->_status.byte_high
-    = _STATUS_HIGH_SIGN_MASK | _STATUS_HIGH_MODE_1OF4;
-  pace->_status.byte_low = 0x00;
+  static uint8_t status_high;
+  status_high = pace->_status.byte_high;
 
+  status_high |= _STATUS_HIGH_SIGN_MASK;
+
+  if (status_high == _STATUS_HIGH_SIGN_MASK)
+    status_high += _STATUS_HIGH_MODE_1OF4;
+
+  pace->_status.byte_high = status_high;
   UINT16(pace->_decrement) = UINT16(pace->_decrement_accel);
 }

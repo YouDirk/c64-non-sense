@@ -44,8 +44,8 @@ Sandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Pace_new(&Sandbox_pace_y, 6, 12, 4, 16);
-  Pace_new(&Sandbox_pace_x, 2, 32, 16, 0);
+  Pace_new(&Sandbox_pace_y, 6, 2, 4, 0xff);
+  Pace_new(&Sandbox_pace_x, 4, 2, 10, 0);
   Pace_impulse_pos(&Sandbox_pace_y);
 }
 
