@@ -64,7 +64,6 @@ Graphix_init(Graphix_initCallback_t init_callback)
   VIC.bordercolor = VIC_COLOR_BLACK;
 
   _Graphix_init_vic_detect();
-  // TODO printf("%02x\n", Graphix.vic_revision);
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;

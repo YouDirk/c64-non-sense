@@ -38,7 +38,7 @@ typedef_struct_end(Graphix_buffer_t)
 
 /* VIC-II revision structure  */
 typedef_enum_begin(Graphix_vicrev_t)
-  /* default PAL revision  (europe)*/
+  /* default PAL revision  (europe)  */
   typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_pal6569_e,      37)
   /* Drean PAL-N revision (south america)  */
   typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_paln6572_e,     40)

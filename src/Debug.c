@@ -20,6 +20,7 @@
 #include "Debug.gen.h"
 
 #include "Timer.h"
+#include "Graphix.h"
 #include "Engine.h"
 
 /* ***************************************************************  */
@@ -38,9 +39,23 @@ void __fastcall__
 Debug_release_print(void)
 {
   static _Debug_entry_t* cur;
-  static const char* type_str;
+  static const char *vic_str, *type_str;
 
-  printf("debug: %u%c message%c%s\n",
+  switch (Graphix.vic_revision) {
+  /* default PAL revision  (europe)  */
+  case Graphix_vicrev_pal6569_e: vic_str = "-6569"; break;
+  /* Drean PAL-N revision (south america)  */
+  case Graphix_vicrev_paln6572_e: vic_str = "n-6572"; break;
+  /* default NTSC revision (usa)  */
+  case Graphix_vicrev_ntsc6567r8_e: vic_str = "-6567r8"; break;
+  /* old NTSC revision  */
+  case Graphix_vicrev_ntsc6567r56a_e: vic_str = "-6567r56a"; break;
+  default: vic_str = "<vic?>";
+  }
+
+  printf("sys: %s%s\n"
+         "debug: %u%c message%c%s\n",
+         Graphix.is_pal? "pal": "ntsc", vic_str,
          _Debug.count, _Debug.count >= _DEBUG_LIST_SIZE? '+': '\0',
          _Debug.count == 1? '\0': 's', _Debug.count == 0? " :)": "...");
 
