@@ -32,6 +32,8 @@
 
         ldx #$00                        ; X := 0x00, cycle counter
         sei                             ; race between vic and cpu measured
+        ;; -----------------------------------------------------------
+
 rasterline_not_overflow:
         lda VIC_RASTERLINE
 rasterline_not_inc:
@@ -48,6 +50,7 @@ rasterline_not_inc:
         beq done                        ; if (NTSC): Y = 0x05|0x06
 
 cycles_count:
+        ;; Y = 0x37
         inx                             ; X++ := cycle counter
         lda VIC_RASTERLINE
         bpl cycles_count                ; while (RASTERLINE >= 0)
@@ -56,14 +59,13 @@ cycles_count:
         txa                             ; A := cycles
         cmp #VIC_RASTERL_CYCLES_PAL_THRESHOLD
         bmi done                        ; if (cycles < 0): Y = 0x37
-        lda #Graphix_vicrev_paln6572_e
-        tay                             ; Y := 0x40
+        ldy #Graphix_vicrev_paln6572_e  ; Y := 0x40
 
+        ;; -----------------------------------------------------------
 done:
         ;; Y = Graphix_vicrev_{ntsc/pal}_e
         cli                             ; restore I status flag
-        tya                             ; A := rasterline_max
-        sta _Graphix + Graphix_t::vic_revision
+        sty _Graphix + Graphix_t::vic_revision
 
         rts
 .endproc                                ; __Graphix_vic_detect

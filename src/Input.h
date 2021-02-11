@@ -21,6 +21,27 @@
 
 #include "common.h"
 
+/* *******************************************************************
+ * C64 keyboard matrix
+ *
+ * legend: PA (CIA1 port A), PB (CIA1 port B)
+ *         joy2 (joystick port 2), joy1 (joystick port 1)
+ *
+ *      |   PB7    PB6  PB5   PB4    PB3     PB2     PB1    PB0  | joy2
+ * ---------------------------------------------------------------------
+ * PA7  | RUNSTOP   Q   C=   SPACE    2      CTRL    LEFT    1   |
+ * PA6  |    /     UP    =   RSHIFT  HOME     ;       *    POUND |
+ * PA5  |    ,      @    :     .      -       L       P      +   |
+ * PA4  |    N      O    K     M      0       J       I      9   | Btn1
+ * PA3  |    V      U    H     B      8       G       Y      7   | Right
+ * PA2  |    X      T    F     C      6       D       R      5   | Left
+ * PA1  | LSHIFT    E    S     Z      4       A       W      3   | Down
+ * PA0  | CRSR DN  F5   F3    F1     F7    CRSR RT  RETURN  DEL  | Up
+ * ---------------------------------------------------------------------
+ * joy1 |                    Btn1   Right    Left    Down   Up   |
+ *
+ */
+
 /* ***************************************************************  */
 
 /* Selectors for one or more specific input devices.  */

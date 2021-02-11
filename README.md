@@ -118,14 +118,17 @@ Credits
 ### Appendix: Programmers references
 
 * Commodore 64 wiki *(well beginning)*
-    - (en)                          https://www.c64-wiki.com/wiki/C64
-    - (de, *deeper specifications*) https://www.c64-wiki.de/wiki/C64
+    - (en)                     https://www.c64-wiki.com/wiki/C64
+    - (de, *sometimes deeper*) https://www.c64-wiki.de/wiki/C64
 
 * Commodore 64 Programmer's Reference Guide
     - (pdf)  http://www.classiccmp.org/cini/pdf/Commodore/C64%20Programmer's%20Reference%20Guide.pdf
     - (html) http://www.devili.iki.fi/Computers/Commodore/C64/Programmers_Reference/page_iii.html
     - (txt)  http://www.zimmers.net/cbmpics/cbm/c64/c64prg.txt
     - (wiki) https://www.c64-wiki.com/wiki/Commodore_64_Programmer%27s_Reference_Guide
+
+* Commodore 64 ROMs disassembled
+    - (Kernal, BASIC, etc.) http://unusedino.de/ec64/technical/aay/c64/
 
 * Commodore 64 schematic diagrams
     - (left)   https://www.c64-wiki.com/wiki/File:PRG_Schematic_(left).gif
