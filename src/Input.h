@@ -21,15 +21,25 @@
 
 #include "common.h"
 
+/* ***************************************************************  */
+
+/* Selectors for one or more specific input devices.  */
+#define Input_none_mask            ((Input_devices_t) 0x00)
+#define Input_joy_port2_mask       ((Input_devices_t) 0x01)
+#define Input_joy_port1_mask       ((Input_devices_t) 0x02)
+#define Input_joy_all_mask         ((Input_devices_t) 0x03)
+#define Input_all_mask             ((Input_devices_t) 0xff)
+typedef uint8_t                    Input_devices_t;
+
 /* *******************************************************************
  * C64 keyboard matrix
  *
- * legend: PA (CIA1 port A), PB (CIA1 port B)
- *         joy2 (joystick port 2), joy1 (joystick port 1)
+ * legend: PA (CIA1 port A), joy2 (joystick port 2)
+ *         PB (CIA1 port B), joy1 (joystick port 1)
  *
  *      |   PB7    PB6  PB5   PB4    PB3     PB2     PB1    PB0  | joy2
  * ---------------------------------------------------------------------
- * PA7  | RUNSTOP   Q   C=   SPACE    2      CTRL    LEFT    1   |
+ * PA7  | STOPRUN   Q   C=   SPACE    2      CTRL    LEFT    1   |
  * PA6  |    /     UP    =   RSHIFT  HOME     ;       *    POUND |
  * PA5  |    ,      @    :     .      -       L       P      +   |
  * PA4  |    N      O    K     M      0       J       I      9   | Btn1
@@ -40,17 +50,96 @@
  * ---------------------------------------------------------------------
  * joy1 |                    Btn1   Right    Left    Down   Up   |
  *
+ *
+ * The order of SCAN CODES (aka Keyboard Code) are going from
+ * bottom-right to left.
+ *
+ *   0x00 DEL, 0x01 RETURN, 0x02 CRSR RT, 0x03 F7...
+ *
+ * and then upwards for each line
+ *
+ *   0x07 CRSR DN,                                  0x08 3, ...
+ *   0x0f LSHIFT (unused in Kernal implementation), 0x10 5, ...
+ *   0x17 X,                                        0x18 7, ...
+ *     ...
+ *     ...                                 0x3e Q, 0x3f RUNSTOP
  */
 
-/* ***************************************************************  */
+#define Input_sc_delinst_e              ((Input_scancode_t) (0x00))
+#define Input_sc_return_e               ((Input_scancode_t) (0x01))
+#define Input_sc_crsrright_e            ((Input_scancode_t) (0x02))
+#define Input_sc_f7_e                   ((Input_scancode_t) (0x03))
+#define Input_sc_f1_e                   ((Input_scancode_t) (0x04))
+#define Input_sc_f3_e                   ((Input_scancode_t) (0x05))
+#define Input_sc_f5_e                   ((Input_scancode_t) (0x06))
+#define Input_sc_crsrdown_e             ((Input_scancode_t) (0x07))
 
-/* Selectors for one or more specific input devices.  */
-#define Input_none_mask            ((Input_devices_t) 0x00)
-#define Input_joy_port2_mask       ((Input_devices_t) 0x01)
-#define Input_joy_port1_mask       ((Input_devices_t) 0x02)
-#define Input_joy_all_mask         ((Input_devices_t) 0x03)
-#define Input_all_mask             ((Input_devices_t) 0xff)
-typedef uint8_t                    Input_devices_t;
+#define Input_sc_3_e                    ((Input_scancode_t) (0x08))
+#define Input_sc_w_e                    ((Input_scancode_t) (0x09))
+#define Input_sc_a_e                    ((Input_scancode_t) (0x0a))
+#define Input_sc_4_e                    ((Input_scancode_t) (0x0b))
+#define Input_sc_z_e                    ((Input_scancode_t) (0x0c))
+#define Input_sc_s_e                    ((Input_scancode_t) (0x0d))
+#define Input_sc_e_e                    ((Input_scancode_t) (0x0e))
+#define Input_sc_lshift_e               ((Input_scancode_t) (0x0f))
+
+#define Input_sc_5_e                    ((Input_scancode_t) (0x10))
+#define Input_sc_r_e                    ((Input_scancode_t) (0x11))
+#define Input_sc_d_e                    ((Input_scancode_t) (0x12))
+#define Input_sc_6_e                    ((Input_scancode_t) (0x13))
+#define Input_sc_c_e                    ((Input_scancode_t) (0x14))
+#define Input_sc_f_e                    ((Input_scancode_t) (0x15))
+#define Input_sc_t_e                    ((Input_scancode_t) (0x16))
+#define Input_sc_x_e                    ((Input_scancode_t) (0x17))
+
+#define Input_sc_7_e                    ((Input_scancode_t) (0x18))
+#define Input_sc_y_e                    ((Input_scancode_t) (0x19))
+#define Input_sc_g_e                    ((Input_scancode_t) (0x1a))
+#define Input_sc_8_e                    ((Input_scancode_t) (0x1b))
+#define Input_sc_b_e                    ((Input_scancode_t) (0x1c))
+#define Input_sc_h_e                    ((Input_scancode_t) (0x1d))
+#define Input_sc_u_e                    ((Input_scancode_t) (0x1e))
+#define Input_sc_v_e                    ((Input_scancode_t) (0x1f))
+
+#define Input_sc_9_e                    ((Input_scancode_t) (0x20))
+#define Input_sc_i_e                    ((Input_scancode_t) (0x21))
+#define Input_sc_j_e                    ((Input_scancode_t) (0x22))
+#define Input_sc_0_e                    ((Input_scancode_t) (0x23))
+#define Input_sc_m_e                    ((Input_scancode_t) (0x24))
+#define Input_sc_k_e                    ((Input_scancode_t) (0x25))
+#define Input_sc_o_e                    ((Input_scancode_t) (0x26))
+#define Input_sc_n_e                    ((Input_scancode_t) (0x27))
+
+#define Input_sc_plus_e                 ((Input_scancode_t) (0x28))
+#define Input_sc_p_e                    ((Input_scancode_t) (0x29))
+#define Input_sc_l_e                    ((Input_scancode_t) (0x2a))
+#define Input_sc_minus_e                ((Input_scancode_t) (0x2b))
+#define Input_sc_dot_e                  ((Input_scancode_t) (0x2c))
+#define Input_sc_colon_e                ((Input_scancode_t) (0x2d))
+#define Input_sc_atsign_e               ((Input_scancode_t) (0x2e))
+#define Input_sc_comma_e                ((Input_scancode_t) (0x2f))
+
+#define Input_sc_pound_e                ((Input_scancode_t) (0x30))
+#define Input_sc_asterisk_e             ((Input_scancode_t) (0x31))
+#define Input_sc_semicolon_e            ((Input_scancode_t) (0x32))
+#define Input_sc_homeclr_e              ((Input_scancode_t) (0x33))
+#define Input_sc_rshift_e               ((Input_scancode_t) (0x34))
+#define Input_sc_equal_e                ((Input_scancode_t) (0x35))
+#define Input_sc_uparrow_e              ((Input_scancode_t) (0x36))
+#define Input_sc_slash_e                ((Input_scancode_t) (0x37))
+
+#define Input_sc_1_e                    ((Input_scancode_t) (0x38))
+#define Input_sc_leftarrow_e            ((Input_scancode_t) (0x39))
+#define Input_sc_ctrl_e                 ((Input_scancode_t) (0x3a))
+#define Input_sc_2_e                    ((Input_scancode_t) (0x3b))
+#define Input_sc_space_e                ((Input_scancode_t) (0x3c))
+#define Input_sc_commodore_e            ((Input_scancode_t) (0x3d))
+#define Input_sc_q_e                    ((Input_scancode_t) (0x3e))
+#define Input_sc_stoprun_e              ((Input_scancode_t) (0x3f))
+
+typedef uint8_t Input_scancode_t;
+
+/* ***************************************************************  */
 
 /* Information of an axis  */
 typedef struct Input_axis_t {
