@@ -29,7 +29,7 @@ EngineConfig_init(void)
   /* Set game depending engine configurations here.
    */
 
-  EngineConfig.inputs_enabled = Input_joy_all_mask;
+  EngineConfig.inputs_enabled = Input_all_mask;
 }
 
 void __fastcall__

@@ -24,12 +24,13 @@
 /* ***************************************************************  */
 
 /* Selectors for one or more specific input devices.  */
-#define Input_none_mask            ((Input_devices_t) 0x00)
-#define Input_joy_port2_mask       ((Input_devices_t) 0x01)
-#define Input_joy_port1_mask       ((Input_devices_t) 0x02)
-#define Input_joy_all_mask         ((Input_devices_t) 0x03)
-#define Input_all_mask             ((Input_devices_t) 0xff)
-typedef uint8_t                    Input_devices_t;
+#define Input_none_mask                 ((Input_devices_t) 0x00)
+#define Input_joystick_port2_mask       ((Input_devices_t) 0x01)
+#define Input_joystick_port1_mask       ((Input_devices_t) 0x02)
+#define Input_joystick_all_mask         ((Input_devices_t) 0x03)
+#define Input_keyboard_ascan_mask       ((Input_devices_t) 0x04)
+#define Input_all_mask                  ((Input_devices_t) 0xff)
+typedef uint8_t                         Input_devices_t;
 
 /* *******************************************************************
  * C64 keyboard matrix
@@ -51,8 +52,8 @@ typedef uint8_t                    Input_devices_t;
  * joy1 |                    Btn1   Right    Left    Down   Up   |
  *
  *
- * The order of SCAN CODES (aka Keyboard Code) are going from
- * bottom-right to left.
+ * The C64 SCAN CODES (aka keyboard codes) are ordered from
+ * bottom-right to left
  *
  *   0x00 DEL, 0x01 RETURN, 0x02 CRSR RT, 0x03 F7...
  *
@@ -62,7 +63,12 @@ typedef uint8_t                    Input_devices_t;
  *   0x0f LSHIFT (unused in Kernal implementation), 0x10 5, ...
  *   0x17 X,                                        0x18 7, ...
  *     ...
- *     ...                                 0x3e Q, 0x3f RUNSTOP
+ *     ...                                 0x3e Q, 0x3f STOPRUN
+ *
+ * These scan codes are full compatible to the implementation of the
+ * Kernal PETSCII lookup table (C64 ASCII) at
+ *
+ *   (uint8_t*) 0xeb81, which is zeropage vector 0xf5 is pointing to.
  */
 
 #define Input_sc_delinst_e              ((Input_scancode_t) (0x00))

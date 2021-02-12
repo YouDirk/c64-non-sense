@@ -35,7 +35,7 @@ Input_init(Input_devices_t devices)
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
   */
 
-  /* set data direction of CIA1 port A and port B  */
+  /* direction of CIA1 port A and B is read-only by default  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;
   CIA1.ddrb = CIA_DDR_RONLY_ALL;
 }
@@ -46,6 +46,9 @@ Input_release(void)
   /* restore data direction of CIA1 port A and port B  */
   CIA1.ddrb = CIA1_DDRB_DEFAULT;
   CIA1.ddra = CIA1_DDRA_DEFAULT;
+
+  CIA1.pra = CIA1_PRA_DEFAULT;
+  CIA1.prb = CIA1_PRB_DEFAULT;
 }
 
 /* ***************************************************************  */
@@ -86,7 +89,7 @@ Input_tick(void)
 {
   static uint8_t cia_port_inv;
 
-  if (Input.set.enabled & Input_joy_port2_mask) {
+  if (Input.set.enabled & Input_joystick_port2_mask) {
     cia_port_inv = ~CIA1.pra;
 
     _joystick_axis_tick(&Input.joy_port2.axis_y, cia_port_inv << 2);
@@ -98,7 +101,7 @@ Input_tick(void)
     _joystick_axis_tick((Input_axis_t*) &Input.joy_port2.button1,
                         cia_port_inv >> 2);
   }
-  if (Input.set.enabled & Input_joy_port1_mask) {
+  if (Input.set.enabled & Input_joystick_port1_mask) {
     cia_port_inv = ~CIA1.prb;
 
     _joystick_axis_tick(&Input.joy_port1.axis_y, cia_port_inv << 2);
@@ -109,5 +112,17 @@ Input_tick(void)
      */
     _joystick_axis_tick((Input_axis_t*) &Input.joy_port1.button1,
                         cia_port_inv >> 2);
+  }
+
+  if (Input.set.enabled & Input_keyboard_ascan_mask) {
+    CIA1.ddra = CIA_DDR_RW_ALL;
+
+    /*
+    CIA1.pra = (0xff);
+    if (CIA1.prb != 0xff)
+      printf("0x%02x\n", CIA1.prb);
+    */
+
+    CIA1.ddra = CIA_DDR_RONLY_ALL;
   }
 }

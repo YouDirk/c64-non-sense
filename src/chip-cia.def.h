@@ -32,11 +32,8 @@ define_hex(CIA2_BASE,                   dd00)
 define_hex(CIA1_PRA,                    dc00)
 define_hex(CIA1_PRB,                    dc01)
 
-/* ------------------------------
- * if CIA1 DDR[AB] set to 'read/write'
- */
-define_hex(CIA1_PRA_KEYCOL_MASK,        ff)
-define_hex(CIA1_PRB_KEYROW_MASK,        ff)
+define_hex(CIA1_PRA_DEFAULT,            7f)
+define_hex(CIA1_PRB_DEFAULT,            ff)
 
 /* ------------------------------
  * if CIA1 DDR[AB] set to 'read'
