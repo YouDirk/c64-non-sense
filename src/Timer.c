@@ -74,7 +74,7 @@ Timer_init(void)
   /* Start Timer, Port B cycle, auto-restart, load latch initial,
    * system clock, RTC 60 Hz
    */
-  CIA1.cra = CIA1_CRA_MODE;
+  CIA1.cra = CIA1_CRA_MODE | CIA_CRAB_LDLATCH_MASK;
 
   /* IRQs go!  */
   CIA1.icr = CIA1_ICR_IRQMODE;
@@ -87,7 +87,7 @@ Timer_release(void)
   *(uint16_t*) &CIA1.ta_lo = _ta_default;
 
   /* load the set latch  */
-  CIA1.cra = CIA1_CRA_DEFAULT;
+  CIA1.cra = CIA1_CRA_DEFAULT | CIA_CRAB_LDLATCH_MASK;
 
   /* mask all CIA1 IRQs  */
   CIA1.icr = CIA_ICR_MASK(CIA_ICR_ALL);

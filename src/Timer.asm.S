@@ -36,6 +36,9 @@ cia1_portb_backup:
         .res 1                          ; space for CIA1 port B backup
         .popseg                         ; restore "CODE" segment
 
+        lda #CIA1_CRA_MODE | CIA_CRAB_PBENABLE_MASK
+        sta CIA1_CRA                    ; portB bit6 disabled by default
+
         ldx CIA1_PRB                    ; X = portB
         txa                             ; A = portB
         eor cia1_portb_backup           ; A = B xor prevB = toggled
@@ -44,6 +47,9 @@ cia1_portb_backup:
         bne timer_1_sync                ; if toggled then a_is_sync
         DEBUG_WARN "timer 1, isr async with cia1"
 timer_1_sync:
+
+        lda #CIA1_CRA_MODE
+        sta CIA1_CRA                    ; restore CIA1 portB bit6
 .endif ; DEBUG_TIMER1_SYNCCHECK
 
         ;; -----------------------------------------------------------
@@ -90,6 +96,8 @@ not_overflow:
 ;;
 ;; !!! CALLER NEEDS TO SAVE (backup) SREG!
 ;;
+
+;; uint32_t __fastcall__ Timer_1_get32(void);
 .export _Timer_1_get32
 _Timer_1_get32:
 
@@ -114,6 +122,7 @@ _Timer_1_get32:
 
 ;; *******************************************************************
 
+;; uint16_t __fastcall__ Timer_1_get16(void);
 .export _Timer_1_get16
 _Timer_1_get16:
 
@@ -134,6 +143,7 @@ _Timer_1_get16:
 
 ;; *******************************************************************
 
+;; uint8_t __fastcall__ Timer_1_get8(void);
 .export _Timer_1_get8
 _Timer_1_get8:
 
@@ -147,6 +157,7 @@ _Timer_1_get8:
 
 ;; *******************************************************************
 
+;; void __fastcall__ Timer_1_reset(void);
 .export _Timer_1_reset
 _Timer_1_reset:
 

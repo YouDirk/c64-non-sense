@@ -228,4 +228,12 @@ extern void __fastcall__ Input_release(void);
 /* Check the enabled input devices for state changes.  */
 extern void __fastcall__ Input_tick(void);
 
+/* *******************************************************************
+ * private
+ */
+
+extern void __fastcall__ _Input_keyboard_scan(void);
+
+/* ***************************************************************  */
+
 #endif /* INPUT_H__  */

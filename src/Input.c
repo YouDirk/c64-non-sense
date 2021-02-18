@@ -115,14 +115,6 @@ Input_tick(void)
   }
 
   if (Input.set.enabled & Input_keyboard_ascan_mask) {
-    CIA1.ddra = CIA_DDR_RW_ALL;
-
-    /*
-    CIA1.pra = (0xff);
-    if (CIA1.prb != 0xff)
-      printf("0x%02x\n", CIA1.prb);
-    */
-
-    CIA1.ddra = CIA_DDR_RONLY_ALL;
+    _Input_keyboard_scan();
   }
 }

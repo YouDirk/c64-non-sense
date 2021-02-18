@@ -150,12 +150,13 @@ define_hex(CIA_CRAB_PBTOGGLE_MASK,      04)
 define_hex(CIA_CRAB_UNDERSTOP_MASK,     08)
 define_hex(CIA_CRAB_LDLATCH_MASK,       10)
 
-define(CIA1_CRA_DEFAULT,                                             \
-       CIA_CRAB_START_MASK | CIA_CRAB_LDLATCH_MASK)
+define(CIA1_CRA_DEFAULT,                CIA_CRAB_START_MASK)
 
-define(CIA1_CRA_MODE,                                                \
-       CIA_CRAB_START_MASK | CIA_CRAB_PBENABLE_MASK                  \
-       | CIA_CRAB_PBTOGGLE_MASK | CIA_CRAB_LDLATCH_MASK)
+/* CIA_CRAB_PBTOGGLE_MASK must be set for a possible
+ * DEBUG_TIMER1_SYNCCHECK.  But CIA_CRAB_PBENABLE_MASK must be clear,
+ * it will be set during Timer A ISR call.
+ */
+define(CIA1_CRA_MODE, CIA_CRAB_START_MASK | CIA_CRAB_PBTOGGLE_MASK)
 
 header_endif(CHIP_CIA)
 
