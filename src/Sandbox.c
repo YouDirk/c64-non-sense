@@ -64,6 +64,7 @@ Sandbox_poll(void)
 
 }
 
+static Input_scancode_t prev_scancode = Input_sc_none_e;
 void __fastcall__
 Sandbox_tick(void)
 {
@@ -87,6 +88,17 @@ Sandbox_tick(void)
     else if (Input.joy_port1.axis_y.direction < 0)
       Pace_accelerate_neg(&Sandbox_pace_y);
     else Pace_brake(&Sandbox_pace_y);
+  }
+
+  // TODO: Input.keyboard.changed
+  else if (prev_scancode != Input_sc_w_e
+           && Input.keyboard.pressed[0] == Input_sc_w_e) {
+    prev_scancode = Input_sc_w_e;
+    Pace_start_pos(&Sandbox_pace_y);
+  } else if (prev_scancode != Input_sc_none_e
+             && Input.keyboard.pressed[0] == Input_sc_none_e) {
+    prev_scancode = Input_sc_none_e;
+    Pace_stop(&Sandbox_pace_y);
   }
 
   if (Input.joy_port2.axis_x.changed) {

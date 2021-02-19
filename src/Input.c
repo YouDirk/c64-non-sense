@@ -35,6 +35,10 @@ Input_init(Input_devices_t devices)
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
   */
 
+  memset(Input.keyboard.pressed, Input_sc_none_e,
+         INPUT_KEYBOARD_PRESSED_SIZE * sizeof(Input_scancode_t));
+  Input.keyboard.changed = false;
+
   /* direction of CIA1 port A and B is read-only by default  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;
   CIA1.ddrb = CIA_DDR_RONLY_ALL;
@@ -115,6 +119,6 @@ Input_tick(void)
   }
 
   if (Input.set.enabled & Input_keyboard_ascan_mask) {
-    _Input_keyboard_scan();
+    Input.keyboard.pressed[0] = _Input_keyboard_scan();
   }
 }

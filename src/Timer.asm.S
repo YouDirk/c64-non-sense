@@ -31,7 +31,7 @@
 
 .ifdef DEBUG_TIMER1_SYNCCHECK
         .pushseg                        ; push current segment ("CODE")
-        .bss                            ; org zero-initialized segment
+        .bss                            ; org uninitialized segment
 cia1_portb_backup:
         .res 1                          ; space for CIA1 port B backup
         .popseg                         ; restore "CODE" segment

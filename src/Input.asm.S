@@ -22,34 +22,50 @@
 
 ;; *******************************************************************
 
-;; void __fastcall__ _Input_keyboard_scan(void);
+;; Input_scancode_t __fastcall__ _Input_keyboard_scan(void);
 .export __Input_keyboard_scan
 .proc __Input_keyboard_scan: near
+
+        .pushseg                        ; push current segment ("CODE")
+        .bss                            ; org uninitialized segment
+cur_scan_value:
+        .res 1                          ; scan value for output port
+        .popseg                         ; restore "CODE" segment
+
 
         lda #CIA_DDR_RW_ALL
         sta CIA1_DDRA
 
+        ldy #$ff
         lda #$fe
+        sta cur_scan_value
 
 scan_loop:
         ;; A = scan value for output port
         sta CIA1_PRA
-        pha
         lda CIA1_PRB
+inner_loop:
+        ;; A = scan value for input port
+        iny
         lsr
-        bcs scan_next
-        DEBUG_NOTE "ok"
-scan_next:
-        pla
-        ;; A = scan value for output port
+        bcs inner_next
+        jmp scan_done
+inner_next:
+        bne inner_loop
+inner_done:
+        lda cur_scan_value
         sec
         rol
+        sta cur_scan_value
         cmp #$ff
         bne scan_loop
+        iny                     ; TODO
 scan_done:
 
         lda #CIA_DDR_RONLY_ALL
         sta CIA1_DDRA
+
+        tya
 
         rts
 .endproc                                ; __Input_keyboard_scan

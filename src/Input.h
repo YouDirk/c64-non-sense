@@ -70,6 +70,7 @@ typedef uint8_t                         Input_devices_t;
  *
  *   (uint8_t*) 0xeb81, which is zeropage vector 0xf5 is pointing to.
  */
+#define Input_sc_none_e                 ((Input_scancode_t) (0x40))
 
 #define Input_sc_delinst_e              ((Input_scancode_t) (0x00))
 #define Input_sc_return_e               ((Input_scancode_t) (0x01))
@@ -143,7 +144,33 @@ typedef uint8_t                         Input_devices_t;
 #define Input_sc_q_e                    ((Input_scancode_t) (0x3e))
 #define Input_sc_stoprun_e              ((Input_scancode_t) (0x3f))
 
+/* Scanned key codes from keyboard (0x00-0x40).  */
 typedef uint8_t Input_scancode_t;
+
+/* ***************************************************************  */
+
+#define INPUT_KEYBOARD_PRESSED_SIZE     3
+
+/* Information the keyboard  */
+typedef struct Input_keyboard_t {
+
+  /* Scan codes of the keys which are currently pressed.  The order in
+   * this buffer is the same as the ORDER THEY WERE PRESSED DOWN.
+   *
+   * Therefore if your game does just support one simultaneously
+   * pressed key then you just need to check the first item
+   * INPUT.KEYBOARD.PRESSED[0] in this buffer.
+   *
+   * If currently no key was pressed down then the corresponding
+   * position in this buffer is containing INPUT_SC_NONE_E (scan code
+   * 0x40).
+   */
+  Input_scancode_t pressed[INPUT_KEYBOARD_PRESSED_SIZE];
+
+  /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
+  bool changed;
+
+} Input_keyboard_t;
 
 /* ***************************************************************  */
 
@@ -208,6 +235,9 @@ typedef struct Input_t {
   /* The two joysticks on physical Port 2 and Port 1 :)  */
   Input_joystick_t joy_port2, joy_port1;
 
+  /* The keyboard ^^  */
+  Input_keyboard_t keyboard;
+
 } Input_t;
 
 /* ***************************************************************  */
@@ -232,7 +262,7 @@ extern void __fastcall__ Input_tick(void);
  * private
  */
 
-extern void __fastcall__ _Input_keyboard_scan(void);
+extern Input_scancode_t __fastcall__ _Input_keyboard_scan(void);
 
 /* ***************************************************************  */
 
