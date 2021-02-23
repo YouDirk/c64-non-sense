@@ -14,7 +14,8 @@
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-.include "common.inc.s"
+
+.include "Input.inc.s"
 
 .include "chip-cia.gen.s"
 
@@ -65,7 +66,7 @@ scan_done:
         lda #CIA_DDR_RONLY_ALL
         sta CIA1_DDRA
 
-        tya
+        sty _Input + (Input_t::keyboard) + (Input_keyboard_t::pressed)
 
         rts
 .endproc                                ; __Input_keyboard_scan

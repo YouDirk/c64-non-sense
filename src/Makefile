@@ -20,7 +20,7 @@ OBJ = Interrupt.asm Timer.asm Timer Graphix.asm Graphix Input Input.asm \
       Engine EngineConfig Pace Sandbox main
 
 # *.gen.[hs] to be generated
-DEFH = chip-vic chip-cia kernal Graphix
+DEFH = chip-vic chip-cia kernal Graphix Input
 
 # compile and link only if DEBUG_BUILD=1 in makefile.config.mk
 OBJ_DEBUG = Debug.asm Debug

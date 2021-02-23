@@ -119,6 +119,6 @@ Input_tick(void)
   }
 
   if (Input.set.enabled & Input_keyboard_ascan_mask) {
-    Input.keyboard.pressed[0] = _Input_keyboard_scan();
+    _Input_keyboard_scan();
   }
 }

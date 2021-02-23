@@ -66,6 +66,11 @@ typedef_struct_end(Graphix_t)
 
 /* ***************************************************************  */
 
+/* Static members of this module.  */
+extern_var(Graphix_t,                        Graphix)
+
+/* ***************************************************************  */
+
 #ifndef CONF_DOUBLE_BUFFERING
   extern_var(Graphix_buffer_t*, Graphix_buffer_shared_ptr)
 #endif /* CONF_DOUBLE_BUFFERING  */

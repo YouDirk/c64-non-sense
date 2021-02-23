@@ -79,7 +79,9 @@ BC ******************************************************************
 #  define typedef_struct_constchar_ptr(name)      const char* name;
 
 #  define typedef_struct_nested_array(other, name, size)             \
-                                                  other name[size];
+                                        other name[size];
+#  define typedef_struct_enum_array(other, name, size)               \
+                                        other name[size];
 
 #  define typedef_enum_begin(name)                typedef uint8_t name;
 #  define typedef_enum_end(name)                  BC enum name  */
@@ -140,7 +142,9 @@ BC ******************************************************************
 #  define typedef_struct_constchar_ptr(name)      name .addr ; const char*
 
 #  define typedef_struct_nested_array(other, name, size)             \
-                                                  name .tag other (size)
+                                        name .tag other (size)
+#  define typedef_struct_enum_array(other, name, size)               \
+                                        name .byte (size) ; other
 
 #  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)
 #  define typedef_enum_end(name)        ; enum name

@@ -26,7 +26,7 @@ header_define(DEBUG)
 
 /* ***************************************************************  */
 
-define_dec(_DEBUG_LIST_SIZE,            15)
+define_dec(_DEBUG_LIST_SIZE,                 15)
 
 typedef_enum_begin(_debug_msgtype_t)
   typedef_enum_hex(_debug_msgtype_t, _debug_error_e, 01)
@@ -50,7 +50,7 @@ typedef_struct_end(_Debug_t)
 /* ***************************************************************  */
 
 /* Static members of this module.  */
-extern_var(_Debug_t, _Debug)
+extern_var(_Debug_t,                         _Debug)
 
 /* ***************************************************************  */
 

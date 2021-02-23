@@ -20,7 +20,6 @@
 #define GRAPHIX_H__
 
 #include "common.h"
-
 #include "Graphix.gen.h"
 
 /* *******************************************************************
@@ -90,9 +89,6 @@ typedef void __fastcall__ (*Graphix_initCallback_t)(void);
 typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);
 
 /* ***************************************************************  */
-
-/* Static members of this module.  */
-extern Graphix_t Graphix;
 
 /* Initialize this module.
  *

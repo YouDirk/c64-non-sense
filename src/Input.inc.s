@@ -1,5 +1,5 @@
 ;; C64 NonSense, just playing around with C64 cross-compile tools.
-;; Copyright (C) 2020  Dirk "YouDirk" Lehmann
+;; Copyright (C) 2021  Dirk "YouDirk" Lehmann
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU Affero General Public License as published
@@ -15,17 +15,19 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-.ifnblank GRAPHIX_INC_S__
-.define GRAPHIX_INC_S__
+.ifnblank INPUT_INC_S__
+.define INPUT_INC_S__
 
 .include "common.inc.s"
-.include "Graphix.gen.s"
+.include "Input.gen.s"
+
+;; *******************************************************************
+;; private
+;;
+
+;; extern void __fastcall__ _Input_keyboard_scan(void)
+.global __Input_keyboard_scan
 
 ;; *******************************************************************
 
-;; extern void __fastcall__ Graphix_rasterline_isr(void);
-.global Graphix_rasterline_isr
-
-;; *******************************************************************
-
-.endif                                  ; GRAPHIX_INC_S__
+.endif                                  ; INPUT_INC_S__
