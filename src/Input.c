@@ -35,6 +35,7 @@ Input_init(Input_devices_t devices)
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
   */
 
+  Input.keyboard.pressed_length = 0;
   memset(Input.keyboard.pressed, Input_sc_none_e,
          INPUT_KEYBOARD_PRESSED_SIZE * sizeof(Input_scancode_t));
   Input.keyboard.changed = false;

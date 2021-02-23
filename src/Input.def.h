@@ -198,7 +198,7 @@ typedef_struct_end(Input_joystick_t)
 
 /* ***************************************************************  */
 
-define_dec(INPUT_KEYBOARD_PRESSED_SIZE,                          3)
+define_dec(INPUT_KEYBOARD_PRESSED_SIZE,                          5)
 
 /* Information about the keyboard  */
 typedef_struct_begin(Input_keyboard_t)
@@ -214,6 +214,7 @@ typedef_struct_begin(Input_keyboard_t)
    * position in this buffer is containing INPUT_SC_NONE_E (scan code
    * 0x40).
    */
+  typedef_struct_uint8(pressed_length)
   typedef_struct_enum_array(Input_scancode_t,                        \
                             pressed, INPUT_KEYBOARD_PRESSED_SIZE)
 

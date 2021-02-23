@@ -95,8 +95,8 @@ Sandbox_tick(void)
            && Input.keyboard.pressed[0] == Input_sc_w_e) {
     prev_scancode = Input_sc_w_e;
     Pace_start_pos(&Sandbox_pace_y);
-  } else if (prev_scancode != Input_sc_none_e
-             && Input.keyboard.pressed[0] == Input_sc_none_e) {
+  } else if (prev_scancode == Input_sc_w_e
+             && Input.keyboard.pressed[0] != Input_sc_w_e) {
     prev_scancode = Input_sc_none_e;
     Pace_stop(&Sandbox_pace_y);
   }
