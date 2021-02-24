@@ -31,10 +31,9 @@
         .bss                            ; org uninitialized segment
 cur_scan_value:
         .res 1                          ; scan value for output port
+cur_input_matrix:
+        .res 1                          ; input from keyboard matrix
         .popseg                         ; restore "CODE" segment
-
-        lda #Input_sc_none_e
-        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed
 
         lda #CIA_DDR_RW_ALL
         sta CIA1_DDRA
@@ -47,20 +46,26 @@ cur_scan_value:
 scan_loop:
         ;; A = scan value for output port
         sta CIA1_PRA
+bounced:
         lda CIA1_PRB
+        cmp CIA1_PRB
+        bne bounced
 inner_loop:
         ;; A = input from keyboard matrix
         iny
         lsr
         bcs inner_next
+
         ;; --- current key was pressed
-
-        ;; TODO: X = Input_keyboard_t::pressed_length
-        ;;   wrtie to Input_keyboard_t::pressed[pressed_length]
-        sty _Input + Input_t::keyboard + Input_keyboard_t::pressed
+        sta cur_input_matrix
+        tya
+        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        lda cur_input_matrix
         inx
-
+        cpx #INPUT_KEYBOARD_PRESSED_BUFSIZE
+        beq scan_done
         ;; --- end of: current key was pressed
+
 inner_next:
         bne inner_loop                  ; while (shifted_input != 0)
 inner_done:
@@ -76,7 +81,9 @@ scan_done:
         lda #CIA_DDR_RONLY_ALL
         sta CIA1_DDRA
 
-        stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_length
+        lda #Input_sc_none_e
+        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
 
         rts
 .endproc                                ; __Input_keyboard_scan

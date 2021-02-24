@@ -29,8 +29,8 @@
 
 #include "Debug.h"
 
-#define STRING_LEN                 256
-typedef char                       string_t[STRING_LEN];
+#define STRING_BUFSIZE             256
+typedef char                       string_t[STRING_BUFSIZE];
 
 /*****************************************************************  */
 

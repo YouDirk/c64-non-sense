@@ -198,25 +198,42 @@ typedef_struct_end(Input_joystick_t)
 
 /* ***************************************************************  */
 
-define_dec(INPUT_KEYBOARD_PRESSED_SIZE,                          5)
+/* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
+define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      5)
+
+define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                              \
+                                 INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
 
 /* Information about the keyboard  */
 typedef_struct_begin(Input_keyboard_t)
 
   /* Scan codes of the keys which are currently pressed.  The order in
-   * this buffer is the same as the ORDER THEY WERE PRESSED DOWN.
+   * this buffer is the same as they were scanned from the keyboard
+   * matrix.
    *
-   * Therefore if your game does just support one simultaneously
-   * pressed key then you just need to check the first item
-   * INPUT.KEYBOARD.PRESSED[0] in this buffer.
+   * This buffer will be terminated with 0x40 (INPUT_SC_NONE_E), as it
+   * is commonly known from null-termination of C strings.
    *
-   * If currently no key was pressed down then the corresponding
-   * position in this buffer is containing INPUT_SC_NONE_E (scan code
-   * 0x40).
+   * For a well performance do not use a counting index variable.
+   * Instead use a loop such like this:
+   *
+   * ```C
+   *   Input_scancode_t* cur_key;
+   *
+   *   for (cur_key=Input.keyboard.pressed;
+   *        *cur_key != Input_sc_none_e; ++cur_key) {
+   *     do_something(*cur_key);
+   *   }
+   * ```
    */
-  typedef_struct_uint8(pressed_length)
   typedef_struct_enum_array(Input_scancode_t,                        \
-                            pressed, INPUT_KEYBOARD_PRESSED_SIZE)
+                            pressed, INPUT_KEYBOARD_PRESSED_BUFSIZE)
+
+  /* The number of items in INPUT.KEYBOARD.PRESSED.  For iteration do
+   * not use an index variable.  See comment of INPUT.KEYBOARD.PRESSED
+   * above.
+   */
+  typedef_struct_uint8(pressed_count)
 
   /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
   typedef_struct_bool(changed)
