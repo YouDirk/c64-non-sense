@@ -64,7 +64,6 @@ Sandbox_poll(void)
 
 }
 
-static Input_scancode_t prev_scancode = Input_sc_none_e;
 void __fastcall__
 Sandbox_tick(void)
 {
@@ -91,8 +90,8 @@ Sandbox_tick(void)
   }
 
   // TODO: Input.keyboard.changed
-  else if (prev_scancode != Input_sc_w_e
-           && Input.keyboard.pressed_count >= 3) {
+  else if (Input.keyboard.changed) {
+
 #ifdef DEBUG
     static Input_scancode_t* cur;
     for (cur=Input.keyboard.pressed; *cur != Input_sc_none_e; ++cur)
@@ -100,12 +99,10 @@ Sandbox_tick(void)
     printf("%u\n", Input.keyboard.pressed_count);
 #endif
 
-    prev_scancode = Input_sc_w_e;
-    Pace_start_pos(&Sandbox_pace_y);
-  } else if (prev_scancode == Input_sc_w_e
-             && Input.keyboard.pressed_count < 3) {
-    prev_scancode = Input_sc_none_e;
-    Pace_stop(&Sandbox_pace_y);
+    if (Input.keyboard.pressed_count >= 3)
+      Pace_start_pos(&Sandbox_pace_y);
+    else if (Input.keyboard.pressed_count < 3)
+      Pace_stop(&Sandbox_pace_y);
   }
 
   if (Input.joy_port2.axis_x.changed) {

@@ -33,19 +33,26 @@ cur_scan_value:
         .res 1                          ; scan value for output port
 cur_input_matrix:
         .res 1                          ; input from keyboard matrix
+inner_loop_counter:
+        .res 1                          ; index (i) for inner loop
         .popseg                         ; restore "CODE" segment
 
         lda #CIA_DDR_RW_ALL
         sta CIA1_DDRA
 
-        ldx #$00
-        ldy #$ff
-        lda #$fe
-        sta cur_scan_value
+        ldx #$00                        ; X: pressed_count
+        stx _Input + Input_t::keyboard + Input_keyboard_t::changed
+                                        ; changed := false
+        ldy #$ff                        ; Y: scan code
+        lda #$fe                        ; A: scan value
+        sta cur_scan_value              ;    | input from matirx
 
 scan_loop:
         ;; A = scan value for output port
         sta CIA1_PRA
+
+        lda #$08
+        sta inner_loop_counter          ; for (i=8; ....)
 bounced:
         lda CIA1_PRB
         cmp CIA1_PRB
@@ -57,33 +64,50 @@ inner_loop:
         bcs inner_next
 
         ;; --- current key was pressed
-        sta cur_input_matrix
-        tya
+        sta cur_input_matrix            ; "push": input matrix
+        tya                             ; A := scan_code
+        cmp _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        beq key_not_changed
+                         ; keyboard.pressed[pressed_count] := scan_code
         sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        lda cur_input_matrix
-        inx
-        cpx #INPUT_KEYBOARD_PRESSED_BUFSIZE
-        beq scan_done
+        lda #$01
+        sta _Input + Input_t::keyboard + Input_keyboard_t::changed
+key_not_changed:
+        lda cur_input_matrix            ; "pop": A := input matrix
+        inx                             ; ++pressed_count
+        cpx #INPUT_KEYBOARD_PRESSED_MAXCOUNT ; if (pressed_count ==
+        beq scan_done                        ;     MAXCOUNT) break;
         ;; --- end of: current key was pressed
 
 inner_next:
-        bne inner_loop                  ; while (shifted_input != 0)
+        dec inner_loop_counter
+        bne inner_loop                  ; for (i=8; i != 0; --i)
 inner_done:
-        lda cur_scan_value
+        lda cur_scan_value              ; A := scan value
         sec
-        rol
-        sta cur_scan_value
+        rol                             ; scan_value
+        sta cur_scan_value              ;   := (1 | scan_value) >> 1
         cmp #$ff
         bne scan_loop                   ; while (rolled_scanval != 0xff)
-        ;; A = 0x39 (Input_sc_none_e - 1)
+
+.ifdef DEBUG
+        ;; Y = 0x3f (Input_sc_none_e - 1)
+        cpy #$3f
+        beq debug_scannedall_ok
+        DEBUG_ERROR_REGSAVE "input keyboard, not all scanned"
+debug_scannedall_ok:
+.endif ; DEBUG
+
 scan_done:
+                         ; keyboard.pressed[pressed_count] := 0x40
+        lda #Input_sc_none_e
+        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+
+        ;; TODO: Test if pressed_count changed
+        stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
 
         lda #CIA_DDR_RONLY_ALL
         sta CIA1_DDRA
-
-        lda #Input_sc_none_e
-        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
 
         rts
 .endproc                                ; __Input_keyboard_scan

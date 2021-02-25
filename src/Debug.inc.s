@@ -48,9 +48,21 @@
   .define DEBUG_INIT           jsr _Debug_init
   .define DEBUG_RELEASE_PRINT  jsr _Debug_release_print
 
+  ;; Use CC65 fastcall convention
   .define DEBUG_ERROR(msg)     _DEBUG_HELPER msg, Debug_error_isrsafe
   .define DEBUG_WARN(msg)      _DEBUG_HELPER msg, Debug_warn_isrsafe
   .define DEBUG_NOTE(msg)      _DEBUG_HELPER msg, Debug_note_isrsafe
+
+  ;; Use callee-save implementation
+  .macro DEBUG_ERROR_REGSAVE msg
+        _DEBUG_HELPER_REGSAVE msg, Debug_error_isrsafe
+  .endmacro
+  .macro DEBUG_WARN_REGSAVE msg
+        _DEBUG_HELPER_REGSAVE msg, Debug_warn_isrsafe
+  .endmacro
+  .macro DEBUG_NOTE_REGSAVE msg
+        _DEBUG_HELPER_REGSAVE msg, Debug_note_isrsafe
+  .endmacro
 
   ;; -----------------------------------------------------------------
   ;; Do not call directly!  Call the macros DEBUG_*() above instead.
@@ -61,6 +73,7 @@
   .global Debug_warn_isrsafe
   .global Debug_note_isrsafe
 
+  ;; Use CC65 fastcall convention
   .macro _DEBUG_HELPER msg, function
   .scope
         .pushseg                        ; push current segment ("CODE")
@@ -75,6 +88,23 @@ debug_msg:
   .endscope
   .endmacro                             ; _DEBUG_HELPER
 
+  ;; Use callee-save implementation
+  .macro _DEBUG_HELPER_REGSAVE msg, function
+  .scope
+        pha                             ; push A
+        txa
+        pha                             ; push X
+        tya
+        pha                             ; push Y
+        _DEBUG_HELPER msg, function     ; call: CC65 fastcall convention
+        pla
+        tay                             ; pull Y
+        pla
+        tax                             ; pull X
+        pla                             ; pull A
+  .endscope
+  .endmacro                             ; _DEBUG_HELPER_REGSAVE
+
 ;; *******************************************************************
 .else ; DEBUG
   .define DEBUG_INIT
@@ -82,6 +112,9 @@ debug_msg:
   .define DEBUG_ERROR(msg)
   .define DEBUG_WARN(msg)
   .define DEBUG_NOTE(msg)
+  .define DEBUG_ERROR_REGSAVE(msg)
+  .define DEBUG_WARN_REGSAVE(msg)
+  .define DEBUG_NOTE_REGSAVE(msg)
 .endif ; DEBUG
 
 .endif                                  ; DEBUG_INC_S__

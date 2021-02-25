@@ -201,7 +201,7 @@ typedef_struct_end(Input_joystick_t)
 /* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
 define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      5)
 
-define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                              \
+define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
                                  INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
 
 /* Information about the keyboard  */
