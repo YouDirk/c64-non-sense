@@ -93,10 +93,12 @@ Sandbox_tick(void)
   // TODO: Input.keyboard.changed
   else if (prev_scancode != Input_sc_w_e
            && Input.keyboard.pressed_count >= 3) {
+#ifdef DEBUG
     static Input_scancode_t* cur;
     for (cur=Input.keyboard.pressed; *cur != Input_sc_none_e; ++cur)
       printf("0x%02x ", *cur);
     printf("%u\n", Input.keyboard.pressed_count);
+#endif
 
     prev_scancode = Input_sc_w_e;
     Pace_start_pos(&Sandbox_pace_y);
