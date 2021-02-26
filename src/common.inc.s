@@ -58,6 +58,13 @@
 .define SIZEOF_ADDR                2
 
 ;; *******************************************************************
+;; Compatible with <stdbool.h> of CC65
+
+.define SIZEOF_BOOL                1
+.define FALSE                      $00
+.define TRUE                       $01
+
+;; *******************************************************************
 
 .macro MUTEX_LOCK mutex
         lda #$01

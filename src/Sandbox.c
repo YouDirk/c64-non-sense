@@ -67,6 +67,9 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
+  static Input_scancode_t* key_cur;
+  static bool key_w, key_s, key_a, key_d;
+
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
       Pace_start_pos(&Sandbox_pace_y);
@@ -89,22 +92,6 @@ Sandbox_tick(void)
     else Pace_brake(&Sandbox_pace_y);
   }
 
-  // TODO: Input.keyboard.changed
-  else if (Input.keyboard.changed) {
-
-#ifdef DEBUG
-    static Input_scancode_t* cur;
-    for (cur=Input.keyboard.pressed; *cur != Input_sc_none_e; ++cur)
-      printf("0x%02x ", *cur);
-    printf("%u\n", Input.keyboard.pressed_count);
-#endif
-
-    if (Input.keyboard.pressed_count >= 3)
-      Pace_start_pos(&Sandbox_pace_y);
-    else if (Input.keyboard.pressed_count < 3)
-      Pace_stop(&Sandbox_pace_y);
-  }
-
   if (Input.joy_port2.axis_x.changed) {
     if (Input.joy_port2.axis_x.direction > 0)
       Pace_start_pos(&Sandbox_pace_x);
@@ -117,6 +104,29 @@ Sandbox_tick(void)
       Pace_start_pos(&Sandbox_pace_x);
     else if (Input.joy_port1.axis_x.direction < 0)
       Pace_start_neg(&Sandbox_pace_x);
+    else Pace_brake(&Sandbox_pace_x);
+  }
+
+  if (Input.keyboard.changed) {
+    key_w=false, key_s=false, key_a=false, key_d=false;
+
+    for (key_cur=Input.keyboard.pressed; *key_cur!=Input_sc_none_e;
+         ++key_cur) {
+      switch (*key_cur) {
+      case Input_sc_w_e: key_w = true; break;
+      case Input_sc_s_e: key_s = true; break;
+      case Input_sc_a_e: key_a = true; break;
+      case Input_sc_d_e: key_d = true; break;
+      default: break;
+      }
+    }
+
+    if (key_w) Pace_start_pos(&Sandbox_pace_y);
+    else if (key_s) Pace_accelerate_neg(&Sandbox_pace_y);
+    else Pace_brake(&Sandbox_pace_y);
+
+    if (key_a) Pace_start_pos(&Sandbox_pace_x);
+    else if (key_d) Pace_start_neg(&Sandbox_pace_x);
     else Pace_brake(&Sandbox_pace_x);
   }
 

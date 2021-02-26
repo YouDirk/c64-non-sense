@@ -70,7 +70,7 @@ inner_loop:
         beq key_not_changed
                          ; keyboard.pressed[pressed_count] := scan_code
         sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        lda #$01
+        lda #TRUE
         sta _Input + Input_t::keyboard + Input_keyboard_t::changed
 key_not_changed:
         lda cur_input_matrix            ; "pop": A := input matrix
@@ -104,7 +104,12 @@ scan_done:
         sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
 
         ;; TODO: Test if pressed_count changed
+        cpx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
+        beq count_not_changed
         stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
+        lda #TRUE
+        sta _Input + Input_t::keyboard + Input_keyboard_t::changed
+count_not_changed:
 
         lda #CIA_DDR_RONLY_ALL
         sta CIA1_DDRA
