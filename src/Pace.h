@@ -60,6 +60,20 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* ***************************************************************  */
 
+/* Set a new MAX_PACE and DELAY.  */
+extern void __fastcall__ Pace_pacemax_set(
+                    Pace_t* pace, uint8_t pace_max, uint8_t delay);
+
+/* Set a new ACCELERATION.  */
+void __fastcall__  Pace_accelerate_set(
+                    Pace_t* pace, uint8_t accelerate);
+
+/* Set a new BRAKERATE for this pace.  */
+extern void __fastcall__ Pace_brakerate_set(
+                    Pace_t* pace, uint8_t brakerate);
+
+/* ***************************************************************  */
+
 /* Set PACE_MAX immediately.  Hold that pace until PACE_STOP(),
  * PACE_BRAKE() or PACE_IMPULSE_*() is called.
  */

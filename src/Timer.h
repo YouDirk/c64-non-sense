@@ -27,9 +27,9 @@
  * A B, CIA2 A B).
  */
 
-#define TIMER_1_FREQUENCY_HZ            100  /* 100 Hz  */
+#define TIMER_1_FREQUENCY_HZ            50   /* 50 Hz  */
 #define TIMER_1_TICKRATE_MS             (1000/TIMER_1_FREQUENCY_HZ)
-                                             /* 10 ms  */
+                                             /* 20 ms  */
 
 /* These calibration values are just useful if the Timer 1 frequency
  * is a multiple of the PAL/NTSC frequency.  If you prefer accurate
@@ -46,10 +46,10 @@
  * timing for a very long time with a very huge stuttering.
  */
 #ifndef CONF_DOUBLE_BUFFERING
-#  define TIMER_1_CALIBR_PAL_CLKS  -22 /* reduce buckings/sec (PAL)  */
+#  define TIMER_1_CALIBR_PAL_CLKS  -36 /* reduce buckings/sec (PAL)  */
 #  define TIMER_1_CALIBR_NTSC_CLKS TIMER_1_CALIBR_PAL_CLKS /* (NTSC) */
 #else /* CONF_DOUBLE_BUFFERING  */
-#  define TIMER_1_CALIBR_PAL_CLKS  -10 /* triple buffering disabled  */
+#  define TIMER_1_CALIBR_PAL_CLKS  0 /* triple buffering disabled  */
 #  define TIMER_1_CALIBR_NTSC_CLKS TIMER_1_CALIBR_PAL_CLKS /* (NTSC) */
 #endif /* CONF_DOUBLE_BUFFERING  */
 

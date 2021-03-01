@@ -44,8 +44,8 @@ Sandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Pace_new(&Sandbox_pace_y, 6, 2, 4, 0xff);
-  Pace_new(&Sandbox_pace_x, 4, 2, 10, 0);
+  Pace_new(&Sandbox_pace_y, 12, 6, 14, 128);
+  Pace_new(&Sandbox_pace_x, 8, 2, 60, 0);
   Pace_impulse_pos(&Sandbox_pace_y);
 }
 
@@ -67,8 +67,8 @@ Sandbox_poll(void)
 void __fastcall__
 Sandbox_tick(void)
 {
-  static Input_scancode_t* key_cur;
-  static bool key_w, key_s, key_a, key_d;
+  static uint8_t i;
+  static bool key_w, key_s, key_a, key_d, key_space;
 
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
@@ -108,22 +108,29 @@ Sandbox_tick(void)
   }
 
   if (Input.keyboard.changed) {
-    key_w=false, key_s=false, key_a=false, key_d=false;
+    key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
-    for (key_cur=Input.keyboard.pressed; *key_cur!=Input_sc_none_e;
-         ++key_cur) {
-      switch (*key_cur) {
+    for (i=0; i<Input.keyboard.pressed_count; ++i) {
+      switch (Input.keyboard.pressed[i]) {
       case Input_sc_w_e: key_w = true; break;
       case Input_sc_s_e: key_s = true; break;
       case Input_sc_a_e: key_a = true; break;
       case Input_sc_d_e: key_d = true; break;
+      case Input_sc_space_e: key_space = true; break;
       default: break;
       }
     }
 
-    if (key_w) Pace_start_pos(&Sandbox_pace_y);
+    if (key_space) {
+      Pace_brakerate_set(&Sandbox_pace_y, 50);
+      Pace_brake(&Sandbox_pace_y);
+    }
+    else if (key_w) Pace_start_pos(&Sandbox_pace_y);
     else if (key_s) Pace_accelerate_neg(&Sandbox_pace_y);
-    else Pace_brake(&Sandbox_pace_y);
+    else {
+      Pace_brakerate_set(&Sandbox_pace_y, 14);
+      Pace_brake(&Sandbox_pace_y);
+    }
 
     if (key_a) Pace_start_pos(&Sandbox_pace_x);
     else if (key_d) Pace_start_neg(&Sandbox_pace_x);

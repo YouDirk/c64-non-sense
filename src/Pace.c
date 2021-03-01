@@ -131,6 +131,33 @@ Pace_tick(Pace_t* pace)
 /* ***************************************************************  */
 
 void __fastcall__
+Pace_pacemax_set(Pace_t* pace, uint8_t pace_max, uint8_t delay)
+{
+  pace->_max.byte_high
+    = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK) & pace_max;
+  pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
+}
+
+void __fastcall__
+Pace_accelerate_set(Pace_t* pace, uint8_t accelerate)
+{
+  UINT16(pace->_decrement_accel)
+    = ~UINT16(accelerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+              | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
+}
+
+void __fastcall__
+Pace_brakerate_set(Pace_t* pace, uint8_t brakerate)
+{
+  pace->_decrement_brake.byte_high = 0x00;
+  pace->_decrement_brake.byte_low
+    = brakerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+    | _STATUS_LOW_FRACCOUNTER_BIT0;
+}
+
+/* ***************************************************************  */
+
+void __fastcall__
 Pace_start_pos(Pace_t* pace)
 {
   pace->_status.byte_high = pace->_max.byte_high + 1;

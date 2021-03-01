@@ -214,8 +214,9 @@ typedef_struct_begin(Input_keyboard_t)
    * This buffer will be terminated with 0x40 (INPUT_SC_NONE_E), as it
    * is commonly known from null-termination of C strings.
    *
-   * For a well performance do not use a counting index variable.
-   * Instead use a loop such like this:
+   * It´s possible to use an index variable in a loop, because
+   * INPUT.KEYBOARD.PRESSED is global static and SIZEOF this variable
+   * is 1.  Otherwise use a loop such like this instead:
    *
    * ```C
    *   Input_scancode_t* cur_key;
