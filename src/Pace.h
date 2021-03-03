@@ -65,12 +65,20 @@ extern void __fastcall__ Pace_pacemax_set(
                     Pace_t* pace, uint8_t pace_max, uint8_t delay);
 
 /* Set a new ACCELERATION.  */
-void __fastcall__  Pace_accelerate_set(
+extern void __fastcall__  Pace_accelerate_set(
                     Pace_t* pace, uint8_t accelerate);
 
 /* Set a new BRAKERATE for this pace.  */
 extern void __fastcall__ Pace_brakerate_set(
                     Pace_t* pace, uint8_t brakerate);
+
+/* ***************************************************************  */
+
+/* TRUE if PACE has a velocity of 0 pixel/s.  */
+extern bool __fastcall__ Pace_is_stopped(Pace_t* pace);
+
+/* TRUE if PACE has a positive or negative maximal velocity.  */
+extern bool __fastcall__ Pace_is_maxpace(Pace_t* pace);
 
 /* ***************************************************************  */
 

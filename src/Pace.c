@@ -55,18 +55,10 @@ Pace_new(Pace_t* pace,
 
   UINT16(pace->_status) = 0x0000;
 
-  pace->_max.byte_high
-    = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK) & pace_max;
-  pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
+  Pace_pacemax_set(pace, pace_max, delay);
 
-  pace->_decrement_brake.byte_high = 0x00;
-  pace->_decrement_brake.byte_low
-    = brakerate << _STATUS_LOW_TICKCOUNTER_SHIFT
-    | _STATUS_LOW_FRACCOUNTER_BIT0;
-
-  UINT16(pace->_decrement_accel)
-    = ~UINT16(accelerate << _STATUS_LOW_TICKCOUNTER_SHIFT
-              | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
+  Pace_accelerate_set(pace, accelerate);
+  Pace_brakerate_set(pace, brakerate);
 }
 
 /* Nothing to do.  Just an empty-macro for now.
@@ -157,6 +149,20 @@ Pace_brakerate_set(Pace_t* pace, uint8_t brakerate)
 
 /* ***************************************************************  */
 
+bool __fastcall__
+Pace_is_stopped(Pace_t* pace)
+{
+  return (~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high) == 0;
+}
+
+bool __fastcall__
+Pace_is_maxpace(Pace_t* pace)
+{
+  return (~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high)
+    >= pace->_max.byte_high;
+}
+
+/* ***************************************************************  */
 void __fastcall__
 Pace_start_pos(Pace_t* pace)
 {
