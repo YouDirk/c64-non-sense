@@ -138,8 +138,8 @@ Sandbox_tick(void)
   }
 
   if (Pace_is_stopped(&Sandbox_pace_y)) {
-    DEBUG_NOTE("stopped");
-    //Pace_impulse_neg(&Sandbox_pace_y);
+    //DEBUG_NOTE("stopped");
+    Pace_impulse_neg(&Sandbox_pace_y);
   }
 
   Pace_tick(&Sandbox_pace_y);
