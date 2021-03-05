@@ -28,13 +28,20 @@
  * ticks, even if the mathematically velocity is constant.  Therefore
  * it´s possible to visualize paces which are not equals a multiple of
  * the engine tickrate.
+ *
+ * Don´t use values of this data type as condition to test the paces,
+ * use the PACE_IS_*() functions instead.
  */
 typedef int8_t                     Pace_increment_t;
 
 /* Datatype of this structure.  */
 typedef struct Pace_t {
 
-  /* Use this as increment of positions.
+  /* Use this as increment of positions.  It will be alter between
+   * engine ticks!
+   *
+   * Don´t use this value as condition to test the paces, use the
+   * PACE_IS_*() functions instead.
    */
   Pace_increment_t pace;
 
@@ -46,7 +53,7 @@ typedef struct Pace_t {
 /* ***************************************************************  */
 
 /* Initialize the pace structure.  */
-extern void __fastcall__ Pace_new(Pace_t* pace, uint8_t pace_max,
+extern void __fastcall__ Pace_new(Pace_t* pace, uint8_t velocity_max,
                 uint8_t accelerate, uint8_t brakerate, uint8_t delay);
 
 /* Free the pace structure.  */
@@ -60,9 +67,9 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* ***************************************************************  */
 
-/* Set a new MAX_PACE and DELAY.  */
-extern void __fastcall__ Pace_pacemax_set(
-                    Pace_t* pace, uint8_t pace_max, uint8_t delay);
+/* Set a new VELOCITY_MAX and DELAY.  */
+extern void __fastcall__ Pace_velocitymax_set(
+                    Pace_t* pace, uint8_t velocity_max, uint8_t delay);
 
 /* Set a new ACCELERATION.  */
 extern void __fastcall__  Pace_accelerate_set(
@@ -79,6 +86,24 @@ extern bool __fastcall__ Pace_is_stopped(Pace_t* pace);
 
 /* TRUE if PACE has a positive or negative maximal velocity.  */
 extern bool __fastcall__ Pace_is_maxpace(Pace_t* pace);
+
+/* TRUE if PACE has a positive maximal velocity.  */
+extern bool __fastcall__ Pace_is_maxpace_pos(Pace_t* pace);
+
+/* TRUE if PACE has a negative maximal velocity.  */
+extern bool __fastcall__ Pace_is_maxpace_neg(Pace_t* pace);
+
+/* ***************************************************************  */
+
+/* Returns the current absolute VELOCITY.  The MAXPACE equals
+ * VELOCITY_MAX+1.
+ */
+extern uint8_t __fastcall__ Pace_velocity_get_abs(Pace_t* pace);
+
+/* Returns the current the sign correct VELOCITY.  The MAXPACE equals
+ * VELOCITY_MAX+1.
+ */
+extern int8_t __fastcall__ Pace_velocity_get(Pace_t* pace);
 
 /* ***************************************************************  */
 
@@ -100,25 +125,25 @@ extern void __fastcall__ Pace_stop(Pace_t* pace);
  */
 extern void __fastcall__ Pace_brake(Pace_t* pace);
 
-/* Add an positive impulse and accelerate to PACE_MAX immediately.
+/* Add an positive impulse and accelerate to VELOCITY_MAX immediately.
  * After that brake to 0 pixel/s with BRAKERATE.
  */
 extern void __fastcall__ Pace_impulse_pos(Pace_t* pace);
 
-/* Add an negative impulse and accelerate to -PACE_MAX
+/* Add an negative impulse and accelerate to -VELOCITY_MAX
  * immediately.  After that brake to 0 pixel/s with BRAKERATE.
  */
 extern void __fastcall__ Pace_impulse_neg(Pace_t* pace);
 
-/* Accelerate from current pace positive until PACE_MAX is reached.
- * Hold that pace until PACE_STOP(), PACE_BRAKE() or PACE_IMPULSE_*()
- * is called.
+/* Accelerate from current pace positive until VELOCITY_MAX is
+ * reached.  Hold that pace until PACE_STOP(), PACE_BRAKE() or
+ * PACE_IMPULSE_*() is called.
  */
 extern void __fastcall__ Pace_accelerate_pos(Pace_t* pace);
 
-/* Accelerate from current pace negative until -PACE_MAX is reached.
- * Hold that pace until PACE_STOP(), PACE_BRAKE() or PACE_IMPULSE_*()
- * is called.
+/* Accelerate from current pace negative until -VELOCITY_MAX is
+ * reached.  Hold that pace until PACE_STOP(), PACE_BRAKE() or
+ * PACE_IMPULSE_*() is called.
  */
 extern void __fastcall__ Pace_accelerate_neg(Pace_t* pace);
 

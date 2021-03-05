@@ -137,8 +137,9 @@ Sandbox_tick(void)
     else Pace_brake(&Sandbox_pace_x);
   }
 
-  if (Pace_is_stopped(&Sandbox_pace_y)) {
-    //DEBUG_NOTE("stopped");
+  if (Pace_velocity_get(&Sandbox_pace_y) == -8) {
+    Pace_impulse_pos(&Sandbox_pace_y);
+  } else if (Pace_velocity_get(&Sandbox_pace_y) == 8) {
     Pace_impulse_neg(&Sandbox_pace_y);
   }
 

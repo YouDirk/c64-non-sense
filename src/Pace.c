@@ -29,6 +29,10 @@
  *   '--|---------|-----------------------------------------|----'
  *      |         |                                         |
  *      |        pixel pace                               frac-counter
+ *      |
+ *      | |------------------------|
+ *      |          velocity
+ *      |
  *     sign bit
  */
 
@@ -48,14 +52,14 @@
 
 void __fastcall__
 Pace_new(Pace_t* pace,
-         uint8_t pace_max, uint8_t accelerate, uint8_t brakerate,
+         uint8_t velocity_max, uint8_t accelerate, uint8_t brakerate,
          uint8_t delay)
 {
   pace->pace = 0;
 
   UINT16(pace->_status) = 0x0000;
 
-  Pace_pacemax_set(pace, pace_max, delay);
+  Pace_velocitymax_set(pace, velocity_max, delay);
 
   Pace_accelerate_set(pace, accelerate);
   Pace_brakerate_set(pace, brakerate);
@@ -123,10 +127,11 @@ Pace_tick(Pace_t* pace)
 /* ***************************************************************  */
 
 void __fastcall__
-Pace_pacemax_set(Pace_t* pace, uint8_t pace_max, uint8_t delay)
+Pace_velocitymax_set(Pace_t* pace, uint8_t velocity_max, uint8_t delay)
 {
   pace->_max.byte_high
-    = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK) & pace_max;
+    = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK)
+    & velocity_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
 }
 
@@ -162,7 +167,47 @@ Pace_is_maxpace(Pace_t* pace)
     >= pace->_max.byte_high;
 }
 
+bool __fastcall__
+Pace_is_maxpace_pos(Pace_t* pace)
+{
+  static uint8_t highbyte;
+  highbyte = pace->_status.byte_high;
+
+  return !(_STATUS_HIGH_SIGN_MASK & highbyte)
+    && ((~_STATUS_HIGH_SIGN_MASK & highbyte) >= pace->_max.byte_high);
+}
+
+bool __fastcall__
+Pace_is_maxpace_neg(Pace_t* pace)
+{
+  static uint8_t highbyte;
+  highbyte = pace->_status.byte_high;
+
+  return (_STATUS_HIGH_SIGN_MASK & highbyte)
+    && ((~_STATUS_HIGH_SIGN_MASK & highbyte) >= pace->_max.byte_high);
+}
+
 /* ***************************************************************  */
+
+uint8_t __fastcall__
+Pace_velocity_get_abs(Pace_t* pace)
+{
+  return ~_STATUS_HIGH_SIGN_MASK & pace->_status.byte_high;
+}
+
+int8_t __fastcall__
+Pace_velocity_get(Pace_t* pace)
+{
+  static uint8_t highbyte;
+  highbyte = pace->_status.byte_high;
+
+  return (_STATUS_HIGH_SIGN_MASK & highbyte)
+    ? ~(~_STATUS_HIGH_SIGN_MASK & highbyte) + 1
+    : (~_STATUS_HIGH_SIGN_MASK & highbyte);
+}
+
+/* ***************************************************************  */
+
 void __fastcall__
 Pace_start_pos(Pace_t* pace)
 {
