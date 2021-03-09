@@ -134,7 +134,7 @@ Pace_velocitymax_set(Pace_t* pace, uint7_t velocity_max, uint6_t delay)
     & velocity_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
 
-#ifndef DEBUG_OPT_OVERFLOW_DISBABLE_PACE
+#ifndef DEBUG_OPT_OVERFLOW_DISABLE_PACE
   if (velocity_max > UINT7_MAX)
     DEBUG_ERROR("pace velocitymax, velocity overflows!");
   if (delay > UINT6_MAX)
@@ -152,7 +152,7 @@ Pace_accelerate_set(Pace_t* pace, uint8_t accel_rate)
   /* We are on an 8-bit machine.  It just occurs a warning during
    * compile time.
    */
-#if 0 && !defined(DEBUG_OPT_OVERFLOW_DISBABLE_PACE)
+#if 0 && !defined(DEBUG_OPT_OVERFLOW_DISABLE_PACE)
   if (accel_rate > UINT8_MAX)
     DEBUG_ERROR("pace accelerate, overflows!");
 #endif
@@ -166,7 +166,7 @@ Pace_brakerate_set(Pace_t* pace, uint6_t brake_rate)
     = brake_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
     | _STATUS_LOW_FRACCOUNTER_BIT0;
 
-#ifndef DEBUG_OPT_OVERFLOW_DISBABLE_PACE
+#ifndef DEBUG_OPT_OVERFLOW_DISABLE_PACE
   if (brake_rate > UINT6_MAX)
     DEBUG_ERROR("pace brakerate, overflows!");
 #endif
