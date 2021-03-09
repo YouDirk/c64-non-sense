@@ -52,8 +52,8 @@
 
 void __fastcall__
 Pace_new(Pace_t* pace,
-         uint8_t velocity_max, uint8_t accelerate, uint8_t brakerate,
-         uint8_t delay)
+         uint7_t velocity_max, uint8_t accel_rate, uint6_t brake_rate,
+         uint6_t delay)
 {
   pace->pace = 0;
 
@@ -61,8 +61,8 @@ Pace_new(Pace_t* pace,
 
   Pace_velocitymax_set(pace, velocity_max, delay);
 
-  Pace_accelerate_set(pace, accelerate);
-  Pace_brakerate_set(pace, brakerate);
+  Pace_accelerate_set(pace, accel_rate);
+  Pace_brakerate_set(pace, brake_rate);
 }
 
 /* Nothing to do.  Just an empty-macro for now.
@@ -127,29 +127,49 @@ Pace_tick(Pace_t* pace)
 /* ***************************************************************  */
 
 void __fastcall__
-Pace_velocitymax_set(Pace_t* pace, uint8_t velocity_max, uint8_t delay)
+Pace_velocitymax_set(Pace_t* pace, uint7_t velocity_max, uint6_t delay)
 {
   pace->_max.byte_high
     = (_STATUS_HIGH_PXLPACE_MASK | _STATUS_HIGH_MODE_MASK)
     & velocity_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
+
+#ifndef DEBUG_OPT_OVERFLOW_DISBABLE_PACE
+  if (velocity_max > UINT7_MAX)
+    DEBUG_ERROR("pace velocitymax, velocity overflows!");
+  if (delay > UINT6_MAX)
+    DEBUG_ERROR("pace velocitymax, delay overflows!");
+#endif
 }
 
 void __fastcall__
-Pace_accelerate_set(Pace_t* pace, uint8_t accelerate)
+Pace_accelerate_set(Pace_t* pace, uint8_t accel_rate)
 {
   UINT16(pace->_decrement_accel)
-    = ~UINT16(accelerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+    = ~UINT16(accel_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
               | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
+
+  /* We are on an 8-bit machine.  It just occurs a warning during
+   * compile time.
+   */
+#if 0 && !defined(DEBUG_OPT_OVERFLOW_DISBABLE_PACE)
+  if (accel_rate > UINT8_MAX)
+    DEBUG_ERROR("pace accelerate, overflows!");
+#endif
 }
 
 void __fastcall__
-Pace_brakerate_set(Pace_t* pace, uint8_t brakerate)
+Pace_brakerate_set(Pace_t* pace, uint6_t brake_rate)
 {
   pace->_decrement_brake.byte_high = 0x00;
   pace->_decrement_brake.byte_low
-    = brakerate << _STATUS_LOW_TICKCOUNTER_SHIFT
+    = brake_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
     | _STATUS_LOW_FRACCOUNTER_BIT0;
+
+#ifndef DEBUG_OPT_OVERFLOW_DISBABLE_PACE
+  if (brake_rate > UINT6_MAX)
+    DEBUG_ERROR("pace brakerate, overflows!");
+#endif
 }
 
 /* ***************************************************************  */

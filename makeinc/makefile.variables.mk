@@ -63,6 +63,10 @@ ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   OBJ += $(OBJ_DEBUG)
   DEFH += $(DEFH_DEBUG)
   CCDEFINES += -DDEBUG
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_OVERFLOW_DISBABLE_PACE)), \
+                  $(call 2BOOL,$(DEBUG_BUILD))))
+    CCDEFINES += -DDEBUG_OPT_OVERFLOW_DISBABLE_PACE
+  endif
   ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_IRQ_RENDERTIME

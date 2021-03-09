@@ -34,6 +34,13 @@
 #
 DEBUG_BUILD := 1
 
+# Log a debug error message if an integer-argument in PACE_*()
+# function call is overflowing.
+#
+# values: [1 0]
+#
+DEBUG_OPT_OVERFLOW_DISBABLE_PACE := 0
+
 # Mark as border color at which position the Graphix_render_isr()
 # routine will be executed.
 #

@@ -53,8 +53,8 @@ typedef struct Pace_t {
 /* ***************************************************************  */
 
 /* Initialize the pace structure.  */
-extern void __fastcall__ Pace_new(Pace_t* pace, uint8_t velocity_max,
-                uint8_t accelerate, uint8_t brakerate, uint8_t delay);
+extern void __fastcall__ Pace_new(Pace_t* pace, uint7_t velocity_max,
+                uint8_t accel_rate, uint6_t brake_rate, uint6_t delay);
 
 /* Free the pace structure.  */
 #define Pace_delete(pace)
@@ -69,15 +69,15 @@ extern void __fastcall__ Pace_tick(Pace_t* pace);
 
 /* Set a new VELOCITY_MAX and DELAY.  */
 extern void __fastcall__ Pace_velocitymax_set(
-                    Pace_t* pace, uint8_t velocity_max, uint8_t delay);
+                    Pace_t* pace, uint7_t velocity_max, uint6_t delay);
 
 /* Set a new ACCELERATION.  */
 extern void __fastcall__  Pace_accelerate_set(
-                    Pace_t* pace, uint8_t accelerate);
+                    Pace_t* pace, uint8_t accel_rate);
 
-/* Set a new BRAKERATE for this pace.  */
+/* Set a new BRAKE_RATE for this pace.  */
 extern void __fastcall__ Pace_brakerate_set(
-                    Pace_t* pace, uint8_t brakerate);
+                    Pace_t* pace, uint6_t brake_rate);
 
 /* ***************************************************************  */
 
@@ -121,17 +121,17 @@ extern void __fastcall__ Pace_start_neg(Pace_t* pace);
  */
 extern void __fastcall__ Pace_stop(Pace_t* pace);
 
-/* Brake from current pace to 0 pixel/s with BRAKERATE.
+/* Brake from current pace to 0 pixel/s with BRAKE_RATE.
  */
 extern void __fastcall__ Pace_brake(Pace_t* pace);
 
 /* Add an positive impulse and accelerate to VELOCITY_MAX immediately.
- * After that brake to 0 pixel/s with BRAKERATE.
+ * After that brake to 0 pixel/s with BRAKE_RATE.
  */
 extern void __fastcall__ Pace_impulse_pos(Pace_t* pace);
 
 /* Add an negative impulse and accelerate to -VELOCITY_MAX
- * immediately.  After that brake to 0 pixel/s with BRAKERATE.
+ * immediately.  After that brake to 0 pixel/s with BRAKE_RATE.
  */
 extern void __fastcall__ Pace_impulse_neg(Pace_t* pace);
 
