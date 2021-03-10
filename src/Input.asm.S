@@ -38,7 +38,7 @@ inner_loop_counter:
         .popseg                         ; restore "CODE" segment
 
         lda #CIA_DDR_RW_ALL
-        sta CIA1_DDRA
+        sta CIA1_DDRA                   ; scan value -> portA
 
         ldx #$00                        ; X: pressed_count
         stx _Input + Input_t::keyboard + Input_keyboard_t::changed
@@ -54,14 +54,14 @@ scan_loop:
         lda #$08
         sta inner_loop_counter          ; for (i=8; ....)
 bounced:
-        lda CIA1_PRB
-        cmp CIA1_PRB
+        lda CIA1_PRB                    ; read input matrix
+        cmp CIA1_PRB                    ;   from portB
         bne bounced
 inner_loop:
         ;; A = input from keyboard matrix
-        iny
-        lsr
-        bcs inner_next
+        iny                             ; input_matrix
+        lsr                             ;    := (input_matrix >> 1)
+        bcs inner_next                  ; bit0 will be tested first
 
         ;; --- current key was pressed
         sta cur_input_matrix            ; "push": input matrix
@@ -86,11 +86,12 @@ inner_done:
         lda cur_scan_value              ; A := scan value
         sec
         rol                             ; scan_value
-        sta cur_scan_value              ;   := (1 | scan_value) >> 1
-        cmp #$ff
+        sta cur_scan_value              ;   := (1 | scan_value) << 1
+        cmp #$ff                        ; bit0 scanned first, start: 0xfe
         bne scan_loop                   ; while (rolled_scanval != 0xff)
 
-.ifdef DEBUG
+ ;; Check disabled by default.
+.if 0 && .defined(DEBUG)
         ;; Y = 0x3f (Input_sc_none_e - 1)
         cpy #$3f
         beq debug_scannedall_ok
@@ -103,16 +104,16 @@ scan_done:
         lda #Input_sc_none_e
         sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
 
-        ;; TODO: Test if pressed_count changed
+                                ; if (Input.keyboard.pressed_count != X)
         cpx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
-        beq count_not_changed
+        beq count_not_changed   ;   then: I.keyboard.pressed_count := X
         stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
-        lda #TRUE
+        lda #TRUE               ;   then: I.keyboard.changed := true
         sta _Input + Input_t::keyboard + Input_keyboard_t::changed
 count_not_changed:
 
-        lda #CIA_DDR_RONLY_ALL
-        sta CIA1_DDRA
+        lda #CIA_DDR_RONLY_ALL          ; restore data direction of
+        sta CIA1_DDRA                   ;   portA
 
         rts
 .endproc                                ; __Input_keyboard_scan

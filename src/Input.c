@@ -118,7 +118,11 @@ Input_tick(void)
                         cia_port_inv >> 2);
   }
 
-  if (Input.set.enabled & Input_keyboard_ascan_mask) {
+  if (Input.set.enabled
+      & (Input_keyboard_scan_mask | Input_keyboard_scan_petscii_mask)) {
     _Input_keyboard_scan();
+
+    if (Input.set.enabled & Input_keyboard_scan_petscii_mask)
+      DEBUG_NOTE("todo: petscii enabled");
   }
 }

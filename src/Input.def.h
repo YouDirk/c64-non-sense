@@ -32,7 +32,10 @@ typedef_enum_begin(Input_devices_t)
   typedef_enum_hex(Input_devices_t, Input_joystick_port2_mask,   01)
   typedef_enum_hex(Input_devices_t, Input_joystick_port1_mask,   02)
   typedef_enum_hex(Input_devices_t, Input_joystick_all_mask,     03)
-  typedef_enum_hex(Input_devices_t, Input_keyboard_ascan_mask,   04)
+  typedef_enum_hex(Input_devices_t, Input_keyboard_scan_mask,    04)
+  typedef_enum_hex(Input_devices_t, \
+                              Input_keyboard_scan_petscii_mask,  08)
+  typedef_enum_hex(Input_devices_t, Input_keyboard_all_mask,     0c)
   typedef_enum_hex(Input_devices_t, Input_all_mask,              ff)
 typedef_enum_end(Input_devices_t)
 
@@ -199,8 +202,11 @@ typedef_struct_end(Input_joystick_t)
 /* ***************************************************************  */
 
 /* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
-define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      5)
+define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      4)
 
+/* Real length of INPUT.KEYBOARD.PRESSED buffer, including 0x40
+ * (INPUT_SC_NONE_E) termination.
+ */
 define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
                                  INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
 

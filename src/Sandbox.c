@@ -69,6 +69,7 @@ Sandbox_tick(void)
 {
   static uint8_t i;
   static bool key_w, key_s, key_a, key_d, key_space;
+  static uint8_t cur_scancode, cur_petscii;
 
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
@@ -111,7 +112,10 @@ Sandbox_tick(void)
     key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
     for (i=0; i<Input.keyboard.pressed_count; ++i) {
-      switch (Input.keyboard.pressed[i]) {
+      cur_scancode = Input.keyboard.pressed[i];
+      cur_petscii = ((uint8_t*) 0xeb81)[cur_scancode];
+
+      switch (cur_scancode) {
       case Input_sc_w_e: key_w = true; break;
       case Input_sc_s_e: key_s = true; break;
       case Input_sc_a_e: key_a = true; break;
@@ -119,6 +123,13 @@ Sandbox_tick(void)
       case Input_sc_space_e: key_space = true; break;
       default: break;
       }
+
+      if (cur_petscii == 0x01)
+        DEBUG_NOTE("shift pressed");
+      else if (cur_petscii == 0x02)
+        DEBUG_NOTE("c= pressed");
+      else if (cur_petscii == 0x04)
+        DEBUG_NOTE("ctrl pressed");
     }
 
     if (key_space) {
