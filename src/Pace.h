@@ -73,7 +73,7 @@ extern void __fastcall__ Pace_velocitymax_set(
 
 /* Set a new ACCELERATION.  */
 extern void __fastcall__  Pace_accelerate_set(
-                    Pace_t* pace, uint8_t accel_rate);
+                    Pace_t* pace, uint6_t accel_rate);
 
 /* Set a new BRAKE_RATE for this pace.  */
 extern void __fastcall__ Pace_brakerate_set(
@@ -96,12 +96,12 @@ extern bool __fastcall__ Pace_is_maxpace_neg(Pace_t* pace);
 /* ***************************************************************  */
 
 /* Returns the current absolute VELOCITY.  The MAXPACE equals
- * VELOCITY_MAX+1.
+ * VELOCITY_MAX + 1.
  */
 extern uint8_t __fastcall__ Pace_velocity_get_abs(Pace_t* pace);
 
 /* Returns the current the sign correct VELOCITY.  The MAXPACE equals
- * VELOCITY_MAX+1.
+ * VELOCITY_MAX + 1.
  */
 extern int8_t __fastcall__ Pace_velocity_get(Pace_t* pace);
 

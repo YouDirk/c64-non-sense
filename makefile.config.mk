@@ -30,28 +30,28 @@
 # too.  If FULL (full) is set then all DEBUG_OPT_* options are enabled
 # too.
 #
-# values: [full 1 0]
+# values: [full 1 0], default: 1
 #
 DEBUG_BUILD := 1
 
-# Print a debug error message if an integer-argument in a PACE_*()
-# function call is overflowing.
+# Log debug errors if non-<stdint.h> arguments (i.e. UINT6_T, INT4_T)
+# in function calls are overflowing.
 #
-# values: [1 0]
+# values: [1 0], default: 1
 #
-DEBUG_OPT_OVERFLOW_DISABLE_PACE := 0
+DEBUG_OPT_OVERFLOW_CHECK := 1
 
 # Mark as border color at which position the Graphix_render_isr()
 # routine will be executed.
 #
-# values: [1 0]
+# values: [1 0], default: 0
 #
 DEBUG_OPT_IRQ_RENDERTIME := 0
 
-# Output debug warnings if the logical Timer 1 ISR is not in sync with
+# Log debug warnings if the logical Timer 1 ISR is not in sync with
 # physical CIA1 timer A.
 #
-# values: [1 0]
+# values: [1 0], default: 0
 #
 DEBUG_OPT_TIMER1_SYNCCHECK := 0
 
@@ -61,7 +61,7 @@ DEBUG_OPT_TIMER1_SYNCCHECK := 0
 # double buffering does also results in a cyclic stuttering FPS,
 # depending on engine/timer tickrate.
 #
-# values: [1 0]
+# values: [1 0], default: 0
 #
 CONF_DOUBLE_BUFFERING := 0
 
@@ -74,11 +74,14 @@ CONF_DOUBLE_BUFFERING := 0
 # Additionally C symbols are namespaced with an underscore and
 # beginning '_', see example values below.
 #
-# values: [.asm_symbol ._c_symbol $$<hex-address>]
+# values: [.asm_symbol ._c_symbol $$<hex-address>], default: ._main
 #
 BREAKPOINT := ._main
 
 # The removable disk (i.e. USB storage) where to copy the D64 file.
+# Is used for `make` target DISK.
+#
+#   $> make disk
 #
 # values, such like: /dev/sdc1
 #
@@ -86,7 +89,7 @@ DISK_DEVICE := /dev/sdc1
 
 # Optimization flags for compiler
 #
-# values: [-O -Oi -Or -Os]
+# values: [-O -Oi -Or -Os], default: -O
 #
 OPTFLAG := -O
 
@@ -95,7 +98,7 @@ OPTFLAG := -O
 #
 #   $> cc65 --list-warnings
 #
-# values: -W[-]<warning>
+# values: -W[-]<warning>, default: <empty-string>
 #
 CCWARNINGS :=
 

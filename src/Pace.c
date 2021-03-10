@@ -134,8 +134,9 @@ Pace_velocitymax_set(Pace_t* pace, uint7_t velocity_max, uint6_t delay)
     & velocity_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
 
-#ifndef DEBUG_OPT_OVERFLOW_DISABLE_PACE
-  if (velocity_max > UINT7_MAX)
+#ifdef DEBUG_OVERFLOW_CHECK
+  /* MAXPACE equals VELOCITY_MAX + 1  */
+  if (velocity_max > UINT7_MAX - 1)
     DEBUG_ERROR("pace velocitymax, velocity overflows!");
   if (delay > UINT6_MAX)
     DEBUG_ERROR("pace velocitymax, delay overflows!");
@@ -143,18 +144,16 @@ Pace_velocitymax_set(Pace_t* pace, uint7_t velocity_max, uint6_t delay)
 }
 
 void __fastcall__
-Pace_accelerate_set(Pace_t* pace, uint8_t accel_rate)
+Pace_accelerate_set(Pace_t* pace, uint6_t accel_rate)
 {
-  UINT16(pace->_decrement_accel)
-    = ~UINT16(accel_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
-              | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
+  pace->_decrement_accel.byte_high = 0xff;
+  pace->_decrement_accel.byte_low
+    = ~(accel_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
+        | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
 
-  /* We are on an 8-bit machine.  It just occurs a warning during
-   * compile time.
-   */
-#if 0 && !defined(DEBUG_OPT_OVERFLOW_DISABLE_PACE)
-  if (accel_rate > UINT8_MAX)
-    DEBUG_ERROR("pace accelerate, overflows!");
+#ifdef DEBUG_OVERFLOW_CHECK
+  if (accel_rate > UINT6_MAX)
+    DEBUG_ERROR("pace accel_rate, overflows!");
 #endif
 }
 
@@ -166,9 +165,9 @@ Pace_brakerate_set(Pace_t* pace, uint6_t brake_rate)
     = brake_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
     | _STATUS_LOW_FRACCOUNTER_BIT0;
 
-#ifndef DEBUG_OPT_OVERFLOW_DISABLE_PACE
+#ifdef DEBUG_OVERFLOW_CHECK
   if (brake_rate > UINT6_MAX)
-    DEBUG_ERROR("pace brakerate, overflows!");
+    DEBUG_ERROR("pace brake_rate, overflows!");
 #endif
 }
 

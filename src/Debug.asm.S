@@ -32,9 +32,19 @@
         bcs return_fast                 ;   return;
 
         lda ptr1
-        pha                             ; backup low byte of shared zp
+        pha                             ; backup low byte, shared ptr
         lda ptr1 + 1
-        pha                             ; backup high byte of shared zp
+        pha                             ; backup high byte, shared ptr
+        lda sreg
+        pha                             ; backup low byte, shared reg
+        lda sreg + 1
+        pha                             ; backup high byte, shared reg
+
+        php                             ; backup processor status reg
+        sei                             ; mask all IRQs for exclusive
+                                        ;   access to __DEBUG
+
+  .define _TOS STACK_BASE + SIZEOF_WORD + SIZEOF_ADDR + SIZEOF_BYTE
 
         ;; ---
 
@@ -45,7 +55,7 @@
 
 
         jsr Timer_1_get32_isrsafe       ; uint32 Timer_1_get32(void);
-        ldy #_Debug_entry_t::time
+        ldy #_Debug_entry_t::time       ; returns [sreg+1, sreg, X, A]
         sta (ptr1), y
         txa
         iny
@@ -53,18 +63,18 @@
         lda sreg
         iny
         sta (ptr1), y
-        lda sreg + 1                    ; _Debug.end->time = Timer_1_get32();
+        lda sreg + 1             ; _Debug.end->time = Timer_1_get32()
 
-        tsx                             ; X := TOS (Top Of processor Stack)
+        tsx                      ; X := TOS (Top Of processor Stack)
 
-        lda STACK_BASE + SIZEOF_ADDR, x
+        lda _TOS, x
         ldy #_Debug_entry_t::type
         sta (ptr1), y                   ; _Debug.end->type = arg1;
 
-        lda STACK_BASE + SIZEOF_ADDR + _debug_msgtype_t + 1, x
+        lda _TOS + _debug_msgtype_t + 1, x
         ldy #_Debug_entry_t::msg
         sta (ptr1), y
-        lda STACK_BASE + SIZEOF_ADDR + _debug_msgtype_t, x
+        lda _TOS + _debug_msgtype_t, x
         iny
         sta (ptr1), y                   ; _Debug.end->msg = arg0;
 
@@ -80,10 +90,20 @@ inc_endptr_done:
 
         ;; ---
 return:
+        pla                                  ; if IRQDISABLE was set
+        and #MOS6510_PREG_IRQDISABLE_MASK    ;   then we are in an ISR
+        bne irqs_were_masked
+        cli                                  ; otherwise restore I flag
+irqs_were_masked:
+
         pla
-        sta ptr1 + 1                    ; restore high byte of shared zp
+        sta sreg + 1                    ; restore high byte, shared reg
         pla
-        sta ptr1                        ; restore low byte of shared zp
+        sta sreg                        ; restore low byte, shared reg
+        pla
+        sta ptr1 + 1                    ; restore high byte, shared ptr
+        pla
+        sta ptr1                        ; restore low byte, shared ptr
 
 return_fast:
         pla                             ; pull arg1 type

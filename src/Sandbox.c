@@ -44,8 +44,8 @@ Sandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Pace_new(&Sandbox_pace_y, 12, 6, 14, 128);
-  Pace_new(&Sandbox_pace_x, 8, 2, 60, 0);
+  Pace_new(&Sandbox_pace_y, 12, 6, 14, 63);
+  Pace_new(&Sandbox_pace_x, 3, 2, 32, 0);
   Pace_impulse_pos(&Sandbox_pace_y);
 }
 
@@ -135,12 +135,6 @@ Sandbox_tick(void)
     if (key_a) Pace_start_pos(&Sandbox_pace_x);
     else if (key_d) Pace_start_neg(&Sandbox_pace_x);
     else Pace_brake(&Sandbox_pace_x);
-  }
-
-  if (Pace_velocity_get(&Sandbox_pace_y) == -8) {
-    Pace_impulse_pos(&Sandbox_pace_y);
-  } else if (Pace_velocity_get(&Sandbox_pace_y) == 8) {
-    Pace_impulse_neg(&Sandbox_pace_y);
   }
 
   Pace_tick(&Sandbox_pace_y);

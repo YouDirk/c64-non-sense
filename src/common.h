@@ -109,15 +109,4 @@ typedef struct uint32_s            int32_s;
 
 /*****************************************************************  */
 
-#define MUTEX_LOCK(mutex)          ((mutex) = 1)
-#define MUTEX_UNLOCK(mutex)        ((mutex) = 0)
-#define MUTEX_ISLOCKED(mutex)      ((mutex) != 0)
-
-/* The MOS 6510 CPU is an 8-bit machine.  Writing an 8-bit value to
- * memory will be compiled to an atomar operation (STA mutex).
- */
-typedef uint8_t                    mutex_t;
-
-/*****************************************************************  */
-
 #endif /* COMMON_H__  */
