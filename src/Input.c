@@ -71,13 +71,12 @@ _joystick_axis_tick(Input_axis_t* result_axis,
 #  error "_joystick_axis_tick(): CIA_INV_SHIFTED: Assertion 2 failed!"
 #endif
 
-  if (cia_port_inv_shifted & CIA1_PRAB_JOYLEFT_MASK) {
+  if (cia_port_inv_shifted & CIA1_PRAB_JOYLEFT_MASK)
     result_direction = 1;
-  } else if (cia_port_inv_shifted & CIA1_PRAB_JOYRIGHT_MASK) {
+  else if (cia_port_inv_shifted & CIA1_PRAB_JOYRIGHT_MASK)
     result_direction = -1;
-  } else {
+  else
     result_direction = 0;
-  }
 
   if (result_direction == result_axis->direction) {
     result_axis->changed = false;
@@ -120,9 +119,11 @@ Input_tick(void)
 
   if (Input.set.enabled
       & (Input_keyboard_scan_mask | Input_keyboard_scan_petscii_mask)) {
+
     _Input_keyboard_scan();
 
-    if (Input.set.enabled & Input_keyboard_scan_petscii_mask)
+    if (Input.keyboard.changed
+        && Input.set.enabled & Input_keyboard_scan_petscii_mask)
       DEBUG_NOTE("todo: petscii enabled");
   }
 }

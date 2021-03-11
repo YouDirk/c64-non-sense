@@ -22,7 +22,7 @@
 #include "Interrupt.h"
 #include "Input.h"
 #include "Graphix.h"
-#include "Sandbox.h"
+#include "AASandbox.h"
 
 /* ***************************************************************  */
 
@@ -48,7 +48,7 @@ _Engine_init_blackscreen(void)
   Input_init(EngineConfig.inputs_enabled);
 
   /* init test and staged code  */
-  Sandbox_init();
+  AASandbox_init();
 }
 
 void __fastcall__
@@ -69,7 +69,7 @@ _Engine_release_blackscreen(void)
    */
 
   /* also test- and staged code should be deinitialized  */
-  Sandbox_release();
+  AASandbox_release();
 
   /* hmmmm ...  */
   Input_release();

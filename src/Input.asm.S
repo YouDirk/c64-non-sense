@@ -86,7 +86,7 @@ inner_done:
         lda cur_scan_value              ; A := scan value
         sec
         rol                             ; scan_value
-        sta cur_scan_value              ;   := (1 | scan_value) << 1
+        sta cur_scan_value              ;   := (scan_value << 1) | 1
         cmp #$ff                        ; bit0 scanned first, start: 0xfe
         bne scan_loop                   ; while (rolled_scanval != 0xff)
 

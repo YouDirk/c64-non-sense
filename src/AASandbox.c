@@ -16,7 +16,7 @@
  */
 
 
-#include "Sandbox.h"
+#include "AASandbox.h"
 
 #include "Graphix.h"
 #include "Input.h"
@@ -30,7 +30,7 @@ static Pace_t Sandbox_pace_y, Sandbox_pace_x;
 /* ***************************************************************  */
 
 void __fastcall__
-Sandbox_init(void)
+AASandbox_init(void)
 {
   unsigned i;
 
@@ -50,7 +50,7 @@ Sandbox_init(void)
 }
 
 void __fastcall__
-Sandbox_release(void)
+AASandbox_release(void)
 {
   Pace_delete(&Sandbox_pace_x);
   Pace_delete(&Sandbox_pace_y);
@@ -59,13 +59,13 @@ Sandbox_release(void)
 /* ***************************************************************  */
 
 void __fastcall__
-Sandbox_poll(void)
+AASandbox_poll(void)
 {
 
 }
 
 void __fastcall__
-Sandbox_tick(void)
+AASandbox_tick(void)
 {
   static uint8_t i;
   static bool key_w, key_s, key_a, key_d, key_space;
@@ -156,7 +156,7 @@ Sandbox_tick(void)
 }
 
 void __fastcall__
-Sandbox_tick_low(void)
+AASandbox_tick_low(void)
 {
   /* Just for testing here, but very unperformant code.  It calls the
    * CC65 runtime functions

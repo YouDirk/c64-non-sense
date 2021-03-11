@@ -16,8 +16,8 @@
  */
 
 
-#ifndef SANDBOX_H__
-#define SANDBOX_H__
+#ifndef AASANDBOX_H__
+#define AASANDBOX_H__
 
 #include "common.h"
 
@@ -28,20 +28,20 @@
  */
 
 /* Initialize this component.  */
-extern void __fastcall__ Sandbox_init(void);
+extern void __fastcall__ AASandbox_init(void);
 
 /* Deinitialize this component.  */
-extern void __fastcall__ Sandbox_release(void);
+extern void __fastcall__ AASandbox_release(void);
 
 /* ***************************************************************  */
 
 /* Polls this component between engine ticks.  */
-extern void __fastcall__ Sandbox_poll(void);
+extern void __fastcall__ AASandbox_poll(void);
 
 /* Let this component ticking.  */
-extern void __fastcall__ Sandbox_tick(void);
+extern void __fastcall__ AASandbox_tick(void);
 
 /* Let this component ticking, graphix already rendered.  */
-extern void __fastcall__ Sandbox_tick_low(void);
+extern void __fastcall__ AASandbox_tick_low(void);
 
-#endif /* SANDBOX_H__  */
+#endif /* AASANDBOX_H__  */
