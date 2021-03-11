@@ -42,6 +42,7 @@ extern void __fastcall__ Input_tick(void);
  */
 
 extern void __fastcall__ _Input_keyboard_scan(void);
+extern void __fastcall__ _Input_keyboard_petscii_convert(void);
 
 /* ***************************************************************  */
 

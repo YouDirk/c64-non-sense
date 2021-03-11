@@ -18,12 +18,13 @@
 .include "Input.inc.s"
 
 .include "chip-cia.gen.s"
+.include "kernal.gen.s"
 
 .code
 
 ;; *******************************************************************
 
-;; Input_scancode_t __fastcall__ _Input_keyboard_scan(void);
+;; void __fastcall__ _Input_keyboard_scan(void)
 .export __Input_keyboard_scan
 .proc __Input_keyboard_scan: near
 
@@ -117,5 +118,28 @@ count_not_changed:
 
         rts
 .endproc                                ; __Input_keyboard_scan
+
+;; *******************************************************************
+
+;; void __fastcall__ _Input_keyboard_petscii_convert(void)
+.export __Input_keyboard_petscii_convert
+.proc __Input_keyboard_petscii_convert: near
+
+        ldx #$00                   ; X := counter
+
+loop:
+        lda _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        cmp #Input_sc_none_e       ; while (Input.keyboard.pressed[i]
+        beq loop_done              ;        != Input_sc_none_e)
+
+        tay
+        lda (KERNAL_ZP_PETSCIITABLE_VECTOR), y
+
+        inx                        ; ++X
+        jmp loop
+loop_done:
+
+        rts
+.endproc                           ; __Input_keyboard_petscii_convert
 
 ;; *******************************************************************

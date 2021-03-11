@@ -30,14 +30,11 @@ Input_init(Input_devices_t devices)
 {
   Input.set.enabled = devices;
 
-  /* will be initialized with zero automatically by .BSS segment
   memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
-  */
 
-  Input.keyboard.pressed[0] = Input_sc_none_e;
-  Input.keyboard.pressed_count = 0;
-  Input.keyboard.changed = false;
+  memset(&Input.keyboard, 0x00, sizeof(Input_keyboard_t));
+  Input.keyboard.pressed[0] = Input_sc_none_e; /* 0x40  */
 
   /* direction of CIA1 port A and B is read-only by default  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;
@@ -123,7 +120,8 @@ Input_tick(void)
     _Input_keyboard_scan();
 
     if (Input.keyboard.changed
-        && Input.set.enabled & Input_keyboard_scan_petscii_mask)
-      DEBUG_NOTE("todo: petscii enabled");
+        && (Input.set.enabled & Input_keyboard_scan_petscii_mask)) {
+      _Input_keyboard_petscii_convert();
+    }
   }
 }

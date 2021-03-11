@@ -28,6 +28,9 @@
 ;; extern void __fastcall__ _Input_keyboard_scan(void)
 .global __Input_keyboard_scan
 
+;; extern void __fastcall__ _Input_keyboard_petscii_convert(void)
+.global __Input_keyboard_petscii_convert
+
 ;; *******************************************************************
 
 .endif                                  ; INPUT_INC_S__

@@ -69,7 +69,6 @@ AASandbox_tick(void)
 {
   static uint8_t i;
   static bool key_w, key_s, key_a, key_d, key_space;
-  static uint8_t cur_scancode, cur_petscii;
 
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
@@ -112,10 +111,7 @@ AASandbox_tick(void)
     key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
     for (i=0; i<Input.keyboard.pressed_count; ++i) {
-      cur_scancode = Input.keyboard.pressed[i];
-      cur_petscii = ((uint8_t*) 0xeb81)[cur_scancode];
-
-      switch (cur_scancode) {
+      switch (Input.keyboard.pressed[i]) {
       case Input_sc_w_e: key_w = true; break;
       case Input_sc_s_e: key_s = true; break;
       case Input_sc_a_e: key_a = true; break;
@@ -123,13 +119,6 @@ AASandbox_tick(void)
       case Input_sc_space_e: key_space = true; break;
       default: break;
       }
-
-      if (cur_petscii == 0x01)
-        DEBUG_NOTE("shift pressed");
-      else if (cur_petscii == 0x02)
-        DEBUG_NOTE("c= pressed");
-      else if (cur_petscii == 0x04)
-        DEBUG_NOTE("ctrl pressed");
     }
 
     if (key_space) {
@@ -146,6 +135,13 @@ AASandbox_tick(void)
     if (key_a) Pace_start_pos(&Sandbox_pace_x);
     else if (key_d) Pace_start_neg(&Sandbox_pace_x);
     else Pace_brake(&Sandbox_pace_x);
+
+    if (Input.keyboard.petscii.shiftkeys & Input_sk_shift_mask)
+      DEBUG_NOTE("shift pressed");
+    if (Input.keyboard.petscii.shiftkeys & Input_sk_commodore_mask)
+      DEBUG_NOTE("c= pressed");
+    if (Input.keyboard.petscii.shiftkeys & Input_sk_ctrl_mask)
+      DEBUG_NOTE("ctrl pressed");
   }
 
   Pace_tick(&Sandbox_pace_y);

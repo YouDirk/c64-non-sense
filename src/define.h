@@ -62,6 +62,7 @@ BC ******************************************************************
 #  define typedef_struct_enum_ptr(other, name)    other* name;
 #  define typedef_struct_bool(name)               bool name;
 #  define typedef_struct_bool_ptr(name)           bool* name;
+#  define typedef_struct_char(name)               char name;
 #  define typedef_struct_uint8(name)              uint8_t name;
 #  define typedef_struct_uint8_ptr(name)          uint8_t* name;
 #  define typedef_struct_uint16(name)             uint16_t name;
@@ -125,6 +126,7 @@ BC ******************************************************************
 #  define typedef_struct_enum_ptr(other, name)    name .addr  ; other*
 #  define typedef_struct_bool(name)               name .byte  ; bool
 #  define typedef_struct_bool_ptr(name)           name .addr  ; bool*
+#  define typedef_struct_char(name)               name .byte  ; char
 #  define typedef_struct_uint8(name)              name .byte  ; uint8
 #  define typedef_struct_uint8_ptr(name)          name .addr  ; uint8*
 #  define typedef_struct_uint16(name)             name .word  ; uint16

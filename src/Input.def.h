@@ -85,7 +85,6 @@ typedef_enum_end(Input_devices_t)
 
 /* Scanned key codes from keyboard (0x00-0x40).  */
 typedef_enum_begin(Input_scancode_t)
-
   typedef_enum_hex(Input_scancode_t, Input_sc_none_e,            40)
 
   typedef_enum_hex(Input_scancode_t, Input_sc_delinst_e,         00)
@@ -159,7 +158,16 @@ typedef_enum_begin(Input_scancode_t)
   typedef_enum_hex(Input_scancode_t, Input_sc_commodore_e,       3d)
   typedef_enum_hex(Input_scancode_t, Input_sc_q_e,               3e)
   typedef_enum_hex(Input_scancode_t, Input_sc_stoprun_e,         3f)
+typedef_enum_end(Input_scancode_t)
 
+/* ***************************************************************  */
+
+/* Shift-key flags, compatible with zero-page Kernal variable 0x028d.
+ */
+typedef_enum_begin(Input_shiftkeys_t)
+  typedef_enum_hex(Input_shiftkeys_t, Input_sk_shift_mask,       01)
+  typedef_enum_hex(Input_shiftkeys_t, Input_sk_commodore_mask,   02)
+  typedef_enum_hex(Input_shiftkeys_t, Input_sk_ctrl_mask,        04)
 typedef_enum_end(Input_scancode_t)
 
 /* ***************************************************************  */
@@ -210,9 +218,21 @@ define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      4)
 define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
                                  INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
 
+/* If PETSCII enabled: The current scan codes converted to the
+ * equivalent PETSCII character.
+ */
+typedef_struct_begin(Input_keyboard_petscii_t)
+  /* Shift-key flags, compatible with zero-page Kernal variable
+   * 0x028d.
+   */
+  typedef_struct_enum(Input_shiftkeys_t,               shiftkeys)
+
+  /* The PETSCII character code which is able to used for strings.  */
+  typedef_struct_char(character)
+typedef_struct_end(Input_keyboard_petscii_t)
+
 /* Information about the keyboard  */
 typedef_struct_begin(Input_keyboard_t)
-
   /* Scan codes of the keys which are currently pressed.  The order in
    * this buffer is the same as they were scanned from the keyboard
    * matrix.
@@ -245,6 +265,10 @@ typedef_struct_begin(Input_keyboard_t)
   /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
   typedef_struct_bool(changed)
 
+  /* Just filled if PETSCII enabled, using in INPUT.SET.ENABLED the
+   * bit-mask INPUT_KEYBOARD_SCAN_PETSCII_MASK.
+   */
+  typedef_struct_nested(Input_keyboard_petscii_t,      petscii)
 typedef_struct_end(Input_keyboard_t)
 
 /* ***************************************************************  */
@@ -256,26 +280,26 @@ typedef_struct_begin(Input_set_t)
   /* Input devices which will be polled and are ticking in this
    * module.
    */
-  typedef_struct_enum(Input_devices_t,       enabled)
+  typedef_struct_enum(Input_devices_t,                 enabled)
 typedef_struct_end(Input_set_t)
 
 /* Structure of static members for module.  */
 typedef_struct_begin(Input_t)
   /* Some writable member variables.  */
-  typedef_struct_nested(Input_set_t,         set)
+  typedef_struct_nested(Input_set_t,                   set)
 
   /* The two joysticks on physical Port 2 and Port 1 :)  */
-  typedef_struct_nested(Input_joystick_t,    joy_port2)
-  typedef_struct_nested(Input_joystick_t,    joy_port1)
+  typedef_struct_nested(Input_joystick_t,              joy_port2)
+  typedef_struct_nested(Input_joystick_t,              joy_port1)
 
   /* The keyboard ^^  */
-  typedef_struct_nested(Input_keyboard_t,    keyboard)
+  typedef_struct_nested(Input_keyboard_t,              keyboard)
 typedef_struct_end(Input_t)
 
 /* ***************************************************************  */
 
 /* Static members of this module.  */
-extern_var(Input_t,                          Input)
+extern_var(Input_t,                                    Input)
 
 /* ***************************************************************  */
 
