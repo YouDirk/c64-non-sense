@@ -125,16 +125,33 @@ count_not_changed:
 .export __Input_keyboard_petscii_convert
 .proc __Input_keyboard_petscii_convert: near
 
-        ldx #$00                   ; X := counter
+  .define _PETSCII _Input + Input_t::keyboard + Input_keyboard_t::petscii
 
-loop:
+        ldx #$00                   ; X := counter = 0x00
+        stx _PETSCII + Input_keyboard_petscii_t::shiftkeys
+                                   ; I.[*].petscii.shiftkeys := 0x00
+
+loop:                              ; A := I.keyboard.pressed[X]
         lda _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        cmp #Input_sc_none_e       ; while (Input.keyboard.pressed[i]
+        cmp #Input_sc_none_e       ; while (Input.keyboard.pressed[X]
         beq loop_done              ;        != Input_sc_none_e)
 
-        tay
-        lda (KERNAL_ZP_PETSCIITABLE_VECTOR), y
-
+        tay                        ; Y := I.keyboard.pressed[X]
+        lda KERNAL_PETSCIITABLE, y    ; A := PETSCII
+        cmp #$05
+        bcs not_shiftkey
+        cmp #$03                   ; if (PETSCII >= 0 || PETSCII == 3)
+        beq not_shiftkey           ;   not_shiftkey
+        ora _PETSCII + Input_keyboard_petscii_t::shiftkeys
+        sta _PETSCII + Input_keyboard_petscii_t::shiftkeys
+        jmp loop_next              ; I.shiftkeys |= PETSCII
+not_shiftkey:
+        ;; TODO
+        ;;   ??? Why BPL instruction in 0xeac7 ???
+        ;;   1. Store Y such like 0xeac9
+        ;;   2. Calcualte relative to 0xeb79, such like in 0xeb64
+        ;;   3. Set Input.keyboard.petscii.character, such like 0xeb6b
+loop_next:
         inx                        ; ++X
         jmp loop
 loop_done:

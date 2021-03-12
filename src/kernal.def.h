@@ -49,27 +49,35 @@ define_hex(KERNAL_HARDNMI_DEFAULT,                fe43)
 define_hex(KERNAL_HARDRESET_VECTOR,               fffc)
 define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
 
-/*
- * end of vectors
+/* end of vectors
  * *******************************************************************
  * zero-page (0x0000 - 0x00ff)
  */
 
+/* Will be set during keyboard scan routine in Kernal code at 0xea9b.
+ * Therefore, if you are using the argument `-autostart` in VICE it
+ * will be never be set!  It´s highly reocommended to use
+ * KERNAL_PETSCIITABLE instead.
+ */
 define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
 
-/*
- * end of zero-page
+/* end of zero-page
  * *******************************************************************
  * advanced zero-page (0x0100 - 0x03ff)
  */
 
 define_hex(KERNAL_AZP_SHIFTFLAGS,                 028d)
+define_hex(KERNAL_AZP_ISPAL,                      02a6)
 
-/*
- * end of advanced zero-page
- * ***************************************************************  */
+/* end of advanced zero-page
+ * *******************************************************************
+ * Kernal ROM (0xe000 - 0xfffa) [w/o MOS-6510 RESET/NMI/IRQ]
+ */
 
-define_hex(KERNAL_FLAG_ISPAL,                     02a6)
+define_hex(KERNAL_PETSCIITABLE,                   eb81)
+
+/* end of Kernal ROM
+ * **************************************************************** */
 
 header_endif(KERNAL)
 
