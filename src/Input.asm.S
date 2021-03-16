@@ -127,34 +127,54 @@ count_not_changed:
 
   .define _PETSCII _Input + Input_t::keyboard + Input_keyboard_t::petscii
 
-        ldx #$00                   ; X := counter = 0x00
-        stx _PETSCII + Input_keyboard_petscii_t::shiftkeys
-                                   ; I.[*].petscii.shiftkeys := 0x00
+        ldy #Input_sc_none_e       ; ZP_SCANCODE := 0x40
+        sty KERNAL_ZP_KEYBOARD_SCANCODE
+        lda #$00                   ; I..petscii.shiftkeys := 0x00
+        sta _PETSCII + Input_keyboard_petscii_t::shiftkeys
 
-loop:                              ; A := I.keyboard.pressed[X]
-        lda _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        cmp #Input_sc_none_e       ; while (Input.keyboard.pressed[X]
+        ldx #$ff                   ; X := counter = 0xff
+loop:
+        inx                        ; ++counter = X
+                                   ; Y := I.keyboard.pressed[X]
+        ldy _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        cpy #Input_sc_none_e       ; while (Input.keyboard.pressed[X]
         beq loop_done              ;        != Input_sc_none_e)
 
-        tay                        ; Y := I.keyboard.pressed[X]
-        lda KERNAL_PETSCIITABLE, y    ; A := PETSCII
+        lda KERNAL_PETSCIITABLE, y      ; A := PETSCII w/o shift-keys
         cmp #$05
         bcs not_shiftkey
-        cmp #$03                   ; if (PETSCII >= 0 || PETSCII == 3)
+        cmp #$03                   ; if (PETSCII >= 5 || PETSCII == 3)
         beq not_shiftkey           ;   not_shiftkey
         ora _PETSCII + Input_keyboard_petscii_t::shiftkeys
         sta _PETSCII + Input_keyboard_petscii_t::shiftkeys
-        jmp loop_next              ; I.shiftkeys |= PETSCII
+        jmp loop                   ; I.shiftkeys |= PETSCII
 not_shiftkey:
-        ;; TODO
-        ;;   ??? Why BPL instruction in 0xeac7 ???
-        ;;   1. Store Y such like 0xeac9
-        ;;   2. Calcualte relative to 0xeb79, such like in 0xeb64
-        ;;   3. Set Input.keyboard.petscii.character, such like 0xeb6b
-loop_next:
-        inx                        ; ++X
+        sty KERNAL_ZP_KEYBOARD_SCANCODE ; ZP_SCANCODE := I..pressed[X]
         jmp loop
 loop_done:
+        ;; set: KERNAL_ZP_KEYBOARD_SCANCODE, I..petscii.shiftkeys
+
+        lda _PETSCII + Input_keyboard_petscii_t::shiftkeys
+        asl                        ; A is dividable by 2
+        cmp #$08                   ; A = 0x00|02|04|06|08|0a|0c|0e
+        bcc petscii_offset_done
+        lda #$06                   ; if ((A << 1) => 0x08) A := 0x06
+petscii_offset_done:               ; A = 0x00|02|04|06
+        ;; A = 0x00 => UNSHIFT, 0x02 => exactly SHIFT pressed
+        ;; 0x04 => exactly COMMODORE pressed
+        ;; 0x06 => at least CTRL pressed
+
+        tax                        ; X := offset of PETSCIITABLE_VECTORS
+        lda KERNAL_PETSCIITABLE_VECTORS, x
+        sta KERNAL_ZP_PETSCIITABLE_VECTOR
+        lda KERNAL_PETSCIITABLE_VECTORS+1, x
+        sta KERNAL_ZP_PETSCIITABLE_VECTOR+1  ; depending on shift-keys
+                                ; set KERNAL_ZP_PETSCIITABLE_VECTOR
+
+        ldy KERNAL_ZP_KEYBOARD_SCANCODE
+        lda (KERNAL_ZP_PETSCIITABLE_VECTOR), y
+        sta _PETSCII + Input_keyboard_petscii_t::character
+                    ; I..petscii.shiftkeys := PETSCII, using shift-keys
 
         rts
 .endproc                           ; __Input_keyboard_petscii_convert

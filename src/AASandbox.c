@@ -142,6 +142,15 @@ AASandbox_tick(void)
       DEBUG_NOTE("c= pressed");
     if (Input.keyboard.petscii.shiftkeys & Input_sk_ctrl_mask)
       DEBUG_NOTE("ctrl pressed");
+
+#ifdef DEBUG
+    /* TODO: Add a PETCSII NONE character constant.  */
+    if (Input.keyboard.petscii.character != 0xff) {
+      static char* out = "'x' char\n";
+      out[1] = Input.keyboard.petscii.character;
+      printf(out);
+    }
+#endif
   }
 
   Pace_tick(&Sandbox_pace_y);

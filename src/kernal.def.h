@@ -54,6 +54,12 @@ define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
  * zero-page (0x0000 - 0x00ff)
  */
 
+/* Will be set during keyboard scan routine in Kernal code at 0xeac9.
+ * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
+ * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
+ */
+define_hex(KERNAL_ZP_KEYBOARD_SCANCODE,           cb)
+
 /* Will be set during keyboard scan routine in Kernal code at 0xea9b.
  * Therefore, if you are using the argument `-autostart` in VICE it
  * will be never be set!  It´s highly reocommended to use
@@ -66,7 +72,11 @@ define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
  * advanced zero-page (0x0100 - 0x03ff)
  */
 
+/* Will not be set, use INPUT.KEYBOARD.PETSCII.SHIFTKEYS instead.  It
+ * is using the same bit layout.
+ */
 define_hex(KERNAL_AZP_SHIFTFLAGS,                 028d)
+
 define_hex(KERNAL_AZP_ISPAL,                      02a6)
 
 /* end of advanced zero-page
@@ -74,6 +84,11 @@ define_hex(KERNAL_AZP_ISPAL,                      02a6)
  * Kernal ROM (0xe000 - 0xfffa) [w/o MOS-6510 RESET/NMI/IRQ]
  */
 
+define_hex(KERNAL_PETSCIITABLE_VECTORS,           eb79)
+define_hex(KERNAL_PETSCIITABLE_VECTOR_UNSHIFTED,  eb79)
+define_hex(KERNAL_PETSCIITABLE_VECTOR_SHIFTED,    eb7b)
+define_hex(KERNAL_PETSCIITABLE_VECTOR_COMMODORE,  eb7d)
+define_hex(KERNAL_PETSCIITABLE_VECTOR_CTRL,       eb7f)
 define_hex(KERNAL_PETSCIITABLE,                   eb81)
 
 /* end of Kernal ROM
