@@ -158,7 +158,7 @@ loop_done:
         asl                        ; A is dividable by 2
         cmp #$08                   ; A = 0x00|02|04|06|08|0a|0c|0e
         bcc petscii_offset_done
-        lda #$06                   ; if ((A << 1) => 0x08) A := 0x06
+        lda #$06                   ; if ((A << 1) >= 0x08) A := 0x06
 petscii_offset_done:               ; A = 0x00|02|04|06
         ;; A = 0x00 => UNSHIFT, 0x02 => exactly SHIFT pressed
         ;; 0x04 => exactly COMMODORE pressed
@@ -171,10 +171,10 @@ petscii_offset_done:               ; A = 0x00|02|04|06
         sta KERNAL_ZP_PETSCIITABLE_VECTOR+1  ; depending on shift-keys
                                 ; set KERNAL_ZP_PETSCIITABLE_VECTOR
 
-        ldy KERNAL_ZP_KEYBOARD_SCANCODE
+        ldy KERNAL_ZP_KEYBOARD_SCANCODE           ; Y := scan_code
         lda (KERNAL_ZP_PETSCIITABLE_VECTOR), y
         sta _PETSCII + Input_keyboard_petscii_t::character
-                    ; I..petscii.shiftkeys := PETSCII, using shift-keys
+                    ; I..petscii.character := PETSCII, using shift-keys
 
         rts
 .endproc                           ; __Input_keyboard_petscii_convert

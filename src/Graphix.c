@@ -18,6 +18,8 @@
 
 #include "Graphix.h"
 
+#include "EngineConfig.h"
+
 #include "chip-vic.gen.h"
 #include "chip-cia.gen.h"
 
@@ -76,6 +78,9 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* (no restore) rasterline, where an IRQ is triggered  */
   VIC.rasterline = VIC_RASTERLINE_MODE;
 
+  /* initialize Graphix.set  */
+  Graphix.set.charset_exit = EngineConfig.charset_exit;
+
   /* initialize Graphix.buffer  */
   Graphix.buffer.screen_ram = _SCREEN_RAM;
   Graphix.buffer.bitmap_ram = _BITMAP_RAM;
@@ -124,10 +129,21 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;
 
-  /* restore VIC memory mapping AND set character-set back to 1
-   * (symbols, no lower case)
+  /* restore VIC memory mapping AND set character-set back to symbols
+   * or lower case
    */
-  VIC.addr = VIC_ADDR_DEFAULT;
+
+  // TODO: Graphix.set.charset_exit wrong initialized
+  switch (EngineConfig.charset_exit) {
+  case Graphix_charset2_lower_e:
+    VIC.addr = VIC_ADDR_DEFAULT | VIC_ADDR_BITMAP_CHARSET2;
+    break;
+  default:
+    DEBUG_ERROR("graphix release, exit charset unknown");
+  case Graphix_charset1_symbols_e:
+    VIC.addr = VIC_ADDR_DEFAULT | VIC_ADDR_BITMAP_CHARSET1;
+    break;
+  }
   CIA2.pra = CIA2_PRA_DEFAULT;
 
   /* switch back into text mode, set screen on   */

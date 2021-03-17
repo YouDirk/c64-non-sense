@@ -109,11 +109,17 @@ define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)
 define_hex(VIC_ADDR_SCREENRAM_STEP,     0040)
 define_hex(VIC_ADDR_BITMAP_MASK,        0f)
 define_hex(VIC_ADDR_BITMAP_STEP,        0400)
+/* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
+ * access to the Character ROM at address (0x1000 - 0x2000), which is
+ * accessable via memory at location (0xd000 - 0xe000).
+ *
+ * The VIC-II DMA address is calculated in that case as
+ * ((VIC_ADDR_BITMAP_CHARSET >> 1) << 11).
+ */
 define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
 define_hex(VIC_ADDR_DEFAULT_SCREENRAM,  10)
-define(VIC_ADDR_DEFAULT,                                             \
-       VIC_ADDR_DEFAULT_SCREENRAM | VIC_ADDR_BITMAP_CHARSET1)
+define(VIC_ADDR_DEFAULT,                VIC_ADDR_DEFAULT_SCREENRAM)
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
 macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \

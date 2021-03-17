@@ -18,6 +18,8 @@
 
 #include "Input.h"
 
+#include "EngineConfig.h"
+
 #include "chip-cia.gen.h"
 
 /* ***************************************************************  */
@@ -26,9 +28,9 @@
 Input_t Input;
 
 void __fastcall__
-Input_init(Input_devices_t devices)
+Input_init(void)
 {
-  Input.set.enabled = devices;
+  Input.set.enabled = EngineConfig.inputs_enabled;
 
   memset(&Input.joy_port2, 0x00, sizeof(Input_joystick_t));
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));

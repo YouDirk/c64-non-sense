@@ -27,7 +27,7 @@
 /* Select and initialize input devices, such like joysticks, keyboard,
  * for polling and ticking.
  */
-extern void __fastcall__ Input_init(Input_devices_t devices);
+extern void __fastcall__ Input_init(void);
 
 /* Restore input configuration.  */
 extern void __fastcall__ Input_release(void);

@@ -50,17 +50,35 @@ typedef_enum_end(Graphix_vicrev_t)
 
 /* ***************************************************************  */
 
+/* Used to select a character set from C64 Character ROM.  */
+typedef_enum_begin(Graphix_charset_t)
+  typedef_enum_hex(Graphix_charset_t, Graphix_charset1_symbols_e,   00)
+  typedef_enum_hex(Graphix_charset_t, Graphix_charset2_lower_e,     01)
+typedef_enum_end(Graphix_charset_t)
+
+/* ***************************************************************  */
+
+/* Configuration variables which can be set directly, without needing
+ * to call setter functions.
+ */
+typedef_struct_begin(Graphix_set_t)
+  /* Charset which will be if set after termination of the engine.  */
+  typedef_struct_enum(Graphix_charset_t,     charset_exit)
+typedef_struct_end(Graphix_set_t)
+
 /* Structure of static members for module.  */
 typedef_struct_begin(Graphix_t)
+  /* Some writable member variables.  */
+  typedef_struct_nested(Graphix_set_t,       set)
 
   /* TRUE if C64 has a PAL VIC, otherwise we are on a NTSC machine.  */
-  typedef_struct_uint8(is_pal)
+  typedef_struct_uint8(                      is_pal)
 
   /* Revision of VIC-II graphic chip.  */
-  typedef_struct_enum(Graphix_vicrev_t, vic_revision)
+  typedef_struct_enum(Graphix_vicrev_t,      vic_revision)
 
   /* The logical graphic buffer.  */
-  typedef_struct_nested(Graphix_buffer_t, buffer)
+  typedef_struct_nested(Graphix_buffer_t,    buffer)
 
 typedef_struct_end(Graphix_t)
 

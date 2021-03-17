@@ -55,6 +55,7 @@ define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
  */
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeac9.
+ *
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
@@ -62,8 +63,10 @@ define_hex(KERNAL_ZP_KEYBOARD_SCANCODE,           cb)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xea9b.
  * Therefore, if you are using the argument `-autostart` in VICE it
- * will be never be set!  It´s highly reocommended to use
- * KERNAL_PETSCIITABLE instead.
+ * will be never be set!
+ *
+ * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
+ * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
 define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
 

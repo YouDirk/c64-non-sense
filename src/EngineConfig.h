@@ -22,14 +22,18 @@
 #include "common.h"
 
 #include "Input.h"
+#include "Graphix.h"
 
 /* ***************************************************************  */
 
 /* Structure of static members for module.  */
 typedef struct EngineConfig_t {
 
-  /* Passed through Input_init() as argument.  */
+  /* Set during Input_init().  */
   Input_devices_t inputs_enabled;
+
+  /* Set during Graphix_init().  */
+  Graphix_charset_t charset_exit;
 
 } EngineConfig_t;
 

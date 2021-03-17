@@ -61,6 +61,10 @@ define_hex(CIA1_PRB_TIMERBTOGGLE_MASK,  80)
  * ------------------------------
  */
 
+/* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
+ * access to the Character ROM at address (0x1000 - 0x2000), which is
+ * accessable via memory at location (0xd000 - 0xe000).
+ */
 define_hex(CIA2_PRA,                    dd00)
 define_hex(CIA2_PRA_VICBANK_MASK,       03)
 define_hex(CIA2_PRA_VICBANK_MEM0,       03)

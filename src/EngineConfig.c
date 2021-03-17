@@ -30,6 +30,7 @@ EngineConfig_init(void)
    */
 
   EngineConfig.inputs_enabled = Input_all_mask;
+  EngineConfig.charset_exit = Graphix_charset2_lower_e;
 }
 
 void __fastcall__

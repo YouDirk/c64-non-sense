@@ -45,7 +45,7 @@ _Engine_init_blackscreen(void)
   Engine.tick_count = ENGINE_MS2TICKS(0);
 
   /* init input stuff, such like joystick, keyboard, etc  */
-  Input_init(EngineConfig.inputs_enabled);
+  Input_init();
 
   /* init test and staged code  */
   AASandbox_init();
