@@ -227,7 +227,12 @@ typedef_struct_begin(Input_keyboard_petscii_t)
    */
   typedef_struct_enum(Input_shiftkeys_t,               shiftkeys)
 
-  /* The PETSCII character code which is able to used for strings.  */
+  /* The PETSCII character code which is able to used for C strings of
+   * type CHAR*.
+   *
+   * If no control character or visible character was pressed then it
+   * will be set to null-terminator char '\0'.
+   */
   typedef_struct_char(character)
 typedef_struct_end(Input_keyboard_petscii_t)
 

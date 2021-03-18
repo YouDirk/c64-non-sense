@@ -35,9 +35,6 @@ _Engine_init_blackscreen(void)
   /* must be the first of all  */
   Interrupt_init();
 
-  /* init static member of EngineConfig  */
-  EngineConfig_init();
-
   /* Engine_t init stuff  */
   Engine.set.exit_code = -1;
   Engine.poll_time = ENGINE_MS2TIMESTAMP(0);
@@ -54,6 +51,9 @@ _Engine_init_blackscreen(void)
 void __fastcall__
 Engine_init(void)
 {
+  /* init static member of EngineConfig  */
+  EngineConfig_init();
+
   Graphix_init(_Engine_init_blackscreen);
 
   /* init as last as possible  */
@@ -74,9 +74,6 @@ _Engine_release_blackscreen(void)
   /* hmmmm ...  */
   Input_release();
 
-  /* okay lul ...  */
-  EngineConfig_release();
-
   /* must be the last of all  */
   Interrupt_release();
 }
@@ -90,6 +87,8 @@ Engine_release(void)
   Timer_release();
 
   Graphix_release(_Engine_release_blackscreen);
+
+  EngineConfig_release();
 }
 
 /* ***************************************************************  */

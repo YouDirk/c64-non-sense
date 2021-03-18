@@ -53,7 +53,7 @@ typedef_enum_end(Graphix_vicrev_t)
 /* Used to select a character set from C64 Character ROM.  */
 typedef_enum_begin(Graphix_charset_t)
   typedef_enum_hex(Graphix_charset_t, Graphix_charset1_symbols_e,   00)
-  typedef_enum_hex(Graphix_charset_t, Graphix_charset2_lower_e,     01)
+  typedef_enum_hex(Graphix_charset_t, Graphix_charset2_lowercase_e, 01)
 typedef_enum_end(Graphix_charset_t)
 
 /* ***************************************************************  */

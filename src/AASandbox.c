@@ -25,7 +25,12 @@
 
 /* ***************************************************************  */
 
-static Pace_t Sandbox_pace_y, Sandbox_pace_x;
+static Pace_t AASandbox_pace_y, AASandbox_pace_x;
+
+#ifdef DEBUG
+static string_t AASandbox_charout;
+static char* AASandbox_charout_last;
+#endif /* DEBUG  */
 
 /* ***************************************************************  */
 
@@ -44,16 +49,26 @@ AASandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Pace_new(&Sandbox_pace_y, 12, 6, 14, 63);
-  Pace_new(&Sandbox_pace_x, 3, 2, 32, 0);
-  Pace_impulse_pos(&Sandbox_pace_y);
+  Pace_new(&AASandbox_pace_y, 12, 6, 14, 63);
+  Pace_new(&AASandbox_pace_x, 3, 2, 32, 0);
+  Pace_impulse_pos(&AASandbox_pace_y);
+
+#ifdef DEBUG
+  strcpy(AASandbox_charout, "PETSCII '");
+  AASandbox_charout_last = AASandbox_charout + 8;
+#endif /* DEBUG  */
 }
 
 void __fastcall__
 AASandbox_release(void)
 {
-  Pace_delete(&Sandbox_pace_x);
-  Pace_delete(&Sandbox_pace_y);
+#ifdef DEBUG
+  strcpy(++AASandbox_charout_last, "'");
+  DEBUG_NOTE(AASandbox_charout);
+#endif /* DEBUG  */
+
+  Pace_delete(&AASandbox_pace_x);
+  Pace_delete(&AASandbox_pace_y);
 }
 
 /* ***************************************************************  */
@@ -72,39 +87,39 @@ AASandbox_tick(void)
 
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
-      Pace_start_pos(&Sandbox_pace_y);
+      Pace_start_pos(&AASandbox_pace_y);
       DEBUG_NOTE("forward");
     }
     else if (Input.joy_port2.axis_y.direction < 0) {
-      Pace_accelerate_neg(&Sandbox_pace_y);
+      Pace_accelerate_neg(&AASandbox_pace_y);
       DEBUG_NOTE("backward");
     }
     else {
-      Pace_brake(&Sandbox_pace_y);
+      Pace_brake(&AASandbox_pace_y);
       DEBUG_NOTE("stop");
     }
 
   } else if (Input.joy_port1.axis_y.changed) {
     if (Input.joy_port1.axis_y.direction > 0)
-      Pace_start_pos(&Sandbox_pace_y);
+      Pace_start_pos(&AASandbox_pace_y);
     else if (Input.joy_port1.axis_y.direction < 0)
-      Pace_accelerate_neg(&Sandbox_pace_y);
-    else Pace_brake(&Sandbox_pace_y);
+      Pace_accelerate_neg(&AASandbox_pace_y);
+    else Pace_brake(&AASandbox_pace_y);
   }
 
   if (Input.joy_port2.axis_x.changed) {
     if (Input.joy_port2.axis_x.direction > 0)
-      Pace_start_pos(&Sandbox_pace_x);
+      Pace_start_pos(&AASandbox_pace_x);
     else if (Input.joy_port2.axis_x.direction < 0)
-      Pace_start_neg(&Sandbox_pace_x);
-    else Pace_brake(&Sandbox_pace_x);
+      Pace_start_neg(&AASandbox_pace_x);
+    else Pace_brake(&AASandbox_pace_x);
 
   } else if (Input.joy_port1.axis_x.changed) {
     if (Input.joy_port1.axis_x.direction > 0)
-      Pace_start_pos(&Sandbox_pace_x);
+      Pace_start_pos(&AASandbox_pace_x);
     else if (Input.joy_port1.axis_x.direction < 0)
-      Pace_start_neg(&Sandbox_pace_x);
-    else Pace_brake(&Sandbox_pace_x);
+      Pace_start_neg(&AASandbox_pace_x);
+    else Pace_brake(&AASandbox_pace_x);
   }
 
   if (Input.keyboard.changed) {
@@ -122,42 +137,34 @@ AASandbox_tick(void)
     }
 
     if (key_space) {
-      Pace_brakerate_set(&Sandbox_pace_y, 50);
-      Pace_brake(&Sandbox_pace_y);
+      Pace_brakerate_set(&AASandbox_pace_y, 50);
+      Pace_brake(&AASandbox_pace_y);
     }
-    else if (key_w) Pace_start_pos(&Sandbox_pace_y);
-    else if (key_s) Pace_accelerate_neg(&Sandbox_pace_y);
+    else if (key_w) Pace_start_pos(&AASandbox_pace_y);
+    else if (key_s) Pace_accelerate_neg(&AASandbox_pace_y);
     else {
-      Pace_brakerate_set(&Sandbox_pace_y, 14);
-      Pace_brake(&Sandbox_pace_y);
+      Pace_brakerate_set(&AASandbox_pace_y, 14);
+      Pace_brake(&AASandbox_pace_y);
     }
 
-    if (key_a) Pace_start_pos(&Sandbox_pace_x);
-    else if (key_d) Pace_start_neg(&Sandbox_pace_x);
-    else Pace_brake(&Sandbox_pace_x);
-
-    if (Input.keyboard.petscii.shiftkeys & Input_sk_shift_mask)
-      DEBUG_NOTE("shift pressed");
-    if (Input.keyboard.petscii.shiftkeys & Input_sk_commodore_mask)
-      DEBUG_NOTE("c= pressed");
-    if (Input.keyboard.petscii.shiftkeys & Input_sk_ctrl_mask)
-      DEBUG_NOTE("ctrl pressed");
+    if (key_a) Pace_start_pos(&AASandbox_pace_x);
+    else if (key_d) Pace_start_neg(&AASandbox_pace_x);
+    else Pace_brake(&AASandbox_pace_x);
 
 #ifdef DEBUG
-    /* TODO: Add a PETCSII NONE character constant.  */
-    if (Input.keyboard.petscii.character != 0xff) {
-      static char* out = "'x' char\n";
-      out[1] = Input.keyboard.petscii.character;
-      printf(out);
+    if (Input.keyboard.petscii.character != '\0'
+        && AASandbox_charout_last - AASandbox_charout
+        < STRING_BUFSIZE - 10) {
+      *++AASandbox_charout_last = Input.keyboard.petscii.character;
     }
-#endif
+#endif /* DEBUG  */
   }
 
-  Pace_tick(&Sandbox_pace_y);
-  Pace_tick(&Sandbox_pace_x);
+  Pace_tick(&AASandbox_pace_y);
+  Pace_tick(&AASandbox_pace_x);
 
-  Graphix.buffer.scroll_y += Sandbox_pace_y.pace;
-  Graphix.buffer.scroll_x += Sandbox_pace_x.pace;
+  Graphix.buffer.scroll_y += AASandbox_pace_y.pace;
+  Graphix.buffer.scroll_x += AASandbox_pace_x.pace;
 }
 
 void __fastcall__

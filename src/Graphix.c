@@ -133,9 +133,8 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
    * or lower case
    */
 
-  // TODO: Graphix.set.charset_exit wrong initialized
-  switch (EngineConfig.charset_exit) {
-  case Graphix_charset2_lower_e:
+  switch (Graphix.set.charset_exit) {
+  case Graphix_charset2_lowercase_e:
     VIC.addr = VIC_ADDR_DEFAULT | VIC_ADDR_BITMAP_CHARSET2;
     break;
   default:
