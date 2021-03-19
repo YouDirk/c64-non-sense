@@ -56,6 +56,11 @@ define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeac9.
  *
+ */
+define_hex(KERNAL_ZP_KEYBOARD_SCANCODE_PREV,      c5)
+
+/* Will be set during keyboard scan routine in Kernal code at 0xeac9.
+ *
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */

@@ -29,7 +29,13 @@ EngineConfig_init(void)
   /* Set game depending engine configurations here.
    */
 
+  /* Input devices which will be polled and are ticking in INPUT
+   * module.
+   */
   EngineConfig.inputs_enabled = Input_all_mask;
+
+  /* Charset which will be set after termination of the engine.
+   */
   EngineConfig.charset_exit = Graphix_charset2_lowercase_e;
 }
 

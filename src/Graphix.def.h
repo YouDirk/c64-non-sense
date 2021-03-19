@@ -62,7 +62,7 @@ typedef_enum_end(Graphix_charset_t)
  * to call setter functions.
  */
 typedef_struct_begin(Graphix_set_t)
-  /* Charset which will be if set after termination of the engine.  */
+  /* Charset which will be set after termination of the engine.  */
   typedef_struct_enum(Graphix_charset_t,     charset_exit)
 typedef_struct_end(Graphix_set_t)
 

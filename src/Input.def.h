@@ -234,6 +234,10 @@ typedef_struct_begin(Input_keyboard_petscii_t)
    * will be set to null-terminator char '\0'.
    */
   typedef_struct_char(character)
+
+  /* TRUE for exactly 1 tick, if CHARACTER has changed it´s value.  */
+  typedef_struct_bool(changed)
+
 typedef_struct_end(Input_keyboard_petscii_t)
 
 /* Information about the keyboard  */
@@ -293,11 +297,65 @@ typedef_struct_begin(Input_t)
   /* Some writable member variables.  */
   typedef_struct_nested(Input_set_t,                   set)
 
-  /* The two joysticks on physical Port 2 and Port 1 :)  */
+  /* The two joysticks on physical Port 2 and Port 1 :)
+   *
+   * Recommended usage
+   * ```
+   * AASandbox_tick(void)
+   * {
+   *   if (Input.joy_port2.axis_y.changed) {
+   *     do_something_with(Input.joy_port2.axis_y.direction);
+   *   }
+   * }
+   * ```
+   */
   typedef_struct_nested(Input_joystick_t,              joy_port2)
   typedef_struct_nested(Input_joystick_t,              joy_port1)
 
-  /* The keyboard ^^  */
+  /* The keyboard ^^
+   *
+   * Recommended using SCAN_CODES with at least INPUT_KEYBOARD_SCAN_MASK
+   * ```
+   * AASandbox_tick(void)
+   * {
+   *   static uint8_t i;
+   *   static bool key_w, key_s, key_a, key_d;
+   *
+   *   if (Input.keyboard.changed) {
+   *     key_w=false, key_s=false, key_a=false, key_d=false;
+   *     for (i=0; i<Input.keyboard.pressed_count; ++i) {
+   *       switch (Input.keyboard.pressed[i]) {
+   *       case Input_sc_w_e: key_w = true; break;
+   *       case Input_sc_s_e: key_s = true; break;
+   *       case Input_sc_a_e: key_a = true; break;
+   *       case Input_sc_d_e: key_d = true; break;
+   *       default: break;
+   *       }
+   *     }
+   *
+   *     if (key_w) do_something_foward();
+   *     else if (key_s) do_something_backward();
+   *     else do_something_stop_vertical();
+   *
+   *     if (key_a) do_something_leftward();
+   *     else if (key_d) do_something_rightward();
+   *     else do_something_stop_horizontal();
+   *   }
+   * }
+   * ```
+   *
+   * Recommended using PETSCII characters with at least
+   * INPUT_KEYBOARD_SCAN_PETSCII_MASK
+   * ```
+   * AASandbox_tick(void)
+   * {
+   *   if (Input.keyboard.petscii.changed
+   *       && Input.keyboard.petscii.character != '\0') {
+   *     do_something_with(Input.keyboard.petscii.character);
+   *   }
+   * }
+   * ```
+   */
   typedef_struct_nested(Input_keyboard_t,              keyboard)
 typedef_struct_end(Input_t)
 

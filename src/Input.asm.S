@@ -127,6 +127,8 @@ count_not_changed:
 
   .define _PETSCII _Input + Input_t::keyboard + Input_keyboard_t::petscii
 
+        ldy KERNAL_ZP_KEYBOARD_SCANCODE ; scan_code_prev := scan_code
+        sty KERNAL_ZP_KEYBOARD_SCANCODE_PREV
         ldy #Input_sc_none_e       ; ZP_SCANCODE := 0x40
         sty KERNAL_ZP_KEYBOARD_SCANCODE
         lda #$00                   ; I..petscii.shiftkeys := 0x00
@@ -169,19 +171,26 @@ petscii_offset_done:               ; A = 0x00|02|04|06
         sta KERNAL_ZP_PETSCIITABLE_VECTOR
         lda KERNAL_PETSCIITABLE_VECTORS+1, x
         sta KERNAL_ZP_PETSCIITABLE_VECTOR+1  ; depending on shift-keys
-                                ; set KERNAL_ZP_PETSCIITABLE_VECTOR
+                                   ; set KERNAL_ZP_PETSCIITABLE_VECTOR
 
         ;; INPUT_SC_NONE_E will be translated to 0xff instead of
         ;; '\0' = 0x00 in KERNAL_PETSCIITABLE_VECTORS
-        lda #$00                             ; A := '\0'
+        lda #$00                        ; A := '\0'
+        sta _PETSCII + Input_keyboard_petscii_t::changed
+                                        ; I..petscii.changed := false
         ldy KERNAL_ZP_KEYBOARD_SCANCODE      ; Y := scan_code
+        cpy KERNAL_ZP_KEYBOARD_SCANCODE_PREV ; if (scan_code ==
+        beq charkey_not_changed              ;   scan_code_prev) return
         cpy #Input_sc_none_e                 ; if (scan_code == 0x40)
         beq nullchar_done                    ;   I...char := '\0'
         lda (KERNAL_ZP_PETSCIITABLE_VECTOR), y
 nullchar_done:                               ; else I...char := PETSCII
         sta _PETSCII + Input_keyboard_petscii_t::character
                     ; I..petscii.character := PETSCII, using shift-keys
+        lda #TRUE                       ; I..petscii.changed := true
+        sta _PETSCII + Input_keyboard_petscii_t::changed
 
+charkey_not_changed:          ; any shift-key released before char-key
         rts
 .endproc                           ; __Input_keyboard_petscii_convert
 

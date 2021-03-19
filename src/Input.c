@@ -121,9 +121,7 @@ Input_tick(void)
 
     _Input_keyboard_scan();
 
-    if (Input.keyboard.changed
-        && (Input.set.enabled & Input_keyboard_scan_petscii_mask)) {
+    if (Input.set.enabled & Input_keyboard_scan_petscii_mask)
       _Input_keyboard_petscii_convert();
-    }
   }
 }

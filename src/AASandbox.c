@@ -150,15 +150,16 @@ AASandbox_tick(void)
     if (key_a) Pace_start_pos(&AASandbox_pace_x);
     else if (key_d) Pace_start_neg(&AASandbox_pace_x);
     else Pace_brake(&AASandbox_pace_x);
+  }
 
 #ifdef DEBUG
-    if (Input.keyboard.petscii.character != '\0'
-        && AASandbox_charout_last - AASandbox_charout
-        < STRING_BUFSIZE - 10) {
-      *++AASandbox_charout_last = Input.keyboard.petscii.character;
-    }
-#endif /* DEBUG  */
+  if (Input.keyboard.petscii.changed
+      && Input.keyboard.petscii.character != '\0'
+      && AASandbox_charout_last - AASandbox_charout
+      < STRING_BUFSIZE - 10) {
+    *++AASandbox_charout_last = Input.keyboard.petscii.character;
   }
+#endif /* DEBUG  */
 
   Pace_tick(&AASandbox_pace_y);
   Pace_tick(&AASandbox_pace_x);
