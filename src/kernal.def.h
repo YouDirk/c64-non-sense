@@ -54,8 +54,13 @@ define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
  * zero-page (0x0000 - 0x00ff)
  */
 
-/* Will be set during keyboard scan routine in Kernal code at 0xeac9.
+/* Will be set during keyboard scan routine in Kernal code at 0xeb28.
  *
+ * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
+ * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
+ *
+ * Our implementation may differ from the Kernals one.  Therefore, it
+ * is recommended to not use it.
  */
 define_hex(KERNAL_ZP_KEYBOARD_SCANCODE_PREV,      c5)
 
@@ -80,7 +85,7 @@ define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
  * advanced zero-page (0x0100 - 0x03ff)
  */
 
-/* Will not be set, use INPUT.KEYBOARD.PETSCII.SHIFTKEYS instead.  It
+/* Will NOT BE SET, use INPUT.KEYBOARD.PETSCII.SHIFTKEYS instead.  It
  * is using the same bit layout.
  */
 define_hex(KERNAL_AZP_SHIFTFLAGS,                 028d)

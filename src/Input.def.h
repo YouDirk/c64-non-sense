@@ -209,15 +209,6 @@ typedef_struct_end(Input_joystick_t)
 
 /* ***************************************************************  */
 
-/* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
-define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      4)
-
-/* Real length of INPUT.KEYBOARD.PRESSED buffer, including 0x40
- * (INPUT_SC_NONE_E) termination.
- */
-define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
-                                 INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
-
 /* If PETSCII enabled: The current scan codes converted to the
  * equivalent PETSCII character.
  */
@@ -240,6 +231,17 @@ typedef_struct_begin(Input_keyboard_petscii_t)
 
 typedef_struct_end(Input_keyboard_petscii_t)
 
+/* ***************************************************************  */
+
+/* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
+define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      4)
+
+/* Real length of INPUT.KEYBOARD.PRESSED buffer, including 0x40
+ * (INPUT_SC_NONE_E) termination.
+ */
+define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
+                                 INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
+
 /* Information about the keyboard  */
 typedef_struct_begin(Input_keyboard_t)
   /* Scan codes of the keys which are currently pressed.  The order in
@@ -254,12 +256,16 @@ typedef_struct_begin(Input_keyboard_t)
    * is 1.  Otherwise use a loop such like this instead:
    *
    * ```C
+   * void __fastcall__
+   * MyModule_tick(void)
+   * {
    *   Input_scancode_t* cur_key;
    *
    *   for (cur_key=Input.keyboard.pressed;
    *        *cur_key != Input_sc_none_e; ++cur_key) {
    *     do_something(*cur_key);
    *   }
+   * }
    * ```
    */
   typedef_struct_enum_array(Input_scancode_t,                        \
@@ -301,7 +307,8 @@ typedef_struct_begin(Input_t)
    *
    * Recommended usage
    * ```
-   * AASandbox_tick(void)
+   * void __fastcall__
+   * MyModule_tick(void)
    * {
    *   if (Input.joy_port2.axis_y.changed) {
    *     do_something_with(Input.joy_port2.axis_y.direction);
@@ -316,7 +323,8 @@ typedef_struct_begin(Input_t)
    *
    * Recommended using SCAN_CODES with at least INPUT_KEYBOARD_SCAN_MASK
    * ```
-   * AASandbox_tick(void)
+   * void __fastcall__
+   * MyModule_tick(void)
    * {
    *   static uint8_t i;
    *   static bool key_w, key_s, key_a, key_d;
