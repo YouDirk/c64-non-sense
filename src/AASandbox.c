@@ -153,12 +153,14 @@ AASandbox_tick(void)
   }
 
 #ifdef DEBUG
+
   if (Input.keyboard.petscii.changed
       && Input.keyboard.petscii.character != '\0'
       && AASandbox_charout_last - AASandbox_charout
       < STRING_BUFSIZE - 10) {
     *++AASandbox_charout_last = Input.keyboard.petscii.character;
   }
+
 #endif /* DEBUG  */
 
   Pace_tick(&AASandbox_pace_y);
