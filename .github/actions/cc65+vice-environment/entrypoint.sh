@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# C64 NonSense, just playing around with C64 cross-compile tools.
+# C64 NonSense, the C64 Game Engine.
 # Copyright (C) 2020-2021  Dirk "YouDirk" Lehmann
 #
 # This program is free software: you can redistribute it and/or modify
