@@ -1,5 +1,5 @@
 ;; C64 NonSense, just playing around with C64 cross-compile tools.
-;; Copyright (C) 2021  Dirk "YouDirk" Lehmann
+;; Copyright (C) 2020-2021  Dirk "YouDirk" Lehmann
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU Affero General Public License as published
