@@ -86,12 +86,48 @@ BC ******************************************************************
 
 #  define typedef_enum_begin(name)                typedef uint8_t name;
 #  define typedef_enum_end(name)                  BC enum name  */
-#  define typedef_enum_hex(type, name, value) \
+#  define typedef_enum_hex(type, name, value)                        \
                                    _define(name, ((type) (0x##value)))
-#  define typedef_enum_dec(type, name, value) \
+#  define typedef_enum_dec(type, name, value)                        \
                                    _define(name, ((type) (value)))
 
 #  define extern_var(type, name)                  extern type name;
+
+
+#  define register_bool(addr_hex, name)                              \
+                         _define(name, (*(bool*) 0x##addr_hex))
+#  define register_bool_ptr(addr_hex, name)                          \
+                         _define(name, (*(bool**) 0x##addr_hex))
+#  define register_char(addr_hex, name)                              \
+                         _define(name, (*(char*) 0x##addr_hex))
+#  define register_uint8(addr_hex, name)                             \
+                         _define(name, (*(uint8_t*) 0x##addr_hex))
+#  define register_uint8_ptr(addr_hex, name)                         \
+                         _define(name, (*(uint8_t**) 0x##addr_hex))
+#  define register_uint16(addr_hex, name)                            \
+                         _define(name, (*(uint16_t*) 0x##addr_hex))
+#  define register_uint16_ptr(addr_hex, name)                        \
+                         _define(name, (*(uint16_t**) 0x##addr_hex))
+#  define register_uint32(addr_hex, name)                            \
+                         _define(name, (*(uint32_t*) 0x##addr_hex))
+#  define register_uint32_ptr(addr_hex, name)                        \
+                         _define(name, (*(uint32_t**) 0x##addr_hex))
+#  define register_int8(addr_hex, name)                              \
+                         _define(name, (*(int8_t*) 0x##addr_hex))
+#  define register_int8_ptr(addr_hex, name)                          \
+                         _define(name, (*(int8_t**) 0x##addr_hex))
+#  define register_int16(addr_hex, name)                             \
+                         _define(name, (*(int16_t*) 0x##addr_hex))
+#  define register_int16_ptr(addr_hex, name)                         \
+                         _define(name, (*(int16_t**) 0x##addr_hex))
+#  define register_int32(addr_hex, name)                             \
+                         _define(name, (*(int32_t*) 0x##addr_hex))
+#  define register_int32_ptr(addr_hex, name)                         \
+                         _define(name, (*(int32_t**) 0x##addr_hex))
+#  define register_char_ptr(addr_hex, name)                          \
+                         _define(name, (*(char**) 0x##addr_hex))
+#  define register_constchar_ptr(addr_hex, name)                     \
+                         _define(name, (*(const char**) 0x##addr_hex))
 
 #elif defined(GEN_ASM_HEADER)
 
@@ -154,6 +190,25 @@ BC ******************************************************************
 #  define typedef_enum_dec(type, name, value)     _define(name, value)
 
 #  define extern_var(type, name)                  .import _##name
+
+#  define register_bool(addr_hex, name)       define_hex(name, addr_hex)
+#  define register_bool_ptr(addr_hex, name)   define_hex(name, addr_hex)
+#  define register_char(addr_hex, name)       define_hex(name, addr_hex)
+#  define register_uint8(addr_hex, name)      define_hex(name, addr_hex)
+#  define register_uint8_ptr(addr_hex, name)  define_hex(name, addr_hex)
+#  define register_uint16(addr_hex, name)     define_hex(name, addr_hex)
+#  define register_uint16_ptr(addr_hex, name) define_hex(name, addr_hex)
+#  define register_uint32(addr_hex, name)     define_hex(name, addr_hex)
+#  define register_uint32_ptr(addr_hex, name) define_hex(name, addr_hex)
+#  define register_int8(addr_hex, name)       define_hex(name, addr_hex)
+#  define register_int8_ptr(addr_hex, name)   define_hex(name, addr_hex)
+#  define register_int16(addr_hex, name)      define_hex(name, addr_hex)
+#  define register_int16_ptr(addr_hex, name)  define_hex(name, addr_hex)
+#  define register_int32(addr_hex, name)      define_hex(name, addr_hex)
+#  define register_int32_ptr(addr_hex, name)  define_hex(name, addr_hex)
+#  define register_char_ptr(addr_hex, name)   define_hex(name, addr_hex)
+#  define register_constchar_ptr(addr_hex, name)                     \
+                                        define_hex(name, addr_hex)
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"

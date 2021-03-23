@@ -18,7 +18,7 @@
 C64 NonSense
 ============
 
-Just playing around with C64 cross-compile tools.
+Welcome the C64 NonSense Game Engine :)
 
 * Interesting stuff?  Then **Donate/Sponsor**  
   [![Donate/Sponsor][sponsor-pic]][sponsor-link] https://github.com/sponsors/YouDirk
