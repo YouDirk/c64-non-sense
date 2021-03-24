@@ -40,12 +40,9 @@ Input_init(void)
   Input.keyboard.pressed[0] = Input_sc_none_e; /* 0x40  */
 
   /* zero-page variables which we are setting, instead of Kernal  */
-  *((Input_scancode_t*) KERNAL_ZP_KEYBOARD_SCANCODE_PREV)
-    = Input_sc_none_e;
-  *((Input_scancode_t*) KERNAL_ZP_KEYBOARD_SCANCODE)
-    = Input_sc_none_e;
-  *((char**) KERNAL_ZP_PETSCIITABLE_VECTOR)
-    = (char*) KERNAL_PETSCIITABLE;
+  KERNAL_ZP_KEYBOARD_SCANCODE_PREV = Input_sc_none_e;
+  KERNAL_ZP_KEYBOARD_SCANCODE = Input_sc_none_e;
+  KERNAL_ZP_PETSCIITABLE_VECTOR = &KERNAL_PETSCIITABLE;
 
   /* direction of CIA1 port A and B is read-only by default  */
   CIA1.ddra = CIA_DDR_RONLY_ALL;

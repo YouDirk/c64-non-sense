@@ -28,26 +28,26 @@ header_define(KERNAL)
  * vectors (IRQ/BRK, NMI, RESET)
  */
 
-define_hex(KERNAL_IRQ_USERENTRY,                  0314)
-define_hex(KERNAL_IRQ_DEFAULT,                    ea31)
-define_hex(KERNAL_IRQ_RETURN,                     ea81)
+register_void(0314,           KERNAL_IRQ_USERENTRY)
+register_void(ea31,           KERNAL_IRQ_DEFAULT)
+register_void(ea81,           KERNAL_IRQ_RETURN)
 
-define_hex(KERNAL_BRK_USERENTRY,                  0316)
-define_hex(KERNAL_BRK_DEFAULT,                    fe66)
-define    (KERNAL_BRK_RETURN,                     KERNAL_IRQ_RETURN)
+register_void(0316,           KERNAL_BRK_USERENTRY)
+register_void(fe66,           KERNAL_BRK_DEFAULT)
+define(KERNAL_BRK_RETURN,     KERNAL_IRQ_RETURN)
 
-define_hex(KERNAL_NMI_USERENTRY,                  0318)
-define_hex(KERNAL_NMI_DEFAULT,                    fe47)
-define    (KERNAL_NMI_RETURN,                     KERNAL_IRQ_RETURN)
+register_void(0318,           KERNAL_NMI_USERENTRY)
+register_void(fe47,           KERNAL_NMI_DEFAULT)
+define(KERNAL_NMI_RETURN,     KERNAL_IRQ_RETURN)
 
-define_hex(KERNAL_HARDIRQ_VECTOR,                 fffe)
-define_hex(KERNAL_HARDIRQ_DEFAULT,                ff48)
+register_void(fffe,           KERNAL_HARDIRQ_VECTOR)
+register_void(ff48,           KERNAL_HARDIRQ_DEFAULT)
 
-define_hex(KERNAL_HARDNMI_VECTOR,                 fffa)
-define_hex(KERNAL_HARDNMI_DEFAULT,                fe43)
+register_void(fffa,           KERNAL_HARDNMI_VECTOR)
+register_void(fe43,           KERNAL_HARDNMI_DEFAULT)
 
-define_hex(KERNAL_HARDRESET_VECTOR,               fffc)
-define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
+register_void(fffc,           KERNAL_HARDRESET_VECTOR)
+register_void(fce2,           KERNAL_HARDRESET_DEFAULT)
 
 /* end of vectors
  * *******************************************************************
@@ -62,14 +62,14 @@ define_hex(KERNAL_HARDRESET_DEFAULT,              fce2)
  * Our implementation may differ from the Kernals one.  Therefore, it
  * is recommended to not use it.
  */
-define_hex(KERNAL_ZP_KEYBOARD_SCANCODE_PREV,      c5)
+register_uint8(c5,            KERNAL_ZP_KEYBOARD_SCANCODE_PREV)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeac9.
  *
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
-define_hex(KERNAL_ZP_KEYBOARD_SCANCODE,           cb)
+register_uint8(cb,            KERNAL_ZP_KEYBOARD_SCANCODE)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xea9b.
  * Therefore, if you are using the argument `-autostart` in VICE it
@@ -78,7 +78,7 @@ define_hex(KERNAL_ZP_KEYBOARD_SCANCODE,           cb)
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
-define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
+register_constchar_ptr(f5,    KERNAL_ZP_PETSCIITABLE_VECTOR)
 
 /* end of zero-page
  * *******************************************************************
@@ -88,21 +88,28 @@ define_hex(KERNAL_ZP_PETSCIITABLE_VECTOR,         f5)
 /* Will NOT BE SET, use INPUT.KEYBOARD.PETSCII.SHIFTKEYS instead.  It
  * is using the same bit layout.
  */
-define_hex(KERNAL_AZP_SHIFTFLAGS,                 028d)
+register_uint8(028d,          KERNAL_AZP_SHIFTFLAGS)
 
-define_hex(KERNAL_AZP_ISPAL,                      02a6)
+/* Will be set during screen editor init routine in Kernal code at
+ * 0xff5b.
+ *
+ * We are using our own implementation with a more detailed
+ * information about the VIC-II chip in GRAPHIX.VIC_REVISION.  Use
+ * GRAPHIX.IS_PAL to just differ between PAL and NTSC.
+ */
+register_uint8(02a6,          KERNAL_AZP_ISPAL)
 
 /* end of advanced zero-page
  * *******************************************************************
  * Kernal ROM (0xe000 - 0xfffa) [w/o MOS-6510 RESET/NMI/IRQ]
  */
 
-define_hex(KERNAL_PETSCIITABLE_VECTORS,           eb79)
-define_hex(KERNAL_PETSCIITABLE_VECTOR_UNSHIFTED,  eb79)
-define_hex(KERNAL_PETSCIITABLE_VECTOR_SHIFTED,    eb7b)
-define_hex(KERNAL_PETSCIITABLE_VECTOR_COMMODORE,  eb7d)
-define_hex(KERNAL_PETSCIITABLE_VECTOR_CTRL,       eb7f)
-define_hex(KERNAL_PETSCIITABLE,                   eb81)
+register_constchar_ptr(eb79,  KERNAL_PETSCIITABLE_VECTORS)
+register_constchar_ptr(eb79,  KERNAL_PETSCIITABLE_VECTOR_UNSHIFTED)
+register_constchar_ptr(eb7b,  KERNAL_PETSCIITABLE_VECTOR_SHIFTED)
+register_constchar_ptr(eb7d,  KERNAL_PETSCIITABLE_VECTOR_COMMODORE)
+register_constchar_ptr(eb7f,  KERNAL_PETSCIITABLE_VECTOR_CTRL)
+register_constchar(eb81,      KERNAL_PETSCIITABLE)
 
 /* end of Kernal ROM
  * **************************************************************** */

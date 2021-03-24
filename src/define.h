@@ -63,6 +63,7 @@ BC ******************************************************************
 #  define typedef_struct_bool(name)               bool name;
 #  define typedef_struct_bool_ptr(name)           bool* name;
 #  define typedef_struct_char(name)               char name;
+#  define typedef_struct_constchar(name)          const char name;
 #  define typedef_struct_uint8(name)              uint8_t name;
 #  define typedef_struct_uint8_ptr(name)          uint8_t* name;
 #  define typedef_struct_uint16(name)             uint16_t name;
@@ -100,6 +101,8 @@ BC ******************************************************************
                          _define(name, (*(bool**) 0x##addr_hex))
 #  define register_char(addr_hex, name)                              \
                          _define(name, (*(char*) 0x##addr_hex))
+#  define register_constchar(addr_hex, name)                         \
+                         _define(name, (*(const char*) 0x##addr_hex))
 #  define register_uint8(addr_hex, name)                             \
                          _define(name, (*(uint8_t*) 0x##addr_hex))
 #  define register_uint8_ptr(addr_hex, name)                         \
@@ -124,6 +127,8 @@ BC ******************************************************************
                          _define(name, (*(int32_t*) 0x##addr_hex))
 #  define register_int32_ptr(addr_hex, name)                         \
                          _define(name, (*(int32_t**) 0x##addr_hex))
+#  define register_void(addr_hex, name)                              \
+                         _define(name, (*(void*) 0x##addr_hex))
 #  define register_char_ptr(addr_hex, name)                          \
                          _define(name, (*(char**) 0x##addr_hex))
 #  define register_constchar_ptr(addr_hex, name)                     \
@@ -163,6 +168,7 @@ BC ******************************************************************
 #  define typedef_struct_bool(name)               name .byte  ; bool
 #  define typedef_struct_bool_ptr(name)           name .addr  ; bool*
 #  define typedef_struct_char(name)               name .byte  ; char
+#  define typedef_struct_constchar(name)          name .byte  ; const char
 #  define typedef_struct_uint8(name)              name .byte  ; uint8
 #  define typedef_struct_uint8_ptr(name)          name .addr  ; uint8*
 #  define typedef_struct_uint16(name)             name .word  ; uint16
@@ -194,6 +200,7 @@ BC ******************************************************************
 #  define register_bool(addr_hex, name)       define_hex(name, addr_hex)
 #  define register_bool_ptr(addr_hex, name)   define_hex(name, addr_hex)
 #  define register_char(addr_hex, name)       define_hex(name, addr_hex)
+#  define register_constchar(addr_hex, name)  define_hex(name, addr_hex)
 #  define register_uint8(addr_hex, name)      define_hex(name, addr_hex)
 #  define register_uint8_ptr(addr_hex, name)  define_hex(name, addr_hex)
 #  define register_uint16(addr_hex, name)     define_hex(name, addr_hex)
@@ -206,9 +213,10 @@ BC ******************************************************************
 #  define register_int16_ptr(addr_hex, name)  define_hex(name, addr_hex)
 #  define register_int32(addr_hex, name)      define_hex(name, addr_hex)
 #  define register_int32_ptr(addr_hex, name)  define_hex(name, addr_hex)
+#  define register_void(addr_hex, name)       define_hex(name, addr_hex)
 #  define register_char_ptr(addr_hex, name)   define_hex(name, addr_hex)
 #  define register_constchar_ptr(addr_hex, name)                     \
-                                        define_hex(name, addr_hex)
+                                              define_hex(name, addr_hex)
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"
