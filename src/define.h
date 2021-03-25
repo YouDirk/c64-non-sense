@@ -127,8 +127,8 @@ BC ******************************************************************
                          _define(name, (*(int32_t*) 0x##addr_hex))
 #  define register_int32_ptr(addr_hex, name)                         \
                          _define(name, (*(int32_t**) 0x##addr_hex))
-#  define register_void(addr_hex, name)                              \
-                         _define(name, (*(void*) 0x##addr_hex))
+#  define register_void_ptr(addr_hex, name)                          \
+                         _define(name, (*(void**) 0x##addr_hex))
 #  define register_char_ptr(addr_hex, name)                          \
                          _define(name, (*(char**) 0x##addr_hex))
 #  define register_constchar_ptr(addr_hex, name)                     \
@@ -213,7 +213,7 @@ BC ******************************************************************
 #  define register_int16_ptr(addr_hex, name)  define_hex(name, addr_hex)
 #  define register_int32(addr_hex, name)      define_hex(name, addr_hex)
 #  define register_int32_ptr(addr_hex, name)  define_hex(name, addr_hex)
-#  define register_void(addr_hex, name)       define_hex(name, addr_hex)
+#  define register_void_ptr(addr_hex, name)   define_hex(name, addr_hex)
 #  define register_char_ptr(addr_hex, name)   define_hex(name, addr_hex)
 #  define register_constchar_ptr(addr_hex, name)                     \
                                               define_hex(name, addr_hex)

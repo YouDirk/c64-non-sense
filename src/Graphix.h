@@ -22,6 +22,8 @@
 #include "common.h"
 #include "Graphix.gen.h"
 
+#include "chip-vic.gen.h"
+
 /* *******************************************************************
  * colors of C64
  *
@@ -29,22 +31,22 @@
  * again at this position.
  */
 
-#define GRAPHIX_BLACK                   0x00
-#define GRAPHIX_WHITE                   0x01
-#define GRAPHIX_RED                     0x02
-#define GRAPHIX_CYAN                    0x03
-#define GRAPHIX_VIOLET                  0x04
-#define GRAPHIX_GREEN                   0x05
-#define GRAPHIX_BLUE                    0x06
-#define GRAPHIX_YELLOW                  0x07
-#define GRAPHIX_ORANGE                  0x08
-#define GRAPHIX_BROWN                   0x09
-#define GRAPHIX_LIGHTRED                0x0a
-#define GRAPHIX_GRAY1                   0x0b
-#define GRAPHIX_GRAY2                   0x0c
-#define GRAPHIX_LIGHTGREEN              0x0d
-#define GRAPHIX_LIGHTBLUE               0x0e
-#define GRAPHIX_GRAY3                   0x0f
+#define GRAPHIX_BLACK                   VIC_COLOR_BLACK
+#define GRAPHIX_WHITE                   VIC_COLOR_WHITE
+#define GRAPHIX_RED                     VIC_COLOR_RED
+#define GRAPHIX_CYAN                    VIC_COLOR_CYAN
+#define GRAPHIX_VIOLET                  VIC_COLOR_VIOLET
+#define GRAPHIX_GREEN                   VIC_COLOR_GREEN
+#define GRAPHIX_BLUE                    VIC_COLOR_BLUE
+#define GRAPHIX_YELLOW                  VIC_COLOR_YELLOW
+#define GRAPHIX_ORANGE                  VIC_COLOR_ORANGE
+#define GRAPHIX_BROWN                   VIC_COLOR_BROWN
+#define GRAPHIX_LIGHTRED                VIC_COLOR_LIGHTRED
+#define GRAPHIX_GRAY1                   VIC_COLOR_GRAY1
+#define GRAPHIX_GRAY2                   VIC_COLOR_GRAY2
+#define GRAPHIX_LIGHTGREEN              VIC_COLOR_LIGHTGREEN
+#define GRAPHIX_LIGHTBLUE               VIC_COLOR_LIGHTBLUE
+#define GRAPHIX_GRAY3                   VIC_COLOR_GRAY3
 
 /*
  * end of colors

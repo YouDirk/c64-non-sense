@@ -28,30 +28,47 @@ header_define(CHIP_VIC)
  * colors of C64
  */
 
-define_hex(VIC_COLOR_BLACK,             00)
-define_hex(VIC_COLOR_WHITE,             01)
-define_hex(VIC_COLOR_RED,               02)
-define_hex(VIC_COLOR_CYAN,              03)
-define_hex(VIC_COLOR_VIOLET,            04)
-define_hex(VIC_COLOR_GREEN,             05)
-define_hex(VIC_COLOR_BLUE,              06)
-define_hex(VIC_COLOR_YELLOW,            07)
-define_hex(VIC_COLOR_ORANGE,            08)
-define_hex(VIC_COLOR_BROWN,             09)
-define_hex(VIC_COLOR_LIGHTRED,          0a)
-define_hex(VIC_COLOR_GRAY1,             0b)
-define_hex(VIC_COLOR_GRAY2,             0c)
-define_hex(VIC_COLOR_LIGHTGREEN,        0d)
-define_hex(VIC_COLOR_LIGHTBLUE,         0e)
-define_hex(VIC_COLOR_GRAY3,             0f)
+define_hex(VIC_COLOR_BLACK,                  00)
+define_hex(VIC_COLOR_WHITE,                  01)
+define_hex(VIC_COLOR_RED,                    02)
+define_hex(VIC_COLOR_CYAN,                   03)
+define_hex(VIC_COLOR_VIOLET,                 04)
+define_hex(VIC_COLOR_GREEN,                  05)
+define_hex(VIC_COLOR_BLUE,                   06)
+define_hex(VIC_COLOR_YELLOW,                 07)
+define_hex(VIC_COLOR_ORANGE,                 08)
+define_hex(VIC_COLOR_BROWN,                  09)
+define_hex(VIC_COLOR_LIGHTRED,               0a)
+define_hex(VIC_COLOR_GRAY1,                  0b)
+define_hex(VIC_COLOR_GRAY2,                  0c)
+define_hex(VIC_COLOR_LIGHTGREEN,             0d)
+define_hex(VIC_COLOR_LIGHTBLUE,              0e)
+define_hex(VIC_COLOR_GRAY3,                  0f)
 
 /*
  * end of colors
  * ***************************************************************  */
 
-define_hex(VIC_BASE,                    d000)
+register_void_ptr(d000,                      VIC_BASE)
 
-define_hex(VIC_RASTERLINE,                   d012)
+register_uint8(d011,                         VIC_CTRL1)
+define_hex(VIC_CTRL1_RASTERLINE_MASK,        80)
+define_hex(VIC_CTRL1_EXTCOLOR_MASK,          40)
+define_hex(VIC_CTRL1_BITMAPMODE_MASK,        20)
+define_hex(VIC_CTRL1_SCREEN_ON_MASK,         10)
+define_hex(VIC_CTRL1_25ROWS_MASK,            08)
+define_hex(VIC_CTRL1_YSCROLL_MASK,           07)
+define_hex(VIC_CTRL1_DEFAULT_YSCROLL,        03)
+define(VIC_CTRL1_DEFAULT,                                            \
+       VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
+       | VIC_CTRL1_DEFAULT_YSCROLL)
+
+/* rasterline bit, bitmap mode, enable screen, no 25 rows, yscroll=0  */
+define(VIC_CTRL1_MODE,                                               \
+       VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
+       | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VAL >> 1)))
+
+register_uint8(d012,                         VIC_RASTERLINE)
 define_hex(VIC_RASTERLINE_MASK,              ff)
 define_hex(VIC_RASTERL_MAX_PAL_MASK,         f0)
 define_hex(VIC_RASTERL_CYCLES_PAL6569_VAL,   7f)
@@ -75,28 +92,11 @@ define(VIC_RASTERLINE_VAL,              VIC_RASTERL_SCREENEND_24ROWS)
 define(VIC_RASTERLINE_MODE,                                          \
        VIC_RASTERLINE_VAL & VIC_RASTERLINE_MASK)
 
-define_hex(VIC_CTRL1,                   d011)
-define_hex(VIC_CTRL1_RASTERLINE_MASK,   80)
-define_hex(VIC_CTRL1_EXTCOLOR_MASK,     40)
-define_hex(VIC_CTRL1_BITMAPMODE_MASK,   20)
-define_hex(VIC_CTRL1_SCREEN_ON_MASK,    10)
-define_hex(VIC_CTRL1_25ROWS_MASK,       08)
-define_hex(VIC_CTRL1_YSCROLL_MASK,      07)
-define_hex(VIC_CTRL1_DEFAULT_YSCROLL,   03)
-define(VIC_CTRL1_DEFAULT,                                            \
-       VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
-       | VIC_CTRL1_DEFAULT_YSCROLL)
-
-/* rasterline bit, bitmap mode, enable screen, no 25 rows, yscroll=0  */
-define(VIC_CTRL1_MODE,                                               \
-       VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
-       | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VAL >> 1)))
-
-define_hex(VIC_CTRL2,                   d016)
-define_hex(VIC_CTRL2_MULTICOLOR_MASK,   10)
-define_hex(VIC_CTRL2_40COLS_MASK,       08)
-define_hex(VIC_CTRL2_XSCROLL_MASK,      07)
-define_hex(VIC_CTRL2_DEFAULT_HIGH,      c0)
+register_uint8(d016,                         VIC_CTRL2)
+define_hex(VIC_CTRL2_MULTICOLOR_MASK,        10)
+define_hex(VIC_CTRL2_40COLS_MASK,            08)
+define_hex(VIC_CTRL2_XSCROLL_MASK,           07)
+define_hex(VIC_CTRL2_DEFAULT_HIGH,           c0)
 define(VIC_CTRL2_DEFAULT,                                            \
        VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK)
 
@@ -104,11 +104,11 @@ define(VIC_CTRL2_DEFAULT,                                            \
 define(VIC_CTRL2_MODE,                                               \
        00)
 
-define_hex(VIC_ADDR,                    d018)
-define_hex(VIC_ADDR_SCREENRAM_MASK,     f0)
-define_hex(VIC_ADDR_SCREENRAM_STEP,     0040)
-define_hex(VIC_ADDR_BITMAP_MASK,        0f)
-define_hex(VIC_ADDR_BITMAP_STEP,        0400)
+register_uint8(d018,                         VIC_ADDR)
+define_hex(VIC_ADDR_SCREENRAM_MASK,          f0)
+define_hex(VIC_ADDR_SCREENRAM_STEP,          0040)
+define_hex(VIC_ADDR_BITMAP_MASK,             0f)
+define_hex(VIC_ADDR_BITMAP_STEP,             0400)
 /* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
  * access to the Character ROM at address (0x1000 - 0x2000), which is
  * accessable via memory at location (0xd000 - 0xe000).
@@ -128,20 +128,20 @@ macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
 macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
                 (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
 
-define_hex(VIC_IRR,                     d019)
-define_hex(VIC_IMR,                     d01a)
-define_hex(VIC_IMR_DISABLEALL_MASK,     00)
-define_hex(VIC_IMR_RASTERLINE_MASK,     01)
-define_hex(VIC_IMR_SHCOLLOSION_MASK,    02)
-define_hex(VIC_IMR_SSCOLLOSION_MASK,    04)
-define_hex(VIC_IMR_LIGHTPEN_MASK,       08)
-define_hex(VIC_IRR_IRQGLOBAL_MASK,      80)
+register_uint8(d019,                         VIC_IRR)
+register_uint8(d01a,                         VIC_IMR)
+define_hex(VIC_IMR_DISABLEALL_MASK,          00)
+define_hex(VIC_IMR_RASTERLINE_MASK,          01)
+define_hex(VIC_IMR_SHCOLLOSION_MASK,         02)
+define_hex(VIC_IMR_SSCOLLOSION_MASK,         04)
+define_hex(VIC_IMR_LIGHTPEN_MASK,            08)
+define_hex(VIC_IRR_IRQGLOBAL_MASK,           80)
 
 define(VIC_IMR_IRQMODE,                                              \
        VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
 
-define_hex(VIC_BORDERCOLOR,             d020)
-define(VIC_BORDERCOLOR_DEFAULT,         VIC_COLOR_LIGHTBLUE)
+register_uint8(d020,                         VIC_BORDERCOLOR)
+define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 
 /* ***************************************************************  */
 

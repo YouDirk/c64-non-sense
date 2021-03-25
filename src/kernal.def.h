@@ -28,26 +28,26 @@ header_define(KERNAL)
  * vectors (IRQ/BRK, NMI, RESET)
  */
 
-register_void(0314,           KERNAL_IRQ_USERENTRY)
-register_void(ea31,           KERNAL_IRQ_DEFAULT)
-register_void(ea81,           KERNAL_IRQ_RETURN)
+register_void_ptr(0314,       KERNAL_IRQ_USERENTRY)
+register_void_ptr(ea31,       KERNAL_IRQ_DEFAULT)
+register_void_ptr(ea81,       KERNAL_IRQ_RETURN)
 
-register_void(0316,           KERNAL_BRK_USERENTRY)
-register_void(fe66,           KERNAL_BRK_DEFAULT)
+register_void_ptr(0316,       KERNAL_BRK_USERENTRY)
+register_void_ptr(fe66,       KERNAL_BRK_DEFAULT)
 define(KERNAL_BRK_RETURN,     KERNAL_IRQ_RETURN)
 
-register_void(0318,           KERNAL_NMI_USERENTRY)
-register_void(fe47,           KERNAL_NMI_DEFAULT)
+register_void_ptr(0318,       KERNAL_NMI_USERENTRY)
+register_void_ptr(fe47,       KERNAL_NMI_DEFAULT)
 define(KERNAL_NMI_RETURN,     KERNAL_IRQ_RETURN)
 
-register_void(fffe,           KERNAL_HARDIRQ_VECTOR)
-register_void(ff48,           KERNAL_HARDIRQ_DEFAULT)
+register_void_ptr(fffe,       KERNAL_HARDIRQ_VECTOR)
+register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
 
-register_void(fffa,           KERNAL_HARDNMI_VECTOR)
-register_void(fe43,           KERNAL_HARDNMI_DEFAULT)
+register_void_ptr(fffa,       KERNAL_HARDNMI_VECTOR)
+register_void_ptr(fe43,       KERNAL_HARDNMI_DEFAULT)
 
-register_void(fffc,           KERNAL_HARDRESET_VECTOR)
-register_void(fce2,           KERNAL_HARDRESET_DEFAULT)
+register_void_ptr(fffc,       KERNAL_HARDRESET_VECTOR)
+register_void_ptr(fce2,       KERNAL_HARDRESET_DEFAULT)
 
 /* end of vectors
  * *******************************************************************

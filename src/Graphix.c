@@ -20,7 +20,6 @@
 
 #include "EngineConfig.h"
 
-#include "chip-vic.gen.h"
 #include "chip-cia.gen.h"
 
 /* default is CIA2_PRA_VICBANK_MEM0  */
