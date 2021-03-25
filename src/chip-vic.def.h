@@ -141,6 +141,7 @@ define(VIC_IMR_IRQMODE,                                              \
        VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
 
 register_uint8(d020,                         VIC_BORDERCOLOR)
+define_hex(VIC_BORDERCOLOR_RVAL,             d020) /* inline asm  */
 define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 
 /* ***************************************************************  */

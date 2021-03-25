@@ -29,11 +29,11 @@
           "  pha\n"                                                  \
           "  lda #%b\n"                                              \
           "  sta %w\n"                                               \
-          , VIC_BORDERCOLOR, (color), VIC_BORDERCOLOR)
+          , VIC_BORDERCOLOR_RVAL, (color), VIC_BORDERCOLOR_RVAL)
 #  define DEBUG_RENDERTIME_END()                                     \
   __asm__("  pla\n"                                                  \
           "  sta %w\n"                                               \
-          , VIC_BORDERCOLOR)
+          , VIC_BORDERCOLOR_RVAL)
 #else /* DEBUG_IRQ_RENDERTIME  */
 #  define DEBUG_RENDERTIME_BEGIN(color)
 #  define DEBUG_RENDERTIME_END()
