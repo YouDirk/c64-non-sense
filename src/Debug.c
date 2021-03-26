@@ -31,6 +31,8 @@ _Debug_t _Debug;
 void __fastcall__
 Debug_init(void)
 {
+  /* Memory not initialized here!  */
+
   _Debug.count = 0;
   _Debug.end = _Debug.entry;
 }
@@ -38,6 +40,8 @@ Debug_init(void)
 void __fastcall__
 Debug_release_print(void)
 {
+  /* Memory already released here!  */
+
   static _Debug_entry_t* cur;
   static const char *vic_str, *type_str;
 

@@ -19,6 +19,7 @@
 #include "Engine.h"
 #include "EngineConfig.h"
 
+#include "Memory.h"
 #include "Interrupt.h"
 #include "Input.h"
 #include "Graphix.h"
@@ -51,6 +52,9 @@ _Engine_init_blackscreen(void)
 void __fastcall__
 Engine_init(void)
 {
+  DEBUG_INIT();
+  Memory_init();
+
   /* init static member of EngineConfig  */
   EngineConfig_init();
 
@@ -89,6 +93,9 @@ Engine_release(void)
   Graphix_release(_Engine_release_blackscreen);
 
   EngineConfig_release();
+
+  Memory_release();
+  DEBUG_RELEASE_PRINT();
 }
 
 /* ***************************************************************  */

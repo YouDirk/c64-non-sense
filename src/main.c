@@ -28,7 +28,6 @@
 int
 main(void)
 {
-  DEBUG_INIT();
   Engine_init();
 
   do {
@@ -67,7 +66,5 @@ main(void)
   } while (Engine.set.exit_code < 0);
 
   Engine_release();
-  DEBUG_RELEASE_PRINT();
-
   return Engine.set.exit_code;
 }
