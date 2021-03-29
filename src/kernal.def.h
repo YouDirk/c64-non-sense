@@ -40,19 +40,27 @@ register_void_ptr(0318,       KERNAL_NMI_USERENTRY)
 register_void_ptr(fe47,       KERNAL_NMI_DEFAULT)
 define(KERNAL_NMI_RETURN,     KERNAL_IRQ_RETURN)
 
-register_void_ptr(fffe,       KERNAL_HARDIRQ_VECTOR)
-register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
-
 register_void_ptr(fffa,       KERNAL_HARDNMI_VECTOR)
 register_void_ptr(fe43,       KERNAL_HARDNMI_DEFAULT)
 
 register_void_ptr(fffc,       KERNAL_HARDRESET_VECTOR)
 register_void_ptr(fce2,       KERNAL_HARDRESET_DEFAULT)
 
+register_void_ptr(fffe,       KERNAL_HARDIRQ_VECTOR)
+register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
+
 /* end of vectors
  * *******************************************************************
  * zero-page (0x0000 - 0x00ff)
  */
+
+/* Access to MOS 6510 CPU IO port (pin P0-P5).
+ *
+ * IODDR: Data Direction Register
+ * IODATA: Data Input/Output depending on IODDR
+ */
+register_uint8(00,            KERNAL_ZP_MOS6510_IODDR)
+register_uint8(01,            KERNAL_ZP_MOS6510_IODATA)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeb28.
  *

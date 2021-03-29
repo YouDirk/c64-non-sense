@@ -23,11 +23,13 @@
 void __fastcall__
 Memory_init(void)
 {
+  Debug_note("memory_init()");
 }
 
 void __fastcall__
 Memory_release(void)
 {
+  Debug_note("memory_release()");
 }
 
 /* ***************************************************************  */
