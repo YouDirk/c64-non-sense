@@ -56,11 +56,34 @@ register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
 
 /* Access to MOS 6510 CPU IO port (pin P0-P5).
  *
- * IODDR: Data Direction Register
+ * IODDR: Data Direction Register (1=output, 0=input)
  * IODATA: Data Input/Output depending on IODDR
+ *
+ * _I_MASK means that the signal which is connected to the
+ * corresponding pin P[0-5] is active-low.
  */
-register_uint8(00,            KERNAL_ZP_MOS6510_IODDR)
-register_uint8(01,            KERNAL_ZP_MOS6510_IODATA)
+register_uint8(00,                           KERNAL_ZP_MOS6510_IODDR)
+register_uint8(01,                           KERNAL_ZP_MOS6510_IODATA)
+
+define_hex(KERNAL_ZP_MOS6510_BASICROM_MASK,            01)
+define_hex(KERNAL_ZP_MOS6510_KERNALROM_MASK,           02)
+define_hex(KERNAL_ZP_MOS6510_IOCHIPS_MASK,             04)
+define_hex(KERNAL_ZP_MOS6510_CASSETTE_OUT_MASK,        08)
+define_hex(KERNAL_ZP_MOS6510_CASSETTE_CLOSED_MASK,     10)
+define_hex(KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK,  20)
+
+define(KERNAL_ZP_MOS6510_IODDR_DEFAULT,                              \
+       KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK                     \
+       | KERNAL_ZP_MOS6510_CASSETTE_OUT_MASK                         \
+       | KERNAL_ZP_MOS6510_IOCHIPS_MASK                              \
+       | KERNAL_ZP_MOS6510_KERNALROM_MASK                            \
+       | KERNAL_ZP_MOS6510_BASICROM_MASK)
+
+define(KERNAL_ZP_MOS6510_IODATA_DEFAULT,                             \
+       KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK                     \
+       | KERNAL_ZP_MOS6510_CASSETTE_CLOSED_MASK                      \
+       | KERNAL_ZP_MOS6510_IOCHIPS_MASK                              \
+       | KERNAL_ZP_MOS6510_KERNALROM_MASK)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeb28.
  *

@@ -18,18 +18,56 @@
 
 #include "Memory.h"
 
+#include "kernal.gen.h"
+
+/* ***************************************************************  */
+
+/* Same as Kernal default configuration: read-only just for cassette
+ * switch bit with mask 0x10.
+ */
+#define MEMORY_IOPORT_DDR                                            \
+                    KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK        \
+                    | KERNAL_ZP_MOS6510_CASSETTE_OUT_MASK            \
+                    | KERNAL_ZP_MOS6510_IOCHIPS_MASK                 \
+                    | KERNAL_ZP_MOS6510_KERNALROM_MASK               \
+                    | KERNAL_ZP_MOS6510_BASICROM_MASK
+
+
+/* Same as Kernal default configuration: BASIC ROM is mapped out.
+ * Make sure that cassette motor disabled.
+ */
+#define MEMORY_IOPORT_IODATA                                         \
+                    KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK        \
+                    | KERNAL_ZP_MOS6510_CASSETTE_CLOSED_MASK         \
+                    | KERNAL_ZP_MOS6510_IOCHIPS_MASK                 \
+                    | KERNAL_ZP_MOS6510_KERNALROM_MASK               \
+                    | KERNAL_ZP_MOS6510_BASICROM_MASK
+
 /* ***************************************************************  */
 
 void __fastcall__
 Memory_init(void)
 {
-  Debug_note("memory_init()");
+
+  KERNAL_ZP_MOS6510_IODDR = MEMORY_IOPORT_DDR;
+  KERNAL_ZP_MOS6510_IODATA = MEMORY_IOPORT_IODATA;
+
+#ifdef DEBUG
+  if (MEMORY_IOPORT_IODATA & KERNAL_ZP_MOS6510_KERNALROM_MASK) {
+    // TODO: Check if ROM is reallay mapped
+    printf("'%s'\n", &MEMORY_BANK_KERNALROM_BEGIN);
+  }
+
+  printf("0x%02x 0x%02x\n",
+         KERNAL_ZP_MOS6510_IODDR, KERNAL_ZP_MOS6510_IODATA);
+#endif
 }
 
 void __fastcall__
 Memory_release(void)
 {
-  Debug_note("memory_release()");
+  KERNAL_ZP_MOS6510_IODDR = KERNAL_ZP_MOS6510_IODDR_DEFAULT;
+  KERNAL_ZP_MOS6510_IODATA = KERNAL_ZP_MOS6510_IODATA_DEFAULT;
 }
 
 /* ***************************************************************  */
