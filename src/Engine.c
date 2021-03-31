@@ -37,7 +37,10 @@ _Engine_init_blackscreen(void)
   Interrupt_init();
 
   /* Engine_t init stuff  */
-  Engine.set.exit_code = -1;
+
+  /* already set in ENGINE_INIT() as return value
+   * Engine.set.exit_code = ENGINE_EXIT_NOTERMINATION;
+   */
   Engine.poll_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_count = ENGINE_MS2TICKS(0);
@@ -52,7 +55,12 @@ _Engine_init_blackscreen(void)
 void __fastcall__
 Engine_init(void)
 {
+  /* return value of this funtion call  */
+  Engine.set.exit_code = ENGINE_EXIT_NOTERMINATION;
+
   DEBUG_INIT();
+
+  /* returns ENGINE.SET.EXIT_CODE  */
   Memory_init();
 
   /* init static member of EngineConfig  */
@@ -62,6 +70,10 @@ Engine_init(void)
 
   /* init as last as possible  */
   Timer_init();
+
+#ifdef DEBUG
+  if (Engine.set.exit_code >= 0) DEBUG_ERROR("engine init, failed!");
+#endif /* DEBUG  */
 }
 
 /* ---------------------------------------------------------------  */

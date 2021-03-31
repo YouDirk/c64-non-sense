@@ -77,6 +77,10 @@ typedef struct Engine_set_t {
    * set: 0 for regularly termination
    */
   int8_t exit_code;
+#define ENGINE_EXIT_SUCCESS                   0
+#define ENGINE_EXIT_FAILURE                   1
+#define ENGINE_EXIT_FAILURE_ENGINE            INT8_MAX  /* 127  */
+#define ENGINE_EXIT_NOTERMINATION            -1
 
 } Engine_set_t;
 
@@ -102,7 +106,10 @@ typedef struct Engine_t {
 /* Static members of this module.  */
 extern Engine_t Engine;
 
-/* Initialize the mystic NonSense Engine ^^  */
+/* Initialize the mystic C64 NonSense Engine ^^
+ *
+ * returns: ENGINE.SET.EXIT_CODE >= 0 on error, otherwise < 0;
+ */
 extern void __fastcall__ Engine_init(void);
 
 /* Undo the stuff which we´ve done in Engine_init().  */

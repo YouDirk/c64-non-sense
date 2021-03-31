@@ -184,6 +184,6 @@ AASandbox_tick_low(void)
     ++Graphix.buffer.bordercolor;
   }
 
-  if (Input.joy_port2.button1.pressed
-      || Input.joy_port1.button1.pressed) Engine.set.exit_code = 0;
+  if (Input.joy_port2.button1.pressed || Input.joy_port1.button1.pressed)
+    Engine.set.exit_code = ENGINE_EXIT_SUCCESS;
 }

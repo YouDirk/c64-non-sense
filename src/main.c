@@ -28,9 +28,10 @@
 int
 main(void)
 {
+  /* returns ENGINE.SET.EXIT_CODE  */
   Engine_init();
 
-  do {
+  while (Engine.set.exit_code < 0) {
     do {
       /* *************************************************************
        * polling stuff between engine ticks
@@ -63,7 +64,7 @@ main(void)
 
     /*
      * ***********************************************************  */
-  } while (Engine.set.exit_code < 0);
+  }
 
   Engine_release();
   return Engine.set.exit_code;
