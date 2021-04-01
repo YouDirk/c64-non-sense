@@ -60,7 +60,6 @@ Engine_init(void)
 
   DEBUG_INIT();
 
-  /* returns ENGINE.SET.EXIT_CODE  */
   Memory_init();
 
   /* init static member of EngineConfig  */
@@ -71,9 +70,7 @@ Engine_init(void)
   /* init as last as possible  */
   Timer_init();
 
-#ifdef DEBUG
-  if (Engine.set.exit_code >= 0) DEBUG_ERROR("engine init, failed!");
-#endif /* DEBUG  */
+  /* returns ENGINE.SET.EXIT_CODE  */
 }
 
 /* ---------------------------------------------------------------  */

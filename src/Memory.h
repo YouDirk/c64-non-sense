@@ -26,8 +26,6 @@
 
 /* Prepare memory layout by configure the PLA MOS 906114-01 using the
  * MOS6510 CPUs I/O port for bank switching.
- *
- * returns: ENGINE.SET.EXIT_CODE >= 0 on error, otherwise < 0;
  */
 extern void __fastcall__ Memory_init(void);
 

@@ -108,7 +108,7 @@ extern Engine_t Engine;
 
 /* Initialize the mystic C64 NonSense Engine ^^
  *
- * returns: ENGINE.SET.EXIT_CODE >= 0 on error, otherwise < 0;
+ * returns: ENGINE.SET.EXIT_CODE
  */
 extern void __fastcall__ Engine_init(void);
 
