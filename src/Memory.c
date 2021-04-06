@@ -22,31 +22,7 @@
 
 #include "kernal.gen.h"
 
-/* *******************************************************************
- * Mapping table for the corresponding MEMORY_IOPORT_IODATA.
- *
- *                     CartHi CartLo
- * GAME_I EXROM_I | IO KERNAL BASIC | 0x8000  0xa000  0xd000  0xe000
- * -----------------------------------------------------------------
- *      1      1     1    1    1    | RAM     BASIC   I/O     Kernal
- * def  1      x     1    1    0    | RAM     RAM     I/O     Kernal
- *      1      x     1    0    1    | RAM     RAM     I/O     RAM
- *      1      x     x    0    0    | RAM     RAM     RAM     RAM
- *      1      1     0    1    1    | RAM     BASIC   Chars   Kernal
- *      1      x     0    1    0    | RAM     RAM     Chars   Kernal
- *      1      x     0    0    1    | RAM     RAM     Chars   RAM
- *      1      0     1    1    1    | CartLo  BASIC   I/O     Kernal
- *      1      0     0    1    1    | CartLo  BASIC   Chars   Kernal
- *      0      1     x    x    x    | CartLo  <unmap> I/O     CartHi
- *      0      0     1    1    1    | CartLo  CartHi  I/O     Kernal
- *      0      0     1    1    0    | RAM     CartHi  I/O     Kernal
- *      0      0     1    0    1    | RAM     RAM     I/O     RAM
- *      0      0     x    0    0    | RAM     RAM     RAM     RAM
- *      0      0     0    1    1    | CartLo  CartHi  Chars   Kernal
- *      0      0     0    1    0    | RAM     CartHi  Chars   Kernal
- *      0      0     0    0    1    | RAM     RAM     RAM     RAM
- */
-// TODO: Define MEMORY_IOPORT_IODATA_MASK and MEMORY_IOPORT_IODATA_VAL
+/* ***************************************************************  */
 
 /* Same as Kernal default configuration: read-only just for cassette
  * switch bit with mask 0x10.
