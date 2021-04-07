@@ -101,8 +101,8 @@ register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
 /* *******************************************************************
  * Mapping table for the corresponding MEMORY_IOPORT_IODATA.
  *
- *                     CartHi CartLo
- * GAME_I EXROM_I | IO KERNAL BASIC | 0x8000  0xa000  0xd000  0xe000
+ *                     CartHi
+ * GAME_I EXROM_I | IO KERNAL ALTER | 0x8000  0xa000  0xd000  0xe000
  * -----------------------------------------------------------------
  *      1      1     1    1    1    | RAM     BASIC   I/O     Kernal
  * def  1      x     1    1    0    | RAM     RAM     I/O     Kernal
@@ -126,6 +126,15 @@ define_hex(MEMORY_BANKS_MASK,                                    1f)
 
 define_hex(MEMORY_BANKS_CARTRIDGE_MASK,                          18)
 define_hex(MEMORY_BANKS_IOPORT_MASK,                             07)
+
+define_hex(MEMORY_BANKS_ISMAPPED_KERNAL_MASK,                    02)
+define_hex(MEMORY_BANKS_ISMAPPED_KERNAL,                         02)
+define_hex(MEMORY_BANKS_ISMAPPED_IO_MASK,                        04)
+define_hex(MEMORY_BANKS_ISMAPPED_IO,                             04)
+define_hex(MEMORY_BANKS_ISMAPPED_CHARS_MASK,                     16)
+define_hex(MEMORY_BANKS_ISMAPPED_CHARS,                          12)
+define_hex(MEMORY_BANKS_ISMAPPED_BASIC_MASK,                     13)
+define_hex(MEMORY_BANKS_ISMAPPED_BASIC,                          13)
 
 define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL_MASK,        1f)
 define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL,             1f)
@@ -174,7 +183,7 @@ define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM2,                   01)
  */
 register_uint8(00,                           MEMORY_MOS6510_IODDR)
 register_uint8(01,                           MEMORY_MOS6510_IODATA)
-define_hex(MEMORY_MOS6510_BASICROM_MASK,               01)
+define_hex(MEMORY_MOS6510_ALTER_MASK,                  01)
 define_hex(MEMORY_MOS6510_KERNALROM_MASK,              02)
 define_hex(MEMORY_MOS6510_IOCHIPS_MASK,                04)
 define_hex(MEMORY_MOS6510_CASSETTE_OUT_MASK,           08)
