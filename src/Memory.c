@@ -24,25 +24,16 @@
 
 /* ***************************************************************  */
 
-/* Same as Kernal default configuration: read-only just for cassette
- * switch bit with mask 0x10.
- */
-#define MEMORY_IOPORT_DDR                                            \
-                    (KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK       \
-                     | KERNAL_ZP_MOS6510_CASSETTE_OUT_MASK           \
-                     | KERNAL_ZP_MOS6510_IOCHIPS_MASK                \
-                     | KERNAL_ZP_MOS6510_KERNALROM_MASK              \
-                     | KERNAL_ZP_MOS6510_BASICROM_MASK)
+/* Same as Kernal default configuration.  */
+#define _MEMORY_MOS6510_IODDR_VAL       MEMORY_MOS6510_IODDR_DEFAULT
 
 
-/* Same as Kernal default configuration: BASIC ROM is mapped out.
- * Make sure that cassette motor disabled.
- */
-#define MEMORY_IOPORT_IODATA                                         \
-                    (KERNAL_ZP_MOS6510_CASSETTE_MOTOREN_I_MASK       \
-                     | KERNAL_ZP_MOS6510_CASSETTE_CLOSED_MASK        \
-                     | KERNAL_ZP_MOS6510_IOCHIPS_MASK                \
-                     | KERNAL_ZP_MOS6510_KERNALROM_MASK)
+/* Same as Kernal default configuration.  */
+#define _MEMORY_MOS6510_IODATA_VAL                                   \
+  ((MEMORY_MOS6510_IODATA_DEFAULT & ~MEMORY_BANKS_IOPORT_MASK)       \
+   | (MEMORY_BANKS_IOPORT_MASK                                       \
+      & MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT_MASK          \
+      & MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT))
 
 /* ***************************************************************  */
 
@@ -64,20 +55,20 @@ Memory_init(void)
   static const char* errormsg;
 #endif /* DEBUG  */
 
-  KERNAL_ZP_MOS6510_IODDR = MEMORY_IOPORT_DDR;
-  KERNAL_ZP_MOS6510_IODATA = MEMORY_IOPORT_IODATA;
+  MEMORY_MOS6510_IODDR = _MEMORY_MOS6510_IODDR_VAL;
+  MEMORY_MOS6510_IODATA = _MEMORY_MOS6510_IODATA_VAL;
 
 #ifdef DEBUG
   /* Kernal ROM should be tested at first, to reduce chance that an
    * IRQ fails.
    */
-  if (MEMORY_IOPORT_IODATA & KERNAL_ZP_MOS6510_KERNALROM_MASK
+  if (_MEMORY_MOS6510_IODATA_VAL & MEMORY_MOS6510_KERNALROM_MASK
       && (0 != memcmp(&MEMORY_BANK_KERNALROM_BEGIN,
                       _Memory_init_valid_kernalrom,
                       _MEMORY_INIT_VALID_BUFSIZE))) {
     __asm__("sei");
     errormsg = "memory init, invalid kernal rom!";
-  } else if (MEMORY_IOPORT_IODATA & KERNAL_ZP_MOS6510_BASICROM_MASK
+  } else if (_MEMORY_MOS6510_IODATA_VAL & MEMORY_MOS6510_BASICROM_MASK
              && (0 != memcmp(&MEMORY_BANK_BASICROM_BEGIN,
                              _Memory_init_valid_basicrom,
                              _MEMORY_INIT_VALID_BUFSIZE))) {
@@ -106,8 +97,8 @@ Memory_init(void)
 void __fastcall__
 Memory_release(void)
 {
-  KERNAL_ZP_MOS6510_IODDR = KERNAL_ZP_MOS6510_IODDR_DEFAULT;
-  KERNAL_ZP_MOS6510_IODATA = KERNAL_ZP_MOS6510_IODATA_DEFAULT;
+  MEMORY_MOS6510_IODDR = MEMORY_MOS6510_IODDR_DEFAULT;
+  MEMORY_MOS6510_IODATA = MEMORY_MOS6510_IODATA_DEFAULT;
 }
 
 /* ***************************************************************  */

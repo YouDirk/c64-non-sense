@@ -122,7 +122,82 @@ register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
  *      0      0     0    1    0    | RAM     CartHi  Chars   Kernal
  *      0      0     0    0    1    | RAM     RAM     RAM     RAM
  */
-//define_hex(MEMORY_IOPORT_MAP_MASK, )
+define_hex(MEMORY_BANKS_MASK,                                    1f)
+
+define_hex(MEMORY_BANKS_CARTRIDGE_MASK,                          18)
+define_hex(MEMORY_BANKS_IOPORT_MASK,                             07)
+
+define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL_MASK,        1f)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL,             1f)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT_MASK,  17)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT,       16)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_IO_RAM_MASK,             17)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_IO_RAM,                  15)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_RAM_RAM_MASK,            13)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_RAM_RAM,                 10)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_CHARS_KERNAL_MASK,     1f)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_CHARS_KERNAL,          1b)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_CHARS_KERNAL_MASK,       17)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_CHARS_KERNAL,            12)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_CHARS_RAM_MASK,          17)
+define_hex(MEMORY_BANKS_NOTGAME_RAM_RAM_CHARS_RAM,               11)
+define_hex(MEMORY_BANKS_NOTGAME_CARTLO_BASIC_IO_KERNAL_MASK,     1f)
+define_hex(MEMORY_BANKS_NOTGAME_CARTLO_BASIC_IO_KERNAL,          17)
+define_hex(MEMORY_BANKS_NOTGAME_CARTLO_BASIC_CHARS_KERNAL_MASK,  1f)
+define_hex(MEMORY_BANKS_NOTGAME_CARTLO_BASIC_CHARS_KERNAL,       13)
+define_hex(MEMORY_BANKS_GAME_CARTLO_UNMAP_IO_CARTHI_MASK,        18)
+define_hex(MEMORY_BANKS_GAME_CARTLO_UNMAP_IO_CARTHI,             08)
+define_hex(MEMORY_BANKS_GAME_CARTLO_CARTHI_IO_KERNAL_MASK,       1f)
+define_hex(MEMORY_BANKS_GAME_CARTLO_CARTHI_IO_KERNAL,            07)
+define_hex(MEMORY_BANKS_GAME_RAM_CARTHI_IO_KERNAL_MASK,          1f)
+define_hex(MEMORY_BANKS_GAME_RAM_CARTHI_IO_KERNAL,               06)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_IO_RAM_MASK,                1f)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_IO_RAM,                     05)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM_MASK,               1b)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM,                    00)
+define_hex(MEMORY_BANKS_GAME_CARTLO_CARTHI_CHARS_KERNAL_MASK,    1f)
+define_hex(MEMORY_BANKS_GAME_CARTLO_CARTHI_CHARS_KERNAL,         03)
+define_hex(MEMORY_BANKS_GAME_RAM_CARTHI_CHARS_KERNAL_MASK,       1f)
+define_hex(MEMORY_BANKS_GAME_RAM_CARTHI_CHARS_KERNAL,            02)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM2_MASK,              1f)
+define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM2,                   01)
+
+/* ***************************************************************  */
+
+/* Access to MOS 6510 CPU IO port (pin P0-P5).
+ *
+ * IODDR: Data Direction Register (1=output, 0=input)
+ * IODATA: Data Input/Output depending on IODDR
+ *
+ * _I_MASK means that the signal which is connected to the
+ * corresponding pin P[0-5] is active-low.
+ */
+register_uint8(00,                           MEMORY_MOS6510_IODDR)
+register_uint8(01,                           MEMORY_MOS6510_IODATA)
+define_hex(MEMORY_MOS6510_BASICROM_MASK,               01)
+define_hex(MEMORY_MOS6510_KERNALROM_MASK,              02)
+define_hex(MEMORY_MOS6510_IOCHIPS_MASK,                04)
+define_hex(MEMORY_MOS6510_CASSETTE_OUT_MASK,           08)
+define_hex(MEMORY_MOS6510_CASSETTE_CLOSED_MASK,        10)
+define_hex(MEMORY_MOS6510_CASSETTE_MOTOREN_I_MASK,     20)
+
+/* Default Kernal configuration: read-only just for cassette switch
+ * bit with mask 0x10.
+ */
+define(MEMORY_MOS6510_IODDR_DEFAULT,                                 \
+       MEMORY_MOS6510_CASSETTE_MOTOREN_I_MASK                        \
+       | MEMORY_MOS6510_CASSETTE_OUT_MASK                            \
+       | MEMORY_BANKS_IOPORT_MASK)
+
+/* Default Kernal configuration: BASIC ROM is mapped out.  Make sure
+ * that cassette motor disabled.
+ */
+define(MEMORY_MOS6510_IODATA_DEFAULT,                                \
+       MEMORY_MOS6510_CASSETTE_MOTOREN_I_MASK                        \
+       | MEMORY_MOS6510_CASSETTE_CLOSED_MASK                         \
+       | (MEMORY_BANKS_IOPORT_MASK                                   \
+          & MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT_MASK      \
+          & MEMORY_BANKS_NOTGAME_RAM_RAM_IO_KERNAL_DEFAULT))
 
 /* ***************************************************************  */
 
