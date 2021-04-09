@@ -101,26 +101,33 @@ register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
 /* *******************************************************************
  * Mapping table for the corresponding MEMORY_IOPORT_IODATA.
  *
+ * (*): Not working by default, reason:
+ *      (k) Kernal not mapped, (io) I/O not mapped,
+ *      (8) 0x0801 RAM, with C64 NonSense code, not mapped
+ *
+ * x: Don´t care.  Will be set to 0, if MEMORY_BANKS_* are used, to
+ *    switch memory banks.
+ *
  *                     CartHi
  * GAME_I EXROM_I | IO KERNAL ALTER | 0x8000  0xa000  0xd000  0xe000
  * -----------------------------------------------------------------
  *      1      1     1    1    1    | RAM     BASIC   I/O     Kernal
  * def  1      x     1    1    0    | RAM     RAM     I/O     Kernal
- *      1      x     1    0    1    | RAM     RAM     I/O     RAM
- *      1      x     x    0    0    | RAM     RAM     RAM     RAM
- *      1      1     0    1    1    | RAM     BASIC   Chars   Kernal
- *      1      x     0    1    0    | RAM     RAM     Chars   Kernal
- *      1      x     0    0    1    | RAM     RAM     Chars   RAM
- *      1      0     1    1    1    | CartLo  BASIC   I/O     Kernal
- *      1      0     0    1    1    | CartLo  BASIC   Chars   Kernal
- *      0      1     x    x    x    | CartLo  <unmap> I/O     CartHi
- *      0      0     1    1    1    | CartLo  CartHi  I/O     Kernal
+ * (k)  1      x     1    0    1    | RAM     RAM     I/O     RAM
+ * (k)  1      x     x    0    0    | RAM     RAM     RAM     RAM
+ * (io) 1      1     0    1    1    | RAM     BASIC   Chars   Kernal
+ * (io) 1      x     0    1    0    | RAM     RAM     Chars   Kernal
+ * (k)  1      x     0    0    1    | RAM     RAM     Chars   RAM
+ * (8)  1      0     1    1    1    | CartLo  BASIC   I/O     Kernal
+ * (io) 1      0     0    1    1    | CartLo  BASIC   Chars   Kernal
+ * (8)  0      1     x    x    x    | CartLo  <unmap> I/O     CartHi
+ * (8)  0      0     1    1    1    | CartLo  CartHi  I/O     Kernal
  *      0      0     1    1    0    | RAM     CartHi  I/O     Kernal
- *      0      0     1    0    1    | RAM     RAM     I/O     RAM
- *      0      0     x    0    0    | RAM     RAM     RAM     RAM
- *      0      0     0    1    1    | CartLo  CartHi  Chars   Kernal
- *      0      0     0    1    0    | RAM     CartHi  Chars   Kernal
- *      0      0     0    0    1    | RAM     RAM     RAM     RAM
+ * (k)  0      0     1    0    1    | RAM     RAM     I/O     RAM
+ * (k)  0      0     x    0    0    | RAM     RAM     RAM     RAM
+ * (io) 0      0     0    1    1    | CartLo  CartHi  Chars   Kernal
+ * (io) 0      0     0    1    0    | RAM     CartHi  Chars   Kernal
+ * (k)  0      0     0    0    1    | RAM     RAM     RAM     RAM
  */
 define_hex(MEMORY_BANKS_MASK,                                    1f)
 
@@ -131,8 +138,8 @@ define_hex(MEMORY_BANKS_ISMAPPED_KERNAL_MASK,                    02)
 define_hex(MEMORY_BANKS_ISMAPPED_KERNAL,                         02)
 define_hex(MEMORY_BANKS_ISMAPPED_IO_MASK,                        04)
 define_hex(MEMORY_BANKS_ISMAPPED_IO,                             04)
-define_hex(MEMORY_BANKS_ISMAPPED_CHARS_MASK,                     16)
-define_hex(MEMORY_BANKS_ISMAPPED_CHARS,                          12)
+define_hex(MEMORY_BANKS_ISMAPPED_CHARS_MASK,                     06)
+define_hex(MEMORY_BANKS_ISMAPPED_CHARS,                          02)
 define_hex(MEMORY_BANKS_ISMAPPED_BASIC_MASK,                     13)
 define_hex(MEMORY_BANKS_ISMAPPED_BASIC,                          13)
 

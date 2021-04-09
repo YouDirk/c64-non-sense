@@ -62,13 +62,15 @@ Memory_init(void)
   /* Kernal ROM should be tested at first, to reduce chance that an
    * IRQ fails.
    */
-  if ((_MEMORY_MOS6510_IODATA_VAL & MEMORY_MOS6510_KERNALROM_MASK)
+  if ((MEMORY_MOS6510_IODATA
+       & MEMORY_MOS6510_KERNALROM_MASK)
+      == MEMORY_BANKS_ISMAPPED_KERNAL
       && 0 != memcmp(&MEMORY_BANK_KERNALROM_BEGIN,
                      _Memory_init_valid_kernalrom,
                      _MEMORY_INIT_VALID_BUFSIZE)) {
     __asm__("sei");
     errormsg = "memory init, invalid kernal rom!";
-  } else if ((_MEMORY_MOS6510_IODATA_VAL
+  } else if ((MEMORY_MOS6510_IODATA
               & MEMORY_BANKS_ISMAPPED_BASIC_MASK)
              == MEMORY_BANKS_ISMAPPED_BASIC
              && 0 != memcmp(&MEMORY_BANK_BASICROM_BEGIN,
