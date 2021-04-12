@@ -96,43 +96,43 @@ BC ******************************************************************
 
 
 #  define register_bool(addr_hex, name)                              \
-                         _define(name, (*(bool*) 0x##addr_hex))
+               _define(name, (*(volatile bool*) 0x##addr_hex))
 #  define register_bool_ptr(addr_hex, name)                          \
-                         _define(name, (*(bool**) 0x##addr_hex))
+               _define(name, (*(volatile bool**) 0x##addr_hex))
 #  define register_char(addr_hex, name)                              \
-                         _define(name, (*(char*) 0x##addr_hex))
+               _define(name, (*(volatile char*) 0x##addr_hex))
 #  define register_constchar(addr_hex, name)                         \
-                         _define(name, (*(const char*) 0x##addr_hex))
+               _define(name, (*(const char*) 0x##addr_hex))
 #  define register_uint8(addr_hex, name)                             \
-                         _define(name, (*(uint8_t*) 0x##addr_hex))
+               _define(name, (*(volatile uint8_t*) 0x##addr_hex))
 #  define register_uint8_ptr(addr_hex, name)                         \
-                         _define(name, (*(uint8_t**) 0x##addr_hex))
+               _define(name, (*(volatile uint8_t**) 0x##addr_hex))
 #  define register_uint16(addr_hex, name)                            \
-                         _define(name, (*(uint16_t*) 0x##addr_hex))
+               _define(name, (*(volatile uint16_t*) 0x##addr_hex))
 #  define register_uint16_ptr(addr_hex, name)                        \
-                         _define(name, (*(uint16_t**) 0x##addr_hex))
+               _define(name, (*(volatile uint16_t**) 0x##addr_hex))
 #  define register_uint32(addr_hex, name)                            \
-                         _define(name, (*(uint32_t*) 0x##addr_hex))
+               _define(name, (*(volatile uint32_t*) 0x##addr_hex))
 #  define register_uint32_ptr(addr_hex, name)                        \
-                         _define(name, (*(uint32_t**) 0x##addr_hex))
+               _define(name, (*(volatile uint32_t**) 0x##addr_hex))
 #  define register_int8(addr_hex, name)                              \
-                         _define(name, (*(int8_t*) 0x##addr_hex))
+               _define(name, (*(volatile int8_t*) 0x##addr_hex))
 #  define register_int8_ptr(addr_hex, name)                          \
-                         _define(name, (*(int8_t**) 0x##addr_hex))
+               _define(name, (*(volatile int8_t**) 0x##addr_hex))
 #  define register_int16(addr_hex, name)                             \
-                         _define(name, (*(int16_t*) 0x##addr_hex))
+               _define(name, (*(volatile int16_t*) 0x##addr_hex))
 #  define register_int16_ptr(addr_hex, name)                         \
-                         _define(name, (*(int16_t**) 0x##addr_hex))
+               _define(name, (*(volatile int16_t**) 0x##addr_hex))
 #  define register_int32(addr_hex, name)                             \
-                         _define(name, (*(int32_t*) 0x##addr_hex))
+               _define(name, (*(volatile int32_t*) 0x##addr_hex))
 #  define register_int32_ptr(addr_hex, name)                         \
-                         _define(name, (*(int32_t**) 0x##addr_hex))
+               _define(name, (*(volatile int32_t**) 0x##addr_hex))
 #  define register_void_ptr(addr_hex, name)                          \
-                         _define(name, (*(void**) 0x##addr_hex))
+               _define(name, (*(volatile void**) 0x##addr_hex))
 #  define register_char_ptr(addr_hex, name)                          \
-                         _define(name, (*(char**) 0x##addr_hex))
+               _define(name, (*(volatile char**) 0x##addr_hex))
 #  define register_constchar_ptr(addr_hex, name)                     \
-                         _define(name, (*(const char**) 0x##addr_hex))
+               _define(name, (*(volatile const char**) 0x##addr_hex))
 
 #elif defined(GEN_ASM_HEADER)
 

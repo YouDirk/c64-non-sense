@@ -39,6 +39,7 @@
 
 /* private validation arrays  */
 #ifdef DEBUG
+#pragma warn(unused-var, push, off)
 
 #define _MEMORY_INIT_VALID_BUFSIZE           5
 static uint8_t _Memory_init_valid_kernalrom[_MEMORY_INIT_VALID_BUFSIZE]
@@ -46,30 +47,78 @@ static uint8_t _Memory_init_valid_kernalrom[_MEMORY_INIT_VALID_BUFSIZE]
 static uint8_t _Memory_init_valid_basicrom[_MEMORY_INIT_VALID_BUFSIZE]
   = {0x94, 0xe3, 0x7b, 0xe3, 0x43};
 
+static void __fastcall__
+_Memory_init_debug_exit(const char* errormsg)
+{
+  DEBUG_ERROR(errormsg);
+  Engine.set.exit_code = ENGINE_EXIT_FAILURE_ENGINE;
+  DEBUG_RELEASE_PRINT();
+
+  exit(ENGINE_EXIT_FAILURE_ENGINE);
+}
+
+static bool __fastcall__
+_Memory_init_debug_ramtest(volatile uint8_t* ram_ptr)
+{
+  static uint8_t i;
+
+  for (i=0; i<_MEMORY_INIT_VALID_BUFSIZE; ++i)
+    ram_ptr[i] = i;
+
+  for (i=0; i<_MEMORY_INIT_VALID_BUFSIZE; ++i)
+    if (ram_ptr[i] != i) return false;
+
+  return true;
+}
+
+/*#pragma warn(unused-var, pop)  Not working yet  */
 #endif /* DEBUG  */
 
 void __fastcall__
 Memory_init(void)
 {
-#ifdef DEBUG
-  static const char* errormsg;
-#endif /* DEBUG  */
-
   MEMORY_MOS6510_IODDR = _MEMORY_MOS6510_IODDR_VAL;
   MEMORY_MOS6510_IODATA = _MEMORY_MOS6510_IODATA_VAL;
 
 #ifdef DEBUG
+#pragma warn(const-comparison, push, off)
+/*#pragma warn(unreachable-code, push, off)
+ *
+ * Hopefully available in a future version of CC65.  Pull request
+ * pending at https://github.com/cc65/cc65/pull/1459
+ */
+
   /* Kernal ROM should be tested at first, to reduce chance that an
    * IRQ fails.
    */
+  if ((_MEMORY_MOS6510_IODATA_VAL & MEMORY_MOS6510_KERNALROM_MASK)
+      == MEMORY_BANKS_ISMAPPED_KERNAL) {
+    if (0 != memcmp(&MEMORY_BANK_KERNALROM_BEGIN,
+                    _Memory_init_valid_kernalrom,
+                    _MEMORY_INIT_VALID_BUFSIZE)) {
+      /* Without SEI instruction, it will crash and never terminate,
+       * because we are using the KERNAL_{IRQ,NMI,}_USERENTRY entry
+       * points instead of the MOS 6510 hard IRQ vectors at
+       * 0xfff{a,c,e}.  Therefore if the Kernal ROM is not mapped into
+       * the memory anymore calling the ISRs will be fail.
+       */
+
+      __asm__("sei");
+      _Memory_init_debug_exit("memory init, invalid kernal rom!");
+    }
+  } else { /* MEMORY_BANKS_ISMAPPED_KERNAL  */
+    if (!_Memory_init_debug_ramtest(&MEMORY_BANK_KERNALROM_BEGIN)) {
+      __asm__("sei");
+      _Memory_init_debug_exit("memory init, kernal rom mapped!");
+    }
+  } /* MEMORY_BANKS_ISMAPPED_KERNAL  */
+
+  /*
   if ((MEMORY_MOS6510_IODATA
-       & MEMORY_MOS6510_KERNALROM_MASK)
-      == MEMORY_BANKS_ISMAPPED_KERNAL
-      && 0 != memcmp(&MEMORY_BANK_KERNALROM_BEGIN,
-                     _Memory_init_valid_kernalrom,
-                     _MEMORY_INIT_VALID_BUFSIZE)) {
+              & MEMORY_BANKS_ISMAPPED_IO_MASK)
+             == MEMORY_BANKS_ISMAPPED_IO) {
     __asm__("sei");
-    errormsg = "memory init, invalid kernal rom!";
+    _Memory_init_debug_exit("memory init, io not mapped!");
   } else if ((MEMORY_MOS6510_IODATA
               & MEMORY_BANKS_ISMAPPED_BASIC_MASK)
              == MEMORY_BANKS_ISMAPPED_BASIC
@@ -77,24 +126,18 @@ Memory_init(void)
                             _Memory_init_valid_basicrom,
                             _MEMORY_INIT_VALID_BUFSIZE)) {
     __asm__("sei");
-    errormsg = "memory init, invalid basic rom!";
-  } else {
-    // TODO: Some more validations ...
-    return;
+    _Memory_init_debug_exit("memory init, invalid basic rom!");
   }
+  */
 
-  /* Without SEI instruction, it will crash and never terminate,
-   * because we are using the KERNAL_{IRQ,NMI,}_USERENTRY entry points
-   * instead of the MOS 6510 hard IRQ vectors at 0xfff{a,c,e}.
-   * Therefore if the Kernal ROM is not mapped into the memory anymore
-   * calling the ISRs will be fail.
-   */
+  // TODO: Some more validations ...
 
-  DEBUG_ERROR(errormsg);
-  Engine.set.exit_code = ENGINE_EXIT_FAILURE_ENGINE;
-  DEBUG_RELEASE_PRINT();
-
-  exit(ENGINE_EXIT_FAILURE_ENGINE);
+/*#pragma warn(unreachable-code, pop)
+ *
+ * Hopefully available in a future version of CC65.  Pull request
+ * pending at https://github.com/cc65/cc65/pull/1459
+ */
+#pragma warn(const-comparison, pop)
 #endif /* DEBUG  */
 }
 
