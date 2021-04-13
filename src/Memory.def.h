@@ -26,46 +26,53 @@ header_define(MEMORY)
 
 /* *******************************************************************
  *
- *         : Pre-initialzed        | Possible memory banks :
- *         : **************        | ********************* :
- *         :                       |                       :
- *         .-----------------------------------------------.
- * 0x0000  | [CPU] MOS 6510, port access (pin P0-P5)       |
- *         .-----------------------------------------------.
- * 0x0002  | [RAM, Kernal] Zero Page                       |
- *         .-----------------------------------------------.
- * 0x0100  | [RAM, Kernal] Extended Zero Page              |
- *         |                                               |
- *         .-----------------------------------------------.
- * 0x0400  | [RAM, VIC-II DMA] default Screen RAM          |
- *         |                                               |
- *         .-----------------------------------------------.
- * 0x0800  | [RAM, BASIC] BASIC RAM                        |
- *         |   0x0801: entry point of C64 NonSense         |
- *         |                                               |
- *         |                                               |
- *         .-----------------------------------------------.
- * 0xa000  | [RAM]                | [ROM] BASIC ROM        |
- *         |                      |                        |
- *         |                      |                        |
- *         |                      |                        |
- *         |                      |                        |
- *         .-----------------------------------------------.
- * 0xc000  | [RAM]                                         |
- *         |                                               |
- *         |                                               |
- *         .-----------------------------------------------.
- * 0xd000  | [I/O] VIC-II, SID,   | [ROM]        | [RAM]   |
- *         |       CIA 1/2,       |   Character  |         |
- *         |       Color RAM      |   ROM        |         |
- *         .-----------------------------------------------.
- * 0xe000  | [ROM] Kernal         | [RAM]                  |
- *         |                      |                        |
- *         |                      |                        |
- *         .-----------------------------------------------.
- * 0xfffa  | [CPU] MOS 6510, vectors (NMI, RESET, IRQ)     |
- * 0xffff  |       defined in 'Kernal'                     |
- *         .-----------------------------------------------.
+ *         : Pre-initialzed        : Possible memory banks      :
+ *         : **************        : *********************      :
+ *         :                       :                            :
+ *         .-----------------------.----------------------------.
+ * 0x0000  | [CPU] MOS 6510, port access (pin P0-P5)            |
+ *         |----------------------------------------------------|
+ * 0x0002  | [RAM, Kernal] Zero Page                            |
+ *         |----------------------------------------------------|
+ * 0x0100  | [RAM, Kernal] Extended Zero Page                   |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x0400  | [RAM, VIC-II DMA] default Screen RAM               |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x0800  | [RAM, BASIC] BASIC RAM                             |
+ *         |   0x0801: C64 NonSense entry point                 |
+ *         |                                                    |
+ *         |                                                    |
+ *         |                                                    |
+ *         |                                                    |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x8000  | [RAM]                | [Cartridge] ROM Low         |
+ *         |                      |                             |
+ *         |                      |                             |
+ *         |                      |                             |
+ *         |----------------------------------------------------|
+ * 0xa000  | [RAM]                | [ROM]        | [Cartridge]  |
+ *         |                      |   BASIC ROM  |   ROM High   |
+ *         |                      |              |              |
+ *         |                      |              |              |
+ *         |----------------------------------------------------|
+ * 0xc000  | [RAM]                                              |
+ *         |                                                    |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0xd000  | [I/O] VIC-II, SID,   | [ROM]        | [RAM]        |
+ *         |       CIA 1/2,       |   Character  |              |
+ *         |       Color RAM      |   ROM        |              |
+ *         |----------------------------------------------------|
+ * 0xe000  | [ROM] Kernal         | [RAM]        | [Cartridge]  |
+ *         |                      |              |   ROM High   |
+ *         |                      |              |              |
+ *         |----------------------------------------------------|
+ * 0xfffa  | [CPU] MOS 6510, vectors (NMI, RESET, IRQ)          |
+ * 0xffff  |       defined in 'Kernal'                          |
+ *         '----------------------------------------------------'
  */
 
 /* ***************************************************************  */
@@ -84,7 +91,10 @@ register_uint8(07ff,               MEMORY_SCREENRAM_DEFAULT_END)
 
 register_uint8(0800,               MEMORY_BASICRAM_BEGIN)
 register_uint8(0801,               MEMORY_BASICRAM_C64NONSENSE_BEGIN)
-register_uint8(9fff,               MEMORY_BASICRAM_END)
+register_uint8(7fff,               MEMORY_BASICRAM_END)
+
+register_uint8(8000,               MEMORY_BANK_CARTLO_BEGIN)
+register_uint8(9fff,               MEMORY_BANK_CARTLO_END)
 
 register_uint8(a000,               MEMORY_BANK_BASICROM_BEGIN)
 register_uint8(bfff,               MEMORY_BANK_BASICROM_END)
@@ -99,11 +109,10 @@ register_uint8(e000,               MEMORY_BANK_KERNALROM_BEGIN)
 register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
 
 /* *******************************************************************
- * Mapping table for the corresponding MEMORY_IOPORT_IODATA.
+ * Mapping table for the corresponding MEMORY_MOS6510_IODATA.
  *
  * (*): Not working by default, reason:
- *      (k) Kernal not mapped, (io) I/O not mapped,
- *      (8) 0x0801 RAM, with C64 NonSense code, not mapped
+ *      (k) Kernal not mapped, (io) I/O not mapped
  *
  * x: Don´t care.  Will be set to 0, if MEMORY_BANKS_* are used, to
  *    switch memory banks.
@@ -118,10 +127,10 @@ register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
  * (io) 1      1     0    1    1    | RAM     BASIC   Chars   Kernal
  * (io) 1      x     0    1    0    | RAM     RAM     Chars   Kernal
  * (k)  1      x     0    0    1    | RAM     RAM     Chars   RAM
- * (8)  1      0     1    1    1    | CartLo  BASIC   I/O     Kernal
+ *      1      0     1    1    1    | CartLo  BASIC   I/O     Kernal
  * (io) 1      0     0    1    1    | CartLo  BASIC   Chars   Kernal
- * (8)  0      1     x    x    x    | CartLo  <unmap> I/O     CartHi
- * (8)  0      0     1    1    1    | CartLo  CartHi  I/O     Kernal
+ * (k)  0      1     x    x    x    | CartLo  <unmap> I/O     CartHi
+ *      0      0     1    1    1    | CartLo  CartHi  I/O     Kernal
  *      0      0     1    1    0    | RAM     CartHi  I/O     Kernal
  * (k)  0      0     1    0    1    | RAM     RAM     I/O     RAM
  * (k)  0      0     x    0    0    | RAM     RAM     RAM     RAM
@@ -142,6 +151,10 @@ define_hex(MEMORY_BANKS_ISMAPPED_CHARS_MASK,                     06)
 define_hex(MEMORY_BANKS_ISMAPPED_CHARS,                          02)
 define_hex(MEMORY_BANKS_ISMAPPED_BASIC_MASK,                     13)
 define_hex(MEMORY_BANKS_ISMAPPED_BASIC,                          13)
+define_hex(MEMORY_BANKS_ISMAPPED_CARTHI_MASK,                    12)
+define_hex(MEMORY_BANKS_ISMAPPED_CARTHI,                         02)
+define_hex(MEMORY_BANKS_ISMAPPED_CARTLO_MASK,                    0b)
+define_hex(MEMORY_BANKS_ISMAPPED_CARTLO,                         03)
 
 define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL_MASK,        1f)
 define_hex(MEMORY_BANKS_NOTGAME_RAM_BASIC_IO_KERNAL,             1f)
