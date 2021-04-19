@@ -24,16 +24,26 @@
 header_ifndef(GRAPHIX)
 header_define(GRAPHIX)
 
+include_def_h(Sprite)
+
+/* ***************************************************************  */
+
+define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
+
 /* ***************************************************************  */
 
 /* graphic buffer structure  */
 typedef_struct_begin(Graphix_buffer_t)
   typedef_struct_uint8_ptr(screen_ram)
   typedef_struct_uint8_ptr(bitmap_ram)
-
-  typedef_struct_uint8(bordercolor)
   typedef_struct_int8(scroll_x)
   typedef_struct_int8(scroll_y)
+
+  typedef_struct_uint8(bordercolor)
+
+  typedef_struct_nested_array(Sprite_t, sprites,                     \
+                                             GRAPHIX_SPRITES_MAXCOUNT)
+  typedef_struct_nested(Sprite_t,            sprites_end)
 typedef_struct_end(Graphix_buffer_t)
 
 /* VIC-II revision structure  */

@@ -19,6 +19,7 @@
 #include "Graphix.h"
 
 #include "EngineConfig.h"
+#include "Sprite.h"
 
 #include "chip-cia.gen.h"
 
@@ -60,6 +61,8 @@ Graphix_t Graphix;
 void __fastcall__
 Graphix_init(Graphix_initCallback_t init_callback)
 {
+  static Sprite_t* cur_sprite;
+
   /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
@@ -83,10 +86,14 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* initialize Graphix.buffer  */
   Graphix.buffer.screen_ram = _SCREEN_RAM;
   Graphix.buffer.bitmap_ram = _BITMAP_RAM;
-
-  Graphix.buffer.bordercolor = GRAPHIX_BLACK;
   Graphix.buffer.scroll_x = 0;
   Graphix.buffer.scroll_y = 0;
+
+  Graphix.buffer.bordercolor = GRAPHIX_BLACK;
+
+  for (cur_sprite=Graphix.buffer.sprites;
+       cur_sprite<&Graphix.buffer.sprites_end; ++cur_sprite)
+    Sprite_new(cur_sprite);
 
   /* initialize all other stuff  */
   init_callback();
@@ -118,12 +125,19 @@ Graphix_init(Graphix_initCallback_t init_callback)
 void __fastcall__
 Graphix_release(Graphix_releaseCallback_t release_callback)
 {
+  static Sprite_t* cur_sprite;
+
   /* Disable VIC IRQs first, then black screen  */
   VIC.imr = VIC_IMR_DISABLEALL_MASK;
   VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
   /* release all other stuff  */
   release_callback();
+
+  /* release Graphix.buffer  */
+  for (cur_sprite=Graphix.buffer.sprites;
+       cur_sprite<&Graphix.buffer.sprites_end; ++cur_sprite)
+    Sprite_delete(cur_sprite);
 
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;
