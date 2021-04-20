@@ -25,7 +25,12 @@
 
 /* ***************************************************************  */
 
+#define _BLINKING_SPRITES                                            \
+  (Graphix_sprites_4_mask | Graphix_sprites_5_mask                   \
+   | Graphix_sprites_6_mask | Graphix_sprites_7_mask)
+
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
+static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
 
 #ifdef DEBUG
 static string_t AASandbox_charout;
@@ -49,9 +54,27 @@ AASandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
+  Graphix.buffer.sprites.sprites[4].set.pos_y = 54;
+  Graphix.buffer.sprites.sprites[4].set.pos_x = 31;
+  Graphix.buffer.sprites.sprites[5].set.pos_y = 54;
+  Graphix.buffer.sprites.sprites[5].set.pos_x = 311;
+
+  Graphix.buffer.sprites.sprites[6].set.pos_y = 225;
+  Graphix.buffer.sprites.sprites[6].set.pos_x = 31;
+  Graphix.buffer.sprites.sprites[7].set.pos_y = 225;
+  Graphix.buffer.sprites.sprites[7].set.pos_x = 311;
+
+  Graphix.buffer.sprites.sprites[0].set.pos_y = 225;
+  Graphix.buffer.sprites.sprites[0].set.pos_x = 31 + (311 - 31)/2;
+  Graphix.buffer.sprites.set.enabled
+    = Graphix_sprites_0_mask | _BLINKING_SPRITES;
+
   Pace_new(&AASandbox_pace_y, 12, 6, 14, 63);
   Pace_new(&AASandbox_pace_x, 3, 2, 32, 0);
+  Pace_new(&AASandbox_pace_sprite_y, 14, 8, 13, 63);
+  Pace_new(&AASandbox_pace_sprite_x, 5, 4, 31, 0);
   Pace_impulse_pos(&AASandbox_pace_y);
+  Pace_impulse_neg(&AASandbox_pace_sprite_y);
 
 #ifdef DEBUG
   strcpy(AASandbox_charout, "PETSCII '");
@@ -88,14 +111,17 @@ AASandbox_tick(void)
   if (Input.joy_port2.axis_y.changed) {
     if (Input.joy_port2.axis_y.direction > 0) {
       Pace_start_pos(&AASandbox_pace_y);
+      Pace_start_pos(&AASandbox_pace_sprite_y);
       DEBUG_NOTE("forward");
     }
     else if (Input.joy_port2.axis_y.direction < 0) {
       Pace_accelerate_neg(&AASandbox_pace_y);
+      Pace_accelerate_neg(&AASandbox_pace_sprite_y);
       DEBUG_NOTE("backward");
     }
     else {
       Pace_brake(&AASandbox_pace_y);
+      Pace_brake(&AASandbox_pace_sprite_y);
       DEBUG_NOTE("stop");
     }
 
@@ -108,11 +134,16 @@ AASandbox_tick(void)
   }
 
   if (Input.joy_port2.axis_x.changed) {
-    if (Input.joy_port2.axis_x.direction > 0)
+    if (Input.joy_port2.axis_x.direction > 0) {
       Pace_start_pos(&AASandbox_pace_x);
-    else if (Input.joy_port2.axis_x.direction < 0)
+      Pace_start_pos(&AASandbox_pace_sprite_x);
+    } else if (Input.joy_port2.axis_x.direction < 0) {
       Pace_start_neg(&AASandbox_pace_x);
-    else Pace_brake(&AASandbox_pace_x);
+      Pace_start_neg(&AASandbox_pace_sprite_x);
+    } else {
+      Pace_brake(&AASandbox_pace_x);
+      Pace_brake(&AASandbox_pace_sprite_x);
+    }
 
   } else if (Input.joy_port1.axis_x.changed) {
     if (Input.joy_port1.axis_x.direction > 0)
@@ -165,9 +196,15 @@ AASandbox_tick(void)
 
   Pace_tick(&AASandbox_pace_y);
   Pace_tick(&AASandbox_pace_x);
+  Pace_tick(&AASandbox_pace_sprite_y);
+  Pace_tick(&AASandbox_pace_sprite_x);
 
   Graphix.buffer.scroll_y += AASandbox_pace_y.pace;
   Graphix.buffer.scroll_x += AASandbox_pace_x.pace;
+  Graphix.buffer
+    .sprites.sprites[0].set.pos_y += AASandbox_pace_sprite_y.pace;
+  Graphix.buffer
+    .sprites.sprites[0].set.pos_x += AASandbox_pace_sprite_x.pace;
 }
 
 void __fastcall__
@@ -182,6 +219,11 @@ AASandbox_tick_low(void)
    */
   if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
     ++Graphix.buffer.bordercolor;
+
+    Graphix.buffer.sprites.set.enabled
+      = Graphix.buffer.sprites.set.enabled & Graphix_sprites_7_mask
+      ? Graphix_sprites_0_mask
+      : (Graphix_sprites_0_mask | _BLINKING_SPRITES);
   }
 
   if (Input.joy_port2.button1.pressed || Input.joy_port1.button1.pressed)

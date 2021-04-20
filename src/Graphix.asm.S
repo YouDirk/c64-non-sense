@@ -79,38 +79,88 @@ done:
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_IRQ_RENDERTIME
 
-        lda ptr1
-        pha                             ; backup low byte of shared zp
-        lda ptr1 + 1
-        pha                             ; backup high byte of shared zp
+  .define _SPR_SPR Graphix_buffer_sprites_t::sprites
 
+        clc
         lda _Graphix_buffer_back_ptr
-        sta ptr1
+        sta ZP_ISR_PTR1
+        adc #Graphix_buffer_t::sprites + _SPR_SPR
+        sta ZP_ISR_PTR2
+                                        ; carry set if addition overflows
         lda _Graphix_buffer_back_ptr + 1
-        sta ptr1 + 1                    ; ptr1 = _Graphix_buffer_back_ptr
+        sta ZP_ISR_PTR1 + 1             ; PTR1 = _Graphix_buffer_back_ptr
+        adc #00
+        sta ZP_ISR_PTR2 + 1   ; PTR2 = &Graphix.buffer.sprites.sprites[0]
+
+        ;; -----------------------------------------------------------
+
+  .define _SPR_SET Graphix_buffer_sprites_t::set
+  .define _SPR_SET_ENA Graphix_buffer_sprites_set_t::enabled
+
+        .pushseg                        ; push current segment ("CODE")
+        .bss                            ; org uninitialized segment
+sprites_enable_shifted:
+        .res 1                          ; scan value for output port
+        .popseg                         ; restore "CODE" segment
+
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
+        lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
+        sta VIC_SPR_ENABLE              ; set Sprite Enable bits
+
+        ;; A := Sprite Enable bits
+        ldx #$00                        ; X := 0x00, sprite_counter
+sprites_loop:                           ; do {
+        lsr
+        sta sprites_enable_shifted
+        bcc sprites_ignore              ; if (enable_shift == carry) {
+
+        ldy #Sprite_t::set + Sprite_set_t::pos_x
+        lda (ZP_ISR_PTR2), y
+        sta VIC_SPR_ARRAY, x            ;   set sprite x position
+        inx                             ;   ++sprite_counter
+        ldy #Sprite_t::set + Sprite_set_t::pos_y
+        lda (ZP_ISR_PTR2), y
+        sta VIC_SPR_ARRAY, x            ;   set sprite y position
+        inx                             ;   ++sprite_counter
+
+        jmp sprites_next                ; } else {
+sprites_ignore:
+        inx                             ;   sprite_counter += 2
+        inx                             ; }
+
+sprites_next:
+        clc
+        lda ZP_ISR_PTR2
+        adc #.sizeof(Sprite_t)
+        sta ZP_ISR_PTR2
+        lda ZP_ISR_PTR2 + 1
+        adc #$00
+        sta ZP_ISR_PTR2 + 1             ; Graphix.[...].sprites[++i]
+
+        lda sprites_enable_shifted      ; A = shifted enable bits
+        bne sprites_loop                ; } while (enable_shift!=0x00);
+sprites_done:
+
+        ;; -----------------------------------------------------------
 
         ldy #Graphix_buffer_t::scroll_y
-        lda (ptr1), y
+        lda (ZP_ISR_PTR1), y
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set y scroll
 
         ldy #Graphix_buffer_t::scroll_x
-        lda (ptr1), y
+        lda (ZP_ISR_PTR1), y
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
         ldy #Graphix_buffer_t::bordercolor
-        lda (ptr1), y
+        lda (ZP_ISR_PTR1), y
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME
         ;; nothing to do, because VIC.bordercolor will be set above
 .endif ; DEBUG_IRQ_RENDERTIME
-
-        pla
-        sta ptr1 + 1                    ; restore high byte of shared zp
-        pla
-        sta ptr1                        ; restore low byte of shared zp
 
         rts
 .endproc                                ; Graphix_rasterline_isr

@@ -23,13 +23,14 @@
 void __fastcall__
 Sprite_new(Sprite_t* sprite)
 {
-  // TODO
+  sprite->set.pos_y = 0;
+  sprite->set.pos_x = 0;
 }
 
 void __fastcall__
 Sprite_delete(Sprite_t* sprite)
 {
-  // TODO
+
 }
 
 /* ***************************************************************  */

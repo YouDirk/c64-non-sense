@@ -30,13 +30,14 @@ header_define(SPRITE)
  * to call setter functions.
  */
 typedef_struct_begin(Sprite_set_t)
-  typedef_struct_bool(dummy)
+  typedef_struct_uint8(                           pos_y)
+  typedef_struct_uint8(                           pos_x)
 typedef_struct_end(Sprite_set_t)
 
 /* Datatype of this structure.  */
 typedef_struct_begin(Sprite_t)
   /* Some writable member variables.  */
-  typedef_struct_nested(Sprite_set_t,                   set)
+  typedef_struct_nested(Sprite_set_t,             set)
 
 typedef_struct_end(Sprite_t)
 

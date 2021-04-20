@@ -25,7 +25,7 @@
 
 /* default is CIA2_PRA_VICBANK_MEM0  */
 #define _VICBANK                   CIA2_PRA_VICBANK_MEMC
-/* default is VIC_ADDR_DEFAULT_SCREENRAM  */
+/* default is VIC_ADDR_SCREENRAM_DEFAULT  */
 #define _SCREENRAM_x0X40           0x00
 /* default 0x07, but just 0x00 or 0x08 possible  */
 #define _BITMAPRAM_x0X400          0x08
@@ -91,8 +91,20 @@ Graphix_init(Graphix_initCallback_t init_callback)
 
   Graphix.buffer.bordercolor = GRAPHIX_BLACK;
 
-  for (cur_sprite=Graphix.buffer.sprites;
-       cur_sprite<&Graphix.buffer.sprites_end; ++cur_sprite)
+  /* disable all sprites  */
+  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
+  Graphix.buffer.sprites.set.enabled = Graphix_sprites_none_mask;
+
+  /* reset postitions of sprites  */
+
+  /* Will be set during vblank isr.
+   *
+   * memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
+   * VIC.spr_hi_x = 0x00;
+   */
+
+  for (cur_sprite = Graphix.buffer.sprites.sprites;
+       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
     Sprite_new(cur_sprite);
 
   /* initialize all other stuff  */
@@ -135,9 +147,16 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   release_callback();
 
   /* release Graphix.buffer  */
-  for (cur_sprite=Graphix.buffer.sprites;
-       cur_sprite<&Graphix.buffer.sprites_end; ++cur_sprite)
+  for (cur_sprite = Graphix.buffer.sprites.sprites;
+       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
     Sprite_delete(cur_sprite);
+
+  /* reset postitions of sprites  */
+  memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
+  VIC.spr_hi_x = 0x00;
+
+  /* disable all sprites  */
+  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
 
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;

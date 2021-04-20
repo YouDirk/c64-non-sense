@@ -45,11 +45,51 @@ define_hex(VIC_COLOR_LIGHTGREEN,             0d)
 define_hex(VIC_COLOR_LIGHTBLUE,              0e)
 define_hex(VIC_COLOR_GRAY3,                  0f)
 
-/*
- * end of colors
+/* end of colors
+ * *******************************************************************
+ * sprite enum masks
+ */
+
+define_hex(VIC_SPRITE_NONE_MASK,             00)
+define_hex(VIC_SPRITE_0_MASK,                01)
+define_hex(VIC_SPRITE_1_MASK,                02)
+define_hex(VIC_SPRITE_2_MASK,                04)
+define_hex(VIC_SPRITE_3_MASK,                08)
+define_hex(VIC_SPRITE_4_MASK,                10)
+define_hex(VIC_SPRITE_5_MASK,                20)
+define_hex(VIC_SPRITE_6_MASK,                40)
+define_hex(VIC_SPRITE_7_MASK,                80)
+
+/* end of sprite enum masks
  * ***************************************************************  */
 
 register_void_ptr(d000,                      VIC_BASE)
+
+/* ***************************************************************  */
+
+register_uint8(d000,                         VIC_SPR_ARRAY)
+define_hex(VIC_SPR_ARRAY_BUFSIZE,            10)
+
+register_uint8(d000,                         VIC_SPR0_X)
+register_uint8(d001,                         VIC_SPR0_Y)
+register_uint8(d002,                         VIC_SPR1_X)
+register_uint8(d003,                         VIC_SPR1_Y)
+register_uint8(d004,                         VIC_SPR2_X)
+register_uint8(d005,                         VIC_SPR2_Y)
+register_uint8(d006,                         VIC_SPR3_X)
+register_uint8(d007,                         VIC_SPR3_Y)
+register_uint8(d008,                         VIC_SPR4_X)
+register_uint8(d009,                         VIC_SPR4_Y)
+register_uint8(d00a,                         VIC_SPR5_X)
+register_uint8(d00b,                         VIC_SPR5_Y)
+register_uint8(d00c,                         VIC_SPR6_X)
+register_uint8(d00d,                         VIC_SPR6_Y)
+register_uint8(d00e,                         VIC_SPR7_X)
+register_uint8(d00f,                         VIC_SPR7_Y)
+
+register_uint8(d010,                         VIC_SPRHI_X)
+
+/* ***************************************************************  */
 
 register_uint8(d011,                         VIC_CTRL1)
 define_hex(VIC_CTRL1_RASTERLINE_MASK,        80)
@@ -58,15 +98,15 @@ define_hex(VIC_CTRL1_BITMAPMODE_MASK,        20)
 define_hex(VIC_CTRL1_SCREEN_ON_MASK,         10)
 define_hex(VIC_CTRL1_25ROWS_MASK,            08)
 define_hex(VIC_CTRL1_YSCROLL_MASK,           07)
-define_hex(VIC_CTRL1_DEFAULT_YSCROLL,        03)
+define_hex(VIC_CTRL1_YSCROLL_DEFAULT,        03)
 define(VIC_CTRL1_DEFAULT,                                            \
        VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
-       | VIC_CTRL1_DEFAULT_YSCROLL)
+       | VIC_CTRL1_YSCROLL_DEFAULT)
 
 /* rasterline bit, bitmap mode, enable screen, no 25 rows, yscroll=0  */
 define(VIC_CTRL1_MODE,                                               \
        VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
-       | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VAL >> 1)))
+       | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VBLANK >> 1)))
 
 register_uint8(d012,                         VIC_RASTERLINE)
 define_hex(VIC_RASTERLINE_MASK,              ff)
@@ -88,17 +128,19 @@ define_hex(VIC_RASTERL_FRONTPORCH_PAL_43,   11f)
 define_hex(VIC_RASTERL_FRONTPORCH_PAL_169,  10a)
 define    (VIC_RASTERL_FRONTPORCH_NTSC_43,  VIC_RASTERL_MAX_NTSC_6567R56A)
 
-define(VIC_RASTERLINE_VAL,              VIC_RASTERL_SCREENEND_24ROWS)
+define(VIC_RASTERLINE_VBLANK,           VIC_RASTERL_SCREENEND_24ROWS)
 define(VIC_RASTERLINE_MODE,                                          \
-       VIC_RASTERLINE_VAL & VIC_RASTERLINE_MASK)
+       VIC_RASTERLINE_VBLANK & VIC_RASTERLINE_MASK)
+
+register_uint8(d015,                         VIC_SPR_ENABLE)
 
 register_uint8(d016,                         VIC_CTRL2)
 define_hex(VIC_CTRL2_MULTICOLOR_MASK,        10)
 define_hex(VIC_CTRL2_40COLS_MASK,            08)
 define_hex(VIC_CTRL2_XSCROLL_MASK,           07)
-define_hex(VIC_CTRL2_DEFAULT_HIGH,           c0)
+define_hex(VIC_CTRL2_HIGH_DEFAULT,           c0)
 define(VIC_CTRL2_DEFAULT,                                            \
-       VIC_CTRL2_DEFAULT_HIGH | VIC_CTRL2_40COLS_MASK)
+       VIC_CTRL2_HIGH_DEFAULT | VIC_CTRL2_40COLS_MASK)
 
 /* no multicolor, no 40 cols in x, xscroll=0  */
 define(VIC_CTRL2_MODE,                                               \
@@ -118,8 +160,8 @@ define_hex(VIC_ADDR_BITMAP_STEP,             0400)
  */
 define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
-define_hex(VIC_ADDR_DEFAULT_SCREENRAM,  10)
-define(VIC_ADDR_DEFAULT,                VIC_ADDR_DEFAULT_SCREENRAM)
+define_hex(VIC_ADDR_SCREENRAM_DEFAULT,  10)
+define(VIC_ADDR_DEFAULT,                VIC_ADDR_SCREENRAM_DEFAULT)
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
 macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \

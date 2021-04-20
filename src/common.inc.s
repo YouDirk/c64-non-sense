@@ -22,8 +22,14 @@
 
 ;; *******************************************************************
 
-.importzp ptr1           ; shared zero page address of CC65 runtime
-.importzp sreg           ; shared virtual register of CC65 runtime
+.include "zeropage.inc"  ; shared zero page addresses of CC65 runtime
+
+.define ZP_NONSENSE_BEGIN                    sp + zpspace
+
+;; Dedicated to Interrupt Service Routines.  No backup and restore
+;; needed, due to no recursive ISRs are occurring.
+.define ZP_ISR_PTR1                          ZP_NONSENSE_BEGIN + 0
+.define ZP_ISR_PTR2                          ZP_NONSENSE_BEGIN + 2
 
 ;; *******************************************************************
 
