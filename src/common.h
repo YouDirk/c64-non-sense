@@ -37,12 +37,30 @@ typedef char                       string_t[STRING_BUFSIZE];
 /* Not STDINT, but better assoziation for bit-width of integers.  A
  * whole byte will be allocated, no checks for overflow.
  */
+
+typedef uint16_t                   uint15_t;
+typedef uint16_t                   uint14_t;
+typedef uint16_t                   uint13_t;
+typedef uint16_t                   uint12_t;
+typedef uint16_t                   uint11_t;
+typedef uint16_t                   uint10_t;
+typedef uint16_t                   uint9_t;
+
 typedef uint8_t                    uint7_t;
 typedef uint8_t                    uint6_t;
 typedef uint8_t                    uint5_t;
 typedef uint8_t                    uint4_t;
 typedef uint8_t                    uint3_t;
 typedef uint8_t                    uint2_t;
+
+typedef int16_t                    int15_t;
+typedef int16_t                    int14_t;
+typedef int16_t                    int13_t;
+typedef int16_t                    int12_t;
+typedef int16_t                    int11_t;
+typedef int16_t                    int10_t;
+typedef int16_t                    int9_t;
+
 typedef int8_t                     int7_t;
 typedef int8_t                     int6_t;
 typedef int8_t                     int5_t;
@@ -50,12 +68,35 @@ typedef int8_t                     int4_t;
 typedef int8_t                     int3_t;
 typedef int8_t                     int2_t;
 
+#define UINT15_MAX                 ((uint15_t) 0x7fff)
+#define UINT14_MAX                 ((uint14_t) 0x3fff)
+#define UINT13_MAX                 ((uint13_t) 0x1fff)
+#define UINT12_MAX                 ((uint12_t) 0x0fff)
+#define UINT11_MAX                 ((uint11_t) 0x07ff)
+#define UINT10_MAX                 ((uint10_t) 0x03ff)
+#define UINT9_MAX                  ((uint9_t)  0x01ff)
+
 #define UINT7_MAX                  ((uint7_t) 0x7f)
 #define UINT6_MAX                  ((uint6_t) 0x3f)
 #define UINT5_MAX                  ((uint5_t) 0x1f)
 #define UINT4_MAX                  ((uint4_t) 0x0f)
 #define UINT3_MAX                  ((uint3_t) 0x07)
 #define UINT2_MAX                  ((uint2_t) 0x03)
+
+#define INT15_MIN                  ((int15_t) 0xc000)
+#define INT15_MAX                  ((int15_t) 0x3fff)
+#define INT14_MIN                  ((int14_t) 0xe000)
+#define INT14_MAX                  ((int14_t) 0x1fff)
+#define INT13_MIN                  ((int13_t) 0xf000)
+#define INT13_MAX                  ((int13_t) 0x0fff)
+#define INT12_MIN                  ((int12_t) 0xf800)
+#define INT12_MAX                  ((int12_t) 0x07ff)
+#define INT11_MIN                  ((int11_t) 0xfc00)
+#define INT11_MAX                  ((int11_t) 0x03ff)
+#define INT10_MIN                  ((int10_t) 0xfe00)
+#define INT10_MAX                  ((int10_t) 0x01ff)
+#define INT9_MIN                   ((int9_t)  0xff00)
+#define INT9_MAX                   ((int9_t)  0x00ff)
 
 #define INT7_MIN                   ((int7_t) 0xc0)
 #define INT7_MAX                   ((int7_t) 0x3f)

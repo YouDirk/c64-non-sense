@@ -90,6 +90,8 @@ AASandbox_release(void)
   DEBUG_NOTE(AASandbox_charout);
 #endif /* DEBUG  */
 
+  Pace_delete(&AASandbox_pace_sprite_x);
+  Pace_delete(&AASandbox_pace_sprite_y);
   Pace_delete(&AASandbox_pace_x);
   Pace_delete(&AASandbox_pace_y);
 }
