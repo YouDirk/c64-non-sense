@@ -31,7 +31,7 @@ header_define(SPRITE)
  */
 typedef_struct_begin(Sprite_set_t)
   typedef_struct_uint8(                           pos_y)
-  typedef_struct_uint8(                           pos_x)
+  typedef_struct_uint9(                           pos_x)
 typedef_struct_end(Sprite_set_t)
 
 /* Datatype of this structure.  */
@@ -45,4 +45,4 @@ typedef_struct_end(Sprite_t)
 
 header_endif(SPRITE)
 
-#endif /* INPUT_DEF_H__  */
+#endif /* SPRITE_DEF_H__  */

@@ -187,9 +187,6 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 void __fastcall__
 Graphix_buffer_swap(void)
 {
-  Graphix.buffer.scroll_x &= VIC_CTRL2_XSCROLL_MASK;
-  Graphix.buffer.scroll_y &= VIC_CTRL1_YSCROLL_MASK;
-
   /* -----------------------------------------------------------------
    *
    * Maybe a lock is needed here if something goes wrong with during

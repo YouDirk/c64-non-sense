@@ -86,10 +86,10 @@ done:
         sta ZP_ISR_PTR1
         adc #Graphix_buffer_t::sprites + _SPR_SPR
         sta ZP_ISR_PTR2
-                                        ; carry set if addition overflows
+            ;; carry set if addition overflows
         lda _Graphix_buffer_back_ptr + 1
         sta ZP_ISR_PTR1 + 1             ; PTR1 = _Graphix_buffer_back_ptr
-        adc #00
+        adc #$00
         sta ZP_ISR_PTR2 + 1   ; PTR2 = &Graphix.buffer.sprites.sprites[0]
 
         ;; -----------------------------------------------------------
@@ -100,16 +100,24 @@ done:
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
 sprites_enable_shifted:
-        .res 1                          ; scan value for output port
+        .res 1                          ; shifted enable bits of 0xd015
+sprites_msb_x:
+        .res 1                          ; msb_bits of pos_x for 0xd010
+sprites_msb_x_mask:
+        .res 1                          ; mask for current msb bits
         .popseg                         ; restore "CODE" segment
 
+        ldx #$00                        ; X := 0x00, sprite_counter
+        stx sprites_msb_x               ; msb_bits := 0x00
+
+        lda #$01
+        sta sprites_msb_x_mask          ; msb_mask := 0x01
 
         ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
         lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
-        sta VIC_SPR_ENABLE              ; set Sprite Enable bits
+        sta VIC_SPR_ENABLE              ; set sprite enable bits
 
-        ;; A := Sprite Enable bits
-        ldx #$00                        ; X := 0x00, sprite_counter
+        ;; A = sprite enable bits
 sprites_loop:                           ; do {
         lsr
         sta sprites_enable_shifted
@@ -119,6 +127,15 @@ sprites_loop:                           ; do {
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite x position
         inx                             ;   ++sprite_counter
+        iny
+        lda (ZP_ISR_PTR2), y            ; A := high byte of pos_x
+        lsr
+        bcc posx_msb_done               ; if (msb != 0) {
+        lda sprites_msb_x_mask          ;   msb_bits
+        ora sprites_msb_x               ;    := msb_bits | msb_mask
+        sta sprites_msb_x               ; }
+posx_msb_done:
+
         ldy #Sprite_t::set + Sprite_set_t::pos_y
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite y position
@@ -130,27 +147,34 @@ sprites_ignore:
         inx                             ; }
 
 sprites_next:
+        asl sprites_msb_x_mask          ; msb_bits := msb_bits << 1
+
         clc
-        lda ZP_ISR_PTR2
-        adc #.sizeof(Sprite_t)
+        lda #.sizeof(Sprite_t)
+        adc ZP_ISR_PTR2
         sta ZP_ISR_PTR2
-        lda ZP_ISR_PTR2 + 1
-        adc #$00
-        sta ZP_ISR_PTR2 + 1             ; Graphix.[...].sprites[++i]
+        bcc inc_highbyte_done
+        inc ZP_ISR_PTR2 + 1             ; ++Graphix.[...].sprites
+inc_highbyte_done:
 
         lda sprites_enable_shifted      ; A = shifted enable bits
         bne sprites_loop                ; } while (enable_shift!=0x00);
 sprites_done:
 
+        lda sprites_msb_x
+        sta VIC_SPRHI_X                 ; VIC_SPRHI_X := msb_bits
+
         ;; -----------------------------------------------------------
 
         ldy #Graphix_buffer_t::scroll_y
         lda (ZP_ISR_PTR1), y
+        and #VIC_CTRL1_YSCROLL_MASK
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set y scroll
 
         ldy #Graphix_buffer_t::scroll_x
         lda (ZP_ISR_PTR1), y
+        and #VIC_CTRL2_XSCROLL_MASK
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 

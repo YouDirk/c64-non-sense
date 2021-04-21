@@ -67,13 +67,39 @@ BC ******************************************************************
 #  define typedef_struct_bool_ptr(name)           bool* name;
 #  define typedef_struct_char(name)               char name;
 #  define typedef_struct_constchar(name)          const char name;
+#  define typedef_struct_uint15(name)             uint15_t name;
+#  define typedef_struct_uint14(name)             uint14_t name;
+#  define typedef_struct_uint13(name)             uint13_t name;
+#  define typedef_struct_uint12(name)             uint12_t name;
+#  define typedef_struct_uint11(name)             uint11_t name;
+#  define typedef_struct_uint10(name)             uint10_t name;
+#  define typedef_struct_uint9(name)              uint9_t name;
 #  define typedef_struct_uint8(name)              uint8_t name;
+#  define typedef_struct_uint7(name)              uint7_t name;
+#  define typedef_struct_uint6(name)              uint6_t name;
+#  define typedef_struct_uint5(name)              uint5_t name;
+#  define typedef_struct_uint4(name)              uint4_t name;
+#  define typedef_struct_uint3(name)              uint3_t name;
+#  define typedef_struct_uint2(name)              uint2_t name;
 #  define typedef_struct_uint8_ptr(name)          uint8_t* name;
 #  define typedef_struct_uint16(name)             uint16_t name;
 #  define typedef_struct_uint16_ptr(name)         uint16_t* name;
 #  define typedef_struct_uint32(name)             uint32_t name;
 #  define typedef_struct_uint32_ptr(name)         uint32_t* name;
+#  define typedef_struct_int15(name)              int15_t name;
+#  define typedef_struct_int14(name)              int14_t name;
+#  define typedef_struct_int13(name)              int13_t name;
+#  define typedef_struct_int12(name)              int12_t name;
+#  define typedef_struct_int11(name)              int11_t name;
+#  define typedef_struct_int10(name)              int10_t name;
+#  define typedef_struct_int9(name)               int9_t name;
 #  define typedef_struct_int8(name)               int8_t name;
+#  define typedef_struct_int7(name)               int7_t name;
+#  define typedef_struct_int6(name)               int6_t name;
+#  define typedef_struct_int5(name)               int5_t name;
+#  define typedef_struct_int4(name)               int4_t name;
+#  define typedef_struct_int3(name)               int3_t name;
+#  define typedef_struct_int2(name)               int2_t name;
 #  define typedef_struct_int8_ptr(name)           int8_t* name;
 #  define typedef_struct_int16(name)              int16_t name;
 #  define typedef_struct_int16_ptr(name)          int16_t* name;
@@ -177,13 +203,39 @@ BC ******************************************************************
 #  define typedef_struct_bool_ptr(name)           name .addr  ; bool*
 #  define typedef_struct_char(name)               name .byte  ; char
 #  define typedef_struct_constchar(name)          name .byte  ; const char
+#  define typedef_struct_uint15(name)             name .word  ; uint15
+#  define typedef_struct_uint14(name)             name .word  ; uint14
+#  define typedef_struct_uint13(name)             name .word  ; uint13
+#  define typedef_struct_uint12(name)             name .word  ; uint12
+#  define typedef_struct_uint11(name)             name .word  ; uint11
+#  define typedef_struct_uint10(name)             name .word  ; uint10
+#  define typedef_struct_uint9(name)              name .word  ; uint9
 #  define typedef_struct_uint8(name)              name .byte  ; uint8
+#  define typedef_struct_uint7(name)              name .byte  ; uint7
+#  define typedef_struct_uint6(name)              name .byte  ; uint6
+#  define typedef_struct_uint5(name)              name .byte  ; uint5
+#  define typedef_struct_uint4(name)              name .byte  ; uint4
+#  define typedef_struct_uint3(name)              name .byte  ; uint3
+#  define typedef_struct_uint2(name)              name .byte  ; uint2
 #  define typedef_struct_uint8_ptr(name)          name .addr  ; uint8*
 #  define typedef_struct_uint16(name)             name .word  ; uint16
 #  define typedef_struct_uint16_ptr(name)         name .addr  ; uint16*
 #  define typedef_struct_uint32(name)             name .dword ; uint32
 #  define typedef_struct_uint32_ptr(name)         name .addr  ; uint32*
+#  define typedef_struct_int15(name)              name .word  ; int15
+#  define typedef_struct_int14(name)              name .word  ; int14
+#  define typedef_struct_int13(name)              name .word  ; int13
+#  define typedef_struct_int12(name)              name .word  ; int12
+#  define typedef_struct_int11(name)              name .word  ; int11
+#  define typedef_struct_int10(name)              name .word  ; int10
+#  define typedef_struct_int9(name)               name .word  ; int9
 #  define typedef_struct_int8(name)               name .byte  ; int8
+#  define typedef_struct_int7(name)               name .byte  ; int7
+#  define typedef_struct_int6(name)               name .byte  ; int6
+#  define typedef_struct_int5(name)               name .byte  ; int5
+#  define typedef_struct_int4(name)               name .byte  ; int4
+#  define typedef_struct_int3(name)               name .byte  ; int3
+#  define typedef_struct_int2(name)               name .byte  ; int2
 #  define typedef_struct_int8_ptr(name)           name .addr  ; int8*
 #  define typedef_struct_int16(name)              name .word  ; int16
 #  define typedef_struct_int16_ptr(name)          name .addr  ; int16*

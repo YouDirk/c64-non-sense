@@ -34,10 +34,9 @@ typedef char                       string_t[STRING_BUFSIZE];
 
 /*****************************************************************  */
 
-/* Not STDINT, but better assoziation for bit-width of integers.  A
- * whole byte will be allocated, no checks for overflow.
+/* Not STDINT, but better assoziation for bit-width of integers.
+ * Whole bytes will be allocated, no checks for overflow.
  */
-
 typedef uint16_t                   uint15_t;
 typedef uint16_t                   uint14_t;
 typedef uint16_t                   uint13_t;
