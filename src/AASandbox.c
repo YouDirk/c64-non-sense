@@ -27,7 +27,7 @@
 
 #define _BLINKING_SPRITES                                            \
   (Graphix_sprites_4_mask | Graphix_sprites_5_mask                   \
-   | Graphix_sprites_0_mask | Graphix_sprites_7_mask)
+   | Graphix_sprites_6_mask | Graphix_sprites_7_mask)
 
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
@@ -59,15 +59,15 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprites[5].set.pos_y = 54;
   Graphix.buffer.sprites.sprites[5].set.pos_x = 311;
 
-  Graphix.buffer.sprites.sprites[0].set.pos_y = 225;
-  Graphix.buffer.sprites.sprites[0].set.pos_x = 31;
+  Graphix.buffer.sprites.sprites[6].set.pos_y = 225;
+  Graphix.buffer.sprites.sprites[6].set.pos_x = 31;
   Graphix.buffer.sprites.sprites[7].set.pos_y = 225;
   Graphix.buffer.sprites.sprites[7].set.pos_x = 311;
 
-  Graphix.buffer.sprites.sprites[6].set.pos_y = 225;
-  Graphix.buffer.sprites.sprites[6].set.pos_x = 31 + (311 - 31)/2;
+  Graphix.buffer.sprites.sprites[0].set.pos_y = 225;
+  Graphix.buffer.sprites.sprites[0].set.pos_x = 31 + (311 - 31)/2;
   Graphix.buffer.sprites.set.enabled
-    = Graphix_sprites_6_mask | _BLINKING_SPRITES;
+    = Graphix_sprites_0_mask | _BLINKING_SPRITES;
 
   Pace_new(&AASandbox_pace_y, 12, 6, 14, 63);
   Pace_new(&AASandbox_pace_x, 3, 2, 32, 0);
@@ -204,9 +204,9 @@ AASandbox_tick(void)
   Graphix.buffer.scroll_y += AASandbox_pace_y.pace;
   Graphix.buffer.scroll_x += AASandbox_pace_x.pace;
   Graphix.buffer
-    .sprites.sprites[6].set.pos_y += AASandbox_pace_sprite_y.pace;
+    .sprites.sprites[0].set.pos_y += AASandbox_pace_sprite_y.pace;
   Graphix.buffer
-    .sprites.sprites[6].set.pos_x += AASandbox_pace_sprite_x.pace;
+    .sprites.sprites[0].set.pos_x += AASandbox_pace_sprite_x.pace;
 }
 
 void __fastcall__
@@ -224,8 +224,8 @@ AASandbox_tick_low(void)
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES
-      ? Graphix_sprites_6_mask
-      : (Graphix_sprites_6_mask | _BLINKING_SPRITES);
+      ? Graphix_sprites_0_mask
+      : (Graphix_sprites_0_mask | _BLINKING_SPRITES);
   }
 
   if (Input.joy_port2.button1.pressed || Input.joy_port1.button1.pressed)

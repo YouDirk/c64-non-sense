@@ -103,39 +103,32 @@ sprites_enable_shifted:
         .res 1                          ; shifted enable bits of 0xd015
 sprites_msb_x:
         .res 1                          ; msb_bits of pos_x for 0xd010
-sprites_msb_x_mask:
-        .res 1                          ; mask for current msb bits
         .popseg                         ; restore "CODE" segment
 
         ldx #$00                        ; X := 0x00, sprite_counter
         stx sprites_msb_x               ; msb_bits := 0x00
 
-        lda #$01
-        sta sprites_msb_x_mask          ; msb_mask := 0x01
-
         ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
         lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
         sta VIC_SPR_ENABLE              ; set sprite enable bits
 
-        ;; A = sprite enable bits
+        sta sprites_enable_shifted      ; set msb_bits
+
 sprites_loop:                           ; do {
-        lsr
-        sta sprites_enable_shifted
+        lsr sprites_enable_shifted
         bcc sprites_ignore              ; if (enable_shift == carry) {
 
         ldy #Sprite_t::set + Sprite_set_t::pos_x
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite x position
         inx                             ;   ++sprite_counter
+
         iny
         lda (ZP_ISR_PTR2), y            ; A := high byte of pos_x
         lsr
-        bcc posx_msb_done               ; if (msb != 0) {
-        lda sprites_msb_x_mask          ;   msb_bits
-        ora sprites_msb_x               ;    := msb_bits | msb_mask
-        sta sprites_msb_x               ; }
-posx_msb_done:
-
+          ;; carry set if msb of high byte was set
+        ror sprites_msb_x               ; msb_bits
+                                        ;   := (msb | msb_bits) >> 1
         ldy #Sprite_t::set + Sprite_set_t::pos_y
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite y position
@@ -147,7 +140,6 @@ sprites_ignore:
         inx                             ; }
 
 sprites_next:
-        asl sprites_msb_x_mask          ; msb_bits := msb_bits << 1
 
         clc
         lda #.sizeof(Sprite_t)
@@ -157,10 +149,11 @@ sprites_next:
         inc ZP_ISR_PTR2 + 1             ; ++Graphix.[...].sprites
 inc_highbyte_done:
 
-        lda sprites_enable_shifted      ; A = shifted enable bits
-        bne sprites_loop                ; } while (enable_shift!=0x00);
+        cpx #VIC_SPR_ARRAY_BUFSIZE
+        bcc sprites_loop                ; } while (sprite_counter < 2*8);
 sprites_done:
-
+        ;; TODO: Bug 0xd010 is set to 0xa8 instead of 0xa1, if sprite0
+        ;; is on right side.
         lda sprites_msb_x
         sta VIC_SPRHI_X                 ; VIC_SPRHI_X := msb_bits
 
