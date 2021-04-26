@@ -54,18 +54,18 @@ AASandbox_init(void)
   for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
 
-  Graphix.buffer.sprites.sprites[4].set.pos_y = 54;
-  Graphix.buffer.sprites.sprites[4].set.pos_x = 31;
-  Graphix.buffer.sprites.sprites[5].set.pos_y = 54;
-  Graphix.buffer.sprites.sprites[5].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[4].set.pos_y = 54;
+  Graphix.buffer.sprites.sprite[4].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[5].set.pos_y = 54;
+  Graphix.buffer.sprites.sprite[5].set.pos_x = 311;
 
-  Graphix.buffer.sprites.sprites[6].set.pos_y = 225;
-  Graphix.buffer.sprites.sprites[6].set.pos_x = 31;
-  Graphix.buffer.sprites.sprites[7].set.pos_y = 225;
-  Graphix.buffer.sprites.sprites[7].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[6].set.pos_y = 225;
+  Graphix.buffer.sprites.sprite[6].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[7].set.pos_y = 225;
+  Graphix.buffer.sprites.sprite[7].set.pos_x = 311;
 
-  Graphix.buffer.sprites.sprites[0].set.pos_y = 225;
-  Graphix.buffer.sprites.sprites[0].set.pos_x = 31 + (311 - 31)/2;
+  Graphix.buffer.sprites.sprite[0].set.pos_y = 225;
+  Graphix.buffer.sprites.sprite[0].set.pos_x = 31 + (311 - 31)/2;
   Graphix.buffer.sprites.set.enabled
     = Graphix_sprites_0_mask | _BLINKING_SPRITES;
 
@@ -204,9 +204,9 @@ AASandbox_tick(void)
   Graphix.buffer.scroll_y += AASandbox_pace_y.pace;
   Graphix.buffer.scroll_x += AASandbox_pace_x.pace;
   Graphix.buffer
-    .sprites.sprites[0].set.pos_y += AASandbox_pace_sprite_y.pace;
+    .sprites.sprite[0].set.pos_y += AASandbox_pace_sprite_y.pace;
   Graphix.buffer
-    .sprites.sprites[0].set.pos_x += AASandbox_pace_sprite_x.pace;
+    .sprites.sprite[0].set.pos_x += AASandbox_pace_sprite_x.pace;
 }
 
 void __fastcall__

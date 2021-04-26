@@ -103,7 +103,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
    * VIC.spr_hi_x = 0x00;
    */
 
-  for (cur_sprite = Graphix.buffer.sprites.sprites;
+  for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
     Sprite_new(cur_sprite);
 
@@ -147,7 +147,7 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   release_callback();
 
   /* release Graphix.buffer  */
-  for (cur_sprite = Graphix.buffer.sprites.sprites;
+  for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
     Sprite_delete(cur_sprite);
 

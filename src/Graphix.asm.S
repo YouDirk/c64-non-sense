@@ -79,7 +79,7 @@ done:
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_IRQ_RENDERTIME
 
-  .define _SPR_SPR Graphix_buffer_sprites_t::sprites
+  .define _SPR_SPR Graphix_buffer_sprites_t::sprite
 
         clc
         lda _Graphix_buffer_back_ptr

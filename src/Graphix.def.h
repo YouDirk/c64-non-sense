@@ -76,7 +76,7 @@ typedef_struct_begin(Graphix_buffer_sprites_t)
   typedef_struct_nested(Graphix_buffer_sprites_set_t,  set)
 
   /* Access to the 8 sprites of the C64 VIC-II graphic chip.  */
-  typedef_struct_nested_array(Sprite_t, sprites,                     \
+  typedef_struct_nested_array(Sprite_t, sprite,                      \
                                              GRAPHIX_SPRITES_MAXCOUNT)
   typedef_struct_nested(Sprite_t,            end)
 typedef_struct_end(Graphix_buffer_sprites_t)

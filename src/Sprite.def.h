@@ -26,12 +26,30 @@ header_define(SPRITE)
 
 /* ***************************************************************  */
 
+/* Struct for one or more sprite visual properties.  */
+typedef_enum_begin(Sprite_visuals_t)
+  typedef_enum_hex(Sprite_visuals_t,                                 \
+                   Sprite_visuals_none_mask,                     00)
+  typedef_enum_hex(Sprite_visuals_t,                                 \
+                   Sprite_visuals_multicolor_mask,               01)
+  typedef_enum_hex(Sprite_visuals_t,                                 \
+                   Sprite_visuals_expansion_twice_y_mask,        02)
+  typedef_enum_hex(Sprite_visuals_t,                                 \
+                   Sprite_visuals_expansion_twice_x_mask,        04)
+  typedef_enum_hex(Sprite_visuals_t,                                 \
+                   Sprite_visuals_priority_background_mask,      08)
+typedef_enum_end(Sprite_visuals_t)
+
+/* ***************************************************************  */
+
 /* Configuration variables which can be set directly, without needing
  * to call setter functions.
  */
 typedef_struct_begin(Sprite_set_t)
   typedef_struct_uint8(                           pos_y)
   typedef_struct_uint9(                           pos_x)
+
+  typedef_struct_enum(Sprite_visuals_t,           props_visual)
 typedef_struct_end(Sprite_set_t)
 
 /* Datatype of this structure.  */
