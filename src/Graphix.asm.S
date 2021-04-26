@@ -99,8 +99,6 @@ done:
 
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
-sprites_enable_shifted:
-        .res 1                          ; shifted enable bits of 0xd015
 sprites_msb_x:
         .res 1                          ; msb_bits of pos_x for 0xd010
         .popseg                         ; restore "CODE" segment
@@ -112,12 +110,7 @@ sprites_msb_x:
         lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
         sta VIC_SPR_ENABLE              ; set sprite enable bits
 
-        sta sprites_enable_shifted      ; set msb_bits
-
 sprites_loop:                           ; do {
-        lsr sprites_enable_shifted
-        bcc sprites_ignore              ; if (enable_shift == carry) {
-
         ldy #Sprite_t::set + Sprite_set_t::pos_x
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite x position
@@ -134,13 +127,6 @@ sprites_loop:                           ; do {
         sta VIC_SPR_ARRAY, x            ;   set sprite y position
         inx                             ;   ++sprite_counter
 
-        jmp sprites_next                ; } else {
-sprites_ignore:
-        inx                             ;   sprite_counter += 2
-        inx                             ; }
-
-sprites_next:
-
         clc
         lda #.sizeof(Sprite_t)
         adc ZP_ISR_PTR2
@@ -152,8 +138,7 @@ inc_highbyte_done:
         cpx #VIC_SPR_ARRAY_BUFSIZE
         bcc sprites_loop                ; } while (sprite_counter < 2*8);
 sprites_done:
-        ;; TODO: Bug 0xd010 is set to 0xa8 instead of 0xa1, if sprite0
-        ;; is on right side.
+
         lda sprites_msb_x
         sta VIC_SPRHI_X                 ; VIC_SPRHI_X := msb_bits
 
