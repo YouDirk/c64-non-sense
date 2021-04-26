@@ -30,6 +30,14 @@ include_def_h(Sprite)
 
 /* ***************************************************************  */
 
+/*
+typedef_enum_begin(Graphix_color_t)
+TODO
+typedef_enum_end(Graphix_color_t)
+*/
+
+/* ***************************************************************  */
+
 macro_arg1(GRAPHIX_SPRITES_2MASK,            1 << (arg1))
 
 define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
@@ -37,26 +45,26 @@ define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
 /* Selector for sprites to be used.  Full compatible with bit masks of
  * VIC-II sprites registers, i.e. enable register at 0xd015, etc.
  */
-typedef_enum_begin(Graphix_sprites_selector_t)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_none_mask, VIC_SPRITE_NONE_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_0_mask, VIC_SPRITE_0_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_1_mask, VIC_SPRITE_1_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_2_mask, VIC_SPRITE_2_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_3_mask, VIC_SPRITE_3_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_4_mask, VIC_SPRITE_4_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_5_mask, VIC_SPRITE_5_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_6_mask, VIC_SPRITE_6_MASK)
-  typedef_enum_val(Graphix_sprites_selector_t,                       \
-                   Graphix_sprites_7_mask, VIC_SPRITE_7_MASK)
-typedef_enum_end(Graphix_sprites_selector_t)
+typedef_enum_begin(Graphix_sprite_selector_t)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_none_mask, VIC_SPRITE_NONE_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_0_mask, VIC_SPRITE_0_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_1_mask, VIC_SPRITE_1_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_2_mask, VIC_SPRITE_2_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_3_mask, VIC_SPRITE_3_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_4_mask, VIC_SPRITE_4_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_5_mask, VIC_SPRITE_5_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_6_mask, VIC_SPRITE_6_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t,                        \
+                   Graphix_sprite_7_mask, VIC_SPRITE_7_MASK)
+typedef_enum_end(Graphix_sprite_selector_t)
 
 /* ***************************************************************  */
 
@@ -67,7 +75,7 @@ typedef_struct_begin(Graphix_buffer_sprites_set_t)
   /* Sprites which will be enabled/visible.  Full compatible with
    * VIC-II register at 0xd015.
    */
-  typedef_struct_enum(Graphix_sprites_selector_t,      enabled)
+  typedef_struct_enum(Graphix_sprite_selector_t,       enabled)
 typedef_struct_end(Graphix_buffer_sprites_set_t)
 
 /* Sprites structure in graphic buffer.  */

@@ -90,7 +90,7 @@ done:
         lda _Graphix_buffer_back_ptr + 1
         sta ZP_ISR_PTR1 + 1             ; PTR1 = _Graphix_buffer_back_ptr
         adc #$00
-        sta ZP_ISR_PTR2 + 1   ; PTR2 = &Graphix.buffer.sprites.sprites[0]
+        sta ZP_ISR_PTR2 + 1   ; PTR2 = &Graphix.buffer.sprites.sprite[0]
 
         ;; -----------------------------------------------------------
 
@@ -99,12 +99,19 @@ done:
 
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
-sprites_msb_x:
-        .res 1                          ; msb_bits of pos_x for 0xd010
+sprites_hi_x:
+        .res 1                          ; hi_x of pos_x for 0xd010
+sprites_mcolors:
+        .res 1                          ; mcolors for 0xd01c
+sprites_expy:
+        .res 1                          ; expy for 0xd017
+sprites_expx:
+        .res 1                          ; expx for 0xd01d
+sprites_bgprio:
+        .res 1                          ; expx for 0xd01b
         .popseg                         ; restore "CODE" segment
 
         ldx #$00                        ; X := 0x00, sprite_counter
-        stx sprites_msb_x               ; msb_bits := 0x00
 
         ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
         lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
@@ -120,27 +127,58 @@ sprites_loop:                           ; do {
         lda (ZP_ISR_PTR2), y            ; A := high byte of pos_x
         lsr
           ;; carry set if msb of high byte was set
-        ror sprites_msb_x               ; msb_bits
-                                        ;   := (msb | msb_bits) >> 1
+        ror sprites_hi_x                ; hi_x
+                                        ;   := (carry | hi_x) >> 1
         ldy #Sprite_t::set + Sprite_set_t::pos_y
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_ARRAY, x            ;   set sprite y position
         inx                             ;   ++sprite_counter
+
+        ldy #Sprite_t::set + Sprite_set_t::visuals
+        lda (ZP_ISR_PTR2), y
+  .if .not Sprite_visuals_multicolor_mask = (1 << 0)
+        .error "Sprite_visuals_multicolor_mask != 0x01!"
+  .endif
+        lsr                             ; mcolors
+        ror sprites_mcolors             ;   := (carry | mcolors) >> 1
+  .if .not Sprite_visuals_expansion_twice_y_mask = (1 << 1)
+        .error "Sprite_visuals_expansion_twice_y_mask != 0x02!"
+  .endif
+        lsr                             ; expy
+        ror sprites_expy                ;   := (carry | expy) >> 1
+  .if .not Sprite_visuals_expansion_twice_x_mask = (1 << 2)
+        .error "Sprite_visuals_expansion_twice_x_mask != 0x04!"
+  .endif
+        lsr                             ; expx
+        ror sprites_expx                ;   := (carry | expx) >> 1
+  .if .not Sprite_visuals_priority_background_mask = (1 << 3)
+        .error "Sprite_visuals_priority_background_mask != 0x08!"
+  .endif
+        lsr                             ; bgprio
+        ror sprites_bgprio              ;   := (carry | bgprio) >> 1
 
         clc
         lda #.sizeof(Sprite_t)
         adc ZP_ISR_PTR2
         sta ZP_ISR_PTR2
         bcc inc_highbyte_done
-        inc ZP_ISR_PTR2 + 1             ; ++Graphix.[...].sprites
+        inc ZP_ISR_PTR2 + 1             ; ++Graphix.[...].sprite
 inc_highbyte_done:
 
         cpx #VIC_SPR_ARRAY_BUFSIZE
         bcc sprites_loop                ; } while (sprite_counter < 2*8);
 sprites_done:
 
-        lda sprites_msb_x
-        sta VIC_SPRHI_X                 ; VIC_SPRHI_X := msb_bits
+        lda sprites_hi_x                ; save VISUALS to registers
+        sta VIC_SPRHI_X
+        lda sprites_mcolors
+        sta VIC_SPR_MCOLOR
+        lda sprites_expy
+        sta VIC_SPR_EXPY
+        lda sprites_expx
+        sta VIC_SPR_EXPX
+        lda sprites_bgprio
+        sta VIC_SPR_BGPRIO
 
         ;; -----------------------------------------------------------
 

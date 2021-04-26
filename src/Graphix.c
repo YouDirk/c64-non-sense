@@ -93,7 +93,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
-  Graphix.buffer.sprites.set.enabled = Graphix_sprites_none_mask;
+  Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
 
   /* reset postitions of sprites  */
 

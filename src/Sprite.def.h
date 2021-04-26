@@ -28,14 +28,39 @@ header_define(SPRITE)
 
 /* Struct for one or more sprite visual properties.  */
 typedef_enum_begin(Sprite_visuals_t)
+  /* NONE = 0x00  */
   typedef_enum_hex(Sprite_visuals_t,                                 \
                    Sprite_visuals_none_mask,                     00)
+  /* TODO: Comment, where to set colors for multicolor mode?
+   *
+   * Enables MULTICOLOR mode this sprite, using up to 3 colors, but
+   * reduces the resolution in horizontal X direction by 2, i.e. from
+   * 24 pxl/sprite to 12 pxl/sprite.
+   */
   typedef_enum_hex(Sprite_visuals_t,                                 \
                    Sprite_visuals_multicolor_mask,               01)
+  /* EXPANDS the size of this sprite in VERTICAL Y direction by 2,
+   * i.e. from 21 pxl/sprite to 42 pxl/sprite.  But it will also
+   * expand the pixel size of the bitmap in the sprite by 2!
+   */
   typedef_enum_hex(Sprite_visuals_t,                                 \
                    Sprite_visuals_expansion_twice_y_mask,        02)
+  /* EXPANDS the size of this sprite in HORIZONTAL X direction by 2,
+   * i.e. from 24 pxl/sprite to 48 pxl/sprite (multicolor: from 12
+   * pxl/sprite to 24 pxl/sprite).  But it will also expand the pixel
+   * size of the bitmap in the sprite by 2!
+   */
   typedef_enum_hex(Sprite_visuals_t,                                 \
                    Sprite_visuals_expansion_twice_x_mask,        04)
+  /* Set the PRIORITY for rendering BACKGROUND to higher than the
+   * sprite itself.  Therefore the sprite looks like to be behind the
+   * background scene.
+   *
+   * If more than one sprites are overlapping, then the sprite with
+   * the highest priority (priorities: sprite_0 > sprite_1 > ... >
+   * sprite_7) decides if the background will be rendered before or
+   * behind the sprites itself.
+   */
   typedef_enum_hex(Sprite_visuals_t,                                 \
                    Sprite_visuals_priority_background_mask,      08)
 typedef_enum_end(Sprite_visuals_t)
@@ -49,7 +74,7 @@ typedef_struct_begin(Sprite_set_t)
   typedef_struct_uint8(                           pos_y)
   typedef_struct_uint9(                           pos_x)
 
-  typedef_struct_enum(Sprite_visuals_t,           props_visual)
+  typedef_struct_enum(Sprite_visuals_t,           visuals)
 typedef_struct_end(Sprite_set_t)
 
 /* Datatype of this structure.  */

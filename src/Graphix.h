@@ -22,8 +22,6 @@
 #include "common.h"
 #include "Graphix.gen.h"
 
-#include "chip-vic.gen.h"
-
 /* *******************************************************************
  * colors of C64
  *

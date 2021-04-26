@@ -132,6 +132,7 @@ define(VIC_RASTERLINE_VBLANK,           VIC_RASTERL_SCREENEND_24ROWS)
 define(VIC_RASTERLINE_MODE,                                          \
        VIC_RASTERLINE_VBLANK & VIC_RASTERLINE_MASK)
 
+/* sprite enable bits  */
 register_uint8(d015,                         VIC_SPR_ENABLE)
 
 register_uint8(d016,                         VIC_CTRL2)
@@ -145,6 +146,9 @@ define(VIC_CTRL2_DEFAULT,                                            \
 /* no multicolor, no 40 cols in x, xscroll=0  */
 define(VIC_CTRL2_MODE,                                               \
        00)
+
+/* sprite Y expansion  */
+register_uint8(d017,                         VIC_SPR_EXPY)
 
 register_uint8(d018,                         VIC_ADDR)
 define_hex(VIC_ADDR_SCREENRAM_MASK,          f0)
@@ -181,6 +185,15 @@ define_hex(VIC_IRR_IRQGLOBAL_MASK,           80)
 
 define(VIC_IMR_IRQMODE,                                              \
        VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
+
+/* sprite background priority  */
+register_uint8(d01b,                         VIC_SPR_BGPRIO)
+
+/* sprite multicolor  */
+register_uint8(d01c,                         VIC_SPR_MCOLOR)
+
+/* sprite X expansion  */
+register_uint8(d01d,                         VIC_SPR_EXPX)
 
 register_uint8(d020,                         VIC_BORDERCOLOR)
 define_hex(VIC_BORDERCOLOR_RVAL,             d020) /* inline asm  */

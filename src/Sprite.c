@@ -25,6 +25,8 @@ Sprite_new(Sprite_t* sprite)
 {
   sprite->set.pos_y = 0;
   sprite->set.pos_x = 0;
+
+  sprite->set.visuals = Sprite_visuals_none_mask;
 }
 
 void __fastcall__

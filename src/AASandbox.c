@@ -26,8 +26,8 @@
 /* ***************************************************************  */
 
 #define _BLINKING_SPRITES                                            \
-  (Graphix_sprites_4_mask | Graphix_sprites_5_mask                   \
-   | Graphix_sprites_6_mask | Graphix_sprites_7_mask)
+  (Graphix_sprite_4_mask | Graphix_sprite_5_mask                     \
+   | Graphix_sprite_6_mask | Graphix_sprite_7_mask)
 
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
@@ -56,6 +56,12 @@ AASandbox_init(void)
 
   Graphix.buffer.sprites.sprite[4].set.pos_y = 54;
   Graphix.buffer.sprites.sprite[4].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[4].set.visuals
+    = Sprite_visuals_multicolor_mask
+    | Sprite_visuals_expansion_twice_y_mask
+    | Sprite_visuals_expansion_twice_x_mask
+    | Sprite_visuals_priority_background_mask;
+
   Graphix.buffer.sprites.sprite[5].set.pos_y = 54;
   Graphix.buffer.sprites.sprite[5].set.pos_x = 311;
 
@@ -66,8 +72,12 @@ AASandbox_init(void)
 
   Graphix.buffer.sprites.sprite[0].set.pos_y = 225;
   Graphix.buffer.sprites.sprite[0].set.pos_x = 31 + (311 - 31)/2;
+  Graphix.buffer.sprites.sprite[0].set.visuals
+    = Sprite_visuals_expansion_twice_y_mask
+    | Sprite_visuals_priority_background_mask;
+
   Graphix.buffer.sprites.set.enabled
-    = Graphix_sprites_0_mask | _BLINKING_SPRITES;
+    = Graphix_sprite_0_mask | _BLINKING_SPRITES;
 
   Pace_new(&AASandbox_pace_y, 12, 6, 14, 63);
   Pace_new(&AASandbox_pace_x, 3, 2, 32, 0);
@@ -103,6 +113,8 @@ AASandbox_poll(void)
 {
 
 }
+
+/* ***************************************************************  */
 
 void __fastcall__
 AASandbox_tick(void)
@@ -209,6 +221,8 @@ AASandbox_tick(void)
     .sprites.sprite[0].set.pos_x += AASandbox_pace_sprite_x.pace;
 }
 
+/* ***************************************************************  */
+
 void __fastcall__
 AASandbox_tick_low(void)
 {
@@ -224,10 +238,12 @@ AASandbox_tick_low(void)
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES
-      ? Graphix_sprites_0_mask
-      : (Graphix_sprites_0_mask | _BLINKING_SPRITES);
+      ? Graphix_sprite_0_mask
+      : (Graphix_sprite_0_mask | _BLINKING_SPRITES);
   }
 
   if (Input.joy_port2.button1.pressed || Input.joy_port1.button1.pressed)
     Engine.set.exit_code = ENGINE_EXIT_SUCCESS;
 }
+
+/* ***************************************************************  */
