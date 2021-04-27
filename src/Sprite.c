@@ -29,10 +29,9 @@ Sprite_new(Sprite_t* sprite)
   sprite->set.visuals = Sprite_visuals_none_mask;
 }
 
-void __fastcall__
-Sprite_delete(Sprite_t* sprite)
-{
+/* Nothing to do.  Just an empty-macro for now.
+ */
 
-}
+/* void __fastcall__ Sprite_delete(Sprite_t* sprite) {}  */
 
 /* ***************************************************************  */

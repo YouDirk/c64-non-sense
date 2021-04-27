@@ -108,7 +108,7 @@ sprites_expy:
 sprites_expx:
         .res 1                          ; expx for 0xd01d
 sprites_bgprio:
-        .res 1                          ; expx for 0xd01b
+        .res 1                          ; bgprio for 0xd01b
         .popseg                         ; restore "CODE" segment
 
         ldx #$00                        ; X := 0x00, sprite_counter

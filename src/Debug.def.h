@@ -29,9 +29,9 @@ header_define(DEBUG)
 define_dec(_DEBUG_LIST_SIZE,                 15)
 
 typedef_enum_begin(_debug_msgtype_t)
-  typedef_enum_hex(_debug_msgtype_t, _debug_error_e, 01)
-  typedef_enum_hex(_debug_msgtype_t, _debug_warn_e,  02)
-  typedef_enum_hex(_debug_msgtype_t, _debug_note_e,  03)
+  typedef_enum_hex(_debug_msgtype_t, 01,     _debug_error_e)
+  typedef_enum_hex(_debug_msgtype_t, 02,     _debug_warn_e)
+  typedef_enum_hex(_debug_msgtype_t, 03,     _debug_note_e)
 typedef_enum_end(_debug_msgtype_t)
 
 typedef_struct_begin(_Debug_entry_t)

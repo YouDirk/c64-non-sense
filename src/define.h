@@ -116,11 +116,11 @@ BC ******************************************************************
 
 #  define typedef_enum_begin(name)                typedef uint8_t name;
 #  define typedef_enum_end(name)                  BC enum name  */
-#  define typedef_enum_hex(type, name, value)                        \
+#  define typedef_enum_hex(type, value, name)                        \
                                    _define(name, ((type) (0x##value)))
-#  define typedef_enum_dec(type, name, value)                        \
+#  define typedef_enum_dec(type, value, name)                        \
                                    _define(name, ((type) (value)))
-#  define typedef_enum_val(type, name, value)                        \
+#  define typedef_enum_val(type, value, name)                        \
                                    _define(name, ((type) (value)))
 
 #  define extern_var(type, name)                  extern type name;
@@ -252,9 +252,9 @@ BC ******************************************************************
 
 #  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)
 #  define typedef_enum_end(name)        ; enum name
-#  define typedef_enum_hex(type, name, value)     _define(name, $value)
-#  define typedef_enum_dec(type, name, value)     _define(name, value)
-#  define typedef_enum_val(type, name, value)     _define(name, value)
+#  define typedef_enum_hex(type, value, name)     _define(name, $value)
+#  define typedef_enum_dec(type, value, name)     _define(name, value)
+#  define typedef_enum_val(type, value, name)     _define(name, value)
 
 #  define extern_var(type, name)                  .import _##name
 

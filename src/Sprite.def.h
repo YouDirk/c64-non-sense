@@ -29,29 +29,29 @@ header_define(SPRITE)
 /* Struct for one or more sprite visual properties.  */
 typedef_enum_begin(Sprite_visuals_t)
   /* NONE = 0x00  */
-  typedef_enum_hex(Sprite_visuals_t,                                 \
-                   Sprite_visuals_none_mask,                     00)
+  typedef_enum_hex(Sprite_visuals_t, 00,                             \
+                                             Sprite_visuals_none_mask)
   /* TODO: Comment, where to set colors for multicolor mode?
    *
    * Enables MULTICOLOR mode this sprite, using up to 3 colors, but
    * reduces the resolution in horizontal X direction by 2, i.e. from
    * 24 pxl/sprite to 12 pxl/sprite.
    */
-  typedef_enum_hex(Sprite_visuals_t,                                 \
-                   Sprite_visuals_multicolor_mask,               01)
+  typedef_enum_hex(Sprite_visuals_t, 01,                             \
+                                       Sprite_visuals_multicolor_mask)
   /* EXPANDS the size of this sprite in VERTICAL Y direction by 2,
    * i.e. from 21 pxl/sprite to 42 pxl/sprite.  But it will also
    * expand the pixel size of the bitmap in the sprite by 2!
    */
-  typedef_enum_hex(Sprite_visuals_t,                                 \
-                   Sprite_visuals_expansion_twice_y_mask,        02)
+  typedef_enum_hex(Sprite_visuals_t, 02,                             \
+                                Sprite_visuals_expansion_twice_y_mask)
   /* EXPANDS the size of this sprite in HORIZONTAL X direction by 2,
    * i.e. from 24 pxl/sprite to 48 pxl/sprite (multicolor: from 12
    * pxl/sprite to 24 pxl/sprite).  But it will also expand the pixel
    * size of the bitmap in the sprite by 2!
    */
-  typedef_enum_hex(Sprite_visuals_t,                                 \
-                   Sprite_visuals_expansion_twice_x_mask,        04)
+  typedef_enum_hex(Sprite_visuals_t, 04,                             \
+                                Sprite_visuals_expansion_twice_x_mask)
   /* Set the PRIORITY for rendering BACKGROUND to higher than the
    * sprite itself.  Therefore the sprite looks like to be behind the
    * background scene.
@@ -61,8 +61,8 @@ typedef_enum_begin(Sprite_visuals_t)
    * sprite_7) decides if the background will be rendered before or
    * behind the sprites itself.
    */
-  typedef_enum_hex(Sprite_visuals_t,                                 \
-                   Sprite_visuals_priority_background_mask,      08)
+  typedef_enum_hex(Sprite_visuals_t, 08,                             \
+                              Sprite_visuals_priority_background_mask)
 typedef_enum_end(Sprite_visuals_t)
 
 /* ***************************************************************  */

@@ -86,8 +86,8 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* initialize Graphix.buffer  */
   Graphix.buffer.screen_ram = _SCREEN_RAM;
   Graphix.buffer.bitmap_ram = _BITMAP_RAM;
-  Graphix.buffer.scroll_x = 0;
-  Graphix.buffer.scroll_y = 0;
+  Graphix.buffer.scroll_x   = 0;
+  Graphix.buffer.scroll_y   = 0;
 
   Graphix.buffer.bordercolor = GRAPHIX_BLACK;
 
@@ -131,7 +131,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
-  VIC.imr = VIC_IMR_IRQMODE;
+  VIC.imr   = VIC_IMR_IRQMODE;
 }
 
 void __fastcall__
@@ -140,7 +140,7 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   static Sprite_t* cur_sprite;
 
   /* Disable VIC IRQs first, then black screen  */
-  VIC.imr = VIC_IMR_DISABLEALL_MASK;
+  VIC.imr   = VIC_IMR_DISABLEALL_MASK;
   VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
   /* release all other stuff  */
@@ -151,9 +151,13 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
     Sprite_delete(cur_sprite);
 
-  /* reset postitions of sprites  */
+  /* reset sprites stuff  */
   memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
-  VIC.spr_hi_x = 0x00;
+  VIC.spr_hi_x    = 0x00;
+  VIC.spr_mcolor  = 0x00;
+  VIC.spr_exp_y   = 0x00;
+  VIC.spr_exp_x   = 0x00;
+  VIC.spr_bg_prio = 0x00;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
@@ -179,7 +183,7 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 
   /* switch back into text mode, set screen on   */
   VIC.bordercolor = VIC_BORDERCOLOR_DEFAULT;
-  VIC.ctrl1 = VIC_CTRL1_DEFAULT;
+  VIC.ctrl1       = VIC_CTRL1_DEFAULT;
 }
 
 /* ***************************************************************  */

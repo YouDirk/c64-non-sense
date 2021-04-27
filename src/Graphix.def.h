@@ -46,24 +46,24 @@ define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
  * VIC-II sprites registers, i.e. enable register at 0xd015, etc.
  */
 typedef_enum_begin(Graphix_sprite_selector_t)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_none_mask, VIC_SPRITE_NONE_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_0_mask, VIC_SPRITE_0_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_1_mask, VIC_SPRITE_1_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_2_mask, VIC_SPRITE_2_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_3_mask, VIC_SPRITE_3_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_4_mask, VIC_SPRITE_4_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_5_mask, VIC_SPRITE_5_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_6_mask, VIC_SPRITE_6_MASK)
-  typedef_enum_val(Graphix_sprite_selector_t,                        \
-                   Graphix_sprite_7_mask, VIC_SPRITE_7_MASK)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_NONE_MASK,  \
+                                              Graphix_sprite_none_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_0_MASK,     \
+                                              Graphix_sprite_0_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_1_MASK,     \
+                                              Graphix_sprite_1_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_2_MASK,     \
+                                              Graphix_sprite_2_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_3_MASK,     \
+                                              Graphix_sprite_3_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_4_MASK,     \
+                                              Graphix_sprite_4_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_5_MASK,     \
+                                              Graphix_sprite_5_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_6_MASK,     \
+                                              Graphix_sprite_6_mask)
+  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_7_MASK,     \
+                                              Graphix_sprite_7_mask)
 typedef_enum_end(Graphix_sprite_selector_t)
 
 /* ***************************************************************  */
@@ -106,21 +106,21 @@ typedef_struct_end(Graphix_buffer_t)
 /* VIC-II revision structure  */
 typedef_enum_begin(Graphix_vicrev_t)
   /* default PAL revision  (europe)  */
-  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_pal6569_e,      37)
+  typedef_enum_hex(Graphix_vicrev_t, 37,      Graphix_vicrev_pal6569_e)
   /* Drean PAL-N revision (south america)  */
-  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_paln6572_e,     40)
+  typedef_enum_hex(Graphix_vicrev_t, 40,     Graphix_vicrev_paln6572_e)
   /* default NTSC revision (usa)  */
-  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_ntsc6567r8_e,   06)
+  typedef_enum_hex(Graphix_vicrev_t, 06,   Graphix_vicrev_ntsc6567r8_e)
   /* old NTSC revision  */
-  typedef_enum_hex(Graphix_vicrev_t, Graphix_vicrev_ntsc6567r56a_e, 05)
+  typedef_enum_hex(Graphix_vicrev_t, 05, Graphix_vicrev_ntsc6567r56a_e)
 typedef_enum_end(Graphix_vicrev_t)
 
 /* ***************************************************************  */
 
 /* Used to select a character set from C64 Character ROM.  */
 typedef_enum_begin(Graphix_charset_t)
-  typedef_enum_hex(Graphix_charset_t, Graphix_charset1_symbols_e,   00)
-  typedef_enum_hex(Graphix_charset_t, Graphix_charset2_lowercase_e, 01)
+  typedef_enum_hex(Graphix_charset_t, 00,   Graphix_charset1_symbols_e)
+  typedef_enum_hex(Graphix_charset_t, 01, Graphix_charset2_lowercase_e)
 typedef_enum_end(Graphix_charset_t)
 
 /* ***************************************************************  */
