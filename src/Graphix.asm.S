@@ -118,10 +118,18 @@ sprites_bgprio:
         sta VIC_SPR_ENABLE              ; set sprite enable bits
 
 sprites_loop:                           ; do {
+        ldy #Sprite_t::set + Sprite_set_t::color
+        lda (ZP_ISR_PTR2), y
+        sta VIC_SPR_COLORS, x           ; set sprite color
+
+        txa
+        asl
+        tax                             ; spr_cnt := 2*spr_cnt
+
         ldy #Sprite_t::set + Sprite_set_t::pos_x
         lda (ZP_ISR_PTR2), y
-        sta VIC_SPR_ARRAY, x            ;   set sprite x position
-        inx                             ;   ++sprite_counter
+        sta VIC_SPR_ARRAY, x            ; set sprite x position
+        inx                             ; spr_cnt := 2*spr_cnt + 1
 
         iny
         lda (ZP_ISR_PTR2), y            ; A := high byte of pos_x
@@ -131,28 +139,31 @@ sprites_loop:                           ; do {
                                         ;   := (carry | hi_x) >> 1
         ldy #Sprite_t::set + Sprite_set_t::pos_y
         lda (ZP_ISR_PTR2), y
-        sta VIC_SPR_ARRAY, x            ;   set sprite y position
-        inx                             ;   ++sprite_counter
+        sta VIC_SPR_ARRAY, x            ; set sprite y position
 
-        ldy #Sprite_t::set + Sprite_set_t::visuals
+        txa
+        lsr
+        tax                             ; spr_cnt := sprite_counter
+
+        ldy #Sprite_t::set + Sprite_set_t::props
         lda (ZP_ISR_PTR2), y
-  .if .not Sprite_visuals_multicolor_mask = (1 << 0)
-        .error "Sprite_visuals_multicolor_mask != 0x01!"
+  .if .not Sprite_props_multicolor_mask = (1 << 0)
+        .error "Sprite_props_multicolor_mask != 0x01!"
   .endif
         lsr                             ; mcolors
         ror sprites_mcolors             ;   := (carry | mcolors) >> 1
-  .if .not Sprite_visuals_expansion_twice_y_mask = (1 << 1)
-        .error "Sprite_visuals_expansion_twice_y_mask != 0x02!"
+  .if .not Sprite_props_scale_y_mask = (1 << 1)
+        .error "Sprite_props_scale_y_mask != 0x02!"
   .endif
         lsr                             ; expy
         ror sprites_expy                ;   := (carry | expy) >> 1
-  .if .not Sprite_visuals_expansion_twice_x_mask = (1 << 2)
-        .error "Sprite_visuals_expansion_twice_x_mask != 0x04!"
+  .if .not Sprite_props_scale_x_mask = (1 << 2)
+        .error "Sprite_props_scale_x_mask != 0x04!"
   .endif
         lsr                             ; expx
         ror sprites_expx                ;   := (carry | expx) >> 1
-  .if .not Sprite_visuals_priority_background_mask = (1 << 3)
-        .error "Sprite_visuals_priority_background_mask != 0x08!"
+  .if .not Sprite_props_prio_bground_mask = (1 << 3)
+        .error "Sprite_props_prio_bground_mask != 0x08!"
   .endif
         lsr                             ; bgprio
         ror sprites_bgprio              ;   := (carry | bgprio) >> 1
@@ -165,8 +176,9 @@ sprites_loop:                           ; do {
         inc ZP_ISR_PTR2 + 1             ; ++Graphix.[...].sprite
 inc_highbyte_done:
 
-        cpx #VIC_SPR_ARRAY_BUFSIZE
-        bcc sprites_loop                ; } while (sprite_counter < 2*8);
+        inx                             ; ++sprite_counter
+        cpx #GRAPHIX_SPRITES_MAXCOUNT
+        bcc sprites_loop                ; } while (sprite_counter < 8);
 sprites_done:
 
         lda sprites_hi_x                ; save VISUALS to registers

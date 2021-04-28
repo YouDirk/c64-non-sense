@@ -89,7 +89,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.buffer.scroll_x   = 0;
   Graphix.buffer.scroll_y   = 0;
 
-  Graphix.buffer.bordercolor = GRAPHIX_BLACK;
+  Graphix.buffer.bordercolor = Graphix_black;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
@@ -158,6 +158,15 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   VIC.spr_exp_y   = 0x00;
   VIC.spr_exp_x   = 0x00;
   VIC.spr_bg_prio = 0x00;
+
+  VIC.spr0_color = VIC_SPR0_COLOR_DEFAULT;
+  VIC.spr1_color = VIC_SPR1_COLOR_DEFAULT;
+  VIC.spr2_color = VIC_SPR2_COLOR_DEFAULT;
+  VIC.spr3_color = VIC_SPR3_COLOR_DEFAULT;
+  VIC.spr4_color = VIC_SPR4_COLOR_DEFAULT;
+  VIC.spr5_color = VIC_SPR5_COLOR_DEFAULT;
+  VIC.spr6_color = VIC_SPR6_COLOR_DEFAULT;
+  VIC.spr7_color = VIC_SPR7_COLOR_DEFAULT;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;

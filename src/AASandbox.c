@@ -25,6 +25,8 @@
 
 /* ***************************************************************  */
 
+static uint8_t AASandbox_bordercolor_time;
+
 #define _BLINKING_SPRITES                                            \
   (Graphix_sprite_4_mask | Graphix_sprite_5_mask                     \
    | Graphix_sprite_6_mask | Graphix_sprite_7_mask)
@@ -42,11 +44,13 @@ static char* AASandbox_charout_last;
 void __fastcall__
 AASandbox_init(void)
 {
-  unsigned i;
+  static uint16_t i;
+
+  AASandbox_bordercolor_time = 0;
 
   /* set screen ram  */
   memset(Graphix.buffer.screen_ram,
-         GRAPHIX_SCREENRAM_COLOR(GRAPHIX_GREEN, GRAPHIX_BLACK),
+         GRAPHIX_SCREENRAM_COLOR(Graphix_green, Graphix_black),
          GRAPHIX_CELLS_PER_SCREEN);
 
   /* set bitmap  */
@@ -56,25 +60,33 @@ AASandbox_init(void)
 
   Graphix.buffer.sprites.sprite[4].set.pos_y = 54;
   Graphix.buffer.sprites.sprite[4].set.pos_x = 31;
-  Graphix.buffer.sprites.sprite[4].set.visuals
-    = Sprite_visuals_multicolor_mask
-    | Sprite_visuals_expansion_twice_y_mask
-    | Sprite_visuals_expansion_twice_x_mask
-    | Sprite_visuals_priority_background_mask;
+  Graphix.buffer.sprites.sprite[4].set.color = Graphix_cyan;
+  Graphix.buffer.sprites.sprite[4].set.props
+    = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
+    | Sprite_props_scale_x_mask | Sprite_props_prio_bground_mask;
 
   Graphix.buffer.sprites.sprite[5].set.pos_y = 54;
   Graphix.buffer.sprites.sprite[5].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[5].set.color = Graphix_lightred;
+  Graphix.buffer.sprites.sprite[5].set.props
+    = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.sprite[6].set.pos_y = 225;
   Graphix.buffer.sprites.sprite[6].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[6].set.color = Graphix_yellow;
+  Graphix.buffer.sprites.sprite[6].set.props
+    = Sprite_props_scale_x_mask;
+
   Graphix.buffer.sprites.sprite[7].set.pos_y = 225;
   Graphix.buffer.sprites.sprite[7].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[7].set.color = Graphix_blue;
+  Graphix.buffer.sprites.sprite[7].set.props
+    = Sprite_props_prio_bground_mask;
 
   Graphix.buffer.sprites.sprite[0].set.pos_y = 225;
   Graphix.buffer.sprites.sprite[0].set.pos_x = 31 + (311 - 31)/2;
-  Graphix.buffer.sprites.sprite[0].set.visuals
-    = Sprite_visuals_expansion_twice_y_mask
-    | Sprite_visuals_priority_background_mask;
+  Graphix.buffer.sprites.sprite[0].set.props
+    = Sprite_props_scale_y_mask | Sprite_props_prio_bground_mask;
 
   Graphix.buffer.sprites.set.enabled
     = Graphix_sprite_0_mask | _BLINKING_SPRITES;
@@ -226,15 +238,13 @@ AASandbox_tick(void)
 void __fastcall__
 AASandbox_tick_low(void)
 {
-  /* Just for testing here, but very unperformant code.  It calls the
-   * CC65 runtime functions
-   *
-   *   * .tosumod0ax and .udiv32
-   *
-   * which are dividing a 32 bit wide unsigned integer.
-   */
-  if (Engine.tick_count % ENGINE_MS2TICKS(1000) == 0) {
+  if (++AASandbox_bordercolor_time >= ENGINE_MS2TICKS(1000)) {
+    AASandbox_bordercolor_time = 0;
+
     ++Graphix.buffer.bordercolor;
+
+    if (--Graphix.buffer.sprites.sprite[0].set.color == Graphix_black)
+      --Graphix.buffer.sprites.sprite[0].set.color;
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES

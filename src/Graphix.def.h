@@ -26,15 +26,38 @@ header_define(GRAPHIX)
 
 include_def_h(chip-vic)
 
-include_def_h(Sprite)
+/* *******************************************************************
+ * colors of C64
+ *
+ * Full compatible with the common known color codes for the C64.
+ */
 
-/* ***************************************************************  */
-
-/*
 typedef_enum_begin(Graphix_color_t)
-TODO
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_BLACK,   Graphix_black)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_WHITE,   Graphix_white)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_RED,     Graphix_red)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_CYAN,    Graphix_cyan)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_VIOLET,  Graphix_violet)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_GREEN,   Graphix_green)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_BLUE,    Graphix_blue)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_YELLOW,  Graphix_yellow)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_ORANGE,  Graphix_orange)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_BROWN,   Graphix_brown)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_LIGHTRED,Graphix_lightred)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_GRAY1,   Graphix_gray1)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_GRAY2,   Graphix_gray2)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_LIGHTGREEN,            \
+                                                       Graphix_lightgreen)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_LIGHTBLUE,             \
+                                                       Graphix_lightblue)
+  typedef_enum_val(Graphix_color_t, VIC_COLOR_GRAY3,   Graphix_gray3)
 typedef_enum_end(Graphix_color_t)
-*/
+
+/* end of colors
+ * ***************************************************************  */
+
+/* SPRITE.DEF.H requires GRAPHIX_COLOR_T.  */
+include_def_h(Sprite)
 
 /* ***************************************************************  */
 
@@ -98,7 +121,7 @@ typedef_struct_begin(Graphix_buffer_t)
   typedef_struct_int8(                                 scroll_x)
   typedef_struct_int8(                                 scroll_y)
 
-  typedef_struct_uint8(                                bordercolor)
+  typedef_struct_enum(Graphix_color_t,                 bordercolor)
 
   typedef_struct_nested(Graphix_buffer_sprites_t,      sprites)
 typedef_struct_end(Graphix_buffer_t)

@@ -201,6 +201,28 @@ define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 
 /* ***************************************************************  */
 
+register_uint8(d027,                         VIC_SPR_COLORS)
+define_hex(VIC_SPR_COLORS_BUFSIZE,           08)
+
+register_uint8(d027,                         VIC_SPR0_COLOR)
+define_hex(VIC_SPR0_COLOR_DEFAULT,           f1)
+register_uint8(d028,                         VIC_SPR1_COLOR)
+define_hex(VIC_SPR1_COLOR_DEFAULT,           f2)
+register_uint8(d029,                         VIC_SPR2_COLOR)
+define_hex(VIC_SPR2_COLOR_DEFAULT,           f3)
+register_uint8(d02a,                         VIC_SPR3_COLOR)
+define_hex(VIC_SPR3_COLOR_DEFAULT,           f4)
+register_uint8(d02b,                         VIC_SPR4_COLOR)
+define_hex(VIC_SPR4_COLOR_DEFAULT,           f5)
+register_uint8(d02c,                         VIC_SPR5_COLOR)
+define_hex(VIC_SPR5_COLOR_DEFAULT,           f6)
+register_uint8(d02d,                         VIC_SPR6_COLOR)
+define_hex(VIC_SPR6_COLOR_DEFAULT,           f7)
+register_uint8(d02e,                         VIC_SPR7_COLOR)
+define_hex(VIC_SPR7_COLOR_DEFAULT,           fc)
+
+/* ***************************************************************  */
+
 header_endif(CHIP_VIC)
 
 #endif /* CHIP_VIC_DEF_H__  */

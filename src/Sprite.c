@@ -26,7 +26,9 @@ Sprite_new(Sprite_t* sprite)
   sprite->set.pos_y = 0;
   sprite->set.pos_x = 0;
 
-  sprite->set.visuals = Sprite_visuals_none_mask;
+  sprite->set.color = Graphix_white;
+
+  sprite->set.props = Sprite_props_none_mask;
 }
 
 /* Nothing to do.  Just an empty-macro for now.

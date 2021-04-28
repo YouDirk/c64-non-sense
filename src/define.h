@@ -114,8 +114,9 @@ BC ******************************************************************
 #  define typedef_struct_enum_array(other, name, size)               \
                                         other name[size];
 
-#  define typedef_enum_begin(name)                typedef uint8_t name;
-#  define typedef_enum_end(name)                  BC enum name  */
+#  define typedef_enum_begin(name)             BC enum name {  */    \
+                                               typedef uint8_t name;
+#  define typedef_enum_end(name)               BC } enum name;  */
 #  define typedef_enum_hex(type, value, name)                        \
                                    _define(name, ((type) (0x##value)))
 #  define typedef_enum_dec(type, value, name)                        \
@@ -250,8 +251,9 @@ BC ******************************************************************
 #  define typedef_struct_enum_array(other, name, size)               \
                                         name .byte (size) ; other
 
-#  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)
-#  define typedef_enum_end(name)        ; enum name
+#  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)   \
+                                        ; enum name {
+#  define typedef_enum_end(name)        ; } enum name;
 #  define typedef_enum_hex(type, value, name)     _define(name, $value)
 #  define typedef_enum_dec(type, value, name)     _define(name, value)
 #  define typedef_enum_val(type, value, name)     _define(name, value)

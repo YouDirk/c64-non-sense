@@ -22,33 +22,7 @@
 #include "common.h"
 #include "Graphix.gen.h"
 
-/* *******************************************************************
- * colors of C64
- *
- * Already defined in chip_vic.def.h, but for higher level programming
- * again at this position.
- */
-
-#define GRAPHIX_BLACK                   VIC_COLOR_BLACK
-#define GRAPHIX_WHITE                   VIC_COLOR_WHITE
-#define GRAPHIX_RED                     VIC_COLOR_RED
-#define GRAPHIX_CYAN                    VIC_COLOR_CYAN
-#define GRAPHIX_VIOLET                  VIC_COLOR_VIOLET
-#define GRAPHIX_GREEN                   VIC_COLOR_GREEN
-#define GRAPHIX_BLUE                    VIC_COLOR_BLUE
-#define GRAPHIX_YELLOW                  VIC_COLOR_YELLOW
-#define GRAPHIX_ORANGE                  VIC_COLOR_ORANGE
-#define GRAPHIX_BROWN                   VIC_COLOR_BROWN
-#define GRAPHIX_LIGHTRED                VIC_COLOR_LIGHTRED
-#define GRAPHIX_GRAY1                   VIC_COLOR_GRAY1
-#define GRAPHIX_GRAY2                   VIC_COLOR_GRAY2
-#define GRAPHIX_LIGHTGREEN              VIC_COLOR_LIGHTGREEN
-#define GRAPHIX_LIGHTBLUE               VIC_COLOR_LIGHTBLUE
-#define GRAPHIX_GRAY3                   VIC_COLOR_GRAY3
-
-/*
- * end of colors
- * ***************************************************************  */
+/* ***************************************************************  */
 
 #define GRAPHIX_CELL_WIDTH_HIRES        8
 #define GRAPHIX_CELL_WIDTH_MULTICOLOR   4
