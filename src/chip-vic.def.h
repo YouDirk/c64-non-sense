@@ -201,6 +201,17 @@ define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 
 /* ***************************************************************  */
 
+/* multicolor for bit combination 0b01 = 0x01  */
+register_uint8(d025,                         VIC_SPR_MCOLOR_0B01)
+define_hex(VIC_SPR_MCOLOR_0B01_DEFAULT,      f4)
+
+/* multicolor for bit combination 0b11 = 0x03  */
+register_uint8(d026,                         VIC_SPR_MCOLOR_0B11)
+define_hex(VIC_SPR_MCOLOR_0B11_DEFAULT,      f0)
+
+/* ***************************************************************  */
+
+/* sprite color (multicolor: bit combination 0b10 = 0x02)  */
 register_uint8(d027,                         VIC_SPR_COLORS)
 define_hex(VIC_SPR_COLORS_BUFSIZE,           08)
 

@@ -99,6 +99,13 @@ typedef_struct_begin(Graphix_buffer_sprites_set_t)
    * VIC-II register at 0xd015.
    */
   typedef_struct_enum(Graphix_sprite_selector_t,       enabled)
+
+  /* Colors with bit combinations 0b01=0x01 and 0b11=0x03 for all
+   * sprites which have GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.PROPS =
+   * SPRITE_PROPS_MULTICOLOR_MASK set.
+   */
+  typedef_struct_enum(Graphix_color_t,                 multicolor_0b01)
+  typedef_struct_enum(Graphix_color_t,                 multicolor_0b11)
 typedef_struct_end(Graphix_buffer_sprites_set_t)
 
 /* Sprites structure in graphic buffer.  */

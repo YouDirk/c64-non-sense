@@ -96,6 +96,8 @@ done:
 
   .define _SPR_SET Graphix_buffer_sprites_t::set
   .define _SPR_SET_ENA Graphix_buffer_sprites_set_t::enabled
+  .define _SPR_SET_MC0B01 Graphix_buffer_sprites_set_t::multicolor_0b01
+  .define _SPR_SET_MC0B11 Graphix_buffer_sprites_set_t::multicolor_0b11
 
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
@@ -111,12 +113,19 @@ sprites_bgprio:
         .res 1                          ; bgprio for 0xd01b
         .popseg                         ; restore "CODE" segment
 
-        ldx #$00                        ; X := 0x00, sprite_counter
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B01
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR_0B01         ; set multicolor_0b01
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B11
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR_0B11         ; set multicolor_0b11
 
         ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
-        lda (ZP_ISR_PTR1), y            ; A := Sprite Enable bits
+        lda (ZP_ISR_PTR1), y
         sta VIC_SPR_ENABLE              ; set sprite enable bits
 
+        ldx #$00                        ; X := 0x00, sprite_counter
 sprites_loop:                           ; do {
         ldy #Sprite_t::set + Sprite_set_t::color
         lda (ZP_ISR_PTR2), y
@@ -181,7 +190,7 @@ inc_highbyte_done:
         bcc sprites_loop                ; } while (sprite_counter < 8);
 sprites_done:
 
-        lda sprites_hi_x                ; save VISUALS to registers
+        lda sprites_hi_x                ; save properties to registers
         sta VIC_SPRHI_X
         lda sprites_mcolors
         sta VIC_SPR_MCOLOR

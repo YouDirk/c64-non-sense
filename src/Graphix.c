@@ -94,6 +94,8 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   /* reset postitions of sprites  */
 
@@ -146,6 +148,9 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   /* release all other stuff  */
   release_callback();
 
+  /* disable all sprites  */
+  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
+
   /* release Graphix.buffer  */
   for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
@@ -167,9 +172,6 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
   VIC.spr5_color = VIC_SPR5_COLOR_DEFAULT;
   VIC.spr6_color = VIC_SPR6_COLOR_DEFAULT;
   VIC.spr7_color = VIC_SPR7_COLOR_DEFAULT;
-
-  /* disable all sprites  */
-  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
 
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;

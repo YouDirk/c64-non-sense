@@ -86,7 +86,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[0].set.pos_y = 225;
   Graphix.buffer.sprites.sprite[0].set.pos_x = 31 + (311 - 31)/2;
   Graphix.buffer.sprites.sprite[0].set.props
-    = Sprite_props_scale_y_mask | Sprite_props_prio_bground_mask;
+    = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.set.enabled
     = Graphix_sprite_0_mask | _BLINKING_SPRITES;
@@ -243,8 +243,18 @@ AASandbox_tick_low(void)
 
     ++Graphix.buffer.bordercolor;
 
-    if (--Graphix.buffer.sprites.sprite[0].set.color == Graphix_black)
+    if ((--Graphix.buffer.sprites.sprite[0].set.color & UINT4_MAX)
+        == Graphix_black) {
       --Graphix.buffer.sprites.sprite[0].set.color;
+    }
+
+    Graphix.buffer.sprites.sprite[0].set.props
+      = Graphix.buffer.sprites.sprite[0].set.props
+        & Sprite_props_prio_bground_mask
+      ? Graphix.buffer.sprites.sprite[0].set.props
+        & ~Sprite_props_prio_bground_mask
+      : Graphix.buffer.sprites.sprite[0].set.props
+        | Sprite_props_prio_bground_mask;
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES

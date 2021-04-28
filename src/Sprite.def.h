@@ -29,16 +29,27 @@ header_define(SPRITE)
 
 /* ***************************************************************  */
 
+/* TODO  */
+define_dec(SPRITE_POSY_SCREEN_BEGIN,              54)
+define_dec(SPRITE_POSX_SCREEN_BEGIN,              31)
+
+/* ***************************************************************  */
+
 /* Struct for one or more sprite visual properties.  */
 typedef_enum_begin(Sprite_properties_t)
   /* NONE = 0x00  */
   typedef_enum_hex(Sprite_properties_t, 00,                          \
                                                Sprite_props_none_mask)
-  /* TODO: Comment, where to set colors for multicolor mode?
+  /* Enables MULTICOLOR mode for this sprite, using up to 3 colors,
+   * but reduces the resolution in horizontal X direction by 2,
+   * i.e. from 24 pxl/sprite to 12 pxl/sprite.
    *
-   * Enables MULTICOLOR mode this sprite, using up to 3 colors, but
-   * reduces the resolution in horizontal X direction by 2, i.e. from
-   * 24 pxl/sprite to 12 pxl/sprite.
+   * The bit combinations for multicolor sprites are the following
+   *
+   *   0b00=0x00 color:    transparency
+   *   0b01=0x01 color:    GRAPHIX.BUFFER.SPRITES.SET.MULTICOLOR_0B01
+   *   0b10=0x02 color:    GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.COLOR
+   *   0b11=0x03 color:    GRAPHIX.BUFFER.SPRITES.SET.MULTICOLOR_0B11
    */
   typedef_enum_hex(Sprite_properties_t, 01,                          \
                                          Sprite_props_multicolor_mask)
@@ -74,11 +85,24 @@ typedef_enum_end(Sprite_properties_t)
  * to call setter functions.
  */
 typedef_struct_begin(Sprite_set_t)
+  /* Vertical Y position of this sprite.  Common absolute positions
+   * are defined above in SPRITE_POSY_*.
+   */
   typedef_struct_uint8(                           pos_y)
+  /* Horizontal X position of this sprite.  Common absolute positions
+   * are defined above in SPRITE_POSX_*.
+   */
   typedef_struct_uint9(                           pos_x)
 
+  /* Color of sprite. Or color for bit combination 0b10=0x02, if
+   * GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.PROPS =
+   * SPRITE_PROPS_MULTICOLOR_MASK is set.
+   */
   typedef_struct_enum(Graphix_color_t,            color)
 
+  /* Properties of this sprite which are able to set via bit masks,
+   * see above.
+   */
   typedef_struct_enum(Sprite_properties_t,        props)
 typedef_struct_end(Sprite_set_t)
 
