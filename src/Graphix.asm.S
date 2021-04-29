@@ -113,17 +113,17 @@ sprites_bgprio:
         .res 1                          ; bgprio for 0xd01b
         .popseg                         ; restore "CODE" segment
 
-        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B01
-        lda (ZP_ISR_PTR1), y
-        sta VIC_SPR_MCOLOR_0B01         ; set multicolor_0b01
-
-        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B11
-        lda (ZP_ISR_PTR1), y
-        sta VIC_SPR_MCOLOR_0B11         ; set multicolor_0b11
-
         ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
         lda (ZP_ISR_PTR1), y
         sta VIC_SPR_ENABLE              ; set sprite enable bits
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B01
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR0_0B01        ; set multicolor0_0b01
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B11
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR1_0B11        ; set multicolor1_0b11
 
         ldx #$00                        ; X := 0x00, sprite_counter
 sprites_loop:                           ; do {
@@ -203,20 +203,24 @@ sprites_done:
 
         ;; -----------------------------------------------------------
 
-        ldy #Graphix_buffer_t::scroll_y
+  .define _SET_SCROLL_Y Graphix_buffer_set_t::scroll_y
+  .define _SET_SCROLL_X Graphix_buffer_set_t::scroll_x
+  .define _SET_BORDERCOLOR Graphix_buffer_set_t::bordercolor
+
+        ldy #Graphix_buffer_t::set + _SET_SCROLL_Y
         lda (ZP_ISR_PTR1), y
         and #VIC_CTRL1_YSCROLL_MASK
         ora #(VIC_CTRL1_MODE & ~VIC_CTRL1_YSCROLL_MASK)
         sta VIC_CTRL1                   ; set y scroll
 
-        ldy #Graphix_buffer_t::scroll_x
+        ldy #Graphix_buffer_t::set + _SET_SCROLL_X
         lda (ZP_ISR_PTR1), y
         and #VIC_CTRL2_XSCROLL_MASK
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
         ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
-        ldy #Graphix_buffer_t::bordercolor
+        ldy #Graphix_buffer_t::set + _SET_BORDERCOLOR
         lda (ZP_ISR_PTR1), y
         sta VIC_BORDERCOLOR             ; set bordercolor
 .ifdef DEBUG_IRQ_RENDERTIME

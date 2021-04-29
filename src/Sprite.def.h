@@ -44,7 +44,8 @@ typedef_enum_begin(Sprite_properties_t)
    * but reduces the resolution in horizontal X direction by 2,
    * i.e. from 24 pxl/sprite to 12 pxl/sprite.
    *
-   * The bit combinations for multicolor sprites are the following
+   * The bit combinations in the bitmap_ram for multicolor sprites are
+   * the following:
    *
    *   0b00=0x00 color:    transparency
    *   0b01=0x01 color:    GRAPHIX.BUFFER.SPRITES.SET.MULTICOLOR_0B01

@@ -59,7 +59,33 @@ typedef_enum_end(Graphix_color_t)
 /* SPRITE.DEF.H requires GRAPHIX_COLOR_T.  */
 include_def_h(Sprite)
 
-/* ***************************************************************  */
+/* *******************************************************************
+ * screen constants
+ */
+
+define_dec(GRAPHIX_SCREEN_BYTES,                               8000)
+define_dec(GRAPHIX_SCREEN_CELLS,                               1000)
+
+define_dec(GRAPHIX_SCREEN_HIRES_PIXELS,                       64000)
+define_dec(GRAPHIX_SCREEN_HIRES_RES_X,                          320)
+define_dec(GRAPHIX_SCREEN_HIRES_RES_Y,                          200)
+define_dec(GRAPHIX_SCREEN_HIRES_CELL_PIXELS,                     64)
+define_dec(GRAPHIX_SCREEN_HIRES_CELL_WIDTH,                       8)
+define_dec(GRAPHIX_SCREEN_HIRES_CELL_HEIGHT,                      8)
+
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_PIXELS,                  32000)
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_RES_X,                     160)
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_RES_Y,                     200)
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_CELL_PIXELS,                32)
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_CELL_WIDTH,                  4)
+define_dec(GRAPHIX_SCREEN_MULTICOLOR_CELL_HEIGHT,                 8)
+
+define_dec(GRAPHIX_SCREEN_CELLS_X,                               40)
+define_dec(GRAPHIX_SCREEN_CELLS_Y,                               25)
+define_dec(GRAPHIX_SCREEN_CELLS_BYTES,                            8)
+
+/* end of screen constants
+ * ***************************************************************  */
 
 macro_arg1(GRAPHIX_SPRITES_2MASK,            1 << (arg1))
 
@@ -121,17 +147,96 @@ typedef_struct_end(Graphix_buffer_sprites_t)
 
 /* ***************************************************************  */
 
+/* Configuration variables which can be set directly, without needing
+ * to call setter functions.
+ */
+typedef_struct_begin(Graphix_buffer_set_t)
+  /* Scrolls the vertical Y position of background.  It is recommended
+   * to DISABLE the 25-ROWS mode of the screen, if you are using
+   * scrolling.
+   *
+   * If 25-ROWS mode is enabled, then set this value to SCROLL_Y = 3
+   * (default initialization), to see the whole SCREEN_RAM/BITMAP_RAM
+   * on screen.
+   *
+   * TODO: How to enable/disable 25-ROWS mode.
+   */
+  typedef_struct_uint3(                                scroll_y)
+  /* Scrolls the horizontal X position of background.  It is
+   * recommended to DISABLE the 40-COLS mode of the screen, if you are
+   * using scrolling.
+   *
+   * If 40-COLS mode is enabled, then set this value to SCROLL_X = 0
+   * (default initialization), to see the whole SCREEN_RAM/BITMAP_RAM
+   * on screen.
+   *
+   * TODO: How to enable/disable 40-COLS mode.
+   */
+  typedef_struct_uint3(                                scroll_x)
+
+  /* Color for the border of the screen.  */
+  typedef_struct_enum(Graphix_color_t,                 bordercolor)
+typedef_struct_end(Graphix_buffer_set_t)
+
+/* ---------------------------------------------------------------  */
+
+/* Size of GRAPHIX_BUFFER_T::SCREEN_RAM in bytes.  */
+define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
+
+/* Size of GRAPHIX_BUFFER_T::BITMAP_RAM in bytes.  */
+define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
+
+/* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset, color_bitzero)  */
+macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
+                                               ((arg1) << 4) | (arg2))
+
 /* Graphix buffer structure.  */
 typedef_struct_begin(Graphix_buffer_t)
+  /* Some writable member variables.  */
+  typedef_struct_nested(Graphix_buffer_set_t,          set)
+
+  /* Points to the screen RAM.  Every byte in this array is
+   * representing a cell in the screen, ordered from left to right.
+   * These are containing the cells fore- and background color for
+   * every cell.  Use the GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT() macro
+   * to convert two colors to the corresponding byte layout.
+   *
+   *   size:        GRAPHIX_BUFFER_SCREENRAM_BUFSIZE
+   *   byte layout: [msb..2^4: color bit set, 2^3..lsb: color zero bit]
+   *                GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset,
+   *                                                    color_bitzero)
+   *
+   *   cell layout: screen_ram[0]   screen_ram[1]   ... screen_ram[39]
+   *                screen_ram[40]  screen_ram[41]  ... screen_ram[79]
+   *                ...             ...                 ...
+   *                ...             ...                 ...
+   *                screen_ram[960] screen_ram[961] ... screen_ram[999]
+   */
   typedef_struct_uint8_ptr(                            screen_ram)
+  /* Points to the bitmap RAM.  Every byte in this array is
+   * representing the pixels of the bitmap, ordered for every 8 bytes
+   * (one cell of the screen) from the top down, then cell-wise from
+   * left to right.
+   *
+   *   size:          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE
+   *   byte layout:   [msb: left pixel, pxl 2, ..., lsb: right pixel]
+   *
+   *   screen layout: bitmap_ram[0]  bitmap_ram[8]   bitmap_ram[16]
+   *                  bitmap_ram[1]  bitmap_ram[9]   bitmap_ram[17]
+   *                  bitmap_ram[2]  bitmap_ram[10]  bitmap_ram[18]
+   *                  bitmap_ram[3]  bitmap_ram[11]  bitmap_ram[19]
+   *                  bitmap_ram[4]  bitmap_ram[12]  bitmap_ram[20]
+   *                  bitmap_ram[5]  bitmap_ram[13]  bitmap_ram[21]
+   *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
+   *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
+   */
   typedef_struct_uint8_ptr(                            bitmap_ram)
-  typedef_struct_int8(                                 scroll_x)
-  typedef_struct_int8(                                 scroll_y)
 
-  typedef_struct_enum(Graphix_color_t,                 bordercolor)
-
+  /* The sprites structure  */
   typedef_struct_nested(Graphix_buffer_sprites_t,      sprites)
 typedef_struct_end(Graphix_buffer_t)
+
+/* ***************************************************************  */
 
 /* VIC-II revision structure  */
 typedef_enum_begin(Graphix_vicrev_t)

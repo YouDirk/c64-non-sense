@@ -84,26 +84,18 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.set.charset_exit = EngineConfig.charset_exit;
 
   /* initialize Graphix.buffer  */
-  Graphix.buffer.screen_ram = _SCREEN_RAM;
-  Graphix.buffer.bitmap_ram = _BITMAP_RAM;
-  Graphix.buffer.scroll_x   = 0;
-  Graphix.buffer.scroll_y   = 0;
+  Graphix.buffer.screen_ram     = _SCREEN_RAM;
+  Graphix.buffer.bitmap_ram     = _BITMAP_RAM;
+  Graphix.buffer.set.scroll_y   = VIC_CTRL1_YSCROLL_DEFAULT;
+  Graphix.buffer.set.scroll_x   = VIC_CTRL2_XSCROLL_DEFAULT;
 
-  Graphix.buffer.bordercolor = Graphix_black;
+  Graphix.buffer.set.bordercolor = Graphix_black;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
-
-  /* reset postitions of sprites  */
-
-  /* Will be set during vblank isr.
-   *
-   * memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
-   * VIC.spr_hi_x = 0x00;
-   */
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
@@ -150,6 +142,8 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
+  VIC.spr_mcolor0 = VIC_SPR_MCOLOR0_0B01_DEFAULT;
+  VIC.spr_mcolor1 = VIC_SPR_MCOLOR1_0B11_DEFAULT;
 
   /* release Graphix.buffer  */
   for (cur_sprite = Graphix.buffer.sprites.sprite;

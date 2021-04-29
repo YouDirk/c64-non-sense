@@ -91,14 +91,14 @@ register_uint8(d010,                         VIC_SPRHI_X)
 
 /* ***************************************************************  */
 
-register_uint8(d011,                         VIC_CTRL1)
-define_hex(VIC_CTRL1_RASTERLINE_MASK,        80)
-define_hex(VIC_CTRL1_EXTCOLOR_MASK,          40)
-define_hex(VIC_CTRL1_BITMAPMODE_MASK,        20)
-define_hex(VIC_CTRL1_SCREEN_ON_MASK,         10)
-define_hex(VIC_CTRL1_25ROWS_MASK,            08)
-define_hex(VIC_CTRL1_YSCROLL_MASK,           07)
-define_hex(VIC_CTRL1_YSCROLL_DEFAULT,        03)
+register_uint8(d011,                                   VIC_CTRL1)
+define_hex(VIC_CTRL1_RASTERLINE_MASK,                  80)
+define_hex(VIC_CTRL1_EXTCOLOR_MASK,                    40)
+define_hex(VIC_CTRL1_BITMAPMODE_MASK,                  20)
+define_hex(VIC_CTRL1_SCREEN_ON_MASK,                   10)
+define_hex(VIC_CTRL1_25ROWS_MASK,                      08)
+define_hex(VIC_CTRL1_YSCROLL_MASK,                     07)
+define_hex(VIC_CTRL1_YSCROLL_DEFAULT,                  03)
 define(VIC_CTRL1_DEFAULT,                                            \
        VIC_CTRL1_SCREEN_ON_MASK | VIC_CTRL1_25ROWS_MASK              \
        | VIC_CTRL1_YSCROLL_DEFAULT)
@@ -108,24 +108,24 @@ define(VIC_CTRL1_MODE,                                               \
        VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
        | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VBLANK >> 1)))
 
-register_uint8(d012,                         VIC_RASTERLINE)
-define_hex(VIC_RASTERLINE_MASK,              ff)
-define_hex(VIC_RASTERL_MAX_PAL_MASK,         f0)
-define_hex(VIC_RASTERL_CYCLES_PAL6569_VAL,   7f)
-define_hex(VIC_RASTERL_CYCLES_PALN6572_VAL,  9b)
+register_uint8(d012,                                   VIC_RASTERLINE)
+define_hex(VIC_RASTERLINE_MASK,                        ff)
+define_hex(VIC_RASTERL_MAX_PAL_MASK,                   f0)
+define_hex(VIC_RASTERL_CYCLES_PAL6569_VAL,             7f)
+define_hex(VIC_RASTERL_CYCLES_PALN6572_VAL,            9b)
 define    (VIC_RASTERL_CYCLES_PAL_THRESHOLD,                         \
            VIC_RASTERL_CYCLES_PAL6569_VAL                            \
            + (VIC_RASTERL_CYCLES_PALN6572_VAL                        \
               - VIC_RASTERL_CYCLES_PAL6569_VAL)/2)
-define_hex(VIC_RASTERL_SCREENBEGIN_24ROWS,   34)
-define_hex(VIC_RASTERL_SCREENEND_24ROWS,     f7)
-define_hex(VIC_RASTERL_SCREENBEGIN_25ROWS,   30)
-define_hex(VIC_RASTERL_SCREENEND_25ROWS,     fb)
-define_hex(VIC_RASTERL_BACKPORCH_PAL_43,     0e)
-define_hex(VIC_RASTERL_BACKPORCH_PAL_169,    21)
-define_hex(VIC_RASTERL_BACKPORCH_NTSC_43,    1a)
-define_hex(VIC_RASTERL_FRONTPORCH_PAL_43,   11f)
-define_hex(VIC_RASTERL_FRONTPORCH_PAL_169,  10a)
+define_hex(VIC_RASTERL_SCREENBEGIN_24ROWS,             34)
+define_hex(VIC_RASTERL_SCREENEND_24ROWS,               f7)
+define_hex(VIC_RASTERL_SCREENBEGIN_25ROWS,             30)
+define_hex(VIC_RASTERL_SCREENEND_25ROWS,               fb)
+define_hex(VIC_RASTERL_BACKPORCH_PAL_43,               0e)
+define_hex(VIC_RASTERL_BACKPORCH_PAL_169,              21)
+define_hex(VIC_RASTERL_BACKPORCH_NTSC_43,              1a)
+define_hex(VIC_RASTERL_FRONTPORCH_PAL_43,             11f)
+define_hex(VIC_RASTERL_FRONTPORCH_PAL_169,            10a)
 define    (VIC_RASTERL_FRONTPORCH_NTSC_43,  VIC_RASTERL_MAX_NTSC_6567R56A)
 
 define(VIC_RASTERLINE_VBLANK,           VIC_RASTERL_SCREENEND_24ROWS)
@@ -133,28 +133,30 @@ define(VIC_RASTERLINE_MODE,                                          \
        VIC_RASTERLINE_VBLANK & VIC_RASTERLINE_MASK)
 
 /* sprite enable bits  */
-register_uint8(d015,                         VIC_SPR_ENABLE)
+register_uint8(d015,                                   VIC_SPR_ENABLE)
 
-register_uint8(d016,                         VIC_CTRL2)
-define_hex(VIC_CTRL2_MULTICOLOR_MASK,        10)
-define_hex(VIC_CTRL2_40COLS_MASK,            08)
-define_hex(VIC_CTRL2_XSCROLL_MASK,           07)
-define_hex(VIC_CTRL2_HIGH_DEFAULT,           c0)
+register_uint8(d016,                                   VIC_CTRL2)
+define_hex(VIC_CTRL2_MULTICOLOR_MASK,                  10)
+define_hex(VIC_CTRL2_40COLS_MASK,                      08)
+define_hex(VIC_CTRL2_XSCROLL_MASK,                     07)
+define_hex(VIC_CTRL2_XSCROLL_DEFAULT,                  00)
+define_hex(VIC_CTRL2_HIGH_DEFAULT,                     c0)
 define(VIC_CTRL2_DEFAULT,                                            \
-       VIC_CTRL2_HIGH_DEFAULT | VIC_CTRL2_40COLS_MASK)
+       VIC_CTRL2_HIGH_DEFAULT | VIC_CTRL2_40COLS_MASK
+       | VIC_CTRL2_XSCROLL_DEFAULT)
 
 /* no multicolor, no 40 cols in x, xscroll=0  */
 define(VIC_CTRL2_MODE,                                               \
        00)
 
-/* sprite Y expansion  */
-register_uint8(d017,                         VIC_SPR_EXPY)
+/* sprite Y expansion enable bits  */
+register_uint8(d017,                                   VIC_SPR_EXPY)
 
-register_uint8(d018,                         VIC_ADDR)
-define_hex(VIC_ADDR_SCREENRAM_MASK,          f0)
-define_hex(VIC_ADDR_SCREENRAM_STEP,          0040)
-define_hex(VIC_ADDR_BITMAP_MASK,             0f)
-define_hex(VIC_ADDR_BITMAP_STEP,             0400)
+register_uint8(d018,                                   VIC_ADDR)
+define_hex(VIC_ADDR_SCREENRAM_MASK,                    f0)
+define_hex(VIC_ADDR_SCREENRAM_STEP,                    0040)
+define_hex(VIC_ADDR_BITMAP_MASK,                       0f)
+define_hex(VIC_ADDR_BITMAP_STEP,                       0400)
 /* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
  * access to the Character ROM at address (0x1000 - 0x2000), which is
  * accessable via memory at location (0xd000 - 0xe000).
@@ -174,25 +176,25 @@ macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
 macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
                 (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
 
-register_uint8(d019,                         VIC_IRR)
-register_uint8(d01a,                         VIC_IMR)
-define_hex(VIC_IMR_DISABLEALL_MASK,          00)
-define_hex(VIC_IMR_RASTERLINE_MASK,          01)
-define_hex(VIC_IMR_SHCOLLOSION_MASK,         02)
-define_hex(VIC_IMR_SSCOLLOSION_MASK,         04)
-define_hex(VIC_IMR_LIGHTPEN_MASK,            08)
-define_hex(VIC_IRR_IRQGLOBAL_MASK,           80)
+register_uint8(d019,                                   VIC_IRR)
+register_uint8(d01a,                                   VIC_IMR)
+define_hex(VIC_IMR_DISABLEALL_MASK,                    00)
+define_hex(VIC_IMR_RASTERLINE_MASK,                    01)
+define_hex(VIC_IMR_SHCOLLOSION_MASK,                   02)
+define_hex(VIC_IMR_SSCOLLOSION_MASK,                   04)
+define_hex(VIC_IMR_LIGHTPEN_MASK,                      08)
+define_hex(VIC_IRR_IRQGLOBAL_MASK,                     80)
 
 define(VIC_IMR_IRQMODE,                                              \
        VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
 
-/* sprite background priority  */
+/* sprite background priority enable bits  */
 register_uint8(d01b,                         VIC_SPR_BGPRIO)
 
-/* sprite multicolor  */
+/* sprite multicolor enable bits  */
 register_uint8(d01c,                         VIC_SPR_MCOLOR)
 
-/* sprite X expansion  */
+/* sprite X expansion enable bits  */
 register_uint8(d01d,                         VIC_SPR_EXPX)
 
 register_uint8(d020,                         VIC_BORDERCOLOR)
@@ -202,12 +204,12 @@ define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 /* ***************************************************************  */
 
 /* multicolor for bit combination 0b01 = 0x01  */
-register_uint8(d025,                         VIC_SPR_MCOLOR_0B01)
-define_hex(VIC_SPR_MCOLOR_0B01_DEFAULT,      f4)
+register_uint8(d025,                         VIC_SPR_MCOLOR0_0B01)
+define_hex(VIC_SPR_MCOLOR0_0B01_DEFAULT,     f4)
 
 /* multicolor for bit combination 0b11 = 0x03  */
-register_uint8(d026,                         VIC_SPR_MCOLOR_0B11)
-define_hex(VIC_SPR_MCOLOR_0B11_DEFAULT,      f0)
+register_uint8(d026,                         VIC_SPR_MCOLOR1_0B11)
+define_hex(VIC_SPR_MCOLOR1_0B11_DEFAULT,     f0)
 
 /* ***************************************************************  */
 

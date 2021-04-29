@@ -24,44 +24,6 @@
 
 /* ***************************************************************  */
 
-#define GRAPHIX_CELL_WIDTH_HIRES        8
-#define GRAPHIX_CELL_WIDTH_MULTICOLOR   4
-#define GRAPHIX_CELL_HEIGHT             8
-#define GRAPHIX_CELL_CNT_X              40
-#define GRAPHIX_CELL_CNT_Y              25
-
-#define GRAPHIX_RES_X_HIRES                                          \
-  (GRAPHIX_CELL_WIDTH_HIRES*GRAPHIX_CELL_CNT_X)      /* x=320 px  */
-#define GRAPHIX_RES_X_MULTICOLOR                                     \
-  (GRAPHIX_CELL_WIDTH_MULTICOLOR*GRAPHIX_CELL_CNT_X) /* x=160 px  */
-#define GRAPHIX_RES_Y                                                \
-  (GRAPHIX_CELL_HEIGHT*GRAPHIX_CELL_CNT_Y)           /* y=200 px  */
-
-#define GRAPHIX_BYTES_PER_CELL          8
-#define GRAPHIX_PIXEL_PER_CELL_HIRES                                 \
-  (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELL_WIDTH_HIRES)  /* 64 px/cell  */
-#define GRAPHIX_PIXEL_PER_CELL_MULTICOLOR                            \
-  (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELL_WIDTH_MULTICOLOR)
-                                                     /* 32 px/cell  */
-
-#define GRAPHIX_CELLS_PER_SCREEN (GRAPHIX_CELL_CNT_X*GRAPHIX_CELL_CNT_Y)
-                                             /* 1000 cells/screen  */
-#define GRAPHIX_BYTES_PER_SCREEN                                     \
-  (GRAPHIX_BYTES_PER_CELL*GRAPHIX_CELLS_PER_SCREEN)
-                                             /* 8000 bytes/screen  */
-
-#define GRAPHIX_PIXEL_PER_SCREEN_HIRES                               \
-  (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_HIRES)
-                                             /* 64.000 px/screen  */
-#define GRAPHIX_PIXEL_PER_SCREEN_MULTICOLOR                          \
-  (GRAPHIX_CELLS_PER_SCREEN*GRAPHIX_PIXEL_PER_CELL_MULTICOLOR)
-                                             /* 32.000 px/screen  */
-
-#define GRAPHIX_SCREENRAM_COLOR(set_color, zero_color)               \
-  (((set_color) << 4) | (zero_color))
-
-/* ***************************************************************  */
-
 /* callbacks are defined here  */
 typedef void __fastcall__ (*Graphix_initCallback_t)(void);
 typedef void __fastcall__ (*Graphix_releaseCallback_t)(void);

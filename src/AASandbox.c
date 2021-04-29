@@ -50,13 +50,15 @@ AASandbox_init(void)
 
   /* set screen ram  */
   memset(Graphix.buffer.screen_ram,
-         GRAPHIX_SCREENRAM_COLOR(Graphix_green, Graphix_black),
-         GRAPHIX_CELLS_PER_SCREEN);
+    GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green, Graphix_black),
+    GRAPHIX_BUFFER_SCREENRAM_BUFSIZE);
 
   /* set bitmap  */
-  memset(Graphix.buffer.bitmap_ram, 0x01, GRAPHIX_BYTES_PER_SCREEN);
-  for (i=0; i<GRAPHIX_BYTES_PER_SCREEN; i+=8)
+  memset(Graphix.buffer.bitmap_ram, 0x01,
+         GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE);
+  for (i=0; i < GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE; i+=8) {
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
+  }
 
   Graphix.buffer.sprites.sprite[4].set.pos_y = 54;
   Graphix.buffer.sprites.sprite[4].set.pos_x = 31;
@@ -225,8 +227,8 @@ AASandbox_tick(void)
   Pace_tick(&AASandbox_pace_sprite_y);
   Pace_tick(&AASandbox_pace_sprite_x);
 
-  Graphix.buffer.scroll_y += AASandbox_pace_y.pace;
-  Graphix.buffer.scroll_x += AASandbox_pace_x.pace;
+  Graphix.buffer.set.scroll_y += AASandbox_pace_y.pace;
+  Graphix.buffer.set.scroll_x += AASandbox_pace_x.pace;
   Graphix.buffer
     .sprites.sprite[0].set.pos_y += AASandbox_pace_sprite_y.pace;
   Graphix.buffer
@@ -241,7 +243,7 @@ AASandbox_tick_low(void)
   if (++AASandbox_bordercolor_time >= ENGINE_MS2TICKS(1000)) {
     AASandbox_bordercolor_time = 0;
 
-    ++Graphix.buffer.bordercolor;
+    ++Graphix.buffer.set.bordercolor;
 
     if ((--Graphix.buffer.sprites.sprite[0].set.color & UINT4_MAX)
         == Graphix_black) {
