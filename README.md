@@ -31,7 +31,7 @@ The progression of C64 NonSense is vlogged at [Youtube here
 ### Features
 
 * **Video**  
-      PAL (optimized), NTSC (via [`src/Time.h`](src/Time.h)
+      PAL (optimized), NTSC (via [`src/Timer.h`](src/Timer.h)
       optimizable)
 * **Graphic modes**  
       HiRes (high resolution), Multicolor *[WiP]*
