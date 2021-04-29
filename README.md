@@ -28,6 +28,20 @@ The progression of C64 NonSense is vlogged at [Youtube here
 
 ![The Screenshot](trunk/screenshot-promo.jpg)
 
+### Features
+
+* **Video**  
+      PAL (optimized), NTSC (via [`src/Time.h`](src/Time.h)
+      optimizable)
+* **Graphic modes**  
+      HiRes (high resolution), Multicolor *[WiP]*
+* **Sprites**  
+      8x real-time configurable sprites, with collision detection and
+      bitmap animations *[WiP]*
+* **Input**  
+      joysticks (port 1 and 2), keyboard (via scan codes and PETSCII
+      characters)
+
 Development toolchain
 ---------------------
 
