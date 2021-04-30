@@ -23,8 +23,8 @@
 void __fastcall__
 Sprite_new(Sprite_t* sprite)
 {
-  sprite->set.pos_y = SPRITE_POSY_SCREEN_BEGIN;
-  sprite->set.pos_x = SPRITE_POSX_SCREEN_BEGIN;
+  sprite->set.pos_y = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+  sprite->set.pos_x = SPRITE_POS_SMALLSCREEN_BEGIN_X;
 
   sprite->set.color = Graphix_white;
 

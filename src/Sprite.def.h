@@ -29,9 +29,23 @@ header_define(SPRITE)
 
 /* ***************************************************************  */
 
-/* TODO  */
-define_dec(SPRITE_POSY_SCREEN_BEGIN,              54)
-define_dec(SPRITE_POSX_SCREEN_BEGIN,              31)
+define_dec(SPRITE_WIDTH,                                    24)
+define_dec(SPRITE_HEIGHT,                                   21)
+
+define_dec(SPRITE_POS_DISPLAY_BEGIN_X,                      0)
+define_dec(SPRITE_POS_DISPLAY_BEGIN_Y,                      0)
+define_dec(SPRITE_POS_DISPLAY_WIDTH,              /* ??? */ 512)
+define_dec(SPRITE_POS_DISPLAY_HEIGHT,             /* ??? */ 256)
+
+define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_X,                  31)
+define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_Y,                  54)
+define_dec(SPRITE_POS_SMALLSCREEN_WIDTH,                    304)
+define_dec(SPRITE_POS_SMALLSCREEN_HEIGHT,                   192)
+
+define_dec(SPRITE_POS_LARGESCREEN_BEGIN_X,                  24)
+define_dec(SPRITE_POS_LARGESCREEN_BEGIN_Y,                  50)
+define_dec(SPRITE_POS_LARGESCREEN_WIDTH,                    320)
+define_dec(SPRITE_POS_LARGESCREEN_HEIGHT,                   200)
 
 /* ***************************************************************  */
 

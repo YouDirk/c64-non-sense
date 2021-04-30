@@ -27,6 +27,9 @@
 
 static uint8_t AASandbox_bordercolor_time;
 
+#define _CONST_SPRITES                                               \
+  (Graphix_sprite_0_mask | Graphix_sprite_1_mask)
+
 #define _BLINKING_SPRITES                                            \
   (Graphix_sprite_4_mask | Graphix_sprite_5_mask                     \
    | Graphix_sprite_6_mask | Graphix_sprite_7_mask)
@@ -60,38 +63,53 @@ AASandbox_init(void)
     Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
   }
 
-  Graphix.buffer.sprites.sprite[4].set.pos_y = 54;
-  Graphix.buffer.sprites.sprite[4].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[4].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+  Graphix.buffer.sprites.sprite[4].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X;
   Graphix.buffer.sprites.sprite[4].set.color = Graphix_cyan;
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
     | Sprite_props_scale_x_mask | Sprite_props_prio_bground_mask;
 
-  Graphix.buffer.sprites.sprite[5].set.pos_y = 54;
-  Graphix.buffer.sprites.sprite[5].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[5].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+  Graphix.buffer.sprites.sprite[5].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH
+    - SPRITE_WIDTH;
   Graphix.buffer.sprites.sprite[5].set.color = Graphix_lightred;
   Graphix.buffer.sprites.sprite[5].set.props
     = Sprite_props_scale_y_mask;
 
-  Graphix.buffer.sprites.sprite[6].set.pos_y = 225;
-  Graphix.buffer.sprites.sprite[6].set.pos_x = 31;
+  Graphix.buffer.sprites.sprite[6].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
+    - SPRITE_HEIGHT;
+  Graphix.buffer.sprites.sprite[6].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X;
   Graphix.buffer.sprites.sprite[6].set.color = Graphix_yellow;
   Graphix.buffer.sprites.sprite[6].set.props
     = Sprite_props_scale_x_mask;
 
-  Graphix.buffer.sprites.sprite[7].set.pos_y = 225;
-  Graphix.buffer.sprites.sprite[7].set.pos_x = 311;
+  Graphix.buffer.sprites.sprite[7].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
+    - SPRITE_HEIGHT;
+  Graphix.buffer.sprites.sprite[7].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH
+    - SPRITE_WIDTH;
   Graphix.buffer.sprites.sprite[7].set.color = Graphix_blue;
   Graphix.buffer.sprites.sprite[7].set.props
     = Sprite_props_prio_bground_mask;
 
-  Graphix.buffer.sprites.sprite[0].set.pos_y = 225;
-  Graphix.buffer.sprites.sprite[0].set.pos_x = 31 + (311 - 31)/2;
+  Graphix.buffer.sprites.sprite[0].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
+    - SPRITE_HEIGHT;
+  Graphix.buffer.sprites.sprite[0].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2;
   Graphix.buffer.sprites.sprite[0].set.props
     = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.set.enabled
-    = Graphix_sprite_0_mask | _BLINKING_SPRITES;
+    = _CONST_SPRITES | _BLINKING_SPRITES;
 
   Pace_new(&AASandbox_pace_y, 12, 6, 14, 63);
   Pace_new(&AASandbox_pace_x, 3, 2, 32, 0);
@@ -101,7 +119,7 @@ AASandbox_init(void)
   Pace_impulse_neg(&AASandbox_pace_sprite_y);
 
 #ifdef DEBUG
-  strcpy(AASandbox_charout, "PETSCII '");
+  strcpy(AASandbox_charout, "petscii '");
   AASandbox_charout_last = AASandbox_charout + 8;
 #endif /* DEBUG  */
 }
@@ -260,8 +278,8 @@ AASandbox_tick_low(void)
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES
-      ? Graphix_sprite_0_mask
-      : (Graphix_sprite_0_mask | _BLINKING_SPRITES);
+      ? _CONST_SPRITES
+      : (_CONST_SPRITES | _BLINKING_SPRITES);
   }
 
   if (Input.joy_port2.button1.pressed || Input.joy_port1.button1.pressed)

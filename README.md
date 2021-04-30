@@ -31,15 +31,16 @@ The progression of C64 NonSense is vlogged at [Youtube here
 ### Features
 
 * **Video**  
-      PAL (optimized), NTSC (via [`src/Timer.h`](src/Timer.h)
+      PAL (optimized), NTSC (working, via [`src/Timer.h`](src/Timer.h)
       optimizable)
 * **Graphic modes**  
-      HiRes (high resolution), Multicolor *[WiP]*
+      HiRes 320x200 with 2 colors/cell, Multicolor 160x200 with 4
+      colors/cell *[WiP]*
 * **Sprites**  
       8x real-time configurable sprites, with collision detection and
       bitmap animations *[WiP]*
 * **Input**  
-      joysticks (port 1 and 2), keyboard (via scan codes and PETSCII
+      joysticks (port 2 and 1), keyboard (via scan codes and PETSCII
       characters)
 
 Development toolchain
