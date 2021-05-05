@@ -28,7 +28,7 @@
 static uint8_t AASandbox_bordercolor_time;
 
 #define _CONST_SPRITES                                               \
-  (Graphix_sprite_0_mask | Graphix_sprite_1_mask)
+  Graphix_sprite_0_mask
 
 #define _BLINKING_SPRITES                                            \
   (Graphix_sprite_4_mask | Graphix_sprite_5_mask                     \
@@ -70,7 +70,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[4].set.color = Graphix_cyan;
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
-    | Sprite_props_scale_x_mask | Sprite_props_prio_bground_mask;
+    | Sprite_props_scale_x_mask;
 
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
@@ -104,7 +104,8 @@ AASandbox_init(void)
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
   Graphix.buffer.sprites.sprite[0].set.pos_x
-    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2;
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2
+    - SPRITE_WIDTH/2;
   Graphix.buffer.sprites.sprite[0].set.props
     = Sprite_props_scale_y_mask;
 

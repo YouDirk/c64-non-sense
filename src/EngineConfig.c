@@ -36,7 +36,7 @@ EngineConfig_init(void)
 
   /* Charset which will be set after termination of the engine.
    */
-  EngineConfig.charset_exit = Graphix_charset2_lowercase_e;
+  EngineConfig.charset_exit = Graphix_charset1_symbols_e;
 }
 
 void __fastcall__

@@ -128,7 +128,7 @@ define_hex(VIC_RASTERL_FRONTPORCH_PAL_43,             11f)
 define_hex(VIC_RASTERL_FRONTPORCH_PAL_169,            10a)
 define    (VIC_RASTERL_FRONTPORCH_NTSC_43,  VIC_RASTERL_MAX_NTSC_6567R56A)
 
-define(VIC_RASTERLINE_VBLANK,           VIC_RASTERL_SCREENEND_24ROWS)
+define(VIC_RASTERLINE_VBLANK,            VIC_RASTERL_SCREENEND_24ROWS)
 define(VIC_RASTERLINE_MODE,                                          \
        VIC_RASTERLINE_VBLANK & VIC_RASTERLINE_MASK)
 
@@ -152,13 +152,22 @@ define(VIC_CTRL2_MODE,                                               \
 /* sprite Y expansion enable bits  */
 register_uint8(d017,                                   VIC_SPR_EXPY)
 
+/* ***************************************************************  */
+
 register_uint8(d018,                                   VIC_ADDR)
-define_hex(VIC_ADDR_SCREENRAM_MASK,                    f0)
-define_hex(VIC_ADDR_SCREENRAM_STEP,                    0040)
+
+/* all bits [7..4] are used  */
+define_hex(VIC_ADDR_SCREENRAM_SHIFT,                   4)
+define_hex(VIC_ADDR_SCREENRAM_STEP,                    0400)
+define_hex(VIC_ADDR_SCREENRAM_DEFAULT,                 01)
+
+/* Bitmap mode: just bit 3 able to set, bits [2..0] unused
+ * Text mode  : bits [3..1] able to set, bit 0 unused
+ */
 define_hex(VIC_ADDR_BITMAP_MASK,                       0f)
 define_hex(VIC_ADDR_BITMAP_STEP,                       0400)
 /* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
- * access to the Character ROM at address (0x1000 - 0x2000), which is
+ * access to the Character ROM at address (0x1000 - 0x1fff), which is
  * accessable via memory at location (0xd000 - 0xe000).
  *
  * The VIC-II DMA address is calculated in that case as
@@ -166,15 +175,20 @@ define_hex(VIC_ADDR_BITMAP_STEP,                       0400)
  */
 define_hex(VIC_ADDR_BITMAP_CHARSET1,    05)  /* (default) symbols    */
 define_hex(VIC_ADDR_BITMAP_CHARSET2,    07)  /* lower case possible  */
-define_hex(VIC_ADDR_SCREENRAM_DEFAULT,  10)
-define(VIC_ADDR_DEFAULT,                VIC_ADDR_SCREENRAM_DEFAULT)
+define_hex(VIC_ADDR_BITMAP_DEFAULT,     00)
+
+define(VIC_ADDR_DEFAULT,                                             \
+               VIC_ADDR_SCREENRAM_DEFAULT << VIC_ADDR_SCREENRAM_SHIFT
+               | VIC_ADDR_BITMAP_DEFAULT)
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
 macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
-                (arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP)
+                              (arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP)
 /* VIC_ADDR_BITMAP_ADDR(VICBANK_ADDR, VIC_ADDR_BITMAP)  */
 macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
-                (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
+                                 (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
+
+/* ***************************************************************  */
 
 register_uint8(d019,                                   VIC_IRR)
 register_uint8(d01a,                                   VIC_IMR)

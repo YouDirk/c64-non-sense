@@ -61,7 +61,9 @@ define_hex(CIA1_PRB_TIMERBTOGGLE_MASK,       80)
  * ------------------------------
  */
 
-/* If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
+/* VIC Bank size is 16 KB (0x4000 bytes).
+ *
+ * If VICBANK_MEM0 or VICBANK_MEM8 is selected, then VIC-II has DMA
  * access to the Character ROM at address (0x1000 - 0x2000), which is
  * accessable via memory at location (0xd000 - 0xe000).
  */

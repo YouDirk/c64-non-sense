@@ -23,19 +23,32 @@
 
 #include "chip-cia.gen.h"
 
-/* default is CIA2_PRA_VICBANK_MEM0  */
-#define _VICBANK                   CIA2_PRA_VICBANK_MEMC
-/* default is VIC_ADDR_SCREENRAM_DEFAULT  */
-#define _SCREENRAM_x0X40           0x00
-/* default 0x07, but just 0x00 or 0x08 possible  */
-#define _BITMAPRAM_x0X400          0x08
+#if GRAPHIX_MMAPPING == 2
+#  define _VICBANK                      CIA2_PRA_VICBANK_MEM4
+#  define _SCREENRAM_x0X400             0x08
+#  define _BITMAPRAM_x0X400             0x00
+#elif GRAPHIX_MMAPPING == 1
+#  define _VICBANK                      CIA2_PRA_VICBANK_MEM8
+#  define _SCREENRAM_x0X400             0x00
+#  define _BITMAPRAM_x0X400             0x08
+#elif GRAPHIX_MMAPPING == 0
+#  define _VICBANK                      CIA2_PRA_VICBANK_MEMC
+#  define _SCREENRAM_x0X400             0x00
+#  define _BITMAPRAM_x0X400             0x08
+#else /* GRAPHIX_MMAPPING  */
+#  error "GRAPHIX_MMAPPING unknown!"
+#  define _VICBANK                      0x00
+#  define _SCREENRAM_x0X400             0x00
+#  define _BITMAPRAM_x0X400             0x00
+#endif /* GRAPHIX_MMAPPING  */
 
-#define _VIC_RAM_ADDR              CIA2_PRA_VICBANK_ADDR(_VICBANK)
-#define _VIC_RAM                   ((void*) _VIC_RAM_ADDR)
-#define _SCREEN_RAM                                                  \
-  ((uint8_t*) VIC_ADDR_SCREENRAM_ADDR(_VIC_RAM_ADDR, _SCREENRAM_x0X40))
-#define _BITMAP_RAM                                                  \
-  ((uint8_t*) VIC_ADDR_BITMAP_ADDR(_VIC_RAM_ADDR, _BITMAPRAM_x0X400))
+#define _VIC_VICBANK_ADDR               CIA2_PRA_VICBANK_ADDR(_VICBANK)
+#define _VIC_VICBANK_RAM                ((void*) _VIC_VICBANK_ADDR)
+
+#define _SCREEN_RAM                     ((uint8_t*)                  \
+        VIC_ADDR_SCREENRAM_ADDR(_VIC_VICBANK_ADDR, _SCREENRAM_x0X400))
+#define _BITMAP_RAM                     ((uint8_t*)                  \
+           VIC_ADDR_BITMAP_ADDR(_VIC_VICBANK_ADDR, _BITMAPRAM_x0X400))
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
 #ifndef CONF_DOUBLE_BUFFERING
@@ -62,6 +75,7 @@ void __fastcall__
 Graphix_init(Graphix_initCallback_t init_callback)
 {
   static Sprite_t* cur_sprite;
+  static uint8_t i;
 
   /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
@@ -71,7 +85,7 @@ Graphix_init(Graphix_initCallback_t init_callback)
 
   /* remap VIC memory  */
   CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
-  VIC.addr = (VIC_ADDR_SCREENRAM_MASK & _SCREENRAM_x0X40)
+  VIC.addr = (_SCREENRAM_x0X400 << VIC_ADDR_SCREENRAM_SHIFT)
     | (VIC_ADDR_BITMAP_MASK & _BITMAPRAM_x0X400);
 
   /* xscroll and multicolor stuff  */
@@ -96,6 +110,21 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
+
+  // --- TODO ---
+  memset((void*) (_SCREEN_RAM + 0x0400), 0xff, 3*21);
+  for (i=0; i<8; ++i) {
+    *(_SCREEN_RAM + 1016 + i)
+      = ((unsigned) _SCREEN_RAM - _VIC_VICBANK_ADDR + 0x0400) >> 6;
+  }
+  memset((void*) (_SCREEN_RAM + 0x0440), 0xe4, 3*21);
+  *(_SCREEN_RAM + 1016 + 4)
+    = ((unsigned) _SCREEN_RAM - _VIC_VICBANK_ADDR + 0x0440) >> 6;
+#ifdef DEBUG
+  printf("0x%04x 0x%04x\n",
+         Graphix.buffer.screen_ram, Graphix.buffer.bitmap_ram);
+#endif
+  // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
@@ -176,12 +205,14 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 
   switch (Graphix.set.charset_exit) {
   case Graphix_charset2_lowercase_e:
-    VIC.addr = VIC_ADDR_DEFAULT | VIC_ADDR_BITMAP_CHARSET2;
+    VIC.addr = (VIC_ADDR_DEFAULT
+                & ~VIC_ADDR_BITMAP_MASK) | VIC_ADDR_BITMAP_CHARSET2;
     break;
   default:
     DEBUG_ERROR("graphix release, exit charset unknown");
   case Graphix_charset1_symbols_e:
-    VIC.addr = VIC_ADDR_DEFAULT | VIC_ADDR_BITMAP_CHARSET1;
+    VIC.addr = (VIC_ADDR_DEFAULT
+                & ~VIC_ADDR_BITMAP_MASK) | VIC_ADDR_BITMAP_CHARSET1;
     break;
   }
   CIA2.pra = CIA2_PRA_DEFAULT;
