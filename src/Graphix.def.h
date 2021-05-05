@@ -313,7 +313,7 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  *         |----------------------------------------------------|
  * 0x63e8  | [RAM] 16 bytes                                     |
  *         |----------------------------------------------------|
- * 0x63f8  | [RAM, SPRITE LOCATOR] 8 bytes                      |
+ * 0x63f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x4000 + (locator << 6))           |
  *         |----------------------------------------------------|
  * 0x6400  | [RAM, SPRITE BUFFERS] 7168 bytes                   |
@@ -336,7 +336,7 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  *         |----------------------------------------------------|
  * 0x83e8  | [RAM] 16 bytes                                     |
  *         |----------------------------------------------------|
- * 0x83f8  | [RAM, SPRITE LOCATOR] 8 bytes                      |
+ * 0x83f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x8000 + (locator << 6))           |
  *         |----------------------------------------------------|
  * 0x8400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |
@@ -372,7 +372,7 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  *         |----------------------------------------------------|
  * 0xc3e8  | [RAM] 16 bytes                                     |
  *         |----------------------------------------------------|
- * 0xc3f8  | [RAM, SPRITE LOCATOR] 8 bytes                      |
+ * 0xc3f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0xc000 + (locator << 6))           |
  *         |----------------------------------------------------|
  * 0xc400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |

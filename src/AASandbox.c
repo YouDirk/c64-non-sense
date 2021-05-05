@@ -64,38 +64,38 @@ AASandbox_init(void)
   }
 
   Graphix.buffer.sprites.sprite[4].set.pos_y
-    = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[4].set.pos_x
-    = SPRITE_POS_SMALLSCREEN_BEGIN_X;
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + 1;
   Graphix.buffer.sprites.sprite[4].set.color = Graphix_cyan;
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
     | Sprite_props_scale_x_mask;
 
   Graphix.buffer.sprites.sprite[5].set.pos_y
-    = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[5].set.pos_x
     = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH
-    - SPRITE_WIDTH;
+    - SPRITE_WIDTH - 1;
   Graphix.buffer.sprites.sprite[5].set.color = Graphix_lightred;
   Graphix.buffer.sprites.sprite[5].set.props
     = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.sprite[6].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
-    - SPRITE_HEIGHT;
+    - SPRITE_HEIGHT - 1;
   Graphix.buffer.sprites.sprite[6].set.pos_x
-    = SPRITE_POS_SMALLSCREEN_BEGIN_X;
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + 1;
   Graphix.buffer.sprites.sprite[6].set.color = Graphix_yellow;
   Graphix.buffer.sprites.sprite[6].set.props
     = Sprite_props_scale_x_mask;
 
   Graphix.buffer.sprites.sprite[7].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
-    - SPRITE_HEIGHT;
+    - SPRITE_HEIGHT - 1;
   Graphix.buffer.sprites.sprite[7].set.pos_x
     = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH
-    - SPRITE_WIDTH;
+    - SPRITE_WIDTH - 1;
   Graphix.buffer.sprites.sprite[7].set.color = Graphix_blue;
   Graphix.buffer.sprites.sprite[7].set.props
     = Sprite_props_prio_bground_mask;
