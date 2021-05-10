@@ -21,34 +21,16 @@
 #include "EngineConfig.h"
 #include "Sprite.h"
 
-#include "chip-cia.gen.h"
-
-#if GRAPHIX_MMAPPING == 2
-#  define _VICBANK                      CIA2_PRA_VICBANK_MEM4
-#  define _SCREENRAM_x0X400             0x08
-#  define _BITMAPRAM_x0X400             0x00
-#elif GRAPHIX_MMAPPING == 1
-#  define _VICBANK                      CIA2_PRA_VICBANK_MEM8
-#  define _SCREENRAM_x0X400             0x00
-#  define _BITMAPRAM_x0X400             0x08
-#elif GRAPHIX_MMAPPING == 0
-#  define _VICBANK                      CIA2_PRA_VICBANK_MEMC
-#  define _SCREENRAM_x0X400             0x00
-#  define _BITMAPRAM_x0X400             0x08
-#else /* GRAPHIX_MMAPPING  */
-#  error "GRAPHIX_MMAPPING unknown!"
-#  define _VICBANK                      0x00
-#  define _SCREENRAM_x0X400             0x00
-#  define _BITMAPRAM_x0X400             0x00
-#endif /* GRAPHIX_MMAPPING  */
-
-#define _VIC_VICBANK_ADDR               CIA2_PRA_VICBANK_ADDR(_VICBANK)
+#define _VIC_VICBANK_ADDR                                            \
+                       CIA2_PRA_VICBANK_ADDR(_GRAPHIX_VICBANK_CIA2PRA)
 #define _VIC_VICBANK_RAM                ((void*) _VIC_VICBANK_ADDR)
 
-#define _SCREEN_RAM                     ((uint8_t*)                  \
-        VIC_ADDR_SCREENRAM_ADDR(_VIC_VICBANK_ADDR, _SCREENRAM_x0X400))
-#define _BITMAP_RAM                     ((uint8_t*)                  \
-           VIC_ADDR_BITMAP_ADDR(_VIC_VICBANK_ADDR, _BITMAPRAM_x0X400))
+#define _SCREEN_RAM      ((uint8_t*)                                 \
+                          VIC_ADDR_SCREENRAM_ADDR(_VIC_VICBANK_ADDR, \
+                                   _GRAPHIX_SCREENRAM_x0X400_VICADDR))
+#define _BITMAP_RAM      ((uint8_t*)                                 \
+                          VIC_ADDR_BITMAP_ADDR(_VIC_VICBANK_ADDR,    \
+                                   _GRAPHIX_BITMAPRAM_x0X400_VICADDR))
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
 #ifndef CONF_DOUBLE_BUFFERING
@@ -84,9 +66,11 @@ Graphix_init(Graphix_initCallback_t init_callback)
   _Graphix_init_vic_detect();
 
   /* remap VIC memory  */
-  CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK) | _VICBANK;
-  VIC.addr = (_SCREENRAM_x0X400 << VIC_ADDR_SCREENRAM_SHIFT)
-    | (VIC_ADDR_BITMAP_MASK & _BITMAPRAM_x0X400);
+  CIA2.pra = (CIA2_PRA_DEFAULT & ~CIA2_PRA_VICBANK_MASK)
+             | _GRAPHIX_VICBANK_CIA2PRA;
+  VIC.addr
+    = (_GRAPHIX_SCREENRAM_x0X400_VICADDR << VIC_ADDR_SCREENRAM_SHIFT)
+    | (VIC_ADDR_BITMAP_MASK & _GRAPHIX_BITMAPRAM_x0X400_VICADDR);
 
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_MODE;

@@ -75,7 +75,7 @@ done:
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_IRQ_RENDERTIME
-        lda #VIC_COLOR_RED              ; we don´t need to push border
+        lda #VIC_COLOR_YELLOW           ; we don´t need to push border
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_IRQ_RENDERTIME
 

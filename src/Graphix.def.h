@@ -25,6 +25,7 @@ header_ifndef(GRAPHIX)
 header_define(GRAPHIX)
 
 include_def_h(chip-vic)
+include_def_h(chip-cia)
 
 /* *******************************************************************
  * colors of C64
@@ -293,72 +294,6 @@ extern_var(Graphix_t,                        Graphix)
 
 define_dec(GRAPHIX_MMAPPING,                 0)
 
-/* GRAPHIX_MMAPPING = 2
- *
- * Memory mapping for Graphix with VIC-II bank mapped to 0x4000.
- *
- *         : CPU access           | VIC DMA                     :
- *         : **********           | ************                :
- *         :                      |                             :
- *         .----------------------|-----------------------------.
- * 0x4000  | [BITMAP RAM] 8000 bytes                            |
- *         |                                                    |
- *         |                                                    |
- *         |                                                    |
- *         |----------------------------------------------------|
- * 0x5f40  | [RAM] 192 bytes                                    |
- *         |----------------------------------------------------|
- * 0x6000  | [SCREEN RAM] 1000 bytes                            |
- *         |                                                    |
- *         |----------------------------------------------------|
- * 0x63e8  | [RAM] 16 bytes                                     |
- *         |----------------------------------------------------|
- * 0x63f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
- *         |   sprite_ptr = (0x4000 + (locator << 6))           |
- *         |----------------------------------------------------|
- * 0x6400  | [RAM, SPRITE BUFFERS] 7168 bytes                   |
- *         |   = 8 sprites * 64 bytes/frame * 14 frames/sprite  |
- *         |                                                    |
- * 0x7fff  |                                                    |
- *         '----------------------------------------------------'
- */
-
-/* GRAPHIX_MMAPPING = 1
- *
- * Memory mapping for Graphix with VIC-II bank mapped to 0x8000.
- *
- *         : CPU access           | VIC DMA                     :
- *         : **********           | *******                     :
- *         :                      |                             :
- *         .----------------------|-----------------------------.
- * 0x8000  | [SCREEN RAM] 1000 bytes                            |
- *         |                                                    |
- *         |----------------------------------------------------|
- * 0x83e8  | [RAM] 16 bytes                                     |
- *         |----------------------------------------------------|
- * 0x83f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
- *         |   sprite_ptr = (0x8000 + (locator << 6))           |
- *         |----------------------------------------------------|
- * 0x8400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |
- *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
- *         |                                                    |
- *         |----------------------.-----------------------------|
- * 0x9000  | [RAM] 4096 bytes     | [ROM] Character ROM         |
- *         |                      |                             |
- *         |                      |                             |
- *         |----------------------'-----------------------------|
- * 0xa000  | [BITMAP RAM] 8000 bytes                            |
- *         |                                                    |
- *         |                                                    |
- *         |                                                    |
- *         |----------------------------------------------------|
- * 0xbf40  | [RAM] 192 bytes                                    |
- * 0xbfff  |                                                    |
- *         '----------------------------------------------------'
- */
-
-/* ---------------------------------------------------------------  */
-
 /* GRAPHIX_MMAPPING = 0
  *
  * Memory mapping for Graphix with VIC-II bank mapped to 0xc000.
@@ -394,6 +329,98 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  * 0xffff  |       defined in 'Kernal'                          |
  *         '----------------------------------------------------'
  */
+
+prep_if(GRAPHIX_MMAPPING equals 0)
+  define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
+  define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
+  define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
+
+/* ---------------------------------------------------------------  */
+
+/* GRAPHIX_MMAPPING = 1
+ *
+ * Memory mapping for Graphix with VIC-II bank mapped to 0x8000.
+ *
+ *         : CPU access           | VIC DMA access              :
+ *         : **********           | **************              :
+ *         :                      |                             :
+ *         .----------------------|-----------------------------.
+ * 0x8000  | [SCREEN RAM] 1000 bytes                            |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x83e8  | [RAM] 16 bytes                                     |
+ *         |----------------------------------------------------|
+ * 0x83f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
+ *         |   sprite_ptr = (0x8000 + (locator << 6))           |
+ *         |----------------------------------------------------|
+ * 0x8400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |
+ *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
+ *         |                                                    |
+ *         |----------------------.-----------------------------|
+ * 0x9000  | [RAM] 4096 bytes     | [ROM] Character ROM         |
+ *         |                      |                             |
+ *         |                      |                             |
+ *         |----------------------'-----------------------------|
+ * 0xa000  | [BITMAP RAM] 8000 bytes                            |
+ *         |                                                    |
+ *         |                                                    |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0xbf40  | [RAM] 192 bytes                                    |
+ * 0xbfff  |                                                    |
+ *         '----------------------------------------------------'
+ */
+
+prep_elif(GRAPHIX_MMAPPING equals 1)
+  define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
+  define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
+  define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
+
+/* ---------------------------------------------------------------  */
+
+/* GRAPHIX_MMAPPING = 2
+ *
+ * Memory mapping for Graphix with VIC-II bank mapped to 0x4000.
+ *
+ *         : CPU access           | VIC DMA access              :
+ *         : **********           | **************              :
+ *         :                      |                             :
+ *         .----------------------|-----------------------------.
+ * 0x4000  | [BITMAP RAM] 8000 bytes                            |
+ *         |                                                    |
+ *         |                                                    |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x5f40  | [RAM] 192 bytes                                    |
+ *         |----------------------------------------------------|
+ * 0x6000  | [SCREEN RAM] 1000 bytes                            |
+ *         |                                                    |
+ *         |----------------------------------------------------|
+ * 0x63e8  | [RAM] 16 bytes                                     |
+ *         |----------------------------------------------------|
+ * 0x63f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
+ *         |   sprite_ptr = (0x4000 + (locator << 6))           |
+ *         |----------------------------------------------------|
+ * 0x6400  | [RAM, SPRITE BUFFERS] 7168 bytes                   |
+ *         |   = 8 sprites * 64 bytes/frame * 14 frames/sprite  |
+ *         |                                                    |
+ * 0x7fff  |                                                    |
+ *         '----------------------------------------------------'
+ */
+
+prep_elif(GRAPHIX_MMAPPING equals 2)
+  define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
+  define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)
+  define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)
+
+/* ---------------------------------------------------------------  */
+
+prep_else("GRAPHIX_MMAPPING")
+  prep_error(                             "GRAPHIX_MMAPPING unknown!")
+  define_hex(_GRAPHIX_VICBANK_CIA2PRA,                             00)
+  define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
+  define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)
+prep_endif("GRAPHIX_MMAPPING")
 
 /* ***************************************************************  */
 

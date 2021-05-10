@@ -41,6 +41,15 @@ DEBUG_BUILD := 1
 #
 DEBUG_OPT_OVERFLOW_CHECK := 1
 
+# Mark as border color the time how long the C64 NonSense Engine is
+# polling stuff.  This is equivalent to the CPU time which is free for
+# your stuff to do in your game.
+#
+# values: [1 0], default: 0
+#
+# TODO ...
+DEBUG_OPT_FREECPU_RENDERTIME := 0
+
 # Mark as border color at which position the Graphix_render_isr()
 # routine will be executed.
 #

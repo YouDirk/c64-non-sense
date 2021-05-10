@@ -317,6 +317,16 @@ typedef_struct_begin(Input_t)
    * ```
    */
   typedef_struct_nested(Input_joystick_t,              joy_port2)
+
+  /* Joystick at port 1 does not work simultaneously together with the
+   * keyboard.  Therefore, if the keyboard status changed then make
+   * sure that there is no input from joystick at port 1.
+   *
+   * For recommended code if INPUT.SET.ENABLED =
+   * Input_joystick_port1_mask | Input_keyboard_*_mask is set together
+   *
+   *   * take a look to INPUT_T::INPUT_SET_T::KEYBOARD
+   */
   typedef_struct_nested(Input_joystick_t,              joy_port1)
 
   /* The keyboard ^^
@@ -329,7 +339,13 @@ typedef_struct_begin(Input_t)
    *   static uint8_t i;
    *   static bool key_w, key_s, key_a, key_d;
    *
-   *   if (Input.keyboard.changed) {
+   *   if (Input.keyboard.changed
+   *
+   *       // needed, if INPUT.SET.ENABLED = Input_joystick_port1_mask
+   *       && Input.joy_port1.axis_x.direction == 0
+   *       && Input.joy_port1.axis_y.direction == 0
+   *
+   *       ) {
    *     key_w=false, key_s=false, key_a=false, key_d=false;
    *     for (i=0; i<Input.keyboard.pressed_count; ++i) {
    *       switch (Input.keyboard.pressed[i]) {

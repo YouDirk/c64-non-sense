@@ -44,6 +44,15 @@ BC ******************************************************************
 #  define header_define(name)      HASH define name##_GEN_H__
 #  define header_endif(name)       HASH endif    BC name##_GEN_H__  */
 
+#  define prep_error(msg)          HASH error msg
+
+#  define prep_if(cond)            HASH if cond
+#  define prep_elif(cond)          HASH elif cond
+#  define prep_else(comment)       HASH else BC comment  */
+#  define prep_endif(comment)      HASH endif BC comment  */
+
+#  define equals                   ==
+
 #  define _include_def_h(module_h) HASH include #module_h
 #  define include_def_h(module)    _include_def_h(module.gen.h)
 
@@ -181,6 +190,15 @@ BC ******************************************************************
 #  define header_ifndef(name)           .ifnblank name##_GEN_S__
 #  define header_define(name)           .define name##_GEN_S__
 #  define header_endif(name)            .endif    ; name##_GEN_S__
+
+#  define prep_error(msg)               .error msg
+
+#  define prep_if(cond)                 .if cond
+#  define prep_elif(cond)               .elseif cond
+#  define prep_else(comment)            .else ; comment
+#  define prep_endif(comment)           .endif ; comment
+
+#  define equals                        =
 
 #  define _include_def_h(module_s)      .include #module_s
 #  define include_def_h(module)         _include_def_h(module.gen.s)

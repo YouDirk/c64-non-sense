@@ -200,7 +200,9 @@ AASandbox_tick(void)
     else Pace_brake(&AASandbox_pace_x);
   }
 
-  if (Input.keyboard.changed) {
+  if (Input.keyboard.changed
+      && Input.joy_port1.axis_x.direction == 0
+      && Input.joy_port1.axis_y.direction == 0) {
     key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
     for (i=0; i<Input.keyboard.pressed_count; ++i) {
@@ -233,6 +235,8 @@ AASandbox_tick(void)
 #ifdef DEBUG
 
   if (Input.keyboard.petscii.changed
+      && Input.joy_port1.axis_x.direction == 0
+      && Input.joy_port1.axis_y.direction == 0
       && Input.keyboard.petscii.character != '\0'
       && AASandbox_charout_last - AASandbox_charout
       < STRING_BUFSIZE - 10) {
