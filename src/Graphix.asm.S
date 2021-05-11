@@ -253,7 +253,7 @@ sprites_done:
         sta ptr1 + 1                    ; PTR1 := back_buffer
 .endif ; CONF_DOUBLE_BUFFERING
 
-        ldy #.sizeof(Graphix_buffer_t)  ; for (Y := sizeof(buffer_t)-1;
+        ldy #.sizeof(Graphix_buffer_t)  ; for (Y := sizeof(buffer_t);
 loop:                                   ;      Y-- != 0;) {
         dey
         lda _Graphix + Graphix_t::buffer, y

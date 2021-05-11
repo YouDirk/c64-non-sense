@@ -136,43 +136,43 @@ BC ******************************************************************
 #  define extern_var(type, name)                  extern type name;
 
 
-#  define register_bool(addr_hex, name)                              \
+#  define register_bool_hex(addr_hex, name)                          \
                _define(name, (*(volatile bool*) 0x##addr_hex))
-#  define register_bool_ptr(addr_hex, name)                          \
+#  define register_bool_ptr_hex(addr_hex, name)                      \
                _define(name, (*(volatile bool**) 0x##addr_hex))
-#  define register_char(addr_hex, name)                              \
+#  define register_char_hex(addr_hex, name)                          \
                _define(name, (*(volatile char*) 0x##addr_hex))
-#  define register_constchar(addr_hex, name)                         \
+#  define register_constchar_hex(addr_hex, name)                     \
                _define(name, (*(const char*) 0x##addr_hex))
-#  define register_uint8(addr_hex, name)                             \
+#  define register_uint8_hex(addr_hex, name)                         \
                _define(name, (*(volatile uint8_t*) 0x##addr_hex))
-#  define register_uint8_ptr(addr_hex, name)                         \
+#  define register_uint8_ptr_hex(addr_hex, name)                     \
                _define(name, (*(volatile uint8_t**) 0x##addr_hex))
-#  define register_uint16(addr_hex, name)                            \
+#  define register_uint16_hex(addr_hex, name)                        \
                _define(name, (*(volatile uint16_t*) 0x##addr_hex))
-#  define register_uint16_ptr(addr_hex, name)                        \
+#  define register_uint16_ptr_hex(addr_hex, name)                    \
                _define(name, (*(volatile uint16_t**) 0x##addr_hex))
-#  define register_uint32(addr_hex, name)                            \
+#  define register_uint32_hex(addr_hex, name)                        \
                _define(name, (*(volatile uint32_t*) 0x##addr_hex))
-#  define register_uint32_ptr(addr_hex, name)                        \
+#  define register_uint32_ptr_hex(addr_hex, name)                    \
                _define(name, (*(volatile uint32_t**) 0x##addr_hex))
-#  define register_int8(addr_hex, name)                              \
+#  define register_int8_hex(addr_hex, name)                          \
                _define(name, (*(volatile int8_t*) 0x##addr_hex))
-#  define register_int8_ptr(addr_hex, name)                          \
+#  define register_int8_ptr_hex(addr_hex, name)                      \
                _define(name, (*(volatile int8_t**) 0x##addr_hex))
-#  define register_int16(addr_hex, name)                             \
+#  define register_int16_hex(addr_hex, name)                         \
                _define(name, (*(volatile int16_t*) 0x##addr_hex))
-#  define register_int16_ptr(addr_hex, name)                         \
+#  define register_int16_ptr_hex(addr_hex, name)                     \
                _define(name, (*(volatile int16_t**) 0x##addr_hex))
-#  define register_int32(addr_hex, name)                             \
+#  define register_int32_hex(addr_hex, name)                         \
                _define(name, (*(volatile int32_t*) 0x##addr_hex))
-#  define register_int32_ptr(addr_hex, name)                         \
+#  define register_int32_ptr_hex(addr_hex, name)                     \
                _define(name, (*(volatile int32_t**) 0x##addr_hex))
-#  define register_void_ptr(addr_hex, name)                          \
+#  define register_void_ptr_hex(addr_hex, name)                      \
                _define(name, (*(volatile void**) 0x##addr_hex))
-#  define register_char_ptr(addr_hex, name)                          \
+#  define register_char_ptr_hex(addr_hex, name)                      \
                _define(name, (*(volatile char**) 0x##addr_hex))
-#  define register_constchar_ptr(addr_hex, name)                     \
+#  define register_constchar_ptr_hex(addr_hex, name)                 \
                _define(name, (*(volatile const char**) 0x##addr_hex))
 
 #elif defined(GEN_ASM_HEADER)
@@ -278,26 +278,44 @@ BC ******************************************************************
 
 #  define extern_var(type, name)                  .import _##name
 
-#  define register_bool(addr_hex, name)       define_hex(name, addr_hex)
-#  define register_bool_ptr(addr_hex, name)   define_hex(name, addr_hex)
-#  define register_char(addr_hex, name)       define_hex(name, addr_hex)
-#  define register_constchar(addr_hex, name)  define_hex(name, addr_hex)
-#  define register_uint8(addr_hex, name)      define_hex(name, addr_hex)
-#  define register_uint8_ptr(addr_hex, name)  define_hex(name, addr_hex)
-#  define register_uint16(addr_hex, name)     define_hex(name, addr_hex)
-#  define register_uint16_ptr(addr_hex, name) define_hex(name, addr_hex)
-#  define register_uint32(addr_hex, name)     define_hex(name, addr_hex)
-#  define register_uint32_ptr(addr_hex, name) define_hex(name, addr_hex)
-#  define register_int8(addr_hex, name)       define_hex(name, addr_hex)
-#  define register_int8_ptr(addr_hex, name)   define_hex(name, addr_hex)
-#  define register_int16(addr_hex, name)      define_hex(name, addr_hex)
-#  define register_int16_ptr(addr_hex, name)  define_hex(name, addr_hex)
-#  define register_int32(addr_hex, name)      define_hex(name, addr_hex)
-#  define register_int32_ptr(addr_hex, name)  define_hex(name, addr_hex)
-#  define register_void_ptr(addr_hex, name)   define_hex(name, addr_hex)
-#  define register_char_ptr(addr_hex, name)   define_hex(name, addr_hex)
-#  define register_constchar_ptr(addr_hex, name)                     \
-                                              define_hex(name, addr_hex)
+#  define register_bool_hex(addr_hex, name)                          \
+                                            define_hex(name, addr_hex)
+#  define register_bool_ptr_hex(addr_hex, name)                      \
+                                            define_hex(name, addr_hex)
+#  define register_char_hex(addr_hex, name)                          \
+                                            define_hex(name, addr_hex)
+#  define register_constchar_hex(addr_hex, name)                     \
+                                            define_hex(name, addr_hex)
+#  define register_uint8_hex(addr_hex, name)                         \
+                                            define_hex(name, addr_hex)
+#  define register_uint8_ptr_hex(addr_hex, name)                     \
+                                            define_hex(name, addr_hex)
+#  define register_uint16_hex(addr_hex, name)                        \
+                                            define_hex(name, addr_hex)
+#  define register_uint16_ptr_hex(addr_hex, name)                    \
+                                            define_hex(name, addr_hex)
+#  define register_uint32_hex(addr_hex, name)                        \
+                                            define_hex(name, addr_hex)
+#  define register_uint32_ptr_hex(addr_hex, name)                    \
+                                            define_hex(name, addr_hex)
+#  define register_int8_hex(addr_hex, name)                          \
+                                            define_hex(name, addr_hex)
+#  define register_int8_ptr_hex(addr_hex, name)                      \
+                                            define_hex(name, addr_hex)
+#  define register_int16_hex(addr_hex, name)                         \
+                                            define_hex(name, addr_hex)
+#  define register_int16_ptr_hex(addr_hex, name)                     \
+                                            define_hex(name, addr_hex)
+#  define register_int32_hex(addr_hex, name)                         \
+                                            define_hex(name, addr_hex)
+#  define register_int32_ptr_hex(addr_hex, name)                     \
+                                            define_hex(name, addr_hex)
+#  define register_void_ptr_hex(addr_hex, name)                      \
+                                            define_hex(name, addr_hex)
+#  define register_char_ptr_hex(addr_hex, name)                      \
+                                            define_hex(name, addr_hex)
+#  define register_constchar_ptr_hex(addr_hex, name)                 \
+                                            define_hex(name, addr_hex)
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"

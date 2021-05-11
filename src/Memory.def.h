@@ -77,36 +77,36 @@ header_define(MEMORY)
 
 /* ***************************************************************  */
 
-register_uint8(00,                 MEMORY_ZEROPAGE_BEGIN)
-register_uint8(ff,                 MEMORY_ZEROPAGE_END)
+register_uint8_hex(00,             MEMORY_ZEROPAGE_BEGIN)
+register_uint8_hex(ff,             MEMORY_ZEROPAGE_END)
 
-register_uint8(0100,               MEMORY_EXTZEROPAGE_BEGIN)
-register_uint8(03ff,               MEMORY_EXTZEROPAGE_END)
+register_uint8_hex(0100,           MEMORY_EXTZEROPAGE_BEGIN)
+register_uint8_hex(03ff,           MEMORY_EXTZEROPAGE_END)
 
-register_uint8(0100,               MEMORY_EXTZEROPAGE_BEGIN)
-register_uint8(03ff,               MEMORY_EXTZEROPAGE_END)
+register_uint8_hex(0100,           MEMORY_EXTZEROPAGE_BEGIN)
+register_uint8_hex(03ff,           MEMORY_EXTZEROPAGE_END)
 
-register_uint8(0400,               MEMORY_SCREENRAM_DEFAULT_BEGIN)
-register_uint8(07ff,               MEMORY_SCREENRAM_DEFAULT_END)
+register_uint8_hex(0400,           MEMORY_SCREENRAM_DEFAULT_BEGIN)
+register_uint8_hex(07ff,           MEMORY_SCREENRAM_DEFAULT_END)
 
-register_uint8(0800,               MEMORY_BASICRAM_BEGIN)
-register_uint8(0801,               MEMORY_BASICRAM_C64NONSENSE_BEGIN)
-register_uint8(7fff,               MEMORY_BASICRAM_END)
+register_uint8_hex(0800,           MEMORY_BASICRAM_BEGIN)
+register_uint8_hex(0801,           MEMORY_BASICRAM_C64NONSENSE_BEGIN)
+register_uint8_hex(7fff,           MEMORY_BASICRAM_END)
 
-register_uint8(8000,               MEMORY_BANK_CARTLO_BEGIN)
-register_uint8(9fff,               MEMORY_BANK_CARTLO_END)
+register_uint8_hex(8000,           MEMORY_BANK_CARTLO_BEGIN)
+register_uint8_hex(9fff,           MEMORY_BANK_CARTLO_END)
 
-register_uint8(a000,               MEMORY_BANK_BASICROM_BEGIN)
-register_uint8(bfff,               MEMORY_BANK_BASICROM_END)
+register_uint8_hex(a000,           MEMORY_BANK_BASICROM_BEGIN)
+register_uint8_hex(bfff,           MEMORY_BANK_BASICROM_END)
 
-register_uint8(c000,               MEMORY_RAM_C000_BEGIN)
-register_uint8(cfff,               MEMORY_RAM_C000_END)
+register_uint8_hex(c000,           MEMORY_RAM_C000_BEGIN)
+register_uint8_hex(cfff,           MEMORY_RAM_C000_END)
 
-register_uint8(d000,               MEMORY_BANK_IOCHIPS_BEGIN)
-register_uint8(dfff,               MEMORY_BANK_IOCHIPS_END)
+register_uint8_hex(d000,           MEMORY_BANK_IOCHIPS_BEGIN)
+register_uint8_hex(dfff,           MEMORY_BANK_IOCHIPS_END)
 
-register_uint8(e000,               MEMORY_BANK_KERNALROM_BEGIN)
-register_uint8(efff,               MEMORY_BANK_KERNALROM_END)
+register_uint8_hex(e000,           MEMORY_BANK_KERNALROM_BEGIN)
+register_uint8_hex(efff,           MEMORY_BANK_KERNALROM_END)
 
 /* *******************************************************************
  * Mapping table for the corresponding MEMORY_MOS6510_IODATA.
@@ -201,8 +201,8 @@ define_hex(MEMORY_BANKS_GAME_RAM_RAM_RAM_RAM2,                   01)
  * _I_MASK means that the signal which is connected to the
  * corresponding pin P[0-5] is active-low.
  */
-register_uint8(00,                           MEMORY_MOS6510_IODDR)
-register_uint8(01,                           MEMORY_MOS6510_IODATA)
+register_uint8_hex(00,                       MEMORY_MOS6510_IODDR)
+register_uint8_hex(01,                       MEMORY_MOS6510_IODATA)
 define_hex(MEMORY_MOS6510_ALTER_MASK,                  01)
 define_hex(MEMORY_MOS6510_KERNALROM_MASK,              02)
 define_hex(MEMORY_MOS6510_IOCHIPS_MASK,                04)

@@ -335,7 +335,7 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  */
 
 prep_if(GRAPHIX_MMAPPING equals 0)
-  register_uint8(b000,                          GRAPHIX_RAM)
+  register_uint8_hex(b000,                      GRAPHIX_RAM)
   define_hex(GRAPHIX_RAM_RVAL,                  b000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
 
@@ -384,7 +384,7 @@ prep_if(GRAPHIX_MMAPPING equals 0)
  */
 
 prep_elif(GRAPHIX_MMAPPING equals 1)
-  register_uint8(7000,                          GRAPHIX_RAM)
+  register_uint8_hex(7000,                      GRAPHIX_RAM)
   define_hex(GRAPHIX_RAM_RVAL,                  7000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
 
@@ -429,7 +429,7 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
  */
 
 prep_elif(GRAPHIX_MMAPPING equals 2)
-  register_uint8(3000,                          GRAPHIX_RAM)
+  register_uint8_hex(3000,                      GRAPHIX_RAM)
   define_hex(GRAPHIX_RAM_RVAL,                  3000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
 

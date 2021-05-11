@@ -63,35 +63,35 @@ define_hex(VIC_SPRITE_7_MASK,                80)
 /* end of sprite enum masks
  * ***************************************************************  */
 
-register_void_ptr(d000,                      VIC_BASE)
+register_void_ptr_hex(d000,                  VIC_BASE)
 
 /* ***************************************************************  */
 
-register_uint8(d000,                         VIC_SPR_ARRAY)
+register_uint8_hex(d000,                     VIC_SPR_ARRAY)
 define_hex(VIC_SPR_ARRAY_BUFSIZE,            10)
 
-register_uint8(d000,                         VIC_SPR0_X)
-register_uint8(d001,                         VIC_SPR0_Y)
-register_uint8(d002,                         VIC_SPR1_X)
-register_uint8(d003,                         VIC_SPR1_Y)
-register_uint8(d004,                         VIC_SPR2_X)
-register_uint8(d005,                         VIC_SPR2_Y)
-register_uint8(d006,                         VIC_SPR3_X)
-register_uint8(d007,                         VIC_SPR3_Y)
-register_uint8(d008,                         VIC_SPR4_X)
-register_uint8(d009,                         VIC_SPR4_Y)
-register_uint8(d00a,                         VIC_SPR5_X)
-register_uint8(d00b,                         VIC_SPR5_Y)
-register_uint8(d00c,                         VIC_SPR6_X)
-register_uint8(d00d,                         VIC_SPR6_Y)
-register_uint8(d00e,                         VIC_SPR7_X)
-register_uint8(d00f,                         VIC_SPR7_Y)
+register_uint8_hex(d000,                     VIC_SPR0_X)
+register_uint8_hex(d001,                     VIC_SPR0_Y)
+register_uint8_hex(d002,                     VIC_SPR1_X)
+register_uint8_hex(d003,                     VIC_SPR1_Y)
+register_uint8_hex(d004,                     VIC_SPR2_X)
+register_uint8_hex(d005,                     VIC_SPR2_Y)
+register_uint8_hex(d006,                     VIC_SPR3_X)
+register_uint8_hex(d007,                     VIC_SPR3_Y)
+register_uint8_hex(d008,                     VIC_SPR4_X)
+register_uint8_hex(d009,                     VIC_SPR4_Y)
+register_uint8_hex(d00a,                     VIC_SPR5_X)
+register_uint8_hex(d00b,                     VIC_SPR5_Y)
+register_uint8_hex(d00c,                     VIC_SPR6_X)
+register_uint8_hex(d00d,                     VIC_SPR6_Y)
+register_uint8_hex(d00e,                     VIC_SPR7_X)
+register_uint8_hex(d00f,                     VIC_SPR7_Y)
 
-register_uint8(d010,                         VIC_SPRHI_X)
+register_uint8_hex(d010,                     VIC_SPRHI_X)
 
 /* ***************************************************************  */
 
-register_uint8(d011,                                   VIC_CTRL1)
+register_uint8_hex(d011,                               VIC_CTRL1)
 define_hex(VIC_CTRL1_RASTERLINE_MASK,                  80)
 define_hex(VIC_CTRL1_EXTCOLOR_MASK,                    40)
 define_hex(VIC_CTRL1_BITMAPMODE_MASK,                  20)
@@ -108,7 +108,7 @@ define(VIC_CTRL1_MODE,                                               \
        VIC_CTRL1_BITMAPMODE_MASK | VIC_CTRL1_SCREEN_ON_MASK          \
        | (VIC_CTRL1_RASTERLINE_MASK & (VIC_RASTERLINE_VBLANK >> 1)))
 
-register_uint8(d012,                                   VIC_RASTERLINE)
+register_uint8_hex(d012,                               VIC_RASTERLINE)
 define_hex(VIC_RASTERLINE_MASK,                        ff)
 define_hex(VIC_RASTERL_MAX_PAL_MASK,                   f0)
 define_hex(VIC_RASTERL_CYCLES_PAL6569_VAL,             7f)
@@ -133,9 +133,9 @@ define(VIC_RASTERLINE_MODE,                                          \
        VIC_RASTERLINE_VBLANK & VIC_RASTERLINE_MASK)
 
 /* sprite enable bits  */
-register_uint8(d015,                                   VIC_SPR_ENABLE)
+register_uint8_hex(d015,                               VIC_SPR_ENABLE)
 
-register_uint8(d016,                                   VIC_CTRL2)
+register_uint8_hex(d016,                               VIC_CTRL2)
 define_hex(VIC_CTRL2_MULTICOLOR_MASK,                  10)
 define_hex(VIC_CTRL2_40COLS_MASK,                      08)
 define_hex(VIC_CTRL2_XSCROLL_MASK,                     07)
@@ -150,11 +150,11 @@ define(VIC_CTRL2_MODE,                                               \
        00)
 
 /* sprite Y expansion enable bits  */
-register_uint8(d017,                                   VIC_SPR_EXPY)
+register_uint8_hex(d017,                               VIC_SPR_EXPY)
 
 /* ***************************************************************  */
 
-register_uint8(d018,                                   VIC_ADDR)
+register_uint8_hex(d018,                               VIC_ADDR)
 
 /* all bits [7..4] are used  */
 define_hex(VIC_ADDR_SCREENRAM_SHIFT,                   4)
@@ -190,8 +190,8 @@ macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
 
 /* ***************************************************************  */
 
-register_uint8(d019,                                   VIC_IRR)
-register_uint8(d01a,                                   VIC_IMR)
+register_uint8_hex(d019,                               VIC_IRR)
+register_uint8_hex(d01a,                               VIC_IMR)
 define_hex(VIC_IMR_DISABLEALL_MASK,                    00)
 define_hex(VIC_IMR_RASTERLINE_MASK,                    01)
 define_hex(VIC_IMR_SHCOLLOSION_MASK,                   02)
@@ -203,49 +203,49 @@ define(VIC_IMR_IRQMODE,                                              \
        VIC_IRR_IRQGLOBAL_MASK | VIC_IMR_RASTERLINE_MASK)
 
 /* sprite background priority enable bits  */
-register_uint8(d01b,                         VIC_SPR_BGPRIO)
+register_uint8_hex(d01b,                     VIC_SPR_BGPRIO)
 
 /* sprite multicolor enable bits  */
-register_uint8(d01c,                         VIC_SPR_MCOLOR)
+register_uint8_hex(d01c,                     VIC_SPR_MCOLOR)
 
 /* sprite X expansion enable bits  */
-register_uint8(d01d,                         VIC_SPR_EXPX)
+register_uint8_hex(d01d,                     VIC_SPR_EXPX)
 
-register_uint8(d020,                         VIC_BORDERCOLOR)
+register_uint8_hex(d020,                     VIC_BORDERCOLOR)
 define_hex(VIC_BORDERCOLOR_RVAL,             d020) /* inline asm  */
 define(VIC_BORDERCOLOR_DEFAULT,              VIC_COLOR_LIGHTBLUE)
 
 /* ***************************************************************  */
 
 /* multicolor for bit combination 0b01 = 0x01  */
-register_uint8(d025,                         VIC_SPR_MCOLOR0_0B01)
+register_uint8_hex(d025,                     VIC_SPR_MCOLOR0_0B01)
 define_hex(VIC_SPR_MCOLOR0_0B01_DEFAULT,     f4)
 
 /* multicolor for bit combination 0b11 = 0x03  */
-register_uint8(d026,                         VIC_SPR_MCOLOR1_0B11)
+register_uint8_hex(d026,                     VIC_SPR_MCOLOR1_0B11)
 define_hex(VIC_SPR_MCOLOR1_0B11_DEFAULT,     f0)
 
 /* ***************************************************************  */
 
 /* sprite color (multicolor: bit combination 0b10 = 0x02)  */
-register_uint8(d027,                         VIC_SPR_COLORS)
+register_uint8_hex(d027,                     VIC_SPR_COLORS)
 define_hex(VIC_SPR_COLORS_BUFSIZE,           08)
 
-register_uint8(d027,                         VIC_SPR0_COLOR)
+register_uint8_hex(d027,                     VIC_SPR0_COLOR)
 define_hex(VIC_SPR0_COLOR_DEFAULT,           f1)
-register_uint8(d028,                         VIC_SPR1_COLOR)
+register_uint8_hex(d028,                     VIC_SPR1_COLOR)
 define_hex(VIC_SPR1_COLOR_DEFAULT,           f2)
-register_uint8(d029,                         VIC_SPR2_COLOR)
+register_uint8_hex(d029,                     VIC_SPR2_COLOR)
 define_hex(VIC_SPR2_COLOR_DEFAULT,           f3)
-register_uint8(d02a,                         VIC_SPR3_COLOR)
+register_uint8_hex(d02a,                     VIC_SPR3_COLOR)
 define_hex(VIC_SPR3_COLOR_DEFAULT,           f4)
-register_uint8(d02b,                         VIC_SPR4_COLOR)
+register_uint8_hex(d02b,                     VIC_SPR4_COLOR)
 define_hex(VIC_SPR4_COLOR_DEFAULT,           f5)
-register_uint8(d02c,                         VIC_SPR5_COLOR)
+register_uint8_hex(d02c,                     VIC_SPR5_COLOR)
 define_hex(VIC_SPR5_COLOR_DEFAULT,           f6)
-register_uint8(d02d,                         VIC_SPR6_COLOR)
+register_uint8_hex(d02d,                     VIC_SPR6_COLOR)
 define_hex(VIC_SPR6_COLOR_DEFAULT,           f7)
-register_uint8(d02e,                         VIC_SPR7_COLOR)
+register_uint8_hex(d02e,                     VIC_SPR7_COLOR)
 define_hex(VIC_SPR7_COLOR_DEFAULT,           fc)
 
 /* ***************************************************************  */

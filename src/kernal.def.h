@@ -28,26 +28,26 @@ header_define(KERNAL)
  * vectors (IRQ/BRK, NMI, RESET)
  */
 
-register_void_ptr(0314,       KERNAL_IRQ_USERENTRY)
-register_void_ptr(ea31,       KERNAL_IRQ_DEFAULT)
-register_void_ptr(ea81,       KERNAL_IRQ_RETURN)
+register_void_ptr_hex(0314,        KERNAL_IRQ_USERENTRY)
+register_void_ptr_hex(ea31,        KERNAL_IRQ_DEFAULT)
+register_void_ptr_hex(ea81,        KERNAL_IRQ_RETURN)
 
-register_void_ptr(0316,       KERNAL_BRK_USERENTRY)
-register_void_ptr(fe66,       KERNAL_BRK_DEFAULT)
-define(KERNAL_BRK_RETURN,     KERNAL_IRQ_RETURN)
+register_void_ptr_hex(0316,        KERNAL_BRK_USERENTRY)
+register_void_ptr_hex(fe66,        KERNAL_BRK_DEFAULT)
+define(KERNAL_BRK_RETURN,          KERNAL_IRQ_RETURN)
 
-register_void_ptr(0318,       KERNAL_NMI_USERENTRY)
-register_void_ptr(fe47,       KERNAL_NMI_DEFAULT)
-define(KERNAL_NMI_RETURN,     KERNAL_IRQ_RETURN)
+register_void_ptr_hex(0318,        KERNAL_NMI_USERENTRY)
+register_void_ptr_hex(fe47,        KERNAL_NMI_DEFAULT)
+define(KERNAL_NMI_RETURN,          KERNAL_IRQ_RETURN)
 
-register_void_ptr(fffa,       KERNAL_HARDNMI_VECTOR)
-register_void_ptr(fe43,       KERNAL_HARDNMI_DEFAULT)
+register_void_ptr_hex(fffa,        KERNAL_HARDNMI_VECTOR)
+register_void_ptr_hex(fe43,        KERNAL_HARDNMI_DEFAULT)
 
-register_void_ptr(fffc,       KERNAL_HARDRESET_VECTOR)
-register_void_ptr(fce2,       KERNAL_HARDRESET_DEFAULT)
+register_void_ptr_hex(fffc,        KERNAL_HARDRESET_VECTOR)
+register_void_ptr_hex(fce2,        KERNAL_HARDRESET_DEFAULT)
 
-register_void_ptr(fffe,       KERNAL_HARDIRQ_VECTOR)
-register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
+register_void_ptr_hex(fffe,        KERNAL_HARDIRQ_VECTOR)
+register_void_ptr_hex(ff48,        KERNAL_HARDIRQ_DEFAULT)
 
 /* end of vectors
  * *******************************************************************
@@ -58,8 +58,8 @@ register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
  *
  * defined in MEMORY.DEF.H
  */
-/* register_uint8(00,                        MEMORY_MOS6510_IODDR)  */
-/* register_uint8(01,                        MEMORY_MOS6510_IODATA)  */
+/* register_uint8_hex(00,          MEMORY_MOS6510_IODDR)  */
+/* register_uint8_hex(01,          MEMORY_MOS6510_IODATA)  */
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeb28.
  *
@@ -69,14 +69,14 @@ register_void_ptr(ff48,       KERNAL_HARDIRQ_DEFAULT)
  * Our implementation may differ from the Kernals one.  Therefore, it
  * is recommended to not use it.
  */
-register_uint8(c5,            KERNAL_ZP_KEYBOARD_SCANCODE_PREV)
+register_uint8_hex(c5,             KERNAL_ZP_KEYBOARD_SCANCODE_PREV)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xeac9.
  *
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
-register_uint8(cb,            KERNAL_ZP_KEYBOARD_SCANCODE)
+register_uint8_hex(cb,             KERNAL_ZP_KEYBOARD_SCANCODE)
 
 /* Will be set during keyboard scan routine in Kernal code at 0xea9b.
  * Therefore, if you are using the argument `-autostart` in VICE it
@@ -85,7 +85,7 @@ register_uint8(cb,            KERNAL_ZP_KEYBOARD_SCANCODE)
  * We are setting it ourself during INPUT_KEYBOARD_PETSCII_CONVERT()
  * if INPUT_KEYBOARD_SCAN_PETSCII_MASK is set in INPUT.SET.ENABLED.
  */
-register_constchar_ptr(f5,    KERNAL_ZP_PETSCIITABLE_VECTOR)
+register_constchar_ptr_hex(f5,     KERNAL_ZP_PETSCIITABLE_VECTOR)
 
 /* end of zero-page
  * *******************************************************************
@@ -95,7 +95,7 @@ register_constchar_ptr(f5,    KERNAL_ZP_PETSCIITABLE_VECTOR)
 /* Will NOT BE SET, use INPUT.KEYBOARD.PETSCII.SHIFTKEYS instead.  It
  * is using the same bit layout.
  */
-register_uint8(028d,          KERNAL_AZP_SHIFTFLAGS)
+register_uint8_hex(028d,           KERNAL_AZP_SHIFTFLAGS)
 
 /* Will be set during screen editor init routine in Kernal code at
  * 0xff5b.
@@ -104,19 +104,19 @@ register_uint8(028d,          KERNAL_AZP_SHIFTFLAGS)
  * information about the VIC-II chip in GRAPHIX.VIC_REVISION.  Use
  * GRAPHIX.IS_PAL to just differ between PAL and NTSC.
  */
-register_uint8(02a6,          KERNAL_AZP_ISPAL)
+register_uint8_hex(02a6,           KERNAL_AZP_ISPAL)
 
 /* end of advanced zero-page
  * *******************************************************************
  * Kernal ROM (0xe000 - 0xfffa) [w/o MOS-6510 RESET/NMI/IRQ]
  */
 
-register_constchar_ptr(eb79,  KERNAL_PETSCIITABLE_VECTORS)
-register_constchar_ptr(eb79,  KERNAL_PETSCIITABLE_VECTOR_UNSHIFTED)
-register_constchar_ptr(eb7b,  KERNAL_PETSCIITABLE_VECTOR_SHIFTED)
-register_constchar_ptr(eb7d,  KERNAL_PETSCIITABLE_VECTOR_COMMODORE)
-register_constchar_ptr(eb7f,  KERNAL_PETSCIITABLE_VECTOR_CTRL)
-register_constchar(eb81,      KERNAL_PETSCIITABLE)
+register_constchar_ptr_hex(eb79,   KERNAL_PETSCIITABLE_VECTORS)
+register_constchar_ptr_hex(eb79,   KERNAL_PETSCIITABLE_VECTOR_UNSHIFTED)
+register_constchar_ptr_hex(eb7b,   KERNAL_PETSCIITABLE_VECTOR_SHIFTED)
+register_constchar_ptr_hex(eb7d,   KERNAL_PETSCIITABLE_VECTOR_COMMODORE)
+register_constchar_ptr_hex(eb7f,   KERNAL_PETSCIITABLE_VECTOR_CTRL)
+register_constchar_hex(eb81,       KERNAL_PETSCIITABLE)
 
 /* end of Kernal ROM
  * **************************************************************** */

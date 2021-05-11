@@ -24,13 +24,13 @@
 header_ifndef(CHIP_CIA)
 header_define(CHIP_CIA)
 
-register_void_ptr(dc00,                      CIA1_BASE)
-register_void_ptr(dd00,                      CIA2_BASE)
+register_void_ptr_hex(dc00,                  CIA1_BASE)
+register_void_ptr_hex(dd00,                  CIA2_BASE)
 
 /* ***************************************************************  */
 
-register_uint8(dc00,                         CIA1_PRA)
-register_uint8(dc01,                         CIA1_PRB)
+register_uint8_hex(dc00,                     CIA1_PRA)
+register_uint8_hex(dc01,                     CIA1_PRB)
 
 define_hex(CIA1_PRA_DEFAULT,                 7f)
 define_hex(CIA1_PRB_DEFAULT,                 ff)
@@ -67,7 +67,7 @@ define_hex(CIA1_PRB_TIMERBTOGGLE_MASK,       80)
  * access to the Character ROM at address (0x1000 - 0x2000), which is
  * accessable via memory at location (0xd000 - 0xe000).
  */
-register_uint8(dd00,                         CIA2_PRA)
+register_uint8_hex(dd00,                     CIA2_PRA)
 define_hex(CIA2_PRA_VICBANK_MASK,            03)
 define_hex(CIA2_PRA_VICBANK_MEM0_DEFAULT,    03)
 define_hex(CIA2_PRA_VICBANK_ADDR0_DEFAULT,   0000)
@@ -91,32 +91,32 @@ macro_arg1(CIA2_PRA_VICBANK_ADDR,                                    \
 
 /* ***************************************************************  */
 
-register_uint8(dc02,                         CIA1_DDRA)
-register_uint8(dc03,                         CIA1_DDRB)
-register_uint8(dd02,                         CIA2_DDRA)
-register_uint8(dd03,                         CIA2_DDRB)
+register_uint8_hex(dc02,                     CIA1_DDRA)
+register_uint8_hex(dc03,                     CIA1_DDRB)
+register_uint8_hex(dd02,                     CIA2_DDRA)
+register_uint8_hex(dd03,                     CIA2_DDRB)
 define_hex(CIA_DDR_RONLY_ALL,                00)
 define_hex(CIA_DDR_RW_ALL,                   ff)
 
 define(CIA1_DDRA_DEFAULT,                    CIA_DDR_RW_ALL)
 define(CIA1_DDRB_DEFAULT,                    CIA_DDR_RONLY_ALL)
 
-register_uint8(dc04,                         CIA1_TA_LO)
-register_uint8(dc05,                         CIA1_TA_HI)
+register_uint8_hex(dc04,                     CIA1_TA_LO)
+register_uint8_hex(dc05,                     CIA1_TA_HI)
 define_hex(CIA1_TA_DEFAULT_PAL,              4025) /* (PAL)   */
 define_hex(CIA1_TA_DEFAULT_NTSC,             4295) /* (NTSC)  */
 
-register_uint8(dd04,                         CIA2_TA_LO)
-register_uint8(dd05,                         CIA2_TA_HI)
+register_uint8_hex(dd04,                     CIA2_TA_LO)
+register_uint8_hex(dd05,                     CIA2_TA_HI)
 
-register_uint8(dc06,                         CIA1_TB_LO)
-register_uint8(dc07,                         CIA1_TB_HI)
+register_uint8_hex(dc06,                     CIA1_TB_LO)
+register_uint8_hex(dc07,                     CIA1_TB_HI)
 
-register_uint8(dd06,                         CIA2_TB_LO)
-register_uint8(dd07,                         CIA2_TB_HI)
+register_uint8_hex(dd06,                     CIA2_TB_LO)
+register_uint8_hex(dd07,                     CIA2_TB_HI)
 
-register_uint8(dc0d,                         CIA1_ICR)
-register_uint8(dd0d,                         CIA2_ICR)
+register_uint8_hex(dc0d,                     CIA1_ICR)
+register_uint8_hex(dd0d,                     CIA2_ICR)
 define_hex(CIA_ICR_TIMERAZERO_MASK,          01)
 define_hex(CIA_ICR_TIMERBZERO_MASK,          02)
 define_hex(CIA_ICR_RTCALARM_MASK,            04)
@@ -135,14 +135,14 @@ macro_arg1(CIA_ICR_UNMASK,     (arg1) | CIA1_ICR_IRQGLOBAL_MASK)
 define(CIA1_ICR_IRQMODE,                                             \
        CIA1_ICR_IRQGLOBAL_MASK | CIA_ICR_TIMERAZERO_MASK)
 
-register_uint8(dc0e,                         CIA1_CRA)
-register_uint8(dd0e,                         CIA2_CRA)
+register_uint8_hex(dc0e,                     CIA1_CRA)
+register_uint8_hex(dd0e,                     CIA2_CRA)
 define_hex(CIA_CRA_CLKCNT_MASK,              20)
 define_hex(CIA_CRA_SPWRITE_MASK,             40)
 define_hex(CIA_CRA_50HZ_MASK,                80)
 
-register_uint8(dc0f,                         CIA1_CRB)
-register_uint8(dd0f,                         CIA2_CRB)
+register_uint8_hex(dc0f,                     CIA1_CRB)
+register_uint8_hex(dd0f,                     CIA2_CRB)
 define_hex(CIA_CRB_CLK_MASK,                 60)
 define_hex(CIA_CRB_CLK_SYS,                  00)
 define_hex(CIA_CRB_CLK_CNT,                  20)
