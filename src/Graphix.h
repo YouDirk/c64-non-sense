@@ -47,8 +47,7 @@ extern void __fastcall__
 extern void __fastcall__
   Graphix_release(Graphix_releaseCallback_t release_callback);
 
-/* Should feels like a swap in a double buffered system of
- * Graphix.buffer
+/* Swap GRAPHIX.BUFFER for rendering, using triple/double buffering.
  */
 extern void __fastcall__ Graphix_buffer_swap(void);
 

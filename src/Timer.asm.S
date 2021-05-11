@@ -61,10 +61,14 @@ timer_1_sync:
         sta _Graphix_buffer_shared_ptr   ; lowB: shared = back buffer
         stx _Graphix_buffer_back_ptr     ; lowB: back = shared buffer
 
+        ;; High byte not needed to swap, it´s the same as ASSERTED in
+        ;; GRAPHIX_INIT().
+    .if 0
         ldx _Graphix_buffer_shared_ptr+1 ; highB: backup shared buffer
         lda _Graphix_buffer_back_ptr+1
         sta _Graphix_buffer_shared_ptr+1 ; highB: shared = back buffer
         stx _Graphix_buffer_back_ptr+1   ; highB: back = shared buffer
+    .endif ; commented
 .endif ; CONF_DOUBLE_BUFFERING
 
         ;; *** end of swap ***

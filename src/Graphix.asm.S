@@ -72,6 +72,7 @@ done:
 
 ;; *******************************************************************
 
+;; void __fastcall__ Graphix_rasterline_isr(void)
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_RENDERTIME_IRQ
@@ -229,3 +230,40 @@ sprites_done:
 
         rts
 .endproc                                ; Graphix_rasterline_isr
+
+;; *******************************************************************
+
+;; void __fastcall__ Graphix_buffer_swap(void)
+.export _Graphix_buffer_swap
+.proc _Graphix_buffer_swap: near
+        DEBUG_RENDERTIME_IRQ_BEGIN #VIC_COLOR_VIOLET
+
+        ;; Loading GRAPHIX_BUFFER_SHARED_PTR to PTR1 is atomar,
+        ;; because the high byte equals GRAPHIX_BUFFER_BACK_PTR, as
+        ;; ASSERTED in GRAPHIX_INIT().
+.ifndef CONF_DOUBLE_BUFFERING
+        lda _Graphix_buffer_shared_ptr
+        sta ptr1
+        lda _Graphix_buffer_shared_ptr + 1
+        sta ptr1 + 1                    ; PTR1 := shared_buffer
+.else ; CONF_DOUBLE_BUFFERING
+        lda _Graphix_buffer_back_ptr
+        sta ptr1
+        lda _Graphix_buffer_back_ptr + 1
+        sta ptr1 + 1                    ; PTR1 := back_buffer
+.endif ; CONF_DOUBLE_BUFFERING
+
+        ldy #.sizeof(Graphix_buffer_t)  ; for (Y := sizeof(buffer_t)-1;
+loop:                                   ;      Y-- != 0;) {
+        dey
+        lda _Graphix + Graphix_t::buffer, y
+        sta (ptr1), y                   ; shared_buffer[Y]
+        cpy #$00                        ;   := Graphix.buffer[Y]
+        bne loop
+loop_done:                              ; }
+
+        DEBUG_RENDERTIME_IRQ_END
+        rts
+.endproc                                ; _Graphix_buffer_swap
+
+;; *******************************************************************

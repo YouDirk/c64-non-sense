@@ -37,8 +37,14 @@
 /* The shared and back buffer for triple buffering, read by ISR.  */
 #define _GRAPHIX_BUFFERS_SHAREDBACK_0                                \
                                 ((Graphix_buffer_t*) &GRAPHIX_RAM + 0)
-#define _GRAPHIX_BUFFERS_SHAREDBACK_1                                \
+
+/* --------------------------------------  */
+#ifndef CONF_DOUBLE_BUFFERING
+#  define _GRAPHIX_BUFFERS_SHAREDBACK_1                              \
                                 ((Graphix_buffer_t*) &GRAPHIX_RAM + 1)
+#endif /* CONF_DOUBLE_BUFFERING  */
+/* --------------------------------------  */
+
 #define _GRAPHIX_BUFFERS_SHAREDBACK_END                              \
                        (GRAPHIX_RAM_RVAL + 2*sizeof(Graphix_buffer_t))
 
@@ -220,32 +226,3 @@ Graphix_release(Graphix_releaseCallback_t release_callback)
 }
 
 /* ***************************************************************  */
-
-void __fastcall__
-Graphix_buffer_swap(void)
-{
-  /* -----------------------------------------------------------------
-   *
-   * Maybe a lock is needed here if something goes wrong with during
-   * triple buffering.
-   */
-  DEBUG_RENDERTIME_IRQ_BEGIN(VIC_COLOR_VIOLET);
-
-  /* pushing GRAPHIX_BUFFER_SHARED_PTR to stack is atomar, because the
-   * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
-   * GRAPHIX_INIT()
-   */
-#ifndef CONF_DOUBLE_BUFFERING
-  memcpy(Graphix_buffer_shared_ptr, &Graphix.buffer,
-         sizeof(Graphix_buffer_t));
-#else /* CONF_DOUBLE_BUFFERING  */
-  memcpy(Graphix_buffer_back_ptr, &Graphix.buffer,
-         sizeof(Graphix_buffer_t));
-#endif /* CONF_DOUBLE_BUFFERING  */
-
-  DEBUG_RENDERTIME_IRQ_END();
-  /* end of critical section
-   *
-   * -----------------------------------------------------------------
-   */
-}
