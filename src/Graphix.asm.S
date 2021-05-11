@@ -74,10 +74,10 @@ done:
 
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
-.ifdef DEBUG_IRQ_RENDERTIME
+.ifdef DEBUG_RENDERTIME_IRQ
         lda #VIC_COLOR_YELLOW           ; we don´t need to push border
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
-.endif ; DEBUG_IRQ_RENDERTIME
+.endif ; DEBUG_RENDERTIME_IRQ
 
   .define _SPR_SPR Graphix_buffer_sprites_t::sprite
 
@@ -219,13 +219,13 @@ sprites_done:
         ora #(VIC_CTRL2_MODE & ~VIC_CTRL2_XSCROLL_MASK)
         sta VIC_CTRL2                   ; set x scroll
 
-        ;; must be the last statement, for correct DEBUG_IRQ_RENDERTIME
+        ;; must be the last statement, for correct DEBUG_RENDERTIME_IRQ
         ldy #Graphix_buffer_t::set + _SET_BORDERCOLOR
         lda (ZP_ISR_PTR1), y
         sta VIC_BORDERCOLOR             ; set bordercolor
-.ifdef DEBUG_IRQ_RENDERTIME
+.ifdef DEBUG_RENDERTIME_IRQ
         ;; nothing to do, because VIC.bordercolor will be set above
-.endif ; DEBUG_IRQ_RENDERTIME
+.endif ; DEBUG_RENDERTIME_IRQ
 
         rts
 .endproc                                ; Graphix_rasterline_isr

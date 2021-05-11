@@ -27,7 +27,7 @@
 
 .export Timer_a_isr
 .proc Timer_a_isr: near
-        DEBUG_RENDERTIME_BEGIN #VIC_COLOR_BLUE
+        DEBUG_RENDERTIME_IRQ_BEGIN #VIC_COLOR_BLUE
 
 .ifdef DEBUG_TIMER1_SYNCCHECK
         .pushseg                        ; push current segment ("CODE")
@@ -84,7 +84,7 @@ timer_1_sync:
 .endif ; DEBUG
 not_overflow:
 
-        DEBUG_RENDERTIME_END
+        DEBUG_RENDERTIME_IRQ_END
         rts
 .endproc                                ; Timer_a_isr
 

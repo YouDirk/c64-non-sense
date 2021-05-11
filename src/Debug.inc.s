@@ -24,22 +24,50 @@
 
 ;; *******************************************************************
 
-.ifdef DEBUG_IRQ_RENDERTIME
-  .macro DEBUG_RENDERTIME_BEGIN color
+.ifdef DEBUG_RENDERTIME_IRQ
+  .macro DEBUG_RENDERTIME_IRQ_BEGIN color
         lda VIC_BORDERCOLOR             ; push current border color to
         pha                             ;   stack
         lda color
         sta VIC_BORDERCOLOR             ; set debug color
-  .endmacro                             ; DEBUG_RENDERTIME_BEGIN
+  .endmacro                             ; DEBUG_RENDERTIME_IRQ_BEGIN
 
-  .macro DEBUG_RENDERTIME_END
+  .macro DEBUG_RENDERTIME_IRQ_END
         pla
         sta VIC_BORDERCOLOR             ; pop backup and restore color
-  .endmacro                             ; DEBUG_RENDERTIME_END
-.else ; DEBUG_IRQ_RENDERTIME
-  .define DEBUG_RENDERTIME_BEGIN(color)
-  .define DEBUG_RENDERTIME_END
-.endif ; DEBUG_IRQ_RENDERTIME
+  .endmacro                             ; DEBUG_RENDERTIME_IRQ_END
+.else ; DEBUG_RENDERTIME_IRQ
+  .define DEBUG_RENDERTIME_IRQ_BEGIN(color)
+  .define DEBUG_RENDERTIME_IRQ_END
+.endif ; DEBUG_RENDERTIME_IRQ
+
+;; *******************************************************************
+
+.ifdef DEBUG_RENDERTIME_FREECPU
+  .macro DEBUG_RENDERTIME_FREECPU_BEGIN color
+        clc
+        lda VIC_BORDERCOLOR             ; push current border color to
+        pha                             ;   stack
+        lda color
+        pha                             ; push debug color to stack
+  .endmacro                             ; DEBUG_RENDERTIME_FREECPU_BEGIN
+
+  .macro DEBUG_RENDERTIME_COLOR_SET
+        tsx                             ; bordercolor := CPU_STACK[0]
+        lda STACK_BASE + 0, x
+        sta VIC_BORDERCOLOR
+  .endmacro                             ; DEBUG_RENDERTIME_COLOR_SET
+
+  .macro DEBUG_RENDERTIME_FREECPU_END
+        pla                             ; pop debug color
+        pla
+        sta VIC_BORDERCOLOR             ; pop backup and restore color
+  .endmacro                             ; DEBUG_RENDERTIME_FREECPU_END
+.else ; DEBUG_RENDERTIME_FREECPU
+  .define DEBUG_RENDERTIME_FREECPU_BEGIN(color)
+  .define DEBUG_RENDERTIME_FREECPU_COLOR_SET()
+  .define DEBUG_RENDERTIME_FREECPU_END()
+.endif ; DEBUG_RENDERTIME_FREECPU
 
 ;; *******************************************************************
 

@@ -302,6 +302,10 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  *         : ***********          | ************                :
  *         :                      |                             :
  *         .----------------------|-----------------------------.
+ * 0xb000  | [RAM, GRAPHIX RAM] 4096 bytes                      |
+ *         |   Graphix_buffer_shared, Graphix_buffer_back       |
+ *         |                                                    |
+ *         |----------------------------------------------------|
  * 0xc000  | [SCREEN RAM] 1000 bytes                            |
  *         |                                                    |
  *         |----------------------------------------------------|
@@ -331,6 +335,10 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  */
 
 prep_if(GRAPHIX_MMAPPING equals 0)
+  register_uint8(b000,                          GRAPHIX_RAM)
+  define_hex(GRAPHIX_RAM_RVAL,                  b000)
+  define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -345,6 +353,10 @@ prep_if(GRAPHIX_MMAPPING equals 0)
  *         : **********           | **************              :
  *         :                      |                             :
  *         .----------------------|-----------------------------.
+ * 0x7000  | [RAM, GRAPHIX RAM] 4096 bytes                      |
+ *         |   Graphix_buffer_shared, Graphix_buffer_back       |
+ *         |                                                    |
+ *         |----------------------------------------------------|
  * 0x8000  | [SCREEN RAM] 1000 bytes                            |
  *         |                                                    |
  *         |----------------------------------------------------|
@@ -372,6 +384,10 @@ prep_if(GRAPHIX_MMAPPING equals 0)
  */
 
 prep_elif(GRAPHIX_MMAPPING equals 1)
+  register_uint8(7000,                          GRAPHIX_RAM)
+  define_hex(GRAPHIX_RAM_RVAL,                  7000)
+  define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -386,6 +402,10 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
  *         : **********           | **************              :
  *         :                      |                             :
  *         .----------------------|-----------------------------.
+ * 0x3000  | [RAM, GRAPHIX RAM] 4096 bytes                      |
+ *         |   Graphix_buffer_shared, Graphix_buffer_back       |
+ *         |                                                    |
+ *         |----------------------------------------------------|
  * 0x4000  | [BITMAP RAM] 8000 bytes                            |
  *         |                                                    |
  *         |                                                    |
@@ -409,6 +429,10 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
  */
 
 prep_elif(GRAPHIX_MMAPPING equals 2)
+  register_uint8(3000,                          GRAPHIX_RAM)
+  define_hex(GRAPHIX_RAM_RVAL,                  3000)
+  define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)

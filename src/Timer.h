@@ -36,12 +36,12 @@
  * timer ticks then set these values to 0.
  *
  * Triple Buffering: Make sure that there is a small difference
- * between Timer- and PAL/NTSC frequency (DEBUG_IRQ_RENDERTIME).
+ * between Timer- and PAL/NTSC frequency (DEBUG_RENDERTIME_IRQ).
  * Otherwise the shared/back buffer swap maybe called in worst case
  * timing for a very long time.
  *
  * Double Buffering: Make sure that there is a large difference
- * between Timer- and PAL/NTSC frequency (DEBUG_IRQ_RENDERTIME).
+ * between Timer- and PAL/NTSC frequency (DEBUG_RENDERTIME_IRQ).
  * Otherwise the Graphix_buffer_swap() maybe called in worst case
  * timing for a very long time with a very huge stuttering.
  */

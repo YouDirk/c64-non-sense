@@ -67,9 +67,13 @@ ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
                   $(call 2BOOL,$(DEBUG_BUILD))))
     CCDEFINES += -DDEBUG_OVERFLOW_CHECK
   endif
-  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_IRQ_RENDERTIME)), \
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_RENDERTIME_FREECPU)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))
-    CCDEFINES += -DDEBUG_IRQ_RENDERTIME
+    CCDEFINES += -DDEBUG_RENDERTIME_FREECPU
+  endif
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_RENDERTIME_IRQ)), \
+                  $(call 2BOOL,$(DEBUG_BUILD))))
+    CCDEFINES += -DDEBUG_RENDERTIME_IRQ
   endif
   ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_TIMER1_SYNCCHECK)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))

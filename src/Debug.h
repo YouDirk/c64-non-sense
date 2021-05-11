@@ -23,21 +23,48 @@
 
 /* ***************************************************************  */
 
-#ifdef DEBUG_IRQ_RENDERTIME
-#  define DEBUG_RENDERTIME_BEGIN(color)                              \
+#ifdef DEBUG_RENDERTIME_IRQ
+#  define DEBUG_RENDERTIME_IRQ_BEGIN(color)                          \
   __asm__("  lda %w\n"                                               \
           "  pha\n"                                                  \
           "  lda #%b\n"                                              \
           "  sta %w\n"                                               \
           , VIC_BORDERCOLOR_RVAL, (color), VIC_BORDERCOLOR_RVAL)
-#  define DEBUG_RENDERTIME_END()                                     \
+#  define DEBUG_RENDERTIME_IRQ_END()                                 \
   __asm__("  pla\n"                                                  \
           "  sta %w\n"                                               \
           , VIC_BORDERCOLOR_RVAL)
-#else /* DEBUG_IRQ_RENDERTIME  */
-#  define DEBUG_RENDERTIME_BEGIN(color)
-#  define DEBUG_RENDERTIME_END()
-#endif /* DEBUG_IRQ_RENDERTIME  */
+#else /* DEBUG_RENDERTIME_IRQ  */
+#  define DEBUG_RENDERTIME_IRQ_BEGIN(color)
+#  define DEBUG_RENDERTIME_IRQ_END()
+#endif /* DEBUG_RENDERTIME_IRQ  */
+
+/* ***************************************************************  */
+
+#ifdef DEBUG_RENDERTIME_FREECPU
+#  define DEBUG_RENDERTIME_FREECPU_BEGIN(color)                      \
+  __asm__("  clc\n"                                                  \
+          "  lda %w\n"                                               \
+          "  pha\n"                                                  \
+          "  lda #%b\n"                                              \
+          "  pha\n"                                                  \
+          , VIC_BORDERCOLOR_RVAL, (color))
+#  define DEBUG_RENDERTIME_FREECPU_COLOR_SET()                       \
+  __asm__("  tsx\n"                                                  \
+          "  lda %w, x\n"                                            \
+          "  sta %w\n"                                               \
+          , STACK_BASE + 0, VIC_BORDERCOLOR_RVAL)
+#  define DEBUG_RENDERTIME_FREECPU_END()                             \
+  __asm__("  pla\n"                                                  \
+          "  adc #1\n" /* prevent that PLA will be optimized out  */ \
+          "  pla\n"                                                  \
+          "  sta %w\n"                                               \
+          , VIC_BORDERCOLOR_RVAL)
+#else /* DEBUG_RENDERTIME_FREECPU  */
+#  define DEBUG_RENDERTIME_FREECPU_BEGIN(color)
+#  define DEBUG_RENDERTIME_FREECPU_COLOR_SET()
+#  define DEBUG_RENDERTIME_FREECPU_END()
+#endif /* DEBUG_RENDERTIME_FREECPU  */
 
 /* ***************************************************************  */
 

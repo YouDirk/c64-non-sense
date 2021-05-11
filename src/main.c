@@ -32,6 +32,8 @@ main(void)
   Engine_init();
 
   while (Engine.set.exit_code < 0) {
+
+    DEBUG_RENDERTIME_FREECPU_BEGIN(Graphix_cyan);
     do {
       /* *************************************************************
        * polling stuff between engine ticks
@@ -40,7 +42,9 @@ main(void)
       /* poll test- and staged code  */
       AASandbox_poll();
 
+      DEBUG_RENDERTIME_FREECPU_COLOR_SET();
     } while (!Engine_tick_poll());
+    DEBUG_RENDERTIME_FREECPU_END();
 
     /* ***************************************************************
      * time critical ticking stuff (input delay)

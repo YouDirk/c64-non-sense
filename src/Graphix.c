@@ -32,12 +32,21 @@
                           VIC_ADDR_BITMAP_ADDR(_VIC_VICBANK_ADDR,    \
                                    _GRAPHIX_BITMAPRAM_x0X400_VICADDR))
 
+/* ***************************************************************  */
+
 /* The shared and back buffer for triple buffering, read by ISR.  */
-#ifndef CONF_DOUBLE_BUFFERING
-  static Graphix_buffer_t _Graphix_buffers_sharedback[2];
-#else /* CONF_DOUBLE_BUFFERING  */
-  static Graphix_buffer_t _Graphix_buffers_sharedback[1];
-#endif /* CONF_DOUBLE_BUFFERING  */
+#define _GRAPHIX_BUFFERS_SHAREDBACK_0                                \
+                                ((Graphix_buffer_t*) &GRAPHIX_RAM + 0)
+#define _GRAPHIX_BUFFERS_SHAREDBACK_1                                \
+                                ((Graphix_buffer_t*) &GRAPHIX_RAM + 1)
+#define _GRAPHIX_BUFFERS_SHAREDBACK_END                              \
+                       (GRAPHIX_RAM_RVAL + 2*sizeof(Graphix_buffer_t))
+
+#define _GRAPHIX_RAM_END        _GRAPHIX_BUFFERS_SHAREDBACK_END
+
+#if _GRAPHIX_RAM_END > (GRAPHIX_RAM_RVAL + GRAPHIX_RAM_BUFSIZE)
+#  error "Graphix RAM is overflowing!"
+#endif
 
 /* Points to the current shared/back buffer of triple buffering.  Set
  * by Timer_a_isr() to reduce random noise in timing.  Read by
@@ -104,10 +113,6 @@ Graphix_init(Graphix_initCallback_t init_callback)
   memset((void*) (_SCREEN_RAM + 0x0440), 0xe4, 3*21);
   *(_SCREEN_RAM + 1016 + 4)
     = ((unsigned) _SCREEN_RAM - _VIC_VICBANK_ADDR + 0x0440) >> 6;
-#ifdef DEBUG
-  printf("0x%04x 0x%04x\n",
-         Graphix.buffer.screen_ram, Graphix.buffer.bitmap_ram);
-#endif
   // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;
@@ -122,9 +127,9 @@ Graphix_init(Graphix_initCallback_t init_callback)
    * these.
    */
 #ifndef CONF_DOUBLE_BUFFERING
-  Graphix_buffer_shared_ptr = &_Graphix_buffers_sharedback[1];
+  Graphix_buffer_shared_ptr = _GRAPHIX_BUFFERS_SHAREDBACK_1;
 #endif /* CONF_DOUBLE_BUFFERING  */
-  Graphix_buffer_back_ptr = &_Graphix_buffers_sharedback[0];
+  Graphix_buffer_back_ptr = _GRAPHIX_BUFFERS_SHAREDBACK_0;
   Graphix_buffer_swap();
   /* If the high bytes of GRAPHIX_BUFFER_SHARED/BACK_PTR are equal,
    * then reading these pointers are atomar operations.
@@ -135,6 +140,14 @@ Graphix_init(Graphix_initCallback_t init_callback)
     DEBUG_ERROR("graphix, buffers not aligned!");
   }
 #endif /* defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)  */
+
+  // --- TODO ---
+#ifdef DEBUG
+  printf("0x%04x 0x%04x 0x%04x\n",
+         Graphix_buffer_back_ptr, Graphix.buffer.screen_ram,
+         Graphix.buffer.bitmap_ram);
+#endif
+  // --- end of TODO ---
 
   /* set screen on and VIC IRQs go!  */
   VIC.ctrl1 = VIC_CTRL1_MODE;
@@ -216,7 +229,7 @@ Graphix_buffer_swap(void)
    * Maybe a lock is needed here if something goes wrong with during
    * triple buffering.
    */
-  DEBUG_RENDERTIME_BEGIN(VIC_COLOR_VIOLET);
+  DEBUG_RENDERTIME_IRQ_BEGIN(VIC_COLOR_VIOLET);
 
   /* pushing GRAPHIX_BUFFER_SHARED_PTR to stack is atomar, because the
    * high byte equals GRAPHIX_BUFFER_BACK_PTR, as ASSERTED in
@@ -230,7 +243,7 @@ Graphix_buffer_swap(void)
          sizeof(Graphix_buffer_t));
 #endif /* CONF_DOUBLE_BUFFERING  */
 
-  DEBUG_RENDERTIME_END();
+  DEBUG_RENDERTIME_IRQ_END();
   /* end of critical section
    *
    * -----------------------------------------------------------------
