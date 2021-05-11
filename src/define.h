@@ -136,44 +136,83 @@ BC ******************************************************************
 #  define extern_var(type, name)                  extern type name;
 
 
+#  define register_bool(addr, name)                                  \
+                    _define(name, (*(volatile bool*) (addr)))
+#  define register_bool_ptr(addr, name)                              \
+                    _define(name, (*(volatile bool**) (addr)))
+#  define register_char(addr, name)                                  \
+                    _define(name, (*(volatile char*) (addr)))
+#  define register_constchar(addr, name)                             \
+                    _define(name, (*(const char*) (addr)))
+#  define register_uint8(addr, name)                                 \
+                    _define(name, (*(volatile uint8_t*) (addr)))
+#  define register_uint8_ptr(addr, name)                             \
+                    _define(name, (*(volatile uint8_t**) (addr)))
+#  define register_uint16(addr, name)                                \
+                    _define(name, (*(volatile uint16_t*) (addr)))
+#  define register_uint16_ptr(addr, name)                            \
+                    _define(name, (*(volatile uint16_t**) (addr)))
+#  define register_uint32(addr, name)                                \
+                    _define(name, (*(volatile uint32_t*) (addr)))
+#  define register_uint32_ptr(addr, name)                            \
+                    _define(name, (*(volatile uint32_t**) (addr)))
+#  define register_int8(addr, name)                                  \
+                    _define(name, (*(volatile int8_t*) (addr)))
+#  define register_int8_ptr(addr, name)                              \
+                    _define(name, (*(volatile int8_t**) (addr)))
+#  define register_int16(addr, name)                                 \
+                    _define(name, (*(volatile int16_t*) (addr)))
+#  define register_int16_ptr(addr, name)                             \
+                    _define(name, (*(volatile int16_t**) (addr)))
+#  define register_int32(addr, name)                                 \
+                    _define(name, (*(volatile int32_t*) (addr)))
+#  define register_int32_ptr(addr, name)                             \
+                    _define(name, (*(volatile int32_t**) (addr)))
+#  define register_void_ptr(addr, name)                              \
+                    _define(name, (*(volatile void**) (addr)))
+#  define register_char_ptr(addr, name)                              \
+                    _define(name, (*(volatile char**) (addr)))
+#  define register_constchar_ptr(addr, name)                         \
+                    _define(name, (*(volatile const char**) (addr)))
+
 #  define register_bool_hex(addr_hex, name)                          \
-               _define(name, (*(volatile bool*) 0x##addr_hex))
+                         register_bool(0x##addr_hex, name)
 #  define register_bool_ptr_hex(addr_hex, name)                      \
-               _define(name, (*(volatile bool**) 0x##addr_hex))
+                         register_bool_ptr(0x##addr_hex, name)
 #  define register_char_hex(addr_hex, name)                          \
-               _define(name, (*(volatile char*) 0x##addr_hex))
+                         register_char(0x##addr_hex, name)
 #  define register_constchar_hex(addr_hex, name)                     \
-               _define(name, (*(const char*) 0x##addr_hex))
+                         register_constchar(0x##addr_hex, name)
 #  define register_uint8_hex(addr_hex, name)                         \
-               _define(name, (*(volatile uint8_t*) 0x##addr_hex))
+                         register_uint8(0x##addr_hex, name)
 #  define register_uint8_ptr_hex(addr_hex, name)                     \
-               _define(name, (*(volatile uint8_t**) 0x##addr_hex))
+                         register_uint8_ptr(0x##addr_hex, name)
 #  define register_uint16_hex(addr_hex, name)                        \
-               _define(name, (*(volatile uint16_t*) 0x##addr_hex))
+                         register_uint16(0x##addr_hex, name)
 #  define register_uint16_ptr_hex(addr_hex, name)                    \
-               _define(name, (*(volatile uint16_t**) 0x##addr_hex))
+                         register_uint16_ptr(0x##addr_hex, name)
 #  define register_uint32_hex(addr_hex, name)                        \
-               _define(name, (*(volatile uint32_t*) 0x##addr_hex))
+                         register_uint32(0x##addr_hex, name)
 #  define register_uint32_ptr_hex(addr_hex, name)                    \
-               _define(name, (*(volatile uint32_t**) 0x##addr_hex))
+                         register_uint32_ptr(0x##addr_hex, name)
 #  define register_int8_hex(addr_hex, name)                          \
-               _define(name, (*(volatile int8_t*) 0x##addr_hex))
+                         register_int8(0x##addr_hex, name)
 #  define register_int8_ptr_hex(addr_hex, name)                      \
-               _define(name, (*(volatile int8_t**) 0x##addr_hex))
+                         register_int8_ptr(0x##addr_hex, name)
 #  define register_int16_hex(addr_hex, name)                         \
-               _define(name, (*(volatile int16_t*) 0x##addr_hex))
+                         register_int16(0x##addr_hex, name)
 #  define register_int16_ptr_hex(addr_hex, name)                     \
-               _define(name, (*(volatile int16_t**) 0x##addr_hex))
+                         register_int16_ptr(0x##addr_hex, name)
 #  define register_int32_hex(addr_hex, name)                         \
-               _define(name, (*(volatile int32_t*) 0x##addr_hex))
+                         register_int32(0x##addr_hex, name)
 #  define register_int32_ptr_hex(addr_hex, name)                     \
-               _define(name, (*(volatile int32_t**) 0x##addr_hex))
+                         register_int32_ptr(0x##addr_hex, name)
 #  define register_void_ptr_hex(addr_hex, name)                      \
-               _define(name, (*(volatile void**) 0x##addr_hex))
+                         register_void_ptr(0x##addr_hex, name)
 #  define register_char_ptr_hex(addr_hex, name)                      \
-               _define(name, (*(volatile char**) 0x##addr_hex))
+                         register_char_ptr(0x##addr_hex, name)
 #  define register_constchar_ptr_hex(addr_hex, name)                 \
-               _define(name, (*(volatile const char**) 0x##addr_hex))
+                         register_constchar_ptr(0x##addr_hex, name)
 
 #elif defined(GEN_ASM_HEADER)
 
@@ -277,6 +316,27 @@ BC ******************************************************************
 #  define typedef_enum_val(type, value, name)     _define(name, value)
 
 #  define extern_var(type, name)                  .import _##name
+
+
+#  define register_bool(addr, name)                _define(name, addr)
+#  define register_bool_ptr(addr, name)            _define(name, addr)
+#  define register_char(addr, name)                _define(name, addr)
+#  define register_constchar(addr, name)           _define(name, addr)
+#  define register_uint8(addr, name)               _define(name, addr)
+#  define register_uint8_ptr(addr, name)           _define(name, addr)
+#  define register_uint16(addr, name)              _define(name, addr)
+#  define register_uint16_ptr(addr, name)          _define(name, addr)
+#  define register_uint32(addr, name)              _define(name, addr)
+#  define register_uint32_ptr(addr, name)          _define(name, addr)
+#  define register_int8(addr, name)                _define(name, addr)
+#  define register_int8_ptr(addr, name)            _define(name, addr)
+#  define register_int16(addr, name)               _define(name, addr)
+#  define register_int16_ptr(addr, name)           _define(name, addr)
+#  define register_int32(addr, name)               _define(name, addr)
+#  define register_int32_ptr(addr, name)           _define(name, addr)
+#  define register_void_ptr(addr, name)            _define(name, addr)
+#  define register_char_ptr(addr, name)            _define(name, addr)
+#  define register_constchar_ptr(addr, name)       _define(name, addr)
 
 #  define register_bool_hex(addr_hex, name)                          \
                                             define_hex(name, addr_hex)
