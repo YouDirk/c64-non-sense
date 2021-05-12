@@ -25,13 +25,6 @@
                        CIA2_PRA_VICBANK_ADDR(_GRAPHIX_VICBANK_CIA2PRA)
 #define _VIC_VICBANK_RAM                ((void*) _VIC_VICBANK_ADDR)
 
-#define _SCREEN_RAM      ((uint8_t*)                                 \
-                          VIC_ADDR_SCREENRAM_ADDR(_VIC_VICBANK_ADDR, \
-                                   _GRAPHIX_SCREENRAM_x0X400_VICADDR))
-#define _BITMAP_RAM      ((uint8_t*)                                 \
-                          VIC_ADDR_BITMAP_ADDR(_VIC_VICBANK_ADDR,    \
-                                   _GRAPHIX_BITMAPRAM_x0X400_VICADDR))
-
 /* ***************************************************************  */
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
@@ -97,8 +90,6 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.set.charset_exit = EngineConfig.charset_exit;
 
   /* initialize Graphix.buffer  */
-  Graphix.buffer.screen_ram     = _SCREEN_RAM;
-  Graphix.buffer.bitmap_ram     = _BITMAP_RAM;
   Graphix.buffer.set.scroll_y   = VIC_CTRL1_YSCROLL_DEFAULT;
   Graphix.buffer.set.scroll_x   = VIC_CTRL2_XSCROLL_DEFAULT;
 
@@ -111,14 +102,16 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   // --- TODO ---
-  memset((void*) (_SCREEN_RAM + 0x0400), 0xff, 3*21);
+  memset((void*) (&GRAPHIX_BUFFER_SCREENRAM + 0x0400), 0xff, 3*21);
   for (i=0; i<8; ++i) {
-    *(_SCREEN_RAM + 1016 + i)
-      = ((unsigned) _SCREEN_RAM - _VIC_VICBANK_ADDR + 0x0400) >> 6;
+    *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
+      = ((unsigned) &GRAPHIX_BUFFER_SCREENRAM - _VIC_VICBANK_ADDR
+         + 0x0400) >> 6;
   }
-  memset((void*) (_SCREEN_RAM + 0x0440), 0xe4, 3*21);
-  *(_SCREEN_RAM + 1016 + 4)
-    = ((unsigned) _SCREEN_RAM - _VIC_VICBANK_ADDR + 0x0440) >> 6;
+  memset((void*) (&GRAPHIX_BUFFER_SCREENRAM + 0x0440), 0xe4, 3*21);
+  *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
+    = ((unsigned) &GRAPHIX_BUFFER_SCREENRAM - _VIC_VICBANK_ADDR
+       + 0x0440) >> 6;
   // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;
@@ -150,8 +143,8 @@ Graphix_init(Graphix_initCallback_t init_callback)
   // --- TODO ---
 #ifdef DEBUG
   printf("0x%04x 0x%04x 0x%04x\n",
-         Graphix_buffer_back_ptr, Graphix.buffer.screen_ram,
-         Graphix.buffer.bitmap_ram);
+         Graphix_buffer_back_ptr, &GRAPHIX_BUFFER_SCREENRAM,
+         &GRAPHIX_BUFFER_BITMAPRAM);
 #endif
   // --- end of TODO ---
 

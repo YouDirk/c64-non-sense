@@ -181,57 +181,60 @@ typedef_struct_end(Graphix_buffer_set_t)
 
 /* ---------------------------------------------------------------  */
 
-/* Size of GRAPHIX_BUFFER_T::SCREEN_RAM in bytes.  */
-define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
+/* Points to the screen RAM.  Every byte in this array is representing
+ * a cell in the screen, ordered from left to right.  These are
+ * containing the cells fore- and background color for every cell.
+ * Use the GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT() macro to convert two
+ * colors to the corresponding byte layout.
+ *
+ *   size:        GRAPHIX_BUFFER_SCREENRAM_BUFSIZE
+ *   byte layout: [msb..2^4: color bit set, 2^3..lsb: color zero bit]
+ *                GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset,
+ *                                                    color_bitzero)
+ *
+ *   cell layout: screen_ram[0]   screen_ram[1]   ... screen_ram[39]
+ *                screen_ram[40]  screen_ram[41]  ... screen_ram[79]
+ *                ...             ...                 ...
+ *                ...             ...                 ...
+ *                screen_ram[960] screen_ram[961] ... screen_ram[999]
+ */
+register_uint8(GRAPHIX_BUFFER_SCREENRAM_RVAL,                        \
+                                             GRAPHIX_BUFFER_SCREENRAM)
 
-/* Size of GRAPHIX_BUFFER_T::BITMAP_RAM in bytes.  */
-define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
+/* Size of GRAPHIX_BUFFER_SCREENRAM in bytes.  */
+define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
 
 /* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset, color_bitzero)  */
 macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
                                                ((arg1) << 4) | (arg2))
 
+
+/* Points to the bitmap RAM.  Every byte in this array is representing
+ * the pixels of the bitmap, ordered for every 8 bytes (one cell of
+ * the screen) from the top down, then cell-wise from left to right.
+ *
+ *   size:          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE
+ *   byte layout:   [msb: left pixel, pxl 2, ..., lsb: right pixel]
+ *
+ *   screen layout: bitmap_ram[0]  bitmap_ram[8]   bitmap_ram[16]
+ *                  bitmap_ram[1]  bitmap_ram[9]   bitmap_ram[17]
+ *                  bitmap_ram[2]  bitmap_ram[10]  bitmap_ram[18]
+ *                  bitmap_ram[3]  bitmap_ram[11]  bitmap_ram[19]
+ *                  bitmap_ram[4]  bitmap_ram[12]  bitmap_ram[20]
+ *                  bitmap_ram[5]  bitmap_ram[13]  bitmap_ram[21]
+ *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
+ *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
+ */
+register_uint8(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                        \
+                                             GRAPHIX_BUFFER_BITMAPRAM)
+
+/* Size of GRAPHIX_BUFFER_BITMAPRAM in bytes.  */
+define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
+
 /* Graphix buffer structure.  */
 typedef_struct_begin(Graphix_buffer_t)
   /* Some writable member variables.  */
   typedef_struct_nested(Graphix_buffer_set_t,          set)
-
-  /* Points to the screen RAM.  Every byte in this array is
-   * representing a cell in the screen, ordered from left to right.
-   * These are containing the cells fore- and background color for
-   * every cell.  Use the GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT() macro
-   * to convert two colors to the corresponding byte layout.
-   *
-   *   size:        GRAPHIX_BUFFER_SCREENRAM_BUFSIZE
-   *   byte layout: [msb..2^4: color bit set, 2^3..lsb: color zero bit]
-   *                GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset,
-   *                                                    color_bitzero)
-   *
-   *   cell layout: screen_ram[0]   screen_ram[1]   ... screen_ram[39]
-   *                screen_ram[40]  screen_ram[41]  ... screen_ram[79]
-   *                ...             ...                 ...
-   *                ...             ...                 ...
-   *                screen_ram[960] screen_ram[961] ... screen_ram[999]
-   */
-  typedef_struct_uint8_ptr(                            screen_ram)
-  /* Points to the bitmap RAM.  Every byte in this array is
-   * representing the pixels of the bitmap, ordered for every 8 bytes
-   * (one cell of the screen) from the top down, then cell-wise from
-   * left to right.
-   *
-   *   size:          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE
-   *   byte layout:   [msb: left pixel, pxl 2, ..., lsb: right pixel]
-   *
-   *   screen layout: bitmap_ram[0]  bitmap_ram[8]   bitmap_ram[16]
-   *                  bitmap_ram[1]  bitmap_ram[9]   bitmap_ram[17]
-   *                  bitmap_ram[2]  bitmap_ram[10]  bitmap_ram[18]
-   *                  bitmap_ram[3]  bitmap_ram[11]  bitmap_ram[19]
-   *                  bitmap_ram[4]  bitmap_ram[12]  bitmap_ram[20]
-   *                  bitmap_ram[5]  bitmap_ram[13]  bitmap_ram[21]
-   *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
-   *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
-   */
-  typedef_struct_uint8_ptr(                            bitmap_ram)
 
   /* The sprites structure  */
   typedef_struct_nested(Graphix_buffer_sprites_t,      sprites)
@@ -339,6 +342,9 @@ prep_if(GRAPHIX_MMAPPING equals 0)
   define_hex(GRAPHIX_RAM_RVAL,                  b000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
 
+  define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     c000)
+  define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     e000) /* not reabable  */
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -388,6 +394,9 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
   define_hex(GRAPHIX_RAM_RVAL,                  7000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
 
+  define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     8000)
+  define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     a000)
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -432,6 +441,9 @@ prep_elif(GRAPHIX_MMAPPING equals 2)
   register_uint8_hex(3000,                      GRAPHIX_RAM)
   define_hex(GRAPHIX_RAM_RVAL,                  3000)
   define_hex(GRAPHIX_RAM_BUFSIZE,               1000)
+
+  define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     6000)
+  define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     4000)
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)

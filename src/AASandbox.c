@@ -52,15 +52,15 @@ AASandbox_init(void)
   AASandbox_bordercolor_time = 0;
 
   /* set screen ram  */
-  memset(Graphix.buffer.screen_ram,
+  memset(&GRAPHIX_BUFFER_SCREENRAM,
     GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green, Graphix_black),
     GRAPHIX_BUFFER_SCREENRAM_BUFSIZE);
 
   /* set bitmap  */
-  memset(Graphix.buffer.bitmap_ram, 0x01,
+  memset(&GRAPHIX_BUFFER_BITMAPRAM, 0x01,
          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE);
   for (i=0; i < GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE; i+=8) {
-    Graphix.buffer.bitmap_ram[i] = 0xff; /* well optimized by CC65  */
+    (&GRAPHIX_BUFFER_BITMAPRAM)[i] = 0xff; /* well optimized by CC65  */
   }
 
   Graphix.buffer.sprites.sprite[4].set.pos_y
