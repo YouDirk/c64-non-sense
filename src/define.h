@@ -66,6 +66,11 @@ BC ******************************************************************
 #  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2)  \
                                        (value)
 
+#  define typedef_uint8(name)           typedef uint8_t name;
+#  define typedef_uint16(name)          typedef uint16_t name;
+#  define typedef_int8(name)            typedef int8_t name;
+#  define typedef_int16(name)           typedef int16_t name;
+
 #  define typedef_struct_begin(name)    typedef struct name {
 #  define typedef_struct_end(name)      } name;
 #  define typedef_struct_nested(other, name)      other name;
@@ -174,6 +179,10 @@ BC ******************************************************************
                     _define(name, (*(volatile char**) (addr)))
 #  define register_constchar_ptr(addr, name)                         \
                     _define(name, (*(volatile const char**) (addr)))
+#  define register_nested(addr, type, name)                          \
+                    _define(name, (*(volatile type*) (addr)))
+#  define register_nested_ptr(addr, type, name)                      \
+                    _define(name, (*(volatile type**) (addr)))
 
 #  define register_bool_hex(addr_hex, name)                          \
                          register_bool(0x##addr_hex, name)
@@ -213,6 +222,11 @@ BC ******************************************************************
                          register_char_ptr(0x##addr_hex, name)
 #  define register_constchar_ptr_hex(addr_hex, name)                 \
                          register_constchar_ptr(0x##addr_hex, name)
+#  define register_nested_hex(addr_hex, type, name)                  \
+                    _define(name, (*(volatile type*) (0x##addr_hex)))
+#  define register_nested_ptr_hex(addr_hex, type, name)              \
+                    _define(name, (*(volatile type**) (0x##addr_hex)))
+
 
 #elif defined(GEN_ASM_HEADER)
 
@@ -250,6 +264,11 @@ BC ******************************************************************
 
 #  define macro_arg1(name, value)       .define name(arg1) value
 #  define macro_arg1_arg2(name, value)  .define name(arg1, arg2) value
+
+#  define typedef_uint8(name)      _define(name, SIZEOF_BYTE) ; uint8
+#  define typedef_uint16(name)     _define(name, SIZEOF_WORD) ; uint16
+#  define typedef_int8(name)       _define(name, SIZEOF_BYTE) ; int8
+#  define typedef_int16(name)      _define(name, SIZEOF_WORD) ; int16
 
 #  define typedef_struct_begin(name)    .struct name
 #  define typedef_struct_end(name)      .endstruct ; struct name
@@ -337,6 +356,8 @@ BC ******************************************************************
 #  define register_void_ptr(addr, name)            _define(name, addr)
 #  define register_char_ptr(addr, name)            _define(name, addr)
 #  define register_constchar_ptr(addr, name)       _define(name, addr)
+#  define register_nested(addr, type, name)        _define(name, addr)
+#  define register_nested_ptr(addr, type, name)    _define(name, addr)
 
 #  define register_bool_hex(addr_hex, name)                          \
                                             define_hex(name, addr_hex)
@@ -376,6 +397,11 @@ BC ******************************************************************
                                             define_hex(name, addr_hex)
 #  define register_constchar_ptr_hex(addr_hex, name)                 \
                                             define_hex(name, addr_hex)
+#  define register_nested_hex(addr_hex, type, name)                  \
+                                            define_hex(name, addr_hex)
+#  define register_nested_ptr_hex(addr_hex, type, name)              \
+                                            define_hex(name, addr_hex)
+
 
 #else /* defined(GEN_C_HEADER)  */
 #  error "Do not include this file outside from *.def.h files!"

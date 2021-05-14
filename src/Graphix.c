@@ -102,16 +102,16 @@ Graphix_init(Graphix_initCallback_t init_callback)
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   // --- TODO ---
-  memset((void*) (&GRAPHIX_BUFFER_SCREENRAM + 0x0400), 0xff, 3*21);
+  memset(&GRAPHIX_BUFFER_SPRITERAM, 0xff, 3*21);
   for (i=0; i<8; ++i) {
     *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
       = ((unsigned) &GRAPHIX_BUFFER_SCREENRAM - _VIC_VICBANK_ADDR
          + 0x0400) >> 6;
   }
-  memset((void*) (&GRAPHIX_BUFFER_SCREENRAM + 0x0440), 0xe4, 3*21);
+  memset((void*) (&GRAPHIX_BUFFER_SPRITERAM + 0x0040), 0xe4, 3*21);
   *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
-    = ((unsigned) &GRAPHIX_BUFFER_SCREENRAM - _VIC_VICBANK_ADDR
-       + 0x0440) >> 6;
+    = ((unsigned) (&GRAPHIX_BUFFER_SPRITERAM + 0x0040)
+       - _VIC_VICBANK_ADDR) >> 6;
   // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;

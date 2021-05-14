@@ -198,7 +198,8 @@ typedef_struct_end(Graphix_buffer_set_t)
  *                ...             ...                 ...
  *                screen_ram[960] screen_ram[961] ... screen_ram[999]
  */
-register_uint8(GRAPHIX_BUFFER_SCREENRAM_RVAL,                        \
+typedef_uint8(                                            screenram_t)
+register_nested(GRAPHIX_BUFFER_SCREENRAM_RVAL, screenram_t,          \
                                              GRAPHIX_BUFFER_SCREENRAM)
 
 /* Size of GRAPHIX_BUFFER_SCREENRAM in bytes.  */
@@ -208,6 +209,7 @@ define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
 macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
                                                ((arg1) << 4) | (arg2))
 
+/* ---------------------------------------------------------------  */
 
 /* Points to the bitmap RAM.  Every byte in this array is representing
  * the pixels of the bitmap, ordered for every 8 bytes (one cell of
@@ -225,11 +227,23 @@ macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
  *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
  *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
  */
-register_uint8(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                        \
+typedef_uint8(                                            bitmapram_t)
+register_nested(GRAPHIX_BUFFER_BITMAPRAM_RVAL, bitmapram_t,          \
                                              GRAPHIX_BUFFER_BITMAPRAM)
 
 /* Size of GRAPHIX_BUFFER_BITMAPRAM in bytes.  */
 define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
+
+/* ---------------------------------------------------------------  */
+
+register_uint8(GRAPHIX_BUFFER_SPRITERAM_RVAL,                        \
+                                             GRAPHIX_BUFFER_SPRITERAM)
+
+/* Size of GRAPHIX_BUFFER_SPRITERAM in bytes.  */
+define(GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,                             \
+                                    _GRAPHIX_BUFFER_SPRITERAM_BUFSIZE)
+
+/* ---------------------------------------------------------------  */
 
 /* Graphix buffer structure.  */
 typedef_struct_begin(Graphix_buffer_t)
@@ -317,7 +331,7 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  * 0xc3f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0xc000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0xc400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |
+ * 0xc400  | [RAM, SPRITE RAM] 3072 bytes                       |
  *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
  *         |                                                    |
  *         |----------------------------------------------------|
@@ -345,6 +359,9 @@ prep_if(GRAPHIX_MMAPPING equals 0)
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     c000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     e000) /* not reabable  */
 
+  define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     c400)
+  define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -371,7 +388,7 @@ prep_if(GRAPHIX_MMAPPING equals 0)
  * 0x83f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x8000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0x8400  | [RAM, SPRITE BUFFERS] 3072 bytes                   |
+ * 0x8400  | [RAM, SPRITE RAM] 3072 bytes                       |
  *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
  *         |                                                    |
  *         |----------------------.-----------------------------|
@@ -396,6 +413,9 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
 
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     8000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     a000)
+
+  define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     8400)
+  define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
@@ -430,7 +450,7 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
  * 0x63f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x4000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0x6400  | [RAM, SPRITE BUFFERS] 7168 bytes                   |
+ * 0x6400  | [RAM, SPRITE RAM] 7168 bytes                       |
  *         |   = 8 sprites * 64 bytes/frame * 14 frames/sprite  |
  *         |                                                    |
  * 0x7fff  |                                                    |
@@ -445,6 +465,9 @@ prep_elif(GRAPHIX_MMAPPING equals 2)
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     6000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     4000)
 
+  define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     6400)
+  define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE, 1c00) /* 7168 bytes  */
+
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)
@@ -453,9 +476,6 @@ prep_elif(GRAPHIX_MMAPPING equals 2)
 
 prep_else("GRAPHIX_MMAPPING")
   prep_error(                             "GRAPHIX_MMAPPING unknown!")
-  define_hex(_GRAPHIX_VICBANK_CIA2PRA,                             00)
-  define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
-  define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)
 prep_endif("GRAPHIX_MMAPPING")
 
 /* ***************************************************************  */
