@@ -21,10 +21,6 @@
 #include "EngineConfig.h"
 #include "Sprite.h"
 
-#define _VIC_VICBANK_ADDR                                            \
-                       CIA2_PRA_VICBANK_ADDR(_GRAPHIX_VICBANK_CIA2PRA)
-#define _VIC_VICBANK_RAM                ((void*) _VIC_VICBANK_ADDR)
-
 /* ***************************************************************  */
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
@@ -104,14 +100,12 @@ Graphix_init(Graphix_initCallback_t init_callback)
   // --- TODO ---
   memset(&GRAPHIX_BUFFER_SPRITERAM, 0xff, 3*21);
   for (i=0; i<8; ++i) {
-    *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
-      = ((unsigned) &GRAPHIX_BUFFER_SCREENRAM - _VIC_VICBANK_ADDR
-         + 0x0400) >> 6;
+    *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
+      = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 0;
   }
-  memset((void*) (&GRAPHIX_BUFFER_SPRITERAM + 0x0040), 0xe4, 3*21);
-  *(&GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
-    = ((unsigned) (&GRAPHIX_BUFFER_SPRITERAM + 0x0040)
-       - _VIC_VICBANK_ADDR) >> 6;
+  memset(&GRAPHIX_BUFFER_SPRITERAM + 0x0040, 0xe4, 3*21);
+  *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
+    = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 1;
   // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;

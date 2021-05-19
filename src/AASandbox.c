@@ -52,9 +52,13 @@ AASandbox_init(void)
   AASandbox_bordercolor_time = 0;
 
   /* set screen ram  */
-  memset(&GRAPHIX_BUFFER_SCREENRAM,
+  memset(GRAPHIX_BUFFER_SCREENRAM,
     GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green, Graphix_black),
     GRAPHIX_BUFFER_SCREENRAM_BUFSIZE);
+
+  GRAPHIX_BUFFER_SCREENRAM[5][6]
+    = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
+                                          Graphix_lightblue);
 
   /* set bitmap  */
   memset(&GRAPHIX_BUFFER_BITMAPRAM, 0x01,

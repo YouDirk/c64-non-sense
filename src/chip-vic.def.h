@@ -182,10 +182,10 @@ define(VIC_ADDR_DEFAULT,                                             \
                | VIC_ADDR_BITMAP_DEFAULT)
 
 /* VIC_ADDR_SCREENRAM_ADDR(VICBANK_ADDR, VIC_ADDR_SCREENRAM)  */
-macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR,                             \
+macro_arg1_arg2(VIC_ADDR_SCREENRAM_ADDR, void*,                      \
                               (arg1) + (arg2)*VIC_ADDR_SCREENRAM_STEP)
 /* VIC_ADDR_BITMAP_ADDR(VICBANK_ADDR, VIC_ADDR_BITMAP)  */
-macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR,                                \
+macro_arg1_arg2(VIC_ADDR_BITMAP_ADDR, void*,                         \
                                  (arg1) + (arg2)*VIC_ADDR_BITMAP_STEP)
 
 /* ***************************************************************  */

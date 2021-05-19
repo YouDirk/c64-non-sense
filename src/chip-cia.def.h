@@ -86,7 +86,7 @@ define(CIA2_PRA_DEFAULT,                                             \
        | CIA2_PRA_VICBANK_MEM0_DEFAULT)
 
 /* CIA2_PRA_VICBANK_ADDR(CIA2_PRA_VICBANK_MEM?)  */
-macro_arg1(CIA2_PRA_VICBANK_ADDR,                                    \
+macro_arg1(CIA2_PRA_VICBANK_ADDR, void*,                             \
            CIA2_PRA_VICBANK_ADDRC - (arg1)*CIA2_PRA_VICBANK_STEP)
 
 /* ***************************************************************  */
@@ -128,9 +128,9 @@ define_hex(CIA2_ICR_NMIGLOBAL_MASK,          80)
 define_hex(CIA_ICR_ALL,                      1f)
 
 /* CIA_ICR_MASK(CIA_ICR_*_MASK)  */
-macro_arg1(CIA_ICR_MASK,       (arg1) & ~CIA1_ICR_IRQGLOBAL_MASK)
+macro_arg1(CIA_ICR_MASK, uint8_t,   (arg1) & ~CIA1_ICR_IRQGLOBAL_MASK)
 /* CIA_ICR_UNMASK(CIA_ICR_*_MASK)  */
-macro_arg1(CIA_ICR_UNMASK,     (arg1) | CIA1_ICR_IRQGLOBAL_MASK)
+macro_arg1(CIA_ICR_UNMASK, uint8_t,  (arg1) | CIA1_ICR_IRQGLOBAL_MASK)
 
 define(CIA1_ICR_IRQMODE,                                             \
        CIA1_ICR_IRQGLOBAL_MASK | CIA_ICR_TIMERAZERO_MASK)

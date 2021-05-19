@@ -62,9 +62,10 @@ BC ******************************************************************
 #  define define_hex(name, value)  _define(name, 0x##value)
 #  define define_dec(name, value)  _define(name, value)
 
-#  define macro_arg1(name, value)      HASH define name(arg1) (value)
-#  define macro_arg1_arg2(name, value) HASH define name(arg1, arg2)  \
-                                       (value)
+#  define macro_arg1(name, type, expr)                               \
+                    HASH define name(arg1) ((type) (expr))
+#  define macro_arg1_arg2(name, type, expr)                          \
+                    HASH define name(arg1, arg2) ((type) (expr))
 
 #  define typedef_uint8(name)           typedef uint8_t name;
 #  define typedef_uint16(name)          typedef uint16_t name;
@@ -180,9 +181,11 @@ BC ******************************************************************
 #  define register_constchar_ptr(addr, name)                         \
                     _define(name, (*(volatile const char**) (addr)))
 #  define register_nested(addr, type, name)                          \
-                    _define(name, (*(volatile type*) (addr)))
+               _define(name, (*(volatile type*) (addr)))
+#  define register_nested_array(addr, type, name, size)              \
+               _define(name, ((volatile type[size]) (addr)))
 #  define register_nested_ptr(addr, type, name)                      \
-                    _define(name, (*(volatile type**) (addr)))
+               _define(name, (*(volatile type**) (addr)))
 
 #  define register_bool_hex(addr_hex, name)                          \
                          register_bool(0x##addr_hex, name)
@@ -223,9 +226,11 @@ BC ******************************************************************
 #  define register_constchar_ptr_hex(addr_hex, name)                 \
                          register_constchar_ptr(0x##addr_hex, name)
 #  define register_nested_hex(addr_hex, type, name)                  \
-                    _define(name, (*(volatile type*) (0x##addr_hex)))
+               register_nested(0x##addr_hex, type, name)
+#  define register_nested_array_hex(addr_hex, type, name, size)      \
+               register_nested_array(0x##addr_hex, type, name, size)
 #  define register_nested_ptr_hex(addr_hex, type, name)              \
-                    _define(name, (*(volatile type**) (0x##addr_hex)))
+               register_nested_ptr(0x##addr_hex, type, name)
 
 
 #elif defined(GEN_ASM_HEADER)
@@ -262,8 +267,9 @@ BC ******************************************************************
 #  define define_hex(name, value)       _define(name, $value)
 #  define define_dec(name, value)       _define(name, value)
 
-#  define macro_arg1(name, value)       .define name(arg1) value
-#  define macro_arg1_arg2(name, value)  .define name(arg1, arg2) value
+#  define macro_arg1(name, type, expr)  .define name(arg1) expr
+#  define macro_arg1_arg2(name, type, expr)                          \
+                                        .define name(arg1, arg2) expr
 
 #  define typedef_uint8(name)      _define(name, SIZEOF_BYTE) ; uint8
 #  define typedef_uint16(name)     _define(name, SIZEOF_WORD) ; uint16
@@ -357,6 +363,8 @@ BC ******************************************************************
 #  define register_char_ptr(addr, name)            _define(name, addr)
 #  define register_constchar_ptr(addr, name)       _define(name, addr)
 #  define register_nested(addr, type, name)        _define(name, addr)
+#  define register_nested_array(addr, type, name, size)              \
+                                                   _define(name, addr)
 #  define register_nested_ptr(addr, type, name)    _define(name, addr)
 
 #  define register_bool_hex(addr_hex, name)                          \
@@ -398,6 +406,8 @@ BC ******************************************************************
 #  define register_constchar_ptr_hex(addr_hex, name)                 \
                                             define_hex(name, addr_hex)
 #  define register_nested_hex(addr_hex, type, name)                  \
+                                            define_hex(name, addr_hex)
+#  define register_nested_array_hex(addr_hex, type, name, size)      \
                                             define_hex(name, addr_hex)
 #  define register_nested_ptr_hex(addr_hex, type, name)              \
                                             define_hex(name, addr_hex)

@@ -88,7 +88,7 @@ define_dec(GRAPHIX_SCREEN_CELLS_BYTES,                            8)
 /* end of screen constants
  * ***************************************************************  */
 
-macro_arg1(GRAPHIX_SPRITES_2MASK,            1 << (arg1))
+macro_arg1(GRAPHIX_SPRITES_2MASK, uint8_t,   1 << (arg1))
 
 define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
 
@@ -197,17 +197,26 @@ typedef_struct_end(Graphix_buffer_set_t)
  *                ...             ...                 ...
  *                ...             ...                 ...
  *                screen_ram[960] screen_ram[961] ... screen_ram[999]
+ *
+ *   usage:       GRAPHIX_BUFFER_SCREENRAM[coord_y][coord_x]
+ *                  = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(
+ *                                      Graphix_COLOR_FOREGROUND,
+ *                                      Graphix_COLOR_BACKGROUND);
  */
-typedef_uint8(                                            screenram_t)
-register_nested(GRAPHIX_BUFFER_SCREENRAM_RVAL, screenram_t,          \
-                                             GRAPHIX_BUFFER_SCREENRAM)
 
 /* Size of GRAPHIX_BUFFER_SCREENRAM in bytes.  */
 define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
 
-/* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset, color_bitzero)  */
+typedef_uint8(                             Graphix_buffer_screenram_t)
+register_nested_array(GRAPHIX_BUFFER_SCREENRAM_RVAL,
+               Graphix_buffer_screenram_t[GRAPHIX_SCREEN_CELLS_Y],
+               GRAPHIX_BUFFER_SCREENRAM, GRAPHIX_SCREEN_CELLS_X)
+
+/* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_foreground,
+ *                                     color_background)
+ */
 macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
-                                               ((arg1) << 4) | (arg2))
+                Graphix_buffer_screenram_t, ((arg1) << 4) | (arg2))
 
 /* ---------------------------------------------------------------  */
 
@@ -227,9 +236,9 @@ macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
  *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
  *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
  */
-typedef_uint8(                                            bitmapram_t)
-register_nested(GRAPHIX_BUFFER_BITMAPRAM_RVAL, bitmapram_t,          \
-                                             GRAPHIX_BUFFER_BITMAPRAM)
+typedef_uint8(                             Graphix_buffer_bitmapram_t)
+register_nested(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                       \
+                Graphix_buffer_bitmapram_t, GRAPHIX_BUFFER_BITMAPRAM)
 
 /* Size of GRAPHIX_BUFFER_BITMAPRAM in bytes.  */
 define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
@@ -363,6 +372,8 @@ prep_if(GRAPHIX_MMAPPING equals 0)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
+  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDRC)
+
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
 
@@ -418,6 +429,8 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
+  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDR8)
+
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
 
@@ -469,6 +482,8 @@ prep_elif(GRAPHIX_MMAPPING equals 2)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE, 1c00) /* 7168 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
+  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDR4)
+
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)
 
