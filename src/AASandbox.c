@@ -58,7 +58,7 @@ AASandbox_init(void)
 
   GRAPHIX_BUFFER_SCREENRAM[5][6]
     = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
-                                          Graphix_lightblue);
+                                          Graphix_lightred);
 
   /* set bitmap  */
   memset(&GRAPHIX_BUFFER_BITMAPRAM, 0x01,
