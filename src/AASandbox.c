@@ -28,10 +28,10 @@
 static uint8_t AASandbox_bordercolor_time;
 
 #define _CONST_SPRITES                                               \
-  Graphix_sprite_0_mask
+  Graphix_sprite_5_mask
 
 #define _BLINKING_SPRITES                                            \
-  (Graphix_sprite_4_mask | Graphix_sprite_5_mask                     \
+  (Graphix_sprite_4_mask | Graphix_sprite_0_mask                     \
    | Graphix_sprite_6_mask | Graphix_sprite_7_mask)
 
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
@@ -56,9 +56,11 @@ AASandbox_init(void)
     GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green, Graphix_black),
     GRAPHIX_BUFFER_SCREENRAM_BUFSIZE);
 
+  /* --- TODO ---
   GRAPHIX_BUFFER_SCREENRAM[5][6]
     = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
                                           Graphix_lightred);
+  */
 
   /* set bitmap  */
   memset(&GRAPHIX_BUFFER_BITMAPRAM, 0x01,
@@ -76,13 +78,13 @@ AASandbox_init(void)
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
     | Sprite_props_scale_x_mask;
 
-  Graphix.buffer.sprites.sprite[5].set.pos_y
+  Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
-  Graphix.buffer.sprites.sprite[5].set.pos_x
+  Graphix.buffer.sprites.sprite[0].set.pos_x
     = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH
     - SPRITE_WIDTH - 1;
-  Graphix.buffer.sprites.sprite[5].set.color = Graphix_lightred;
-  Graphix.buffer.sprites.sprite[5].set.props
+  Graphix.buffer.sprites.sprite[0].set.color = Graphix_lightred;
+  Graphix.buffer.sprites.sprite[0].set.props
     = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.sprite[6].set.pos_y
@@ -104,13 +106,13 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[7].set.props
     = Sprite_props_prio_bground_mask;
 
-  Graphix.buffer.sprites.sprite[0].set.pos_y
+  Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
-  Graphix.buffer.sprites.sprite[0].set.pos_x
+  Graphix.buffer.sprites.sprite[5].set.pos_x
     = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2
     - SPRITE_WIDTH/2;
-  Graphix.buffer.sprites.sprite[0].set.props
+  Graphix.buffer.sprites.sprite[5].set.props
     = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.set.enabled
@@ -257,9 +259,9 @@ AASandbox_tick(void)
   Graphix.buffer.set.scroll_y += AASandbox_pace_y.pace;
   Graphix.buffer.set.scroll_x += AASandbox_pace_x.pace;
   Graphix.buffer
-    .sprites.sprite[0].set.pos_y += AASandbox_pace_sprite_y.pace;
+    .sprites.sprite[5].set.pos_y += AASandbox_pace_sprite_y.pace;
   Graphix.buffer
-    .sprites.sprite[0].set.pos_x += AASandbox_pace_sprite_x.pace;
+    .sprites.sprite[5].set.pos_x += AASandbox_pace_sprite_x.pace;
 }
 
 /* ***************************************************************  */
@@ -272,17 +274,17 @@ AASandbox_tick_low(void)
 
     ++Graphix.buffer.set.bordercolor;
 
-    if ((--Graphix.buffer.sprites.sprite[0].set.color & UINT4_MAX)
+    if ((--Graphix.buffer.sprites.sprite[5].set.color & UINT4_MAX)
         == Graphix_black) {
-      --Graphix.buffer.sprites.sprite[0].set.color;
+      --Graphix.buffer.sprites.sprite[5].set.color;
     }
 
-    Graphix.buffer.sprites.sprite[0].set.props
-      = Graphix.buffer.sprites.sprite[0].set.props
+    Graphix.buffer.sprites.sprite[5].set.props
+      = Graphix.buffer.sprites.sprite[5].set.props
         & Sprite_props_prio_bground_mask
-      ? Graphix.buffer.sprites.sprite[0].set.props
+      ? Graphix.buffer.sprites.sprite[5].set.props
         & ~Sprite_props_prio_bground_mask
-      : Graphix.buffer.sprites.sprite[0].set.props
+      : Graphix.buffer.sprites.sprite[5].set.props
         | Sprite_props_prio_bground_mask;
 
     Graphix.buffer.sprites.set.enabled
