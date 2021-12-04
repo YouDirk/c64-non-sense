@@ -94,8 +94,8 @@ Graphix_init(Graphix_initCallback_t init_callback)
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
-  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
-  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_black;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
 
   // --- TODO ---
   memset(&GRAPHIX_BUFFER_SPRITERAM, 0xff, 3*21);

@@ -33,7 +33,7 @@ main(void)
 
   while (Engine.set.exit_code < 0) {
 
-    DEBUG_RENDERTIME_FREECPU_BEGIN(Graphix_cyan);
+    DEBUG_RENDERTIME_FREECPU_BEGIN(Graphix_black);
     do {
       /* *************************************************************
        * polling stuff between engine ticks

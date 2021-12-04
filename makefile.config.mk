@@ -41,9 +41,9 @@ DEBUG_BUILD := 1
 #
 DEBUG_OPT_OVERFLOW_CHECK := 1
 
-# Mark as border color the time how long the C64 NonSense Engine is
-# polling stuff.  This is equivalent to the CPU time which is free to
-# use your stuff to do in your game.
+# Mark as border color (BLACK) the time how long the C64 NonSense
+# Engine is polling stuff.  This is equivalent to the CPU time which
+# is free to use your stuff to do in your game.
 #
 # values: [1 0], default: 0
 #

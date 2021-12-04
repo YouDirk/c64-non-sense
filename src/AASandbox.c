@@ -56,18 +56,16 @@ AASandbox_init(void)
     GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green, Graphix_black),
     GRAPHIX_BUFFER_SCREENRAM_BUFSIZE);
 
-  /* --- TODO ---
-  GRAPHIX_BUFFER_SCREENRAM[5][6]
-    = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
-                                          Graphix_lightred);
-  */
-
   /* set bitmap  */
-  memset(&GRAPHIX_BUFFER_BITMAPRAM, 0x01,
+  memset(GRAPHIX_BUFFER_BITMAPRAM, 0x01,
          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE);
-  for (i=0; i < GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE; i+=8) {
-    (&GRAPHIX_BUFFER_BITMAPRAM)[i] = 0xff; /* well optimized by CC65  */
-  }
+  for (i=0; i<GRAPHIX_SCREEN_BYTES; i+=8)
+    GRAPHIX_BUFFER_BITMAPRAM[0][0][i] = 0xff;
+
+  GRAPHIX_BUFFER_SCREENRAM[6][7]
+    = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
+                                          Graphix_gray1);
+  GRAPHIX_BUFFER_BITMAPRAM[6][7][4] = 0x19;
 
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
@@ -77,6 +75,8 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
     | Sprite_props_scale_x_mask;
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;

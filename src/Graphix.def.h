@@ -181,67 +181,110 @@ typedef_struct_end(Graphix_buffer_set_t)
 
 /* ---------------------------------------------------------------  */
 
-/* Points to the screen RAM.  Every byte in this array is representing
+/* Points to the Screen RAM.  Every byte in this array is representing
  * a cell in the screen, ordered from left to right.  These are
  * containing the cells fore- and background color for every cell.
  * Use the GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT() macro to convert two
  * colors to the corresponding byte layout.
  *
- *   size:        GRAPHIX_BUFFER_SCREENRAM_BUFSIZE
- *   byte layout: [msb..2^4: color bit set, 2^3..lsb: color zero bit]
- *                GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset,
- *                                                    color_bitzero)
+ * size:        GRAPHIX_BUFFER_SCREENRAM_BUFSIZE = 1000
  *
- *   cell layout: screen_ram[0]   screen_ram[1]   ... screen_ram[39]
- *                screen_ram[40]  screen_ram[41]  ... screen_ram[79]
- *                ...             ...                 ...
- *                ...             ...                 ...
- *                screen_ram[960] screen_ram[961] ... screen_ram[999]
+ * byte layout: [msb..2^4: color bit set, 2^3..lsb: color bit zero]
+ *              GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_bitset,
+ *                                                  color_bitzero)
  *
- *   usage:       GRAPHIX_BUFFER_SCREENRAM[coord_y][coord_x]
- *                  = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(
- *                                      Graphix_COLOR_FOREGROUND,
- *                                      Graphix_COLOR_BACKGROUND);
+ * screen layout:
+ *   screen_ram[ 0][0]  screen_ram[ 0][1]  ...  screen_ram[ 0][39]
+ *   screen_ram[ 1][0]  screen_ram[ 1][1]  ...  screen_ram[ 1][39]
+ *   ...                ...                     ...
+ *   ...                ...                     ...
+ *   screen_ram[24][0]  screen_ram[24][1]  ...  screen_ram[24][39]
+ *
+ *
+ * usage:       GRAPHIX_BUFFER_SCREENRAM[cell_y][cell_x]
+ *                = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(
+ *                                    Graphix_COLOR_FOREGROUND,
+ *                                    Graphix_COLOR_BACKGROUND);
  */
 
 /* Size of GRAPHIX_BUFFER_SCREENRAM in bytes.  */
-define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,     GRAPHIX_SCREEN_CELLS)
+define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,  GRAPHIX_SCREEN_CELLS)
 
-typedef_uint8(                             Graphix_buffer_screenram_t)
-register_nested_array(GRAPHIX_BUFFER_SCREENRAM_RVAL,
-               Graphix_buffer_screenram_t[GRAPHIX_SCREEN_CELLS_Y],
-               GRAPHIX_BUFFER_SCREENRAM, GRAPHIX_SCREEN_CELLS_X)
+/* End of GRAPHIX_BUFFER_BITMAPRAM.  */
+register_constnested(GRAPHIX_BUFFER_SCREENRAM_RVAL
+        +GRAPHIX_BUFFER_SCREENRAM_BUFSIZE, Graphix_bitmapram_byte_t, \
+                                          GRAPHIX_BUFFER_SCREENRAM_END)
+
+typedef_uint8(                             Graphix_screenram_byte_t)
+register_nested_array(GRAPHIX_BUFFER_SCREENRAM_RVAL,                 \
+               Graphix_screenram_byte_t[GRAPHIX_SCREEN_CELLS_Y],     \
+                                          GRAPHIX_BUFFER_SCREENRAM,  \
+                                          GRAPHIX_SCREEN_CELLS_X)
 
 /* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_foreground,
  *                                     color_background)
  */
 macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
-                Graphix_buffer_screenram_t, ((arg1) << 4) | (arg2))
+                Graphix_screenram_byte_t, ((arg1) << 4) | (arg2))
 
 /* ---------------------------------------------------------------  */
 
-/* Points to the bitmap RAM.  Every byte in this array is representing
+/* Points to the Bitmap RAM.  Every byte in this array is representing
  * the pixels of the bitmap, ordered for every 8 bytes (one cell of
  * the screen) from the top down, then cell-wise from left to right.
  *
- *   size:          GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE
- *   byte layout:   [msb: left pixel, pxl 2, ..., lsb: right pixel]
+ * size:        GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE = 8000
  *
- *   screen layout: bitmap_ram[0]  bitmap_ram[8]   bitmap_ram[16]
- *                  bitmap_ram[1]  bitmap_ram[9]   bitmap_ram[17]
- *                  bitmap_ram[2]  bitmap_ram[10]  bitmap_ram[18]
- *                  bitmap_ram[3]  bitmap_ram[11]  bitmap_ram[19]
- *                  bitmap_ram[4]  bitmap_ram[12]  bitmap_ram[20]
- *                  bitmap_ram[5]  bitmap_ram[13]  bitmap_ram[21]
- *                  bitmap_ram[6]  bitmap_ram[14]  bitmap_ram[22]
- *                  bitmap_ram[7]  bitmap_ram[15]  bitmap_ram[23]
+ * byte layout:
+ *   HiRes      - [msb: left pixel, pxl 2, ..., lsb: right pixel]
+ *                Values: 0b0 cell background color of Screen RAM
+ *                        0b1 cell foreground color of Screen RAM
+ *   MultiColor - [left pixel, 2nd pixel, 3rd pixel, right pixel]
+ *                Values: 0b00 common Graphix background color
+ *                        0b01 cell foreground color of Screen RAM
+ *                        0b10 cell background color of Screen RAM
+ *                        0b11 cell color of Color RAM
+ *
+ * screen layout:
+ *   bitmap_ram[ 0][0][0] bitmap_ram[ 0][1][0] ... bitmap_ram[ 0][39][0]
+ *   bitmap_ram[ 0][0][1] bitmap_ram[ 0][1][1]     ...
+ *   bitmap_ram[ 0][0][2] bitmap_ram[ 0][1][2]     ...
+ *   bitmap_ram[ 0][0][3] bitmap_ram[ 0][1][3]     ...
+ *   bitmap_ram[ 0][0][4] bitmap_ram[ 0][1][4]     ...
+ *   bitmap_ram[ 0][0][5] bitmap_ram[ 0][1][5]     ...
+ *   bitmap_ram[ 0][0][6] bitmap_ram[ 0][1][6]     ...
+ *   bitmap_ram[ 0][0][7] bitmap_ram[ 0][1][7] ... bitmap_ram[ 0][39][7]
+ *
+ *   bitmap_ram[ 1][0][0] bitmap_ram[ 1][1][0] ... bitmap_ram[ 1][39][0]
+ *   ...                  ...                      ...
+ *   bitmap_ram[ 1][0][7] bitmap_ram[ 1][1][7] ... bitmap_ram[ 1][39][7]
+ *
+ *   ...                  ...                      ...
+ *   ...                  ...                      ...
+ *
+ *   bitmap_ram[24][0][0] bitmap_ram[24][1][0] ... bitmap_ram[24][39][0]
+ *   ...                  ...                      ...
+ *   bitmap_ram[24][0][7] bitmap_ram[24][1][7] ... bitmap_ram[24][39][7]
+ *
+ *
+ * usage:       GRAPHIX_BUFFER_BITMAPRAM[cell_y][cell_x][byte 0..7]
+ *                = 0x81 | 0x30  // 0b10110001
  */
-typedef_uint8(                             Graphix_buffer_bitmapram_t)
-register_nested(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                       \
-                Graphix_buffer_bitmapram_t, GRAPHIX_BUFFER_BITMAPRAM)
 
 /* Size of GRAPHIX_BUFFER_BITMAPRAM in bytes.  */
-define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,     GRAPHIX_SCREEN_BYTES)
+define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,  GRAPHIX_SCREEN_BYTES)
+
+/* End of GRAPHIX_BUFFER_BITMAPRAM.  */
+register_constnested(GRAPHIX_BUFFER_BITMAPRAM_RVAL
+        +GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE, Graphix_bitmapram_byte_t, \
+                                          GRAPHIX_BUFFER_BITMAPRAM_END)
+
+typedef_uint8(                             Graphix_bitmapram_byte_t)
+register_nested_array(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                 \
+        Graphix_bitmapram_byte_t[GRAPHIX_SCREEN_CELLS_Y]             \
+                                [GRAPHIX_SCREEN_CELLS_X],            \
+                                          GRAPHIX_BUFFER_BITMAPRAM,  \
+                                          GRAPHIX_SCREEN_CELLS_BYTES)
 
 /* ---------------------------------------------------------------  */
 
