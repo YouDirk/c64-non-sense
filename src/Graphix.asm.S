@@ -80,7 +80,7 @@ done:
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_RENDERTIME_IRQ
 
-  .define _SPR_SPR Graphix_buffer_sprites_t::sprite
+  .define _SPR_SPR SpriteManager_buffer_t::sprite
 
         clc
         lda _Graphix_buffer_back_ptr
@@ -95,10 +95,10 @@ done:
 
         ;; -----------------------------------------------------------
 
-  .define _SPR_SET Graphix_buffer_sprites_t::set
-  .define _SPR_SET_ENA Graphix_buffer_sprites_set_t::enabled
-  .define _SPR_SET_MC0B01 Graphix_buffer_sprites_set_t::multicolor_0b01
-  .define _SPR_SET_MC0B11 Graphix_buffer_sprites_set_t::multicolor_0b11
+  .define _SPR_SET SpriteManager_buffer_t::set
+  .define _SPR_SET_ENA SpriteManager_buffer_set_t::enabled
+  .define _SPR_SET_MC0B01 SpriteManager_buffer_set_t::multicolor_0b01
+  .define _SPR_SET_MC0B11 SpriteManager_buffer_set_t::multicolor_0b11
 
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
@@ -187,7 +187,7 @@ sprites_loop:                           ; do {
 inc_highbyte_done:
 
         inx                             ; ++sprite_counter
-        cpx #GRAPHIX_SPRITES_MAXCOUNT
+        cpx #SPRITEMANAGER_SPRITES_MAXCOUNT
         bcc sprites_loop                ; } while (sprite_counter < 8);
 sprites_done:
 

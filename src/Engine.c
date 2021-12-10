@@ -21,8 +21,9 @@
 
 #include "Memory.h"
 #include "Interrupt.h"
-#include "Input.h"
 #include "Graphix.h"
+#include "SpriteManager.h"
+#include "Input.h"
 #include "AASandbox.h"
 
 /* ***************************************************************  */
@@ -44,6 +45,9 @@ _Engine_init_blackscreen(void)
   Engine.poll_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_time = ENGINE_MS2TIMESTAMP(0);
   Engine.tick_count = ENGINE_MS2TICKS(0);
+
+  /* init VIC-II hardware sprites and free all depending resources  */
+  SpriteManager_init();
 
   /* init input stuff, such like joystick, keyboard, etc  */
   Input_init();
@@ -86,6 +90,9 @@ _Engine_release_blackscreen(void)
 
   /* hmmmm ...  */
   Input_release();
+
+  /* free all sprite resources and virtual sprites  */
+  SpriteManager_release();
 
   /* must be the last of all  */
   Interrupt_release();

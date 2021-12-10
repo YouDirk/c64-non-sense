@@ -28,11 +28,11 @@
 static uint8_t AASandbox_bordercolor_time;
 
 #define _CONST_SPRITES                                               \
-  Graphix_sprite_5_mask
+  SpriteManager_sprites_5_mask
 
 #define _BLINKING_SPRITES                                            \
-  (Graphix_sprite_4_mask | Graphix_sprite_0_mask                     \
-   | Graphix_sprite_6_mask | Graphix_sprite_7_mask)
+  (SpriteManager_sprites_4_mask | SpriteManager_sprites_0_mask       \
+   | SpriteManager_sprites_6_mask | SpriteManager_sprites_7_mask)
 
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;

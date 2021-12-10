@@ -19,7 +19,6 @@
 #include "Graphix.h"
 
 #include "EngineConfig.h"
-#include "Sprite.h"
 
 /* ***************************************************************  */
 
@@ -60,9 +59,6 @@ Graphix_t Graphix;
 void __fastcall__
 Graphix_init(Graphix_initCallback_t init_callback)
 {
-  static Sprite_t* cur_sprite;
-  static uint8_t i;
-
   /* black screen  */
   VIC.ctrl1 = VIC_CTRL1_DEFAULT & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.bordercolor = VIC_COLOR_BLACK;
@@ -91,35 +87,16 @@ Graphix_init(Graphix_initCallback_t init_callback)
 
   Graphix.buffer.set.bordercolor = Graphix_black;
 
-  /* disable all sprites  */
-  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
-  Graphix.buffer.sprites.set.enabled = Graphix_sprite_none_mask;
-  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_black;
-  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
-
-  // --- TODO ---
-  memset(&GRAPHIX_BUFFER_SPRITERAM, 0xff, 3*21);
-  for (i=0; i<8; ++i) {
-    *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
-      = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 0;
-  }
-  memset(&GRAPHIX_BUFFER_SPRITERAM + 0x0040, 0xe4, 3*21);
-  *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
-    = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 1;
-  // --- end of TODO ---
-
-  for (cur_sprite = Graphix.buffer.sprites.sprite;
-       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
-    Sprite_new(cur_sprite);
-
   /* initialize all other stuff  */
   init_callback();
 
-  /* Initialize buffers for triple buffering.  This is done after
-   * init_callback() to make it possible that the callee initialize
-   * these.
+  /* Initialize all Graphix buffers for triple buffering.  This is
+   * done after init_callback() to make it possible that the callee
+   * initialize these.
    */
 #ifndef CONF_DOUBLE_BUFFERING
+  Graphix_buffer_shared_ptr = _GRAPHIX_BUFFERS_SHAREDBACK_0;
+  Graphix_buffer_swap();
   Graphix_buffer_shared_ptr = _GRAPHIX_BUFFERS_SHAREDBACK_1;
 #endif /* CONF_DOUBLE_BUFFERING  */
   Graphix_buffer_back_ptr = _GRAPHIX_BUFFERS_SHAREDBACK_0;
@@ -134,57 +111,22 @@ Graphix_init(Graphix_initCallback_t init_callback)
   }
 #endif /* defined(DEBUG) && !defined(CONF_DOUBLE_BUFFERING)  */
 
-  // --- TODO ---
-#ifdef DEBUG
-  printf("0x%04x 0x%04x 0x%04x\n",
-         Graphix_buffer_back_ptr, &GRAPHIX_BUFFER_SCREENRAM,
-         &GRAPHIX_BUFFER_BITMAPRAM);
-#endif
-  // --- end of TODO ---
-
-  /* set screen on and VIC IRQs go!  */
-  VIC.ctrl1 = VIC_CTRL1_MODE;
+  /* VIC IRQs go!  Screen will be set to ON during first rasterline
+   * IRQ, to make sure that no uninitialized trash will be outputted.
+   */
+  VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
   VIC.imr   = VIC_IMR_IRQMODE;
 }
 
 void __fastcall__
 Graphix_release(Graphix_releaseCallback_t release_callback)
 {
-  static Sprite_t* cur_sprite;
-
   /* Disable VIC IRQs first, then black screen  */
   VIC.imr   = VIC_IMR_DISABLEALL_MASK;
   VIC.ctrl1 = VIC_CTRL1_MODE & ~VIC_CTRL1_SCREEN_ON_MASK;
 
   /* release all other stuff  */
   release_callback();
-
-  /* disable all sprites  */
-  VIC.spr_ena = VIC_SPRITE_NONE_MASK;
-  VIC.spr_mcolor0 = VIC_SPR_MCOLOR0_0B01_DEFAULT;
-  VIC.spr_mcolor1 = VIC_SPR_MCOLOR1_0B11_DEFAULT;
-
-  /* release Graphix.buffer  */
-  for (cur_sprite = Graphix.buffer.sprites.sprite;
-       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
-    Sprite_delete(cur_sprite);
-
-  /* reset sprites stuff  */
-  memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
-  VIC.spr_hi_x    = 0x00;
-  VIC.spr_mcolor  = 0x00;
-  VIC.spr_exp_y   = 0x00;
-  VIC.spr_exp_x   = 0x00;
-  VIC.spr_bg_prio = 0x00;
-
-  VIC.spr0_color = VIC_SPR0_COLOR_DEFAULT;
-  VIC.spr1_color = VIC_SPR1_COLOR_DEFAULT;
-  VIC.spr2_color = VIC_SPR2_COLOR_DEFAULT;
-  VIC.spr3_color = VIC_SPR3_COLOR_DEFAULT;
-  VIC.spr4_color = VIC_SPR4_COLOR_DEFAULT;
-  VIC.spr5_color = VIC_SPR5_COLOR_DEFAULT;
-  VIC.spr6_color = VIC_SPR6_COLOR_DEFAULT;
-  VIC.spr7_color = VIC_SPR7_COLOR_DEFAULT;
 
   /* xscroll and multicolor stuff  */
   VIC.ctrl2 = VIC_CTRL2_DEFAULT;

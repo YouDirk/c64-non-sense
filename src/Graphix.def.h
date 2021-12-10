@@ -57,8 +57,8 @@ typedef_enum_end(Graphix_color_t)
 /* end of colors
  * ***************************************************************  */
 
-/* SPRITE.DEF.H requires GRAPHIX_COLOR_T.  */
-include_def_h(Sprite)
+/* SPRITEMANAGER.DEF.H requires GRAPHIX_COLOR_T.  */
+include_def_h(SpriteManager)
 
 /* *******************************************************************
  * screen constants
@@ -87,66 +87,6 @@ define_dec(GRAPHIX_SCREEN_CELLS_BYTES,                            8)
 
 /* end of screen constants
  * ***************************************************************  */
-
-macro_arg1(GRAPHIX_SPRITES_2MASK, uint8_t,   1 << (arg1))
-
-define_dec(GRAPHIX_SPRITES_MAXCOUNT,         8)
-
-/* Selector for sprites to be used.  Full compatible with bit masks of
- * VIC-II sprites registers, i.e. enable register at 0xd015, etc.
- */
-typedef_enum_begin(Graphix_sprite_selector_t)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_NONE_MASK,  \
-                                              Graphix_sprite_none_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_0_MASK,     \
-                                              Graphix_sprite_0_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_1_MASK,     \
-                                              Graphix_sprite_1_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_2_MASK,     \
-                                              Graphix_sprite_2_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_3_MASK,     \
-                                              Graphix_sprite_3_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_4_MASK,     \
-                                              Graphix_sprite_4_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_5_MASK,     \
-                                              Graphix_sprite_5_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_6_MASK,     \
-                                              Graphix_sprite_6_mask)
-  typedef_enum_val(Graphix_sprite_selector_t, VIC_SPRITE_7_MASK,     \
-                                              Graphix_sprite_7_mask)
-typedef_enum_end(Graphix_sprite_selector_t)
-
-/* ***************************************************************  */
-
-/* Configuration variables which can be set directly, without needing
- * to call setter functions.
- */
-typedef_struct_begin(Graphix_buffer_sprites_set_t)
-  /* Sprites which will be enabled/visible.  Full compatible with
-   * VIC-II register at 0xd015.
-   */
-  typedef_struct_enum(Graphix_sprite_selector_t,       enabled)
-
-  /* Colors with bit combinations 0b01=0x01 and 0b11=0x03 for all
-   * sprites which have GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.PROPS =
-   * SPRITE_PROPS_MULTICOLOR_MASK set.
-   */
-  typedef_struct_enum(Graphix_color_t,                 multicolor_0b01)
-  typedef_struct_enum(Graphix_color_t,                 multicolor_0b11)
-typedef_struct_end(Graphix_buffer_sprites_set_t)
-
-/* Sprites structure in graphic buffer.  */
-typedef_struct_begin(Graphix_buffer_sprites_t)
-  /* Some writable member variables.  */
-  typedef_struct_nested(Graphix_buffer_sprites_set_t,  set)
-
-  /* Access to the 8 sprites of the C64 VIC-II graphic chip.  */
-  typedef_struct_nested_array(Sprite_t, sprite,                      \
-                                             GRAPHIX_SPRITES_MAXCOUNT)
-  typedef_struct_nested(Sprite_t,            end)
-typedef_struct_end(Graphix_buffer_sprites_t)
-
-/* ***************************************************************  */
 
 /* Configuration variables which can be set directly, without needing
  * to call setter functions.
@@ -302,8 +242,8 @@ typedef_struct_begin(Graphix_buffer_t)
   /* Some writable member variables.  */
   typedef_struct_nested(Graphix_buffer_set_t,          set)
 
-  /* The sprites structure  */
-  typedef_struct_nested(Graphix_buffer_sprites_t,      sprites)
+  /* The SpriteManager structure  */
+  typedef_struct_nested(SpriteManager_buffer_t,        sprites)
 typedef_struct_end(Graphix_buffer_t)
 
 /* ***************************************************************  */

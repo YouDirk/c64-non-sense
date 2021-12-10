@@ -18,10 +18,11 @@
 
 #include "common.h"
 
-#include "Input.h"
-#include "Graphix.h"
 #include "Engine.h"
+#include "Graphix.h"
+#include "Input.h"
 #include "AASandbox.h"
+#include "SpriteManager.h"
 
 /* ***************************************************************  */
 
@@ -55,6 +56,9 @@ main(void)
 
     /* poll test- and staged code  */
     AASandbox_tick();
+
+    /* sprite tick for animations, etc  */
+    SpriteManager_tick();
 
     /* *** render, what we´ve done ***  */
     Graphix_buffer_swap();
