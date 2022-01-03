@@ -36,7 +36,7 @@ include_def_h(Sprite)
 
 macro_arg1(SPRITEMANAGER_SPRITES_2MASK, uint8_t,  1 << (arg1))
 
-define_dec(SPRITEMANAGER_SPRITES_MAXCOUNT,        8)
+define_dec(SPRITEMANAGER_SPRITES_COUNT,           8)
 
 /* Selector for sprites to be used.  Full compatible with bit masks of
  * VIC-II sprites registers, i.e. enable register at 0xd015, etc.
@@ -88,7 +88,7 @@ typedef_struct_begin(SpriteManager_buffer_t)
 
   /* Access to the 8 sprites of the C64 VIC-II graphic chip.  */
   typedef_struct_nested_array(Sprite_t, sprite,                      \
-                                        SPRITEMANAGER_SPRITES_MAXCOUNT)
+                                        SPRITEMANAGER_SPRITES_COUNT)
   typedef_struct_nested(Sprite_t,       end)
 typedef_struct_end(SpriteManager_buffer_t)
 

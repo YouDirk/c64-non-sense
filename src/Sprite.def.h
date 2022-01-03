@@ -29,21 +29,22 @@ header_define(SPRITE)
 
 /* ***************************************************************  */
 
-define_dec(SPRITE_WIDTH,                                    24)
-define_dec(SPRITE_HEIGHT,                                   21)
+define_dec(SPRITE_WIDTH,                                     24)
+define_dec(SPRITE_WIDTH_BYTES,                                3)
+define_dec(SPRITE_HEIGHT,                                    21)
 
-define_dec(SPRITE_POS_DISPLAY_BEGIN_X,                      0)
-define_dec(SPRITE_POS_DISPLAY_BEGIN_Y,                      0)
+define_dec(SPRITE_POS_DISPLAY_BEGIN_X,                        0)
+define_dec(SPRITE_POS_DISPLAY_BEGIN_Y,                        0)
 define_dec(SPRITE_POS_DISPLAY_WIDTH,              /* ??? */ 512)
 define_dec(SPRITE_POS_DISPLAY_HEIGHT,             /* ??? */ 256)
 
-define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_X,                  31)
-define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_Y,                  54)
+define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_X,                   31)
+define_dec(SPRITE_POS_SMALLSCREEN_BEGIN_Y,                   54)
 define_dec(SPRITE_POS_SMALLSCREEN_WIDTH,                    304)
 define_dec(SPRITE_POS_SMALLSCREEN_HEIGHT,                   192)
 
-define_dec(SPRITE_POS_LARGESCREEN_BEGIN_X,                  24)
-define_dec(SPRITE_POS_LARGESCREEN_BEGIN_Y,                  50)
+define_dec(SPRITE_POS_LARGESCREEN_BEGIN_X,                   24)
+define_dec(SPRITE_POS_LARGESCREEN_BEGIN_Y,                   50)
 define_dec(SPRITE_POS_LARGESCREEN_WIDTH,                    320)
 define_dec(SPRITE_POS_LARGESCREEN_HEIGHT,                   200)
 
@@ -96,6 +97,21 @@ typedef_enum_end(Sprite_properties_t)
 
 /* ***************************************************************  */
 
+typedef_uint8(                                    Sprite_frame_byte_t)
+
+define(SPRITE_FRAME_BUFFER_Y_COUNT,                     SPRITE_HEIGHT)
+define(SPRITE_FRAME_BUFFER_X_COUNT,                SPRITE_WIDTH_BYTES)
+
+typedef_struct_begin(Sprite_frame_t)
+  typedef_struct_primit_array2(Sprite_frame_byte_t,           buffer,\
+                                         SPRITE_FRAME_BUFFER_Y_COUNT,\
+                                         SPRITE_FRAME_BUFFER_X_COUNT)
+
+  typedef_struct_uint8(                                   tick_count)
+typedef_struct_end(Sprite_frame_t)
+
+/* ***************************************************************  */
+
 /* Configuration variables which can be set directly, without needing
  * to call setter functions.
  */
@@ -126,6 +142,7 @@ typedef_struct_begin(Sprite_t)
   /* Some writable member variables.  */
   typedef_struct_nested(Sprite_set_t,             set)
 
+  //typedef_struct_nested_ptr(Sprite_frame_t,       frames)
 typedef_struct_end(Sprite_t)
 
 /* ***************************************************************  */

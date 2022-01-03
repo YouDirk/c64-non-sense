@@ -147,19 +147,22 @@ typedef_struct_end(Graphix_buffer_set_t)
  *                                    Graphix_COLOR_BACKGROUND);
  */
 
+typedef_uint8(                             Graphix_screenram_byte_t)
+
 /* Size of GRAPHIX_BUFFER_SCREENRAM in bytes.  */
 define(GRAPHIX_BUFFER_SCREENRAM_BUFSIZE,  GRAPHIX_SCREEN_CELLS)
 
-/* End of GRAPHIX_BUFFER_BITMAPRAM.  */
+/* End of GRAPHIX_BUFFER_SCREENRAM.  */
 register_constnested(GRAPHIX_BUFFER_SCREENRAM_RVAL
-        +GRAPHIX_BUFFER_SCREENRAM_BUFSIZE, Graphix_bitmapram_byte_t, \
+        +GRAPHIX_BUFFER_SCREENRAM_BUFSIZE, Graphix_screenram_byte_t, \
                                           GRAPHIX_BUFFER_SCREENRAM_END)
 
-typedef_uint8(                             Graphix_screenram_byte_t)
-register_nested_array(GRAPHIX_BUFFER_SCREENRAM_RVAL,                 \
-               Graphix_screenram_byte_t[GRAPHIX_SCREEN_CELLS_Y],     \
-                                          GRAPHIX_BUFFER_SCREENRAM,  \
-                                          GRAPHIX_SCREEN_CELLS_X)
+/* The GRAPHIX_BUFFER_SCREENRAM.  */
+register_nested_array2(GRAPHIX_BUFFER_SCREENRAM_RVAL,                \
+                       Graphix_screenram_byte_t,                     \
+                                            GRAPHIX_BUFFER_SCREENRAM,\
+                                            GRAPHIX_SCREEN_CELLS_Y,  \
+                                            GRAPHIX_SCREEN_CELLS_X)
 
 /* GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(color_foreground,
  *                                     color_background)
@@ -211,20 +214,22 @@ macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
  *                = 0x81 | 0x30  // 0b10110001
  */
 
+typedef_uint8(                             Graphix_bitmapram_byte_t)
+
 /* Size of GRAPHIX_BUFFER_BITMAPRAM in bytes.  */
 define(GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE,  GRAPHIX_SCREEN_BYTES)
 
 /* End of GRAPHIX_BUFFER_BITMAPRAM.  */
 register_constnested(GRAPHIX_BUFFER_BITMAPRAM_RVAL
         +GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE, Graphix_bitmapram_byte_t, \
-                                          GRAPHIX_BUFFER_BITMAPRAM_END)
+                                         GRAPHIX_BUFFER_BITMAPRAM_END)
 
-typedef_uint8(                             Graphix_bitmapram_byte_t)
-register_nested_array(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                 \
-        Graphix_bitmapram_byte_t[GRAPHIX_SCREEN_CELLS_Y]             \
-                                [GRAPHIX_SCREEN_CELLS_X],            \
-                                          GRAPHIX_BUFFER_BITMAPRAM,  \
-                                          GRAPHIX_SCREEN_CELLS_BYTES)
+/* The GRAPHIX_BUFFER_BITMAPRAM.  */
+register_nested_array2(GRAPHIX_BUFFER_BITMAPRAM_RVAL,                \
+        Graphix_bitmapram_byte_t[GRAPHIX_SCREEN_CELLS_Y],            \
+                                            GRAPHIX_BUFFER_BITMAPRAM,\
+                                            GRAPHIX_SCREEN_CELLS_X,  \
+                                            GRAPHIX_SCREEN_CELLS_BYTES)
 
 /* ---------------------------------------------------------------  */
 

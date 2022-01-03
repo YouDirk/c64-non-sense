@@ -138,7 +138,7 @@ sprites_loop:                           ; do {
 
         ldy #Sprite_t::set + Sprite_set_t::pos_x
         lda (ZP_ISR_PTR2), y
-        sta VIC_SPR_ARRAY, x            ; set sprite x position
+        sta VIC_SPR_POSITIONS, x        ; set sprite x position
         inx                             ; spr_cnt := 2*spr_cnt + 1
 
         iny
@@ -149,7 +149,7 @@ sprites_loop:                           ; do {
                                         ;   := (carry | hi_x) >> 1
         ldy #Sprite_t::set + Sprite_set_t::pos_y
         lda (ZP_ISR_PTR2), y
-        sta VIC_SPR_ARRAY, x            ; set sprite y position
+        sta VIC_SPR_POSITIONS, x        ; set sprite y position
 
         txa
         lsr
@@ -187,12 +187,12 @@ sprites_loop:                           ; do {
 inc_highbyte_done:
 
         inx                             ; ++sprite_counter
-        cpx #SPRITEMANAGER_SPRITES_MAXCOUNT
+        cpx #SPRITEMANAGER_SPRITES_COUNT
         bcc sprites_loop                ; } while (sprite_counter < 8);
 sprites_done:
 
         lda sprites_hi_x                ; save properties to registers
-        sta VIC_SPRHI_X
+        sta VIC_SPRHI_POSITION_X
         lda sprites_mcolors
         sta VIC_SPR_MCOLOR
         lda sprites_expy

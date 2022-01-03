@@ -74,10 +74,12 @@ BC ******************************************************************
 
 #  define typedef_struct_begin(name)    typedef struct name {
 #  define typedef_struct_end(name)      } name;
-#  define typedef_struct_nested(other, name)      other name;
-#  define typedef_struct_nested_ptr(other, name)  other* name;
-#  define typedef_struct_enum(other, name)        other name;
-#  define typedef_struct_enum_ptr(other, name)    other* name;
+#  define typedef_struct_enum(type, name)         type name;
+#  define typedef_struct_enum_ptr(type, name)     type* name;
+#  define typedef_struct_primit(type, name)       type name;
+#  define typedef_struct_primit_ptr(type, name)   type* name;
+#  define typedef_struct_nested(type, name)       type name;
+#  define typedef_struct_nested_ptr(type, name)   type* name;
 #  define typedef_struct_bool(name)               bool name;
 #  define typedef_struct_bool_ptr(name)           bool* name;
 #  define typedef_struct_char(name)               char name;
@@ -124,10 +126,30 @@ BC ******************************************************************
 #  define typedef_struct_int32_ptr(name)          int32_t* name;
 #  define typedef_struct_void_ptr(name)           void* name;
 
-#  define typedef_struct_nested_array(other, name, size)             \
-                                        other name[size];
-#  define typedef_struct_enum_array(other, name, size)               \
-                                        other name[size];
+#  define typedef_struct_enum_array(type, name, size)                \
+                                        type name[size];
+#  define typedef_struct_enum_array2(type, name, size1, size2)       \
+                                        type name[size1][size2];
+#  define typedef_struct_enum_array_ptr(type, name, size)            \
+                                        type (*name)[size];
+#  define typedef_struct_enum_array2_ptr(type, name, size1, size2)   \
+                                        type (*name)[size1][size2];
+#  define typedef_struct_primit_array(type, name, size)              \
+                                        type name[size];
+#  define typedef_struct_primit_array2(type, name, size1, size2)     \
+                                        type name[size1][size2];
+#  define typedef_struct_primit_array_ptr(type, name, size)          \
+                                        type (*name)[size];
+#  define typedef_struct_primit_array2_ptr(type, name, size1, size2) \
+                                        type (*name)[size1][size2];
+#  define typedef_struct_nested_array(type, name, size)              \
+                                        type name[size];
+#  define typedef_struct_nested_array2(type, name, size1, size2)     \
+                                        type name[size1][size2];
+#  define typedef_struct_nested_array_ptr(type, name, size)          \
+                                        type (*name)[size];
+#  define typedef_struct_nested_array2_ptr(type, name, size1, size2) \
+                                        type (*name)[size1][size2];
 
 #  define typedef_enum_begin(name)             BC enum name {  */    \
                                                typedef uint8_t name;
@@ -183,14 +205,19 @@ BC ******************************************************************
 #  define register_nested(addr, type, name)                          \
                _define(name, (*(volatile type*) (addr)))
 #  define register_nested_ptr(addr, type, name)                      \
-               _define(name, (*(volatile type**) (addr)))
+          _define(name, (*(volatile type**) (addr)))
 #  define register_nested_array(addr, type, name, size)              \
-               _define(name, ((volatile type[size]) (addr)))
+          _define(name, ((volatile type[size]) (addr)))
+#  define register_nested_array2(addr, type, name, size1, size2)     \
+          _define(name, ((volatile type[size1][size2]) (addr)))
 #  define register_constnested(addr, type, name)                     \
-               _define(name, (*(volatile const type*) (addr)))
+          _define(name, (*(volatile const type*) (addr)))
 #  define register_constnested_ptr(addr, type, name)                 \
-               _define(name, (*(volatile const type**) (addr)))
-
+          _define(name, (*(volatile const type**) (addr)))
+#  define register_constnested_array(addr, type, name, size)         \
+          _define(name, ((volatile const type[size]) (addr)))
+#  define register_constnested_array2(addr, type, name, size1, size2)\
+          _define(name, ((volatile const type[size1][size2]) (addr)))
 
 #  define register_bool_hex(addr_hex, name)                          \
                          register_bool(0x##addr_hex, name)
@@ -231,15 +258,21 @@ BC ******************************************************************
 #  define register_void_ptr_hex(addr_hex, name)                      \
                          register_void_ptr(0x##addr_hex, name)
 #  define register_nested_hex(addr_hex, type, name)                  \
-               register_nested(0x##addr_hex, type, name)
+          register_nested(0x##addr_hex, type, name)
 #  define register_nested_ptr_hex(addr_hex, type, name)              \
-               register_nested_ptr(0x##addr_hex, type, name)
+          register_nested_ptr(0x##addr_hex, type, name)
 #  define register_nested_array_hex(addr_hex, type, name, size)      \
-               register_nested_array(0x##addr_hex, type, name, size)
+          register_nested_array(0x##addr_hex, type, name, size)
+#  define register_nested_array2_hex(addr_hex, type, name, size1, size2)\
+          register_nested_array2(0x##addr_hex, type, name, size1, size2)
 #  define register_constnested_hex(addr, type, name)                 \
-               register_constnested(0x##addr_hex, type, name)
+          register_constnested(0x##addr_hex, type, name)
 #  define register_constnested_ptr_hex(addr, type, name)             \
-               register_constnested_ptr(0x##addr_hex, type, name)
+          register_constnested_ptr(0x##addr_hex, type, name)
+#  define register_constnested_array_hex(addr_hex, type, name, size) \
+          register_constnested_array(0x##addr_hex, type, name, size)
+#  define register_constnested_array2_hex(addr_hex, type, name, size1, size2)\
+          register_constnested_array2(0x##addr_hex, type, name, size1, size2)
 
 
 #elif defined(GEN_ASM_HEADER)
@@ -280,17 +313,19 @@ BC ******************************************************************
 #  define macro_arg1_arg2(name, type, expr)                          \
                                         .define name(arg1, arg2) expr
 
-#  define typedef_uint8(name)      _define(name, SIZEOF_BYTE) ; uint8
-#  define typedef_uint16(name)     _define(name, SIZEOF_WORD) ; uint16
-#  define typedef_int8(name)       _define(name, SIZEOF_BYTE) ; int8
-#  define typedef_int16(name)      _define(name, SIZEOF_WORD) ; int16
+#  define typedef_uint8(name)      _define(name,       .byte) ; uint8
+#  define typedef_uint16(name)     _define(name,       .word) ; uint16
+#  define typedef_int8(name)       _define(name,       .byte) ; int8
+#  define typedef_int16(name)      _define(name,       .word) ; int16
 
 #  define typedef_struct_begin(name)    .struct name
 #  define typedef_struct_end(name)      .endstruct ; struct name
-#  define typedef_struct_nested(other, name)      name .tag other
-#  define typedef_struct_nested_ptr(other, name)  name .addr  ; other*
-#  define typedef_struct_enum(other, name)        name .byte  ; other
-#  define typedef_struct_enum_ptr(other, name)    name .addr  ; other*
+#  define typedef_struct_enum(type, name)         name .byte  ; type
+#  define typedef_struct_enum_ptr(type, name)     name .addr  ; type*
+#  define typedef_struct_primit(type, name)       name type
+#  define typedef_struct_primit_ptr(type, name)   name .addr  ; type*
+#  define typedef_struct_nested(type, name)       name .tag type
+#  define typedef_struct_nested_ptr(type, name)   name .addr  ; type*
 #  define typedef_struct_bool(name)               name .byte  ; bool
 #  define typedef_struct_bool_ptr(name)           name .addr  ; bool*
 #  define typedef_struct_char(name)               name .byte  ; char
@@ -337,10 +372,31 @@ BC ******************************************************************
 #  define typedef_struct_int32_ptr(name)          name .addr  ; int32*
 #  define typedef_struct_void_ptr(name)           name .addr  ; void*
 
-#  define typedef_struct_nested_array(other, name, size)             \
-                                        name .tag other (size)
-#  define typedef_struct_enum_array(other, name, size)               \
-                                        name .byte (size) ; other
+#  define typedef_struct_enum_array(type, name, size)                \
+                         name .byte (size) ; type
+#  define typedef_struct_enum_array2(type, name, size1, size2)       \
+                         name .byte (size1*size2) ; type
+#  define typedef_struct_enum_array_ptr(type, name, size)            \
+                         name .addr ; type (*name)[size];
+#  define typedef_struct_enum_array2_ptr(type, name, size1, size2)   \
+                         name .addr ; type (*name)[size1][size2];
+#  define typedef_struct_primit_array(type, name, size)              \
+                         name type (size)
+#  define typedef_struct_primit_array2(type, name, size1, size2)     \
+                         name type (size1*size2)
+#  define typedef_struct_primit_array_ptr(type, name, size)          \
+                         name .addr ; type (*name)[size];
+#  define typedef_struct_primit_array2_ptr(type, name, size1, size2) \
+                         name .addr ; type (*name)[size1][size2];
+#  define typedef_struct_nested_array(type, name, size)              \
+                         name .tag type (size)
+#  define typedef_struct_nested_array2(type, name, size1, size2)     \
+                         name .tag type (size1*size2)
+#  define typedef_struct_nested_array_ptr(type, name, size)          \
+                         name .addr ; type (*name)[size];
+#  define typedef_struct_nested_array2_ptr(type, name, size1, size2) \
+                         name .addr ; type (*name)[size1][size2];
+
 
 #  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)   \
                                         ; enum name {
@@ -353,53 +409,59 @@ BC ******************************************************************
 
 
 #  define register_bool(addr, name)                                  \
-                                   _define(name, addr) ; bool
+                              _define(name, addr) ; bool
 #  define register_bool_ptr(addr, name)                              \
-                                   _define(name, addr) ; bool*
+                              _define(name, addr) ; bool*
 #  define register_char(addr, name)                                  \
-                                   _define(name, addr) ; char
+                              _define(name, addr) ; char
 #  define register_char_ptr(addr, name)                              \
-                                   _define(name, addr) ; char*
+                              _define(name, addr) ; char*
 #  define register_constchar(addr, name)                             \
-                                   _define(name, addr) ; const char
+                              _define(name, addr) ; const char
 #  define register_constchar_ptr(addr, name)                         \
-                                   _define(name, addr) ; const char*
+                              _define(name, addr) ; const char*
 #  define register_uint8(addr, name)                                 \
-                                   _define(name, addr) ; uint8
+                              _define(name, addr) ; uint8
 #  define register_uint8_ptr(addr, name)                             \
-                                   _define(name, addr) ; uint8*
+                              _define(name, addr) ; uint8*
 #  define register_uint16(addr, name)                                \
-                                   _define(name, addr) ; uint16
+                              _define(name, addr) ; uint16
 #  define register_uint16_ptr(addr, name)                            \
-                                   _define(name, addr) ; uint16*
+                              _define(name, addr) ; uint16*
 #  define register_uint32(addr, name)                                \
-                                   _define(name, addr) ; uint32
+                              _define(name, addr) ; uint32
 #  define register_uint32_ptr(addr, name)                            \
-                                   _define(name, addr) ; uint32*
+                              _define(name, addr) ; uint32*
 #  define register_int8(addr, name)                                  \
-                                   _define(name, addr) ; int8
+                              _define(name, addr) ; int8
 #  define register_int8_ptr(addr, name)                              \
-                                   _define(name, addr) ; int8*
+                              _define(name, addr) ; int8*
 #  define register_int16(addr, name)                                 \
-                                   _define(name, addr) ; int16
+                              _define(name, addr) ; int16
 #  define register_int16_ptr(addr, name)                             \
-                                   _define(name, addr) ; int16*
+                              _define(name, addr) ; int16*
 #  define register_int32(addr, name)                                 \
-                                   _define(name, addr) ; int32
+                              _define(name, addr) ; int32
 #  define register_int32_ptr(addr, name)                             \
-                                   _define(name, addr) ; int32*
+                              _define(name, addr) ; int32*
 #  define register_void_ptr(addr, name)                              \
-                                   _define(name, addr) ; void*
+                              _define(name, addr) ; void*
 #  define register_nested(addr, type, name)                          \
-                                   _define(name, addr) ; type
+                    _define(name, addr) ; type
 #  define register_nested_ptr(addr, type, name)                      \
-                                   _define(name, addr) ; type*
+                    _define(name, addr) ; type*
 #  define register_nested_array(addr, type, name, size)              \
-                                   _define(name, addr) ; type[size]
+                    _define(name, addr) ; type[size]
+#  define register_nested_array2(addr, type, name, size1, size2)     \
+                    _define(name, addr) ; type[size1][size2]
 #  define register_constnested(addr, type, name)                     \
-                                   _define(name, addr) ; const type
+                    _define(name, addr) ; const type
 #  define register_constnested_ptr(addr, type, name)                 \
-                                   _define(name, addr) ; const type*
+                    _define(name, addr) ; const type*
+#  define register_constnested_array(addr, type, name, size)         \
+                    _define(name, addr) ; const type[size]
+#  define register_constnested_array2(addr, type, name, size1, size2)\
+                    _define(name, addr) ; const type[size1][size2]
 
 #  define register_bool_hex(addr_hex, name)                          \
                               define_hex(name, addr_hex) ; bool
@@ -440,15 +502,21 @@ BC ******************************************************************
 #  define register_void_ptr_hex(addr_hex, name)                      \
                               define_hex(name, addr_hex) ; void*
 #  define register_nested_hex(addr_hex, type, name)                  \
-                              define_hex(name, addr_hex) ; type
+                    define_hex(name, addr_hex) ; type
 #  define register_nested_ptr_hex(addr_hex, type, name)              \
-                              define_hex(name, addr_hex) ; type*
+                    define_hex(name, addr_hex) ; type*
 #  define register_nested_array_hex(addr_hex, type, name, size)      \
-                              define_hex(name, addr_hex) ; type[size]
+                    define_hex(name, addr_hex) ; type[size]
+#  define register_nested_array2_hex(addr_hex, type, name, size1, size2)\
+                    define_hex(name, addr_hex) ; type[size1][size2]
 #  define register_constnested_hex(addr, type, name)                 \
-                              define_hex(name, addr_hex) ; const type
+                    define_hex(name, addr_hex) ; const type
 #  define register_constnested_ptr_hex(addr, type, name)             \
-                              define_hex(name, addr_hex) ; const type*
+                    define_hex(name, addr_hex) ; const type*
+#  define register_constnested_array_hex(addr_hex, type, name, size) \
+                    define_hex(name, addr_hex) ; const type[size]
+#  define register_constnested_array2_hex(addr_hex, type, name, size1, size2)\
+                    define_hex(name, addr_hex) ; const type[size1][size2]
 
 
 #else /* defined(GEN_C_HEADER)  */

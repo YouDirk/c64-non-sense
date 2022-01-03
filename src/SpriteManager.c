@@ -65,7 +65,7 @@ SpriteManager_release(void)
     Sprite_delete(cur_sprite);
 
   /* reset sprites stuff  */
-  memset(&VIC_SPR_ARRAY, 0x00, VIC_SPR_ARRAY_BUFSIZE);
+  memset(&VIC_SPR_POSITIONS, 0x00, VIC_SPR_POSITIONS_BUFSIZE);
   VIC.spr_hi_x    = 0x00;
   VIC.spr_mcolor  = 0x00;
   VIC.spr_exp_y   = 0x00;
