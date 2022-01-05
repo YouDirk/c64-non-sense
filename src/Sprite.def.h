@@ -102,20 +102,103 @@ typedef_uint8(                                    Sprite_frame_byte_t)
 define(SPRITE_FRAME_BUFFER_Y_COUNT,                     SPRITE_HEIGHT)
 define(SPRITE_FRAME_BUFFER_X_COUNT,                SPRITE_WIDTH_BYTES)
 
+/* Size of SPRITE_FRAME_T::BUFFER.  */
+define(SPRITE_FRAME_BUFFER_BUFSIZE,  SPRITE_HEIGHT*SPRITE_WIDTH_BYTES)
+
+/* Memory layout of a sprite frame buffer.
+ *
+ * size:        SPRITE_HEIGHT*SPRITE_WIDTH_BYTES + 1 = 64
+ *
+ * byte layout:
+ *   HiRes      - [msb: left pixel, pxl 2, ..., lsb: right pixel]
+ *     Values:  0b0 transparent
+ *              0b1 foreground, SPRITE_BUFFER_T::SET.COLOR
+ *   MultiColor - [left pixel, 2nd pixel, 3rd pixel, right pixel]
+ *     Values: 0b00 transparent
+ *             0b01 shared, SPRITEMANAGER_BUFFER_T.SET.MULTICOLOR_0B01
+ *             0b10 foreground, SPRITE_BUFFER_T::SET.COLOR
+ *             0b11 shared, SPRITEMANAGER_BUFFER_T.SET.MULTICOLOR_0B11
+ *
+ * screen layout:
+ *             buffer[ 0][0]  buffer[ 0][1]  buffer[ 0][2]
+ *             buffer[ 1][0]  buffer[ 1][1]  buffer[ 1][2]
+ *             buffer[ 2][0]  buffer[ 2][1]  buffer[ 2][2]
+ *                 ...            ...            ...
+ *                 ...            ...            ...
+ *             buffer[20][0]  buffer[20][1]  buffer[20][2]
+ *             tick_count
+ *
+ * usage:      SPRITE_FRAME_T::BUFFER[y_line][x_byte]
+ *                = 0x81 | 0x30  // 0b10110001
+ */
 typedef_struct_begin(Sprite_frame_t)
+  /* The screen part of the frame.  */
   typedef_struct_primit_array2(Sprite_frame_byte_t,           buffer,\
                                          SPRITE_FRAME_BUFFER_Y_COUNT,\
                                          SPRITE_FRAME_BUFFER_X_COUNT)
 
+  /* Time in EINGINE::TICKS_T how long the frame will be displayed for
+   * sprite animations.  Bit 7 (SPRITE_FAME_TICKCOUNT_LAST_MASK)
+   * indicates that this frame is the last frame in this animation.
+   *
+   *   tick_count == 0x00: frame displayed for 1 engine tick
+   *   tick_count == 0x05: frame displayed for 6 engine ticks
+   *   tick_count == 0x80: last frame in animation, displ. for 1 tick
+   *   tick_count == 0x85: last frame in animation, displ. for 6 ticks
+   *   tick_count == 0x91: last frame in animation, displ. for 258 ticks
+   */
   typedef_struct_uint8(                                   tick_count)
 typedef_struct_end(Sprite_frame_t)
+
+/* The last frame in sprite animation is reached if
+ *
+ * SPRITE_FRAME_T::TICK_COUNT & SPRITE_FAME_TICKCOUNT_LAST_MASK == TRUE
+ */
+define_hex(SPRITE_FAME_TICKCOUNT_LAST_MASK,                        80)
+
+/* ***************************************************************  */
+
+/* Sprite Locator to a sprite frame buffer SPRITE_FRAME_T,
+ * dereferencable using SPRITE_LOCATOR_DEREF().  Sprite Locators are
+ * full compatible with the C64 VIC-II Sprite Pointer, default at
+ * 0x07f8..0x07ff.
+ */
+typedef_uint8(                                    Sprite_locator_t)
+
+/* Sprite Locator which points to the beginning of the Sprite RAM.  */
+define(SPRITE_LOCATOR_FIRST,                                         \
+       0+(GRAPHIX_BUFFER_SPRITERAM_RVAL - GRAPHIX_VICBANK_RVAL) >> 6)
+
+/* Sprite Locator which points to the first item outside of the Sprite
+ * RAM.
+ */
+define(SPRITE_LOCATOR_END,                                           \
+       0+(GRAPHIX_BUFFER_SPRITERAM_RVAL +                            \
+       GRAPHIX_BUFFER_SPRITERAM_BUFSIZE - GRAPHIX_VICBANK_RVAL) >> 6)
+
+/* Number of Sprite Locators between SPRITE_LOCATOR_FIRST and
+ * SPRITE_LOCATOR_END.
+ */
+define(SPRITE_LOCATOR_COUNT,   GRAPHIX_BUFFER_SPRITERAM_BUFSIZE >> 6)
+
+/* Use this for dereferencing a sprite locator SPRITE_LOCATOR_T to a
+ * sprite frame buffer SPPRITE_FRAME_T.
+ */
+macro_arg1(SPRITE_LOCATOR_DEREF, Sprite_frame_t*,                    \
+           ((arg1) << 6) + GRAPHIX_VICBANK_RVAL)
+
+/* Use this to create a sprite locator SPRITE_LOCATOR_T from a pointer
+ * to a sprite frame buffer SPPRITE_FRAME_T.
+ */
+macro_arg1(SPRITE_LOCATOR_FROMREF, Sprite_locator_t,                 \
+           ((arg1) - GRAPHIX_VICBANK_RVAL) >> 6)
 
 /* ***************************************************************  */
 
 /* Configuration variables which can be set directly, without needing
  * to call setter functions.
  */
-typedef_struct_begin(Sprite_set_t)
+typedef_struct_begin(Sprite_buffer_set_t)
   /* Vertical Y position of this sprite.  Common absolute positions
    * are defined above in SPRITE_POSY_*.
    */
@@ -135,15 +218,19 @@ typedef_struct_begin(Sprite_set_t)
    * see above.
    */
   typedef_struct_enum(Sprite_properties_t,        props)
-typedef_struct_end(Sprite_set_t)
+typedef_struct_end(Sprite_buffer_set_t)
 
 /* Datatype of this structure.  */
-typedef_struct_begin(Sprite_t)
+typedef_struct_begin(Sprite_buffer_t)
   /* Some writable member variables.  */
-  typedef_struct_nested(Sprite_set_t,             set)
+  typedef_struct_nested(Sprite_buffer_set_t,      set)
 
-  //typedef_struct_nested_ptr(Sprite_frame_t,       frames)
-typedef_struct_end(Sprite_t)
+  /* Sprite locator, pointing to the current frame buffer of this
+   * sprite.  Will be automatically incremented for sprite animation
+   * depending on SPRITE_FRAME_T::TICK_COUNT.
+   */
+  typedef_struct_primit(Sprite_locator_t,         locator)
+typedef_struct_end(Sprite_buffer_t)
 
 /* ***************************************************************  */
 

@@ -188,6 +188,7 @@ macro_arg1_arg2(GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT,                 \
  *                        0b10 cell background color of Screen RAM
  *                        0b11 cell color of Color RAM
  *
+ *
  * screen layout:
  *   bitmap_ram[ 0][0][0] bitmap_ram[ 0][1][0] ... bitmap_ram[ 0][39][0]
  *   bitmap_ram[ 0][0][1] bitmap_ram[ 0][1][1]     ...
@@ -356,11 +357,13 @@ prep_if(GRAPHIX_MMAPPING equals 0)
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     c000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     e000) /* not reabable  */
 
+  define_hex(GRAPHIX_LOCATORS_SPRITES_RVAL,     c3f8) /* SCREEN+0x3f8 */
+
   define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     c400)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
-  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDRC)
+  define    (GRAPHIX_VICBANK_RVAL,              CIA2_PRA_VICBANK_ADDRC)
 
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -413,11 +416,13 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     8000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     a000)
 
+  define_hex(GRAPHIX_LOCATORS_SPRITES_RVAL,     83f8) /* SCREEN+0x3f8 */
+
   define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     8400)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM8)
-  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDR8)
+  define    (GRAPHIX_VICBANK_RVAL,              CIA2_PRA_VICBANK_ADDR8)
 
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    00)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    08)
@@ -466,11 +471,13 @@ prep_elif(GRAPHIX_MMAPPING equals 2)
   define_hex(GRAPHIX_BUFFER_SCREENRAM_RVAL,     6000)
   define_hex(GRAPHIX_BUFFER_BITMAPRAM_RVAL,     4000)
 
+  define_hex(GRAPHIX_LOCATORS_SPRITES_RVAL,     63f8) /* SCREEN+0x3f8 */
+
   define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     6400)
   define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE, 1c00) /* 7168 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEM4)
-  define    (_GRAPHIX_VICBANK_RVAL,             CIA2_PRA_VICBANK_ADDR4)
+  define    (GRAPHIX_VICBANK_RVAL,              CIA2_PRA_VICBANK_ADDR4)
 
   define_hex(_GRAPHIX_SCREENRAM_x0X400_VICADDR,                    08)
   define_hex(_GRAPHIX_BITMAPRAM_x0X400_VICADDR,                    00)

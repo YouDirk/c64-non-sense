@@ -67,6 +67,23 @@ AASandbox_init(void)
                                           Graphix_gray1);
   GRAPHIX_BUFFER_BITMAPRAM[6][7][4] = 0x19;
 
+  /* set first 3 sprite frame buffers  */
+  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST), 0xff,
+         SPRITE_FRAME_BUFFER_BUFSIZE);
+  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1), 0xe4,
+         SPRITE_FRAME_BUFFER_BUFSIZE);
+  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 2), 0xbd,
+         SPRITE_FRAME_BUFFER_BUFSIZE);
+  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)->buffer[3][1] = 0x00;
+
+  /* set sprite frame buffer 1 to 0xe4  */
+
+  /* set sprite multi-color colors  */
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
+
+  /* top, left  */
+  Graphix.buffer.sprites.sprite[4].locator = SPRITE_LOCATOR_FIRST + 1;
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[4].set.pos_x
@@ -75,9 +92,8 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask | Sprite_props_scale_y_mask
     | Sprite_props_scale_x_mask;
-  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
-  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
+  /* top, right  */
   Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[0].set.pos_x
@@ -87,6 +103,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[0].set.props
     = Sprite_props_scale_y_mask;
 
+  /* bottom, left  */
   Graphix.buffer.sprites.sprite[6].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
@@ -96,6 +113,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[6].set.props
     = Sprite_props_scale_x_mask;
 
+  /* bottom, right  */
   Graphix.buffer.sprites.sprite[7].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
@@ -106,6 +124,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[7].set.props
     = Sprite_props_prio_bground_mask;
 
+  /* moving  */
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
@@ -286,6 +305,10 @@ AASandbox_tick_low(void)
         & ~Sprite_props_prio_bground_mask
       : Graphix.buffer.sprites.sprite[5].set.props
         | Sprite_props_prio_bground_mask;
+    Graphix.buffer.sprites.sprite[5].locator
+      = Graphix.buffer.sprites.sprite[5].locator == SPRITE_LOCATOR_FIRST
+      ? SPRITE_LOCATOR_FIRST+2: SPRITE_LOCATOR_FIRST;
+
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES

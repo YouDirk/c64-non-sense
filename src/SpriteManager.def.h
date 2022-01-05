@@ -71,7 +71,7 @@ typedef_struct_begin(SpriteManager_buffer_set_t)
   /* Sprites which will be enabled/visible.  Full compatible with
    * VIC-II register at 0xd015.
    */
-  typedef_struct_enum(SpriteManager_sprites_t,         enabled)
+  typedef_struct_enum(SpriteManager_sprites_t,                enabled)
 
   /* Colors with bit combinations 0b01=0x01 and 0b11=0x03 for all
    * sprites which have GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.PROPS =
@@ -84,12 +84,12 @@ typedef_struct_end(SpriteManager_buffer_set_t)
 /* Sprites structure in graphic buffer.  */
 typedef_struct_begin(SpriteManager_buffer_t)
   /* Some writable member variables.  */
-  typedef_struct_nested(SpriteManager_buffer_set_t,    set)
+  typedef_struct_nested(SpriteManager_buffer_set_t,         set)
 
   /* Access to the 8 sprites of the C64 VIC-II graphic chip.  */
-  typedef_struct_nested_array(Sprite_t, sprite,                      \
-                                        SPRITEMANAGER_SPRITES_COUNT)
-  typedef_struct_nested(Sprite_t,       end)
+  typedef_struct_nested_array(Sprite_buffer_t,              sprite,  \
+                              SPRITEMANAGER_SPRITES_COUNT)
+  typedef_struct_nested(Sprite_buffer_t,                    end)
 typedef_struct_end(SpriteManager_buffer_t)
 
 /* ***************************************************************  */

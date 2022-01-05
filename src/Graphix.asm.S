@@ -128,15 +128,21 @@ sprites_bgprio:
 
         ldx #$00                        ; X := 0x00, sprite_counter
 sprites_loop:                           ; do {
-        ldy #Sprite_t::set + Sprite_set_t::color
+        ldy #Sprite_buffer_t::locator
+        lda (ZP_ISR_PTR2), y
+        sta GRAPHIX_LOCATORS_SPRITES_RVAL, x
+                                        ; set sprite locator
+
+        ldy #Sprite_buffer_t::set + Sprite_buffer_set_t::color
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_COLORS, x           ; set sprite color
 
+        ;; --- begin of X == 2*spr_cnt
         txa
         asl
         tax                             ; spr_cnt := 2*spr_cnt
 
-        ldy #Sprite_t::set + Sprite_set_t::pos_x
+        ldy #Sprite_buffer_t::set + Sprite_buffer_set_t::pos_x
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_POSITIONS, x        ; set sprite x position
         inx                             ; spr_cnt := 2*spr_cnt + 1
@@ -147,15 +153,16 @@ sprites_loop:                           ; do {
           ;; carry set if msb of high byte was set
         ror sprites_hi_x                ; hi_x
                                         ;   := (carry | hi_x) >> 1
-        ldy #Sprite_t::set + Sprite_set_t::pos_y
+        ldy #Sprite_buffer_t::set + Sprite_buffer_set_t::pos_y
         lda (ZP_ISR_PTR2), y
         sta VIC_SPR_POSITIONS, x        ; set sprite y position
 
         txa
         lsr
         tax                             ; spr_cnt := sprite_counter
+        ;; --- end of X == 2*spr_cnt
 
-        ldy #Sprite_t::set + Sprite_set_t::props
+        ldy #Sprite_buffer_t::set + Sprite_buffer_set_t::props
         lda (ZP_ISR_PTR2), y
   .if .not Sprite_props_multicolor_mask = (1 << 0)
         .error "Sprite_props_multicolor_mask != 0x01!"
@@ -179,7 +186,7 @@ sprites_loop:                           ; do {
         ror sprites_bgprio              ;   := (carry | bgprio) >> 1
 
         clc
-        lda #.sizeof(Sprite_t)
+        lda #.sizeof(Sprite_buffer_t)
         adc ZP_ISR_PTR2
         sta ZP_ISR_PTR2
         bcc inc_highbyte_done

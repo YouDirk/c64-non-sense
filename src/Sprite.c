@@ -21,7 +21,7 @@
 /* ***************************************************************  */
 
 void __fastcall__
-Sprite_new(Sprite_t* sprite)
+Sprite_new(Sprite_buffer_t* sprite)
 {
   sprite->set.pos_y = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
   sprite->set.pos_x = SPRITE_POS_SMALLSCREEN_BEGIN_X;
@@ -29,6 +29,9 @@ Sprite_new(Sprite_t* sprite)
   sprite->set.color = Graphix_white;
 
   sprite->set.props = Sprite_props_none_mask;
+
+  sprite->locator
+    = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
 }
 
 /* Nothing to do.  Just an empty-macro for now.

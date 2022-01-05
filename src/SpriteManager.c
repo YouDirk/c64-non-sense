@@ -25,25 +25,13 @@
 void __fastcall__
 SpriteManager_init(void)
 {
-  static Sprite_t* cur_sprite;
-  static uint8_t i;
+  static Sprite_buffer_t* cur_sprite;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   Graphix.buffer.sprites.set.enabled = SpriteManager_sprites_none_mask;
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_black;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
-
-  // --- TODO ---
-  memset(&GRAPHIX_BUFFER_SPRITERAM, 0xff, 3*21);
-  for (i=0; i<8; ++i) {
-    *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + i)
-      = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 0;
-  }
-  memset(&GRAPHIX_BUFFER_SPRITERAM + 0x0040, 0xe4, 3*21);
-  *((uint8_t*) GRAPHIX_BUFFER_SCREENRAM + 1016 + 4)
-    = (((unsigned) &GRAPHIX_BUFFER_SPRITERAM - _GRAPHIX_VICBANK_RVAL) >> 6) + 1;
-  // --- end of TODO ---
 
   for (cur_sprite = Graphix.buffer.sprites.sprite;
        cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
@@ -53,7 +41,7 @@ SpriteManager_init(void)
 void __fastcall__
 SpriteManager_release(void)
 {
-  static Sprite_t* cur_sprite;
+  static Sprite_buffer_t* cur_sprite;
 
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;

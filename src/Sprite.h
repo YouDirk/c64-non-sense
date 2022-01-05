@@ -25,7 +25,7 @@
 /* ***************************************************************  */
 
 /* Initialize empty sprite structure.  */
-extern void __fastcall__ Sprite_new(Sprite_t* sprite);
+extern void __fastcall__ Sprite_new(Sprite_buffer_t* sprite);
 
 /* Free the sprite structure.  */
 #define Sprite_delete(sprite)
