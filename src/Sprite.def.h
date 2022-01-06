@@ -115,9 +115,9 @@ define(SPRITE_FRAME_BUFFER_BUFSIZE,  SPRITE_HEIGHT*SPRITE_WIDTH_BYTES)
  *              0b1 foreground, SPRITE_BUFFER_T::SET.COLOR
  *   MultiColor - [left pixel, 2nd pixel, 3rd pixel, right pixel]
  *     Values: 0b00 transparent
- *             0b01 shared, SPRITEMANAGER_BUFFER_T.SET.MULTICOLOR_0B01
+ *             0b01 shared, SPRITEMANAGER_BUFFER_T::SET.MULTICOLOR_0B01
  *             0b10 foreground, SPRITE_BUFFER_T::SET.COLOR
- *             0b11 shared, SPRITEMANAGER_BUFFER_T.SET.MULTICOLOR_0B11
+ *             0b11 shared, SPRITEMANAGER_BUFFER_T::SET.MULTICOLOR_0B11
  *
  * screen layout:
  *             buffer[ 0][0]  buffer[ 0][1]  buffer[ 0][2]

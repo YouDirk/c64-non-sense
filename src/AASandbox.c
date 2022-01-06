@@ -25,6 +25,83 @@
 
 /* ***************************************************************  */
 
+#define iiiii 0
+#define iiiiB 1
+#define iiiBi 2
+#define iiiBB 3
+#define iiBii 4
+#define iiBiB 5
+#define iiBBi 6
+#define iiBBB 7
+#define iBiii 8
+#define iBiiB 9
+#define iBiBi a
+#define iBiBB b
+#define iBBii c
+#define iBBiB d
+#define iBBBi e
+#define iBBBB f
+
+#define _i(high, low)                             0x##high##low
+#define i(high, low)                              _i(high, low)
+
+
+#define _SPRITE_ANIMATION_COUNT                   2
+
+static const Sprite_frame_t
+_AASandbox_sprite_animation[_SPRITE_ANIMATION_COUNT] = {
+  {
+    {{i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiBB),i(iBBii,iiiiB),i(iBBBi,iiiii)},
+     {i(iiiiB,iBBBB),i(iBBBi,iiiBB),i(iBBBB,iBBii)},
+     {i(iiiBB,iBBBB),i(iBBBB,iiBBB),i(iBBBB,iBBBi)},
+     {i(iiBBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBB)},
+     {i(iiiBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBi)},
+     {i(iiiBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBi)},
+     {i(iiiii,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBiii)},
+     {i(iiiii,iiiiB),i(iBBBB,iBBBB),i(iBBii,iiiii)},
+     {i(iiiii,iiiii),i(iiBBB,iBBBB),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiBB,iBBBi),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iBiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)}},
+    50
+  },
+  {
+    {{i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
+     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)}},
+    50 | SPRITE_FAME_TICKCOUNT_LAST_MASK
+  }
+};
+
+/* ***************************************************************  */
+
 static uint8_t AASandbox_bordercolor_time;
 
 #define _CONST_SPRITES                                               \
@@ -72,11 +149,9 @@ AASandbox_init(void)
          SPRITE_FRAME_BUFFER_BUFSIZE);
   memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1), 0xe4,
          SPRITE_FRAME_BUFFER_BUFSIZE);
-  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 2), 0xbd,
-         SPRITE_FRAME_BUFFER_BUFSIZE);
-  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)->buffer[3][1] = 0x00;
-
-  /* set sprite frame buffer 1 to 0xe4  */
+  memcpy(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 2),
+         _AASandbox_sprite_animation,
+         _SPRITE_ANIMATION_COUNT * sizeof(Sprite_frame_t));
 
   /* set sprite multi-color colors  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
@@ -125,6 +200,7 @@ AASandbox_init(void)
     = Sprite_props_prio_bground_mask;
 
   /* moving  */
+  Graphix.buffer.sprites.sprite[5].locator = SPRITE_LOCATOR_FIRST + 2;
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
@@ -305,10 +381,6 @@ AASandbox_tick_low(void)
         & ~Sprite_props_prio_bground_mask
       : Graphix.buffer.sprites.sprite[5].set.props
         | Sprite_props_prio_bground_mask;
-    Graphix.buffer.sprites.sprite[5].locator
-      = Graphix.buffer.sprites.sprite[5].locator == SPRITE_LOCATOR_FIRST
-      ? SPRITE_LOCATOR_FIRST+2: SPRITE_LOCATOR_FIRST;
-
 
     Graphix.buffer.sprites.set.enabled
       = Graphix.buffer.sprites.set.enabled & _BLINKING_SPRITES
