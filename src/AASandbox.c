@@ -25,22 +25,22 @@
 
 /* ***************************************************************  */
 
-#define iiiii 0
-#define iiiiB 1
-#define iiiBi 2
-#define iiiBB 3
-#define iiBii 4
-#define iiBiB 5
-#define iiBBi 6
-#define iiBBB 7
-#define iBiii 8
-#define iBiiB 9
-#define iBiBi a
-#define iBiBB b
-#define iBBii c
-#define iBBiB d
-#define iBBBi e
-#define iBBBB f
+#define iiii                                      0
+#define iiiB                                      1
+#define iiBi                                      2
+#define iiBB                                      3
+#define iBii                                      4
+#define iBiB                                      5
+#define iBBi                                      6
+#define iBBB                                      7
+#define Biii                                      8
+#define BiiB                                      9
+#define BiBi                                      a
+#define BiBB                                      b
+#define BBii                                      c
+#define BBiB                                      d
+#define BBBi                                      e
+#define BBBB                                      f
 
 #define _i(high, low)                             0x##high##low
 #define i(high, low)                              _i(high, low)
@@ -51,51 +51,51 @@
 static const Sprite_frame_t
 _AASandbox_sprite_animation[_SPRITE_ANIMATION_COUNT] = {
   {
-    {{i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiBB),i(iBBii,iiiiB),i(iBBBi,iiiii)},
-     {i(iiiiB,iBBBB),i(iBBBi,iiiBB),i(iBBBB,iBBii)},
-     {i(iiiBB,iBBBB),i(iBBBB,iiBBB),i(iBBBB,iBBBi)},
-     {i(iiBBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBB)},
-     {i(iiiBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBi)},
-     {i(iiiBB,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBBBi)},
-     {i(iiiii,iBBBB),i(iBBBB,iBBBB),i(iBBBB,iBiii)},
-     {i(iiiii,iiiiB),i(iBBBB,iBBBB),i(iBBii,iiiii)},
-     {i(iiiii,iiiii),i(iiBBB,iBBBB),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiBB,iBBBi),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iBiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)}},
+    {{i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,BBBB),i(BBii,iiiB),i(BBBB,Biii)},
+     {i(iiiB,BBBB),i(BBBi,iiBB),i(BBBB,BBii)},
+     {i(iiBB,BBBB),i(BBBi,iiBB),i(BBBB,BBBi)},
+     {i(iBBB,BBBB),i(BBBB,iBBB),i(BBBB,BBBB)},
+     {i(iBBB,BBBB),i(BBBB,iBBB),i(BBBB,BBBB)},
+     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
+     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
+     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
+     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
+     {i(iiBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBi)},
+     {i(iiBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBi)},
+     {i(iiii,BBBB),i(BBBB,BBBB),i(BBBB,Biii)},
+     {i(iiii,iBBB),i(BBBB,BBBB),i(BBBB,iiii)},
+     {i(iiii,iiiB),i(BBBB,BBBB),i(BBii,iiii)},
+     {i(iiii,iiii),i(iBBB,BBBB),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiBB,BBBi),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiBB,BBBi),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiiB,BBii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiiB,BBii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,Biii),i(iiii,iiii)}},
     50
   },
   {
-    {{i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)},
-     {i(iiiii,iiiii),i(iiiii,iiiii),i(iiiii,iiiii)}},
+    {{i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
+     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)}},
     50 | SPRITE_FAME_TICKCOUNT_LAST_MASK
   }
 };
@@ -207,8 +207,6 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[5].set.pos_x
     = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2
     - SPRITE_WIDTH/2;
-  Graphix.buffer.sprites.sprite[5].set.props
-    = Sprite_props_scale_y_mask;
 
   Graphix.buffer.sprites.set.enabled
     = _CONST_SPRITES | _BLINKING_SPRITES;
