@@ -37,6 +37,14 @@ Sprite_new(Sprite_buffer_t* sprite)
 /* Nothing to do.  Just an empty-macro for now.
  */
 
-/* void __fastcall__ Sprite_delete(Sprite_t* sprite) {}  */
+/* void __fastcall__ Sprite_delete(Sprite_buffer_t* sprite) {}  */
+
+/* ***************************************************************  */
+
+void __fastcall__
+Sprite_tick(Sprite_buffer_t* sprite)
+{
+  // TODO
+}
 
 /* ***************************************************************  */

@@ -23,8 +23,8 @@
 
 /* *******************************************************************
  *
- * Stuff which has currently no component structure can be implemented
- * here.  For fast testing and staging code.
+ * This will be the Main module in the future and therefore the entry
+ * point for Das Produkt, the game implementation.
  */
 
 /* Initialize this component.  */

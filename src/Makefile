@@ -18,7 +18,7 @@
 # C and S files to be compiled
 OBJ = Memory Interrupt.asm Timer.asm Timer Graphix.asm Graphix Input \
       Input.asm Engine EngineConfig Pace SpriteManager Sprite \
-      AASandbox main
+      AASandbox AAAssets main
 
 # *.gen.[hs] to be generated
 DEFH = chip-vic chip-cia kernal Memory Graphix Input SpriteManager \

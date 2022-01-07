@@ -25,32 +25,40 @@
 void __fastcall__
 SpriteManager_init(void)
 {
-  static Sprite_buffer_t* cur_sprite;
-
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   Graphix.buffer.sprites.set.enabled = SpriteManager_sprites_none_mask;
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_black;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
 
-  for (cur_sprite = Graphix.buffer.sprites.sprite;
-       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
-    Sprite_new(cur_sprite);
+  /* initialize each sprite (unrolled loop)  */
+  Sprite_new(Graphix.buffer.sprites.sprite + 0);
+  Sprite_new(Graphix.buffer.sprites.sprite + 1);
+  Sprite_new(Graphix.buffer.sprites.sprite + 2);
+  Sprite_new(Graphix.buffer.sprites.sprite + 3);
+  Sprite_new(Graphix.buffer.sprites.sprite + 4);
+  Sprite_new(Graphix.buffer.sprites.sprite + 5);
+  Sprite_new(Graphix.buffer.sprites.sprite + 6);
+  Sprite_new(Graphix.buffer.sprites.sprite + 7);
 }
 
 void __fastcall__
 SpriteManager_release(void)
 {
-  static Sprite_buffer_t* cur_sprite;
-
   /* disable all sprites  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   VIC.spr_mcolor0 = VIC_SPR_MCOLOR0_0B01_DEFAULT;
   VIC.spr_mcolor1 = VIC_SPR_MCOLOR1_0B11_DEFAULT;
 
-  for (cur_sprite = Graphix.buffer.sprites.sprite;
-       cur_sprite < &Graphix.buffer.sprites.end; ++cur_sprite)
-    Sprite_delete(cur_sprite);
+  /* free each sprite (unrolled loop)  */
+  Sprite_delete(Graphix.buffer.sprites.sprite + 0);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 1);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 2);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 3);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 4);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 5);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 6);
+  Sprite_delete(Graphix.buffer.sprites.sprite + 7);
 
   /* reset sprites stuff  */
   memset(&VIC_SPR_POSITIONS, 0x00, VIC_SPR_POSITIONS_BUFSIZE);
@@ -75,5 +83,13 @@ SpriteManager_release(void)
 void __fastcall__
 SpriteManager_tick(void)
 {
-  //DEBUG_NOTE("spritemanager_tick()");
+  /* tick each sprite (unrolled loop)  */
+  Sprite_tick(Graphix.buffer.sprites.sprite + 0);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 1);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 2);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 3);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 4);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 5);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 6);
+  Sprite_tick(Graphix.buffer.sprites.sprite + 7);
 }

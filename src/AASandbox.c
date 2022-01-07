@@ -18,87 +18,12 @@
 
 #include "AASandbox.h"
 
+#include "AAAssets.h"
+
 #include "Graphix.h"
 #include "Input.h"
 #include "Engine.h"
 #include "Pace.h"
-
-/* ***************************************************************  */
-
-#define iiii                                      0
-#define iiiB                                      1
-#define iiBi                                      2
-#define iiBB                                      3
-#define iBii                                      4
-#define iBiB                                      5
-#define iBBi                                      6
-#define iBBB                                      7
-#define Biii                                      8
-#define BiiB                                      9
-#define BiBi                                      a
-#define BiBB                                      b
-#define BBii                                      c
-#define BBiB                                      d
-#define BBBi                                      e
-#define BBBB                                      f
-
-#define _i(high, low)                             0x##high##low
-#define i(high, low)                              _i(high, low)
-
-
-#define _SPRITE_ANIMATION_COUNT                   2
-
-static const Sprite_frame_t
-_AASandbox_sprite_animation[_SPRITE_ANIMATION_COUNT] = {
-  {
-    {{i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,BBBB),i(BBii,iiiB),i(BBBB,Biii)},
-     {i(iiiB,BBBB),i(BBBi,iiBB),i(BBBB,BBii)},
-     {i(iiBB,BBBB),i(BBBi,iiBB),i(BBBB,BBBi)},
-     {i(iBBB,BBBB),i(BBBB,iBBB),i(BBBB,BBBB)},
-     {i(iBBB,BBBB),i(BBBB,iBBB),i(BBBB,BBBB)},
-     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
-     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
-     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
-     {i(iBBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBB)},
-     {i(iiBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBi)},
-     {i(iiBB,BBBB),i(BBBB,BBBB),i(BBBB,BBBi)},
-     {i(iiii,BBBB),i(BBBB,BBBB),i(BBBB,Biii)},
-     {i(iiii,iBBB),i(BBBB,BBBB),i(BBBB,iiii)},
-     {i(iiii,iiiB),i(BBBB,BBBB),i(BBii,iiii)},
-     {i(iiii,iiii),i(iBBB,BBBB),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiBB,BBBi),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiBB,BBBi),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiiB,BBii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiiB,BBii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,Biii),i(iiii,iiii)}},
-    50
-  },
-  {
-    {{i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)},
-     {i(iiii,iiii),i(iiii,iiii),i(iiii,iiii)}},
-    50 | SPRITE_FAME_TICKCOUNT_LAST_MASK
-  }
-};
 
 /* ***************************************************************  */
 
@@ -147,11 +72,16 @@ AASandbox_init(void)
   /* set first 3 sprite frame buffers  */
   memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST), 0xff,
          SPRITE_FRAME_BUFFER_BUFSIZE);
+  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)->tick_count
+    = SPRITE_FAME_TICKCOUNT_LAST_MASK;
+
   memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1), 0xe4,
          SPRITE_FRAME_BUFFER_BUFSIZE);
+  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1)->tick_count
+    = SPRITE_FAME_TICKCOUNT_LAST_MASK;
+
   memcpy(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 2),
-         _AASandbox_sprite_animation,
-         _SPRITE_ANIMATION_COUNT * sizeof(Sprite_frame_t));
+         AAAssets_spranim_moving, sizeof(AAAssets_spranim_moving));
 
   /* set sprite multi-color colors  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;

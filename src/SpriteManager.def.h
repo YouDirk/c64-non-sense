@@ -71,7 +71,7 @@ typedef_struct_begin(SpriteManager_buffer_set_t)
   /* Sprites which will be enabled/visible.  Full compatible with
    * VIC-II register at 0xd015.
    */
-  typedef_struct_enum(SpriteManager_sprites_t,                enabled)
+  typedef_struct_enum(SpriteManager_sprites_t,         enabled)
 
   /* Colors with bit combinations 0b01=0x01 and 0b11=0x03 for all
    * sprites which have GRAPHIX.BUFFER.SPRITES.SPRITE[i].SET.PROPS =
@@ -80,6 +80,9 @@ typedef_struct_begin(SpriteManager_buffer_set_t)
   typedef_struct_enum(Graphix_color_t,                 multicolor_0b01)
   typedef_struct_enum(Graphix_color_t,                 multicolor_0b11)
 typedef_struct_end(SpriteManager_buffer_set_t)
+
+
+/* ---------------------------------------------------------------  */
 
 /* Sprites structure in graphic buffer.  */
 typedef_struct_begin(SpriteManager_buffer_t)
@@ -91,6 +94,17 @@ typedef_struct_begin(SpriteManager_buffer_t)
                               SPRITEMANAGER_SPRITES_COUNT)
   typedef_struct_nested(Sprite_buffer_t,                    end)
 typedef_struct_end(SpriteManager_buffer_t)
+
+/* ***************************************************************  */
+
+/* Allocated sprite animations in Graphix structure.  */
+typedef_struct_begin(SpriteManager_animations_t)
+  /* Access to the allocated animations for the 8 sprites of the C64
+   * VIC-II graphic chip, which are currently in use.
+   */
+  // TODO
+  typedef_struct_uint8(                                     dummy)
+typedef_struct_end(SpriteManager_animations_t)
 
 /* ***************************************************************  */
 

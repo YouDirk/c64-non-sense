@@ -16,26 +16,22 @@
  */
 
 
-#ifndef SPRITE_H__
-#define SPRITE_H__
+#ifndef AAASSETS_H__
+#define AAASSETS_H__
 
 #include "common.h"
-#include "Sprite.gen.h"
 
-/* ***************************************************************  */
+#include "Sprite.h"
 
-/* Initialize empty sprite structure.  */
-extern void __fastcall__ Sprite_new(Sprite_buffer_t* sprite);
+/* *******************************************************************
+ *
+ * This module just contains asset data and will be replaced by an
+ * AssetLoader-module in the future.
+ */
 
-/* Free the sprite structure.  */
-#define Sprite_delete(sprite)
-/* extern void __fastcall__ Sprite_delete(Sprite_buffer_t* sprite); */
+#define AAASSETS_SPRANIM_MOVING_COUNT                       2
 
-/* ***************************************************************  */
+extern const Sprite_frame_t
+AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT];
 
-/* Tick the sprite for animation, etc.  */
-extern void __fastcall__ Sprite_tick(Sprite_buffer_t* sprite);
-
-/* ***************************************************************  */
-
-#endif /* SPRITE_H__  */
+#endif /* AAASSETS_H__  */

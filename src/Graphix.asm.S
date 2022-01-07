@@ -114,18 +114,6 @@ sprites_bgprio:
         .res 1                          ; bgprio for 0xd01b
         .popseg                         ; restore "CODE" segment
 
-        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
-        lda (ZP_ISR_PTR1), y
-        sta VIC_SPR_ENABLE              ; set sprite enable bits
-
-        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B01
-        lda (ZP_ISR_PTR1), y
-        sta VIC_SPR_MCOLOR0_0B01        ; set multicolor0_0b01
-
-        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B11
-        lda (ZP_ISR_PTR1), y
-        sta VIC_SPR_MCOLOR1_0B11        ; set multicolor1_0b11
-
         ldx #$00                        ; X := 0x00, sprite_counter
 sprites_loop:                           ; do {
         ldy #Sprite_buffer_t::locator
@@ -208,6 +196,18 @@ sprites_done:
         sta VIC_SPR_EXPX
         lda sprites_bgprio
         sta VIC_SPR_BGPRIO
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B01
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR0_0B01        ; set multicolor0_0b01
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_MC0B11
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_MCOLOR1_0B11        ; set multicolor1_0b11
+
+        ldy #Graphix_buffer_t::sprites + _SPR_SET + _SPR_SET_ENA
+        lda (ZP_ISR_PTR1), y
+        sta VIC_SPR_ENABLE              ; set sprite enable bits
 
         ;; -----------------------------------------------------------
 
