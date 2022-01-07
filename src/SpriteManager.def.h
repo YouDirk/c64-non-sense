@@ -31,6 +31,7 @@ include_def_h(chip-vic)
 
 /* SPRITE.DEF.H requires GRAPHIX_COLOR_T.  */
 include_def_h(Sprite)
+include_def_h(SpriteAnimation)
 
 /* ***************************************************************  */
 
@@ -102,8 +103,9 @@ typedef_struct_begin(SpriteManager_animations_t)
   /* Access to the allocated animations for the 8 sprites of the C64
    * VIC-II graphic chip, which are currently in use.
    */
-  // TODO
-  typedef_struct_uint8(                                     dummy)
+  typedef_struct_nested_array_ofptr(SpriteAnimation_t,      sprite,  \
+                                    SPRITEMANAGER_SPRITES_COUNT)
+  typedef_struct_nested_ptr(SpriteAnimation_t,              end)
 typedef_struct_end(SpriteManager_animations_t)
 
 /* ***************************************************************  */

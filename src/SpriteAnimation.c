@@ -16,37 +16,27 @@
  */
 
 
+#include "SpriteAnimation.h"
+
 #include "Sprite.h"
 
 /* ***************************************************************  */
 
 void __fastcall__
-Sprite_new(Sprite_buffer_t* sprite)
+SpriteAnimation_new(SpriteAnimation_t* animation, uint8_t frame_count,
+                    Sprite_locator_t first_frame)
 {
-  sprite->set.pos_y = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
-  sprite->set.pos_x = SPRITE_POS_SMALLSCREEN_BEGIN_X;
+  animation->frame_count = frame_count;
 
-  sprite->set.color = Graphix_white;
-
-  sprite->set.props = Sprite_props_none_mask;
-
-  sprite->locator
-    = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
+  animation->first_frame = first_frame;
+  animation->buffer = SPRITE_LOCATOR_DEREF(first_frame);
 }
 
 /* Nothing to do.  Just an empty-macro for now.
  */
 
 /* void __fastcall__
- * Sprite_delete(Sprite_buffer_t* sprite) {}
+ * SpriteAnimation_delete(SpriteAnimation_t* animation) {}
  */
-
-/* ***************************************************************  */
-
-void __fastcall__
-Sprite_tick(Sprite_buffer_t* sprite)
-{
-  // TODO
-}
 
 /* ***************************************************************  */

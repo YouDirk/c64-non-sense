@@ -90,7 +90,7 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(____,B___),_(____,____)}},
-    50 | SPRITE_FAME_TICKCOUNT_LAST_MASK
+    50 | SPRITE_FRAME_TICKCOUNT_LAST_MASK
   }
 };
 

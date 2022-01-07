@@ -138,7 +138,7 @@ typedef_struct_begin(Sprite_frame_t)
                                          SPRITE_FRAME_BUFFER_X_COUNT)
 
   /* Time in EINGINE::TICKS_T how long the frame will be displayed for
-   * sprite animations.  Bit 7 (SPRITE_FAME_TICKCOUNT_LAST_MASK)
+   * sprite animations.  Bit 7 (SPRITE_FRAME_TICKCOUNT_LAST_MASK)
    * indicates that this frame is the last frame in this animation.
    *
    *   tick_count == 0x00: frame displayed for 1 engine tick
@@ -147,14 +147,14 @@ typedef_struct_begin(Sprite_frame_t)
    *   tick_count == 0x85: last frame in animation, displ. for 6 ticks
    *   tick_count == 0x91: last frame in animation, displ. for 258 ticks
    */
-  typedef_struct_uint8(                                   tick_count)
+  typedef_struct_uint8(                                    tick_count)
 typedef_struct_end(Sprite_frame_t)
 
 /* The last frame in sprite animation is reached if
  *
- * SPRITE_FRAME_T::TICK_COUNT & SPRITE_FAME_TICKCOUNT_LAST_MASK == TRUE
+ * SPRITE_FRAME_T::TICK_COUNT & SPRITE_FRAME_TICKCOUNT_LAST_MASK == TRUE
  */
-define_hex(SPRITE_FAME_TICKCOUNT_LAST_MASK,                        80)
+define_hex(SPRITE_FRAME_TICKCOUNT_LAST_MASK,                       80)
 
 /* ***************************************************************  */
 

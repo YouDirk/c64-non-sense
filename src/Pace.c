@@ -68,7 +68,9 @@ Pace_new(Pace_t* pace,
 /* Nothing to do.  Just an empty-macro for now.
  */
 
-/* void __fastcall__ Pace_delete(Pace_t* pace) {}  */
+/* void __fastcall__
+ * Pace_delete(Pace_t* pace) {}
+ */
 
 /* ***************************************************************  */
 

@@ -134,6 +134,10 @@ BC ******************************************************************
                                         type (*name)[size];
 #  define typedef_struct_enum_array2_ptr(type, name, size1, size2)   \
                                         type (*name)[size1][size2];
+#  define typedef_struct_enum_array_ofptr(type, name, size)          \
+                                        type* name[size];
+#  define typedef_struct_enum_array2_ofptr(type, name, size1, size2) \
+                                        type* name[size1][size2];
 #  define typedef_struct_primit_array(type, name, size)              \
                                         type name[size];
 #  define typedef_struct_primit_array2(type, name, size1, size2)     \
@@ -142,6 +146,10 @@ BC ******************************************************************
                                         type (*name)[size];
 #  define typedef_struct_primit_array2_ptr(type, name, size1, size2) \
                                         type (*name)[size1][size2];
+#  define typedef_struct_primit_array_ofptr(type, name, size)        \
+                                        type* name[size];
+#  define typedef_struct_primit_array2_ofptr(type, name, size1, size2)\
+                                        type* name[size1][size2];
 #  define typedef_struct_nested_array(type, name, size)              \
                                         type name[size];
 #  define typedef_struct_nested_array2(type, name, size1, size2)     \
@@ -150,6 +158,10 @@ BC ******************************************************************
                                         type (*name)[size];
 #  define typedef_struct_nested_array2_ptr(type, name, size1, size2) \
                                         type (*name)[size1][size2];
+#  define typedef_struct_nested_array_ofptr(type, name, size)        \
+                                        type* name[size];
+#  define typedef_struct_nested_array2_ofptr(type, name, size1, size2)\
+                                        type* name[size1][size2];
 
 #  define typedef_enum_begin(name)             BC enum name {  */    \
                                                typedef uint8_t name;
@@ -380,6 +392,10 @@ BC ******************************************************************
                          name .addr ; type (*name)[size];
 #  define typedef_struct_enum_array2_ptr(type, name, size1, size2)   \
                          name .addr ; type (*name)[size1][size2];
+#  define typedef_struct_enum_array_ofptr(type, name, size)          \
+               name .addr (size) ; type* name[size];
+#  define typedef_struct_enum_array2_ofptr(type, name, size1, size2) \
+               name .addr (size1*size2) ; type* name[size1][size2];
 #  define typedef_struct_primit_array(type, name, size)              \
                          name type (size)
 #  define typedef_struct_primit_array2(type, name, size1, size2)     \
@@ -388,6 +404,10 @@ BC ******************************************************************
                          name .addr ; type (*name)[size];
 #  define typedef_struct_primit_array2_ptr(type, name, size1, size2) \
                          name .addr ; type (*name)[size1][size2];
+#  define typedef_struct_primit_array_ofptr(type, name, size)        \
+               name .addr (size) ; type* name[size];
+#  define typedef_struct_primit_array2_ofptr(type, name, size1, size2)\
+               name .addr (size1*size2) ; type* name[size1][size2];
 #  define typedef_struct_nested_array(type, name, size)              \
                          name .tag type (size)
 #  define typedef_struct_nested_array2(type, name, size1, size2)     \
@@ -396,6 +416,10 @@ BC ******************************************************************
                          name .addr ; type (*name)[size];
 #  define typedef_struct_nested_array2_ptr(type, name, size1, size2) \
                          name .addr ; type (*name)[size1][size2];
+#  define typedef_struct_nested_array_ofptr(type, name, size)        \
+               name .addr (size) ; type* name[size];
+#  define typedef_struct_nested_array2_ofptr(type, name, size1, size2)\
+               name .addr (size1*size2) ; type* name[size1][size2];
 
 
 #  define typedef_enum_begin(name)      _define(name, SIZEOF_BYTE)   \

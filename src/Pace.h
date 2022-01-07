@@ -54,7 +54,7 @@ typedef struct Pace_t {
 
 /* Initialize the pace structure.  */
 extern void __fastcall__ Pace_new(Pace_t* pace, uint7_t velocity_max,
-                uint8_t accel_rate, uint6_t brake_rate, uint6_t delay);
+               uint8_t accel_rate, uint6_t brake_rate, uint6_t delay);
 
 /* Free the pace structure.  */
 #define Pace_delete(pace)

@@ -17,12 +17,12 @@
 
 # C and S files to be compiled
 OBJ = Memory Interrupt.asm Timer.asm Timer Graphix.asm Graphix Input \
-      Input.asm Engine EngineConfig Pace SpriteManager Sprite \
-      AASandbox AAAssets main
+      Input.asm Engine EngineConfig Pace SpriteManager SpriteAnimation \
+      Sprite AASandbox AAAssets main
 
 # *.gen.[hs] to be generated
 DEFH = chip-vic chip-cia kernal Memory Graphix Input SpriteManager \
-       Sprite
+       SpriteAnimation Sprite
 
 # compile and link only if DEBUG_BUILD=1 in makefile.config.mk
 OBJ_DEBUG = Debug.asm Debug
