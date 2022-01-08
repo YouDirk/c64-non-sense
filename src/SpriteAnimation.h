@@ -26,6 +26,18 @@
 
 /* ***************************************************************  */
 
+/* Allocate a sprite ANIMATION in the Sprite RAM, but do not
+ * initialize the allocated RAM.
+ *
+ * Do not forget to set ANIMATION->BUFFER[FRAME_COUNT-1].TICK_COUNT
+ *                   to SPRITE_FRAME_TICKCOUNT_LAST_MASK
+ * after the call of this function!
+ *
+ * returns: TRUE on success, otherwise FALSE if the allocation fails.
+ */
+extern bool __fastcall__ SpriteAnimation_alloc_uninit(
+                   SpriteAnimation_t* animation, uint8_t frame_count);
+
 /* Allocate a sprite ANIMATION in the Sprite RAM and initialize it
  * with the sprite frame buffer SRC.
  *
@@ -35,7 +47,20 @@ extern bool __fastcall__ SpriteAnimation_alloc(
                     SpriteAnimation_t* animation,
                     const Sprite_frame_t* src, uint8_t frame_count);
 
+/* ---------------------------------------------------------------  */
+
+/* Free the allocated sprite ANIMATION from Sprite RAM.  It will not
+ * touch the member variables of ANIMATION, i.e. pointers will NOT BE
+ * SET TO NULL.
+ *
+ * To heavy use of this function will result in an fragment heap.  In
+ * that case think about to use SPRITEANIMATION_FREEALL() instead.
+ */
+extern void __fastcall__ SpriteAnimation_free(
+                                  const SpriteAnimation_t* animation);
+
 /* Free all currently allocated sprite animations from Sprite RAM.
+ * Useful to avoid an fragmented heap in the Sprite RAM.
  */
 extern void __fastcall__ SpriteAnimation_freeall(void);
 

@@ -105,6 +105,22 @@ _SpriteAnimation_alloc(uint8_t frame_count)
 /* ***************************************************************  */
 
 bool __fastcall__
+SpriteAnimation_alloc_uninit(SpriteAnimation_t* animation,
+                             uint8_t frame_count)
+{
+  static Sprite_frame_t* alloc;
+
+  if ((alloc = _SpriteAnimation_alloc(frame_count)) == NULL)
+    return false;
+
+  animation->frame_count = frame_count;
+  animation->first_frame = SPRITE_LOCATOR_FROMREF((uint16_t) alloc);
+  animation->buffer = alloc;
+
+  return true;
+}
+
+bool __fastcall__
 SpriteAnimation_alloc(SpriteAnimation_t* animation,
                       const Sprite_frame_t* src, uint8_t frame_count)
 {
@@ -120,6 +136,18 @@ SpriteAnimation_alloc(SpriteAnimation_t* animation,
   animation->buffer = alloc;
 
   return true;
+}
+
+/* ***************************************************************  */
+
+void __fastcall__
+SpriteAnimation_free(const SpriteAnimation_t* animation)
+{
+  static Sprite_frame_t* alloc;
+
+  alloc = animation->buffer;
+
+  // TODO
 }
 
 /* ***************************************************************  */

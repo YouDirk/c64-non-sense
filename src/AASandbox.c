@@ -43,6 +43,7 @@ static uint8_t AASandbox_bordercolor_time;
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
 
+static SpriteAnimation_t AASandbox_anim_blank, AASandbox_anim_multic;
 static SpriteAnimation_t AASandbox_anim_default;
 
 #ifdef DEBUG
@@ -66,30 +67,32 @@ AASandbox_init(void)
 
   /* set bitmap  */
   memset(GRAPHIX_BUFFER_BITMAPRAM, 0x01,
-         GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE);
+                                   GRAPHIX_BUFFER_BITMAPRAM_BUFSIZE);
   for (i=0; i<GRAPHIX_SCREEN_BYTES; i+=8)
     GRAPHIX_BUFFER_BITMAPRAM[0][0][i] = 0xff;
 
   GRAPHIX_BUFFER_SCREENRAM[6][7]
-    = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
-                                          Graphix_gray1);
+               = GRAPHIX_BUFFER_SCREENRAM_BYTELAYOUT(Graphix_green,
+                                                     Graphix_gray1);
   GRAPHIX_BUFFER_BITMAPRAM[6][7][4] = 0x19;
 
-  /* set first 3 sprite frame buffers  */
-  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 8), 0xff,
-          SPRITE_FRAME_BUFFER_BUFSIZE);
-  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)->tick_count
-          = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
+  /* allocate sprite animations  */
+  SpriteAnimation_alloc_uninit(&AASandbox_anim_blank, 1);
+  memset(AASandbox_anim_blank.buffer,
+                                   0xff, SPRITE_FRAME_BUFFER_BUFSIZE);
+  AASandbox_anim_blank.buffer[0].tick_count
+                                   = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
-  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 9), 0xe4,
-          SPRITE_FRAME_BUFFER_BUFSIZE);
-  SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1)->tick_count
-          = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
+  SpriteAnimation_alloc_uninit(&AASandbox_anim_multic, 1);
+  memset(AASandbox_anim_multic.buffer,
+                                   0xe4, SPRITE_FRAME_BUFFER_BUFSIZE);
+  AASandbox_anim_multic.buffer[0].tick_count
+                                   = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
   SpriteAnimation_alloc(
-          &AASandbox_anim_default, AAAssets_spranim_moving,
-          AAASSETS_SPRANIM_MOVING_COUNT);
+                    &AASandbox_anim_default, AAAssets_spranim_moving,
+                    AAASSETS_SPRANIM_MOVING_COUNT);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
 
   /* set sprite multi-color colors  */
@@ -97,7 +100,8 @@ AASandbox_init(void)
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   /* top, left  */
-  Graphix.buffer.sprites.sprite[4].locator = SPRITE_LOCATOR_FIRST + 9;
+  Graphix.buffer.sprites.sprite[4].locator
+    = AASandbox_anim_multic.first_frame;
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[4].set.pos_x
@@ -108,7 +112,8 @@ AASandbox_init(void)
     | Sprite_props_scale_x_mask;
 
   /* top, right  */
-  Graphix.buffer.sprites.sprite[0].locator = SPRITE_LOCATOR_FIRST + 8;
+  Graphix.buffer.sprites.sprite[0].locator
+    = AASandbox_anim_blank.first_frame;
   Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[0].set.pos_x
@@ -119,7 +124,8 @@ AASandbox_init(void)
     = Sprite_props_scale_y_mask;
 
   /* bottom, left  */
-  Graphix.buffer.sprites.sprite[6].locator = SPRITE_LOCATOR_FIRST + 8;
+  Graphix.buffer.sprites.sprite[6].locator
+    = AASandbox_anim_blank.first_frame;
   Graphix.buffer.sprites.sprite[6].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
@@ -130,7 +136,8 @@ AASandbox_init(void)
     = Sprite_props_scale_x_mask;
 
   /* bottom, right  */
-  Graphix.buffer.sprites.sprite[7].locator = SPRITE_LOCATOR_FIRST + 8;
+  Graphix.buffer.sprites.sprite[7].locator
+    = AASandbox_anim_blank.first_frame;
   Graphix.buffer.sprites.sprite[7].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
