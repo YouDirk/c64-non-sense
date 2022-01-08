@@ -34,12 +34,12 @@ Sprite_new(Sprite_buffer_t* sprite)
     = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
 }
 
-/* Nothing to do.  Just an empty-macro for now.
- */
-
-/* void __fastcall__
- * Sprite_delete(Sprite_buffer_t* sprite) {}
- */
+void __fastcall__
+Sprite_delete(Sprite_buffer_t* sprite)
+{
+  /* maybe that the rasterline ISR is still running  */
+  sprite->set.props = Sprite_props_none_mask;
+}
 
 /* ***************************************************************  */
 

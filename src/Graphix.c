@@ -24,21 +24,21 @@
 
 /* The shared and back buffer for triple buffering, read by ISR.  */
 #define _GRAPHIX_BUFFERS_SHAREDBACK_0                                \
-                                ((Graphix_buffer_t*) &GRAPHIX_RAM + 0)
+                              (((Graphix_buffer_t*) &GRAPHIX_RAM) + 0)
 
 /* --------------------------------------  */
 #ifndef CONF_DOUBLE_BUFFERING
 #  define _GRAPHIX_BUFFERS_SHAREDBACK_1                              \
-                                ((Graphix_buffer_t*) &GRAPHIX_RAM + 1)
+                              (((Graphix_buffer_t*) &GRAPHIX_RAM) + 1)
 #endif /* CONF_DOUBLE_BUFFERING  */
 /* --------------------------------------  */
 
 #define _GRAPHIX_BUFFERS_SHAREDBACK_END                              \
                        (GRAPHIX_RAM_RVAL + 2*sizeof(Graphix_buffer_t))
 
-#define _GRAPHIX_RAM_END        _GRAPHIX_BUFFERS_SHAREDBACK_END
+#define _GRAPHIX_BUFFERS_END           _GRAPHIX_BUFFERS_SHAREDBACK_END
 
-#if _GRAPHIX_RAM_END > (GRAPHIX_RAM_RVAL + GRAPHIX_RAM_BUFSIZE)
+#if _GRAPHIX_BUFFERS_END > (GRAPHIX_RAM_RVAL + GRAPHIX_RAM_BUFSIZE)
 #  error "Graphix RAM is overflowing!"
 #endif
 

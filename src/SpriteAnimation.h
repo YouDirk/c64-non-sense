@@ -22,18 +22,38 @@
 #include "common.h"
 #include "SpriteAnimation.gen.h"
 
+#include "Sprite.h"
+
 /* ***************************************************************  */
 
-/* Initialize empty sprite animation structure.  */
-extern void __fastcall__ SpriteAnimation_new(
-                    SpriteAnimation_t* animation, uint8_t frame_count,
-                    Sprite_locator_t first_frame);
-
-/* Free the sprite animation structure.  */
-#define SpriteAnimation_delete(animation)
-/* extern void __fastcall__ SpriteAnimation_delete(
- *                                      SpriteAnimation_t* animation);
+/* Allocate a sprite ANIMATION in the Sprite RAM and initialize it
+ * with the sprite frame buffer SRC.
+ *
+ * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
+extern bool __fastcall__ SpriteAnimation_alloc(
+                    SpriteAnimation_t* animation,
+                    const Sprite_frame_t* src, uint8_t frame_count);
+
+/* Free all currently allocated sprite animations from Sprite RAM.
+ */
+extern void __fastcall__ SpriteAnimation_freeall(void);
+
+/* ***************************************************************  */
+
+#ifdef DEBUG
+
+#define SPRITEANIMATION_DEBUG_ALLOC_PRINT()                          \
+                                  _SpriteAnimation_debug_alloc_print()
+
+/* Do not call directly!  Call the SPRITEANIMATION_DEBUG_ALLOC_PRINT()
+ * macro above instead.
+ */
+extern void __fastcall__ _SpriteAnimation_debug_alloc_print(void);
+
+#else /* DEBUG  */
+#define SPRITEANIMATION_DEBUG_ALLOC_PRINT()
+#endif /* DEBUG  */
 
 /* ***************************************************************  */
 

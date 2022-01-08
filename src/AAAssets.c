@@ -40,7 +40,11 @@
 #define __(high, low)                             0x##high##low
 #define _(high, low)                              __(high, low)
 
-/* ***************************************************************  */
+/* *******************************************************************
+ *
+ * This module just contains asset data and will be replaced by an
+ * AssetLoader-module in the future.
+ */
 
 const Sprite_frame_t
 AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
@@ -48,7 +52,7 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
     {{_(____,____),_(____,____),_(____,____)},
      {_(____,BBBB),_(BB__,___B),_(BBBB,B___)},
      {_(___B,BBBB),_(BBBB,_BBB),_(BBBB,BB__)},
-     {_(__BB,BBBB),_(BBBB,_BBB),_(BBBB,BBB_)},
+     {_(__BB,BBBB),_(BBBB,BBBB),_(BBBB,BBB_)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
@@ -72,7 +76,7 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
     {{_(____,____),_(____,____),_(____,____)},
      {_(____,BBBB),_(BB__,___B),_(BBBB,B___)},
      {_(___B,BBBB),_(BBBB,_BBB),_(BBBB,BB__)},
-     {_(__BB,BBBB),_(BBBB,_BBB),_(BBBB,BBB_)},
+     {_(__BB,BBBB),_(BBBB,BBBB),_(BBBB,BBB_)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},

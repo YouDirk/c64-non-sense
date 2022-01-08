@@ -20,14 +20,14 @@
 
 #include "AAAssets.h"
 
-#include "Graphix.h"
-#include "Input.h"
 #include "Engine.h"
+#include "Input.h"
 #include "Pace.h"
 
-/* ***************************************************************  */
+#include "Graphix.h"
+#include "SpriteAnimation.h"
 
-static uint8_t AASandbox_bordercolor_time;
+/* ***************************************************************  */
 
 #define _CONST_SPRITES                                               \
   SpriteManager_sprites_5_mask
@@ -36,8 +36,14 @@ static uint8_t AASandbox_bordercolor_time;
   (SpriteManager_sprites_4_mask | SpriteManager_sprites_0_mask       \
    | SpriteManager_sprites_6_mask | SpriteManager_sprites_7_mask)
 
+/* ***************************************************************  */
+
+static uint8_t AASandbox_bordercolor_time;
+
 static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
+
+static SpriteAnimation_t AASandbox_anim_default;
 
 #ifdef DEBUG
 static string_t AASandbox_charout;
@@ -70,25 +76,28 @@ AASandbox_init(void)
   GRAPHIX_BUFFER_BITMAPRAM[6][7][4] = 0x19;
 
   /* set first 3 sprite frame buffers  */
-  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST), 0xff,
-         SPRITE_FRAME_BUFFER_BUFSIZE);
+  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 8), 0xff,
+          SPRITE_FRAME_BUFFER_BUFSIZE);
   SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)->tick_count
-    = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
+          = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
-  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1), 0xe4,
-         SPRITE_FRAME_BUFFER_BUFSIZE);
+  memset(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 9), 0xe4,
+          SPRITE_FRAME_BUFFER_BUFSIZE);
   SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 1)->tick_count
-    = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
+          = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
-  memcpy(SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST + 2),
-         AAAssets_spranim_moving, sizeof(AAAssets_spranim_moving));
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_alloc(
+          &AASandbox_anim_default, AAAssets_spranim_moving,
+          AAASSETS_SPRANIM_MOVING_COUNT);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
 
   /* set sprite multi-color colors  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   /* top, left  */
-  Graphix.buffer.sprites.sprite[4].locator = SPRITE_LOCATOR_FIRST + 1;
+  Graphix.buffer.sprites.sprite[4].locator = SPRITE_LOCATOR_FIRST + 9;
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[4].set.pos_x
@@ -99,6 +108,7 @@ AASandbox_init(void)
     | Sprite_props_scale_x_mask;
 
   /* top, right  */
+  Graphix.buffer.sprites.sprite[0].locator = SPRITE_LOCATOR_FIRST + 8;
   Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[0].set.pos_x
@@ -109,6 +119,7 @@ AASandbox_init(void)
     = Sprite_props_scale_y_mask;
 
   /* bottom, left  */
+  Graphix.buffer.sprites.sprite[6].locator = SPRITE_LOCATOR_FIRST + 8;
   Graphix.buffer.sprites.sprite[6].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
@@ -119,6 +130,7 @@ AASandbox_init(void)
     = Sprite_props_scale_x_mask;
 
   /* bottom, right  */
+  Graphix.buffer.sprites.sprite[7].locator = SPRITE_LOCATOR_FIRST + 8;
   Graphix.buffer.sprites.sprite[7].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT - 1;
@@ -130,7 +142,8 @@ AASandbox_init(void)
     = Sprite_props_prio_bground_mask;
 
   /* moving  */
-  Graphix.buffer.sprites.sprite[5].locator = SPRITE_LOCATOR_FIRST + 2;
+  Graphix.buffer.sprites.sprite[5].locator
+    = AASandbox_anim_default.first_frame;
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
@@ -188,17 +201,14 @@ AASandbox_tick(void)
     if (Input.joy_port2.axis_y.direction > 0) {
       Pace_start_pos(&AASandbox_pace_y);
       Pace_start_pos(&AASandbox_pace_sprite_y);
-      DEBUG_NOTE("forward");
     }
     else if (Input.joy_port2.axis_y.direction < 0) {
       Pace_accelerate_neg(&AASandbox_pace_y);
       Pace_accelerate_neg(&AASandbox_pace_sprite_y);
-      DEBUG_NOTE("backward");
     }
     else {
       Pace_brake(&AASandbox_pace_y);
       Pace_brake(&AASandbox_pace_sprite_y);
-      DEBUG_NOTE("stop");
     }
 
   } else if (Input.joy_port1.axis_y.changed) {

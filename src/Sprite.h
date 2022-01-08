@@ -28,8 +28,7 @@
 extern void __fastcall__ Sprite_new(Sprite_buffer_t* sprite);
 
 /* Free the sprite structure.  */
-#define Sprite_delete(sprite)
-/* extern void __fastcall__ Sprite_delete(Sprite_buffer_t* sprite); */
+extern void __fastcall__ Sprite_delete(Sprite_buffer_t* sprite);
 
 /* ***************************************************************  */
 
