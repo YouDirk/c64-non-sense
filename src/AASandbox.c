@@ -45,6 +45,7 @@ static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
 
 static SpriteAnimation_t AASandbox_anim_blank, AASandbox_anim_multic;
 static SpriteAnimation_t AASandbox_anim_default;
+static SpriteAnimation_t AASandbox_anim_test, AASandbox_anim_test2;
 
 #ifdef DEBUG
 static string_t AASandbox_charout;
@@ -77,22 +78,30 @@ AASandbox_init(void)
   GRAPHIX_BUFFER_BITMAPRAM[6][7][4] = 0x19;
 
   /* allocate sprite animations  */
-  SpriteAnimation_alloc_uninit(&AASandbox_anim_blank, 1);
+  SpriteAnimation_new_alloc(&AASandbox_anim_blank, 1);
   memset(AASandbox_anim_blank.buffer,
                                    0xff, SPRITE_FRAME_BUFFER_BUFSIZE);
   AASandbox_anim_blank.buffer[0].tick_count
                                    = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
-  SpriteAnimation_alloc_uninit(&AASandbox_anim_multic, 1);
+  SpriteAnimation_new_alloc(&AASandbox_anim_multic, 1);
   memset(AASandbox_anim_multic.buffer,
                                    0xe4, SPRITE_FRAME_BUFFER_BUFSIZE);
   AASandbox_anim_multic.buffer[0].tick_count
                                    = SPRITE_FRAME_TICKCOUNT_LAST_MASK;
 
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_alloc(
+  SpriteAnimation_new(
                     &AASandbox_anim_default, AAAssets_spranim_moving,
                     AAASSETS_SPRANIM_MOVING_COUNT);
+
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_new_alloc(&AASandbox_anim_test, 2);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_new_alloc(&AASandbox_anim_test2, 2);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_new_alloc(&AASandbox_anim_test, 2);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_delete(&AASandbox_anim_test2);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
 
   /* set sprite multi-color colors  */
@@ -186,6 +195,8 @@ AASandbox_release(void)
   Pace_delete(&AASandbox_pace_sprite_y);
   Pace_delete(&AASandbox_pace_x);
   Pace_delete(&AASandbox_pace_y);
+
+  SpriteAnimation_delete_all();
 }
 
 /* ***************************************************************  */

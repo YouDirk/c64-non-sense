@@ -35,7 +35,7 @@
  *
  * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
-extern bool __fastcall__ SpriteAnimation_alloc_uninit(
+extern bool __fastcall__ SpriteAnimation_new_alloc(
                    SpriteAnimation_t* animation, uint8_t frame_count);
 
 /* Allocate a sprite ANIMATION in the Sprite RAM and initialize it
@@ -43,7 +43,7 @@ extern bool __fastcall__ SpriteAnimation_alloc_uninit(
  *
  * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
-extern bool __fastcall__ SpriteAnimation_alloc(
+extern bool __fastcall__ SpriteAnimation_new(
                     SpriteAnimation_t* animation,
                     const Sprite_frame_t* src, uint8_t frame_count);
 
@@ -53,16 +53,17 @@ extern bool __fastcall__ SpriteAnimation_alloc(
  * touch the member variables of ANIMATION, i.e. pointers will NOT BE
  * SET TO NULL.
  *
- * To heavy use of this function will result in an fragment heap.  In
- * that case think about to use SPRITEANIMATION_FREEALL() instead.
+ * To heavy use of this function maybe result in an fragmented heap.
+ * In that case think about to use SPRITEANIMATION_DELETE_ALL()
+ * instead.
  */
-extern void __fastcall__ SpriteAnimation_free(
+extern void __fastcall__ SpriteAnimation_delete(
                                   const SpriteAnimation_t* animation);
 
 /* Free all currently allocated sprite animations from Sprite RAM.
  * Useful to avoid an fragmented heap in the Sprite RAM.
  */
-extern void __fastcall__ SpriteAnimation_freeall(void);
+extern void __fastcall__ SpriteAnimation_delete_all(void);
 
 /* ***************************************************************  */
 

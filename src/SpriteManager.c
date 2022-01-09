@@ -33,7 +33,7 @@ SpriteManager_init(void)
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
 
   /* intialize Sprite RAM and GRAPHIX.ANIMS.SPRITES to NULL  */
-  SpriteAnimation_freeall();
+  SpriteAnimation_delete_all();
 
   /* initialize each sprite (unrolled loop)  */
   Sprite_new(Graphix.buffer.sprites.sprite + 0);
@@ -67,7 +67,7 @@ SpriteManager_release(void)
   /* free all currently allocated sprite animation from Sprite RAM and
    * set GRAPHIX.ANIMS.SPRITES to NULL
    */
-  SpriteAnimation_freeall();
+  SpriteAnimation_delete_all();
 
   /* reset sprites stuff  */
   memset(&VIC_SPR_POSITIONS, 0x00, VIC_SPR_POSITIONS_BUFSIZE);
