@@ -21,6 +21,8 @@
 
 #include "common.h"
 
+#include "Memory.gen.h"
+
 /* ***************************************************************  */
 
 #ifdef DEBUG_RENDERTIME_IRQ
@@ -53,7 +55,7 @@
   __asm__("  tsx\n"                                                  \
           "  lda %w, x\n"                                            \
           "  sta %w\n"                                               \
-          , STACK_BASE + 0, VIC_BORDERCOLOR_RVAL)
+          , MEMORY_STACK_BASE + 0, VIC_BORDERCOLOR_RVAL)
 #  define DEBUG_RENDERTIME_FREECPU_END()                             \
   __asm__("  pla\n"                                                  \
           "  adc #1\n" /* prevent that PLA will be optimized out  */ \

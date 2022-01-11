@@ -34,12 +34,14 @@
 #
 DEBUG_BUILD := 1
 
-# Log debug errors if non-<stdint.h> arguments (i.e. UINT6_T, INT4_T)
-# in function calls are overflowing.
+# Enable additional assertion checks for function arguments and log
+# them as debug errors if they will be failed.  For example if
+# non-<stdint.h> arguments (i.e. UINT6_T, INT4_T) in function calls
+# are overflowing.
 #
 # values: [1 0], default: 1
 #
-DEBUG_OPT_OVERFLOW_CHECK := 1
+DEBUG_OPT_ASSERTION_CHECK := 1
 
 # Mark as border color (black) the time how long the C64 NonSense
 # Engine is polling stuff.  This is equivalent to the CPU time which

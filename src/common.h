@@ -149,19 +149,4 @@ typedef struct uint32_s            int32_s;
 
 /*****************************************************************  */
 
-/* In assembler the N-th byte of the processor stack can be ezly
- * addressed via
- *
- * ```asm
- *   tsx                      ; Transfer S register into X register
- *   lda STACK_BASE + N, x    ; Load the N-th byte of TOS into accu
- *   sta STACK_BASE + N, x    ; Store accu into the N-th byte of TOS
- * ```
- *
- * See COMMON.INC.S for more details.
- */
-#define STACK_BASE                 0x0101
-
-/*****************************************************************  */
-
 #endif /* COMMON_H__  */

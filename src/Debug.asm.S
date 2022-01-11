@@ -18,6 +18,7 @@
 .include "Debug.inc.s"
 .include "Debug.gen.s"
 
+.include "Memory.gen.s"
 .include "Timer.inc.s"
 
 .code
@@ -44,7 +45,7 @@
         sei                             ; mask all IRQs for exclusive
                                         ;   access to __DEBUG
 
-  .define _TOS STACK_BASE + SIZEOF_WORD + SIZEOF_ADDR + SIZEOF_BYTE
+  .define _TOS MEMORY_STACK_BASE + SIZEOF_WORD+SIZEOF_ADDR+SIZEOF_BYTE
 
         ;; ---
 

@@ -63,9 +63,9 @@ ifneq (,$(call 2BOOL,$(DEBUG_BUILD)))
   OBJ += $(OBJ_DEBUG)
   DEFH += $(DEFH_DEBUG)
   CCDEFINES += -DDEBUG
-  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_OVERFLOW_CHECK)), \
+  ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_ASSERTION_CHECK)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))
-    CCDEFINES += -DDEBUG_OVERFLOW_CHECK
+    CCDEFINES += -DDEBUG_ASSERTION_CHECK
   endif
   ifeq (full,$(or $(call 2FULL,$(DEBUG_OPT_RENDERTIME_FREECPU)), \
                   $(call 2BOOL,$(DEBUG_BUILD))))

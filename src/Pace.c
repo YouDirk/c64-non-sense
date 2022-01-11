@@ -69,7 +69,7 @@ Pace_new(Pace_t* pace,
  */
 
 /* void __fastcall__
- * Pace_delete(Pace_t* pace) {}
+ * Pace_delete(const Pace_t* pace) {}
  */
 
 /* ***************************************************************  */
@@ -136,7 +136,7 @@ Pace_velocitymax_set(Pace_t* pace, uint7_t velocity_max, uint6_t delay)
     & velocity_max;
   pace->_max.byte_low = delay << _STATUS_LOW_TICKCOUNTER_SHIFT;
 
-#ifdef DEBUG_OVERFLOW_CHECK
+#ifdef DEBUG_ASSERTION_CHECK
   /* MAXPACE equals VELOCITY_MAX + 1  */
   if (velocity_max > UINT7_MAX - 1)
     DEBUG_ERROR("pace velocitymax, velocity overflows!");
@@ -153,7 +153,7 @@ Pace_accelerate_set(Pace_t* pace, uint6_t accel_rate)
     = ~(accel_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
         | _STATUS_LOW_FRACCOUNTER_BIT0) + 1;
 
-#ifdef DEBUG_OVERFLOW_CHECK
+#ifdef DEBUG_ASSERTION_CHECK
   if (accel_rate > UINT6_MAX)
     DEBUG_ERROR("pace accel_rate, overflows!");
 #endif
@@ -167,7 +167,7 @@ Pace_brakerate_set(Pace_t* pace, uint6_t brake_rate)
     = brake_rate << _STATUS_LOW_TICKCOUNTER_SHIFT
     | _STATUS_LOW_FRACCOUNTER_BIT0;
 
-#ifdef DEBUG_OVERFLOW_CHECK
+#ifdef DEBUG_ASSERTION_CHECK
   if (brake_rate > UINT6_MAX)
     DEBUG_ERROR("pace brake_rate, overflows!");
 #endif

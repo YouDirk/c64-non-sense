@@ -58,7 +58,7 @@ extern void __fastcall__ Pace_new(Pace_t* pace, uint7_t velocity_max,
 
 /* Free the pace structure.  */
 #define Pace_delete(pace)
-/* extern void __fastcall__ Pace_delete(Pace_t* pace);  */
+/* extern void __fastcall__ Pace_delete(const Pace_t* pace);  */
 
 /* ***************************************************************  */
 

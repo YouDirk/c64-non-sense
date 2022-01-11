@@ -34,8 +34,9 @@ header_define(MEMORY)
  *         |----------------------------------------------------|
  * 0x0002  | [RAM, Kernal] Zero Page                            |
  *         |----------------------------------------------------|
- * 0x0100  | [RAM, Kernal] Extended Zero Page                   |
- *         |                                                    |
+ * 0x0100  | [RAM, MOS 6510] Return Stack                       |
+ *         |----------------------------------------------------|
+ * 0x0200  | [RAM, Kernal] Extended Zero Page                   |
  *         |----------------------------------------------------|
  * 0x0400  | [RAM, VIC-II DMA] default Screen RAM               |
  *         |                                                    |
@@ -62,6 +63,9 @@ header_define(MEMORY)
  *         |                                                    |
  *         |                                                    |
  *         |----------------------------------------------------|
+ * 0xc800  | [RAM, CC65] Parameter Stack                        |
+ *         |                                                    |
+ *         |----------------------------------------------------|
  * 0xd000  | [I/O] VIC-II, SID,   | [ROM]        | [RAM]        |
  *         |       CIA 1/2,       |   Character  |              |
  *         |       Color RAM      |   ROM        |              |
@@ -80,10 +84,33 @@ header_define(MEMORY)
 register_uint8_hex(00,             MEMORY_ZEROPAGE_BEGIN)
 register_uint8_hex(ff,             MEMORY_ZEROPAGE_END)
 
-register_uint8_hex(0100,           MEMORY_EXTZEROPAGE_BEGIN)
-register_uint8_hex(03ff,           MEMORY_EXTZEROPAGE_END)
+register_uint8_hex(0100,           MEMORY_STACK_RETURN_BEGIN)
+register_uint8_hex(01ff,           MEMORY_STACK_RETURN_END)
+/*
+ * The high byte of the C64 processor stack address is hard wired to
+ * 0x0100.  The Stack Pointer Register (S register) of the MOS 6510
+ * CPU will be initialized to 0xff by the Kernal during RESET.
+ * Therefore, if the stack is empty it points to 0x01ff.  On pushing
+ * to it (PHA <VALUE> instruction) the VALUE will be saved to 0x01SS
+ * (SS: value of S register) and AFTER that, SS will be decrmented by
+ * 1.
+ *
+ * The top of C64 processor stack (TOS) can be calculated as
+ *
+ *   TOS = 0x0101 + SS
+ *
+ * In assembler the N-th byte of the processor stack can be ezly
+ * addressed via
+ *
+ * ```asm
+ *   tsx                      ; Transfer S register into X register
+ *   lda STACK_BASE + N, x    ; Load the N-th byte of TOS into accu
+ *   sta STACK_BASE + N, x    ; Store accu into the N-th byte of TOS
+ * ```
+ */
+define_hex(MEMORY_STACK_BASE,      0101)
 
-register_uint8_hex(0100,           MEMORY_EXTZEROPAGE_BEGIN)
+register_uint8_hex(0200,           MEMORY_EXTZEROPAGE_BEGIN)
 register_uint8_hex(03ff,           MEMORY_EXTZEROPAGE_END)
 
 register_uint8_hex(0400,           MEMORY_SCREENRAM_DEFAULT_BEGIN)
@@ -100,6 +127,8 @@ register_uint8_hex(a000,           MEMORY_BANK_BASICROM_BEGIN)
 register_uint8_hex(bfff,           MEMORY_BANK_BASICROM_END)
 
 register_uint8_hex(c000,           MEMORY_RAM_C000_BEGIN)
+register_uint8_hex(c800,           MEMORY_STACK_PARAM_BEGIN)
+register_uint8_hex(cfff,           MEMORY_STACK_PARAM_END)
 register_uint8_hex(cfff,           MEMORY_RAM_C000_END)
 
 register_uint8_hex(d000,           MEMORY_BANK_IOCHIPS_BEGIN)

@@ -340,8 +340,10 @@ define_dec(GRAPHIX_MMAPPING,                 0)
  * 0xc3f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0xc000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0xc400  | [RAM, SPRITE RAM] 3072 bytes                       |
- *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
+ * 0xc400  | [RAM, SPRITE RAM] 1024 bytes, 16 frames            |
+ *         |   = 8 sprites * 64 bytes/frame * 2 frames/sprite   |
+ *         |----------------------------------------------------|
+ * 0xc800  | [RAM, CC65] Parameter Stack, 2048 bytes            |
  *         |                                                    |
  *         |----------------------------------------------------|
  * 0xd000  | [I/O] VIC-II, SID,  [ROM]        [RAM]             |
@@ -371,7 +373,7 @@ prep_if(GRAPHIX_MMAPPING equals 0)
   define_hex(GRAPHIX_LOCATORS_SPRITES_RVAL,     c3f8) /* SCREEN+0x3f8 */
 
   define_hex(GRAPHIX_BUFFER_SPRITERAM_RVAL,     c400)
-  define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  c00) /* 3072 bytes  */
+  define_hex(_GRAPHIX_BUFFER_SPRITERAM_BUFSIZE,  400) /* 1024 bytes  */
 
   define    (_GRAPHIX_VICBANK_CIA2PRA,          CIA2_PRA_VICBANK_MEMC)
   define    (GRAPHIX_VICBANK_RVAL,              CIA2_PRA_VICBANK_ADDRC)
@@ -401,7 +403,7 @@ prep_if(GRAPHIX_MMAPPING equals 0)
  * 0x83f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x8000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0x8400  | [RAM, SPRITE RAM] 3072 bytes                       |
+ * 0x8400  | [RAM, SPRITE RAM] 3072 bytes, 48 frames            |
  *         |   = 8 sprites * 64 bytes/frame * 6 frames/sprite   |
  *         |                                                    |
  *         |----------------------.-----------------------------|
@@ -467,7 +469,7 @@ prep_elif(GRAPHIX_MMAPPING equals 1)
  * 0x63f8  | [RAM, SPRITE LOCATORS] 8 bytes                     |
  *         |   sprite_ptr = (0x4000 + (locator << 6))           |
  *         |----------------------------------------------------|
- * 0x6400  | [RAM, SPRITE RAM] 7168 bytes                       |
+ * 0x6400  | [RAM, SPRITE RAM] 7168 bytes, 112 frames           |
  *         |   = 8 sprites * 64 bytes/frame * 14 frames/sprite  |
  *         |                                                    |
  * 0x7fff  |                                                    |

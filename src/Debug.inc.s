@@ -20,6 +20,8 @@
 
 .include "common.inc.s"
 
+.include "Memory.gen.s"
+
 .include "chip-vic.gen.s"
 
 ;; *******************************************************************
@@ -54,7 +56,7 @@
 
   .macro DEBUG_RENDERTIME_COLOR_SET
         tsx                             ; bordercolor := CPU_STACK[0]
-        lda STACK_BASE + 0, x
+        lda MEMORY_STACK_BASE + 0, x
         sta VIC_BORDERCOLOR
   .endmacro                             ; DEBUG_RENDERTIME_COLOR_SET
 

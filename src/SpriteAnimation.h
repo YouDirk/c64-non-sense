@@ -56,6 +56,16 @@ extern bool __fastcall__ SpriteAnimation_new(
  * To heavy use of this function maybe result in an fragmented heap.
  * In that case think about to use SPRITEANIMATION_DELETE_ALL()
  * instead.
+ *
+ * Hints to avoid fragmentation:
+ *
+ *   - For every SPRITEANIMATION_DELETE() do allocate (i.e. using
+ *     SPRITEANIMATION_NEW()) an sprite animation with the same
+ *     ANIMATION.FRAME_COUNT.
+ *
+ *   - Allocate (i.e. using SPRITEANIMATION_NEW()) more than one
+ *     sprite animation by descend ordering in ANIMATION.FRAME_COUNT
+ *     (larger FRAME_COUNT before the smaller one).
  */
 extern void __fastcall__ SpriteAnimation_delete(
                                   const SpriteAnimation_t* animation);
