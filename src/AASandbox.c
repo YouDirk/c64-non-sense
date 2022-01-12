@@ -45,7 +45,10 @@ static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
 
 static SpriteAnimation_t AASandbox_anim_blank, AASandbox_anim_multic;
 static SpriteAnimation_t AASandbox_anim_default;
-static SpriteAnimation_t AASandbox_anim_test, AASandbox_anim_test2;
+
+static SpriteAnimation_t AASandbox_anim_test1, AASandbox_anim_test2;
+static SpriteAnimation_t AASandbox_anim_test3, AASandbox_anim_test4;
+static SpriteAnimation_t AASandbox_anim_test5, AASandbox_anim_test6;
 
 #ifdef DEBUG
 static string_t AASandbox_charout;
@@ -94,15 +97,29 @@ AASandbox_init(void)
                     &AASandbox_anim_default, AAAssets_spranim_moving,
                     AAASSETS_SPRANIM_MOVING_COUNT);
 
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_new_alloc(&AASandbox_anim_test, 2);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  /* *** TODO: alloc() & free() tests here ***  */
+  SpriteAnimation_new_alloc(&AASandbox_anim_test1, 2);
   SpriteAnimation_new_alloc(&AASandbox_anim_test2, 2);
+  SpriteAnimation_new_alloc(&AASandbox_anim_test3, 2);
+  SpriteAnimation_new_alloc(&AASandbox_anim_test4, 2);
+  SpriteAnimation_new_alloc(&AASandbox_anim_test5, 2);
+  SpriteAnimation_new_alloc(&AASandbox_anim_test6, 2);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_new_alloc(&AASandbox_anim_test, 2);
+  SpriteAnimation_delete(&AASandbox_anim_test1);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_delete(&AASandbox_anim_test5);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_delete(&AASandbox_anim_test3);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
   SpriteAnimation_delete(&AASandbox_anim_test2);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_new_alloc(&AASandbox_anim_test1, 2);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_delete(&AASandbox_anim_test4);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  SpriteAnimation_delete(&AASandbox_anim_test6);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  /* *** TODO: end of alloc() & free() tests ***  */
 
   /* set sprite multi-color colors  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;

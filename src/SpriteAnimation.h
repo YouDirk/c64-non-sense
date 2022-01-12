@@ -77,6 +77,49 @@ extern void __fastcall__ SpriteAnimation_delete_all(void);
 
 /* ***************************************************************  */
 
+/* Returns TRUE if all sprite animations are free´d from Sprite RAM,
+ * i.e. after using SPRITEANIMATION_DELETE_ALL() or
+ * SPRITEANIMATION_DELETE().  Otherwise FALSE.
+ */
+extern bool __fastcall__ SpriteAnimation_alloc_is_empty(void);
+
+/* Returns TRUE if there is no more free space for sprite animations to
+ * Sprite RAM anymore.  Otherwise FALSE.
+ *
+ * Notice, it is possible that the function returns FALSE, but you
+ * cannot allocate your animation, because the heap is fragmented.
+ * The performantest way in that case is to try SPRITEANIMATION_NEW()
+ * out and check the return value.
+ */
+extern bool __fastcall__ SpriteAnimation_alloc_is_full(void);
+
+/* Returns TRUE if there exist more than one big free block in Sprite
+ * RAM, which we call an 'fragmented heap'.  Otherwise FALSE.
+ */
+extern bool __fastcall__ SpriteAnimation_alloc_is_fragmented(void);
+
+/* Returns the number of free sprite frames (in a continuous address
+ * space) which can be allocated in a sprite animation, independent
+ * from fragmentation of the heap.
+ */
+extern uint8_t __fastcall__
+                    SpriteAnimation_alloc_framesfree_animation(void);
+
+/* Returns the maximum number of free sprite frames in the Sprite RAM
+ * as sum of all free fragments.
+ *
+ * Notice, it is possible that the function returns a number, which is
+ * not possible to allocate with a single SPRITEANIMATION_NEW() call,
+ * because of an fragmented heap.  The performantest way in that case
+ * is to try SPRITEANIMATION_NEW() out and check the return value.  Or
+ * use SPRITEANIMATION_ALLOC_FRAMESFREE_ANIMATION() if you need a
+ * precise number.
+ */
+extern uint8_t __fastcall__
+                    SpriteAnimation_alloc_framesfree_sum(void);
+
+/* ***************************************************************  */
+
 #ifdef DEBUG
 
 #define SPRITEANIMATION_DEBUG_ALLOC_PRINT()                          \

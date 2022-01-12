@@ -48,19 +48,77 @@ void __fastcall__
 _SpriteAnimation_debug_alloc_print(void)
 {
   static _freelist_block_t *cur_block;
+
+  for (cur_block=_SpriteAnimation_freelist; cur_block != NULL;
+       cur_block=cur_block->next) {
+    printf("->0x%04x %u", cur_block, cur_block->size);
+  }
+
+  printf("\n  %u(max %u)/%u free, frag=%u e=%u f=%u\n",
+         SpriteAnimation_alloc_framesfree_sum(),
+         SpriteAnimation_alloc_framesfree_animation(),
+         SPRITE_LOCATOR_COUNT,
+         SpriteAnimation_alloc_is_fragmented(),
+         SpriteAnimation_alloc_is_empty(),
+         SpriteAnimation_alloc_is_full());
+}
+#endif /* DEBUG  */
+
+/* ***************************************************************  */
+
+bool __fastcall__
+SpriteAnimation_alloc_is_empty(void)
+{
+  return _SpriteAnimation_freelist != NULL
+    && (_SpriteAnimation_freelist->size == SPRITE_LOCATOR_COUNT);
+}
+
+bool __fastcall__
+SpriteAnimation_alloc_is_full(void)
+{
+  return _SpriteAnimation_freelist == NULL;
+}
+
+bool __fastcall__
+SpriteAnimation_alloc_is_fragmented(void)
+{
+  return _SpriteAnimation_freelist != NULL
+         && _SpriteAnimation_freelist->next != NULL;
+}
+
+uint8_t __fastcall__
+SpriteAnimation_alloc_framesfree_animation(void)
+{
+  static _freelist_block_t* cur_block;
+  static uint8_t max, cur;
+
+  max = 0;
+  for (cur_block=_SpriteAnimation_freelist; cur_block != NULL;
+       cur_block=cur_block->next) {
+    cur = cur_block->size;
+
+    if (cur > max) max = cur;
+  }
+
+  return max;
+}
+
+uint8_t __fastcall__
+SpriteAnimation_alloc_framesfree_sum(void)
+{
+  static _freelist_block_t* cur_block;
   static uint8_t count;
 
   count = 0;
   for (cur_block=_SpriteAnimation_freelist; cur_block != NULL;
        cur_block=cur_block->next) {
     count += cur_block->size;
-
-    printf("->0x%04x %u", cur_block, cur_block->size);
   }
 
-  printf("\n%u of %u frames free.\n", count, SPRITE_LOCATOR_COUNT);
+  return count;
 }
-#endif /* DEBUG  */
+
+/* ***************************************************************  */
 
 /* Allocation algorithm for sprite animations in Sprite RAM.
  *
@@ -69,7 +127,7 @@ _SpriteAnimation_debug_alloc_print(void)
 static Sprite_frame_t* __fastcall__
 _SpriteAnimation_alloc(uint8_t frame_count)
 {
-  static _freelist_block_t *cur_block;
+  static _freelist_block_t* cur_block;
   static _freelist_block_t** prev_next_ptr;
 
   static uint8_t cur_size;
@@ -109,7 +167,7 @@ _SpriteAnimation_alloc(uint8_t frame_count)
     return (Sprite_frame_t*) cur_block;
   }
 
-  DEBUG_ERROR("sprite anim, out of memory!");
+  DEBUG_ERROR("sprite anim, new out of mem!");
   return NULL;
 }
 
@@ -149,98 +207,210 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
   return true;
 }
 
-/* ***************************************************************  */
+/* *******************************************************************
+ *
+ * cases for SPRITE_ANIMATION_DELETE()
+ * -----------------------------------
+ *
+ *                      ._________________________.
+ *       SA_freelist ---'                         |
+ *                          .-------.   .-------|^|^^^^^|
+ *                      |   |   1   |   |   2   | '->   |
+ *     begin Sprite RAM |   '-------'   '-------|_______|
+ *
+ *            .___________________________________.
+ *            |                                   |
+ *            | .-------------------------------. |
+ *      |^^^^^|^|-------.   .-------.   .-------|^|^^^^^|
+ *      |       |   3   | 6 |   4   | 6 |   5   | '->   |
+ *      |_______|-------'   '-------'   '-------|_______|
+ *              '-------------------------------'
+ *
+ *                        ._________________________.
+ *                        |                         '-> NULL
+ *                  |^^^^^|^|-------.   .-------.
+ *                  |       |   7   |   |   8   |   |
+ *                  |_______|-------'   '-------'   | end Sprite RAM
+ *
+ *
+ * Useful for debugging, using the _DEBUG_CASES output.
+ */
+
+#define _DEBUG_CASES 1
+
+#if _DEBUG_CASES == 1
+#  define _DEBUG_CASE(no) DEBUG_NOTE("sprite del, case " no)
+#else
+#  define _DEBUG_CASE(no)
+#endif /* _DEBUG_CASES  */
 
 void __fastcall__
 SpriteAnimation_delete(const SpriteAnimation_t* animation)
 {
-  static _freelist_block_t *cur_block, *tmp_block;
-  static void* alloc;
+  static _freelist_block_t *cur_block, *prev_block;
+  static uint8_t *alloc, *alloc_end, *prev_block_end;
+  static uint16_t alloc_bufsize, prev_block_bufsize;
 
-  // TODO
-  DEBUG_WARN("sprite anim, free not full implemented!");
+  static uint8_t alloc_framecount;
 
-  alloc = animation->buffer;
+  alloc = (uint8_t*) animation->buffer;
+  alloc_framecount = animation->frame_count;
 
 #ifdef DEBUG_ASSERTION_CHECK
-  if (animation->frame_count == 0) {
+  if (alloc_framecount == 0) {
     DEBUG_ERROR("sprite anim, free zero size!");
+    return;
+  }
+  if (alloc == NULL) {
+    DEBUG_ERROR("sprite anim, free null ptr!");
     return;
   }
 #endif /* DEBUG_ASSERTION_CHECK  */
 
   if (_SpriteAnimation_freelist == NULL) {
 #ifdef DEBUG_ASSERTION_CHECK
-    if (alloc < SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)
-        || alloc >= SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)
-        || animation->frame_count > SPRITE_LOCATOR_COUNT) {
-      DEBUG_ERROR("sprite anim, free 1 useless!");
+    if (alloc < (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)
+        || alloc >= (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)
+        || alloc_framecount > SPRITE_LOCATOR_COUNT) {
+      DEBUG_ERROR("sprite anim, free useless!");
       return;
     }
 #endif /* DEBUG_ASSERTION_CHECK  */
 
-    _SpriteAnimation_freelist = alloc;
+    _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
     _SpriteAnimation_freelist->next = NULL;
-    _SpriteAnimation_freelist->size = animation->frame_count;
+    _SpriteAnimation_freelist->size = alloc_framecount;
 
+    _DEBUG_CASE("1+8");
     return;
-  }
+
+  } /* if (_SpriteAnimation_freelist == NULL)  */
+
+  alloc_bufsize = alloc_framecount  << 6;
+  alloc_end = (uint8_t*) alloc + alloc_bufsize;
 
   /* -------------------------------------------------------------  */
 
-  for (cur_block=_SpriteAnimation_freelist; cur_block->next != NULL;
+  prev_block = _SpriteAnimation_freelist;
+  for (cur_block=_SpriteAnimation_freelist; cur_block != NULL;
        cur_block=cur_block->next) {
-    if (alloc >= cur_block->next) continue;
 
-    if ((uint8_t*) cur_block + (cur_block->size << 6) == alloc) {
+    if (alloc >= (uint8_t*) cur_block) {
+      prev_block = cur_block;
+      continue;
+    }
 
-      if ((uint8_t*) alloc + (animation->frame_count << 6) < (uint8_t*) cur_block->next){
-        cur_block->size += animation->frame_count;
-        return;
-      } else if ((uint8_t*) alloc + (animation->frame_count << 6) > (uint8_t*) cur_block->next) {
-        DEBUG_ERROR("sprite anim, free too large!");
+    prev_block_bufsize = prev_block->size << 6;
+    prev_block_end = (uint8_t*) prev_block + prev_block_bufsize;
+
+    /* ---  */
+
+    if (alloc == prev_block_end) {
+      if (alloc_end < (uint8_t*) cur_block) {
+        prev_block->size += alloc_framecount;
+
+        _DEBUG_CASE("3");
         return;
       }
 
-      cur_block->size += animation->frame_count + cur_block->next->size;
-      cur_block->next = cur_block->next->next;
+      if (alloc_end == (uint8_t*) cur_block) {
+        prev_block->next = cur_block->next;
+        prev_block->size += alloc_framecount + cur_block->size;
 
-      return;
-    } else if ((uint8_t*) cur_block + (cur_block->size << 6) < alloc) {
-      DEBUG_ERROR("sprite anim, double free!");
-      return;
-    }
+        _DEBUG_CASE("6");
+        return;
+      }
 
-    if ((uint8_t*) alloc + (animation->frame_count << 6) == (uint8_t*) cur_block->next) {
-      (uint8_t*) tmp_block = (uint8_t*) cur_block->next - (animation->frame_count << 6);
-      tmp_block->size = cur_block->next->size + animation->frame_count;
-      tmp_block->next = cur_block->next->next;
-
-      cur_block->next = tmp_block;
-
-      return;
-    } else if ((uint8_t*) alloc + (animation->frame_count << 6) < (uint8_t*) cur_block->next) {
-      tmp_block = alloc;
-
-      tmp_block->size = animation->frame_count;
-      tmp_block->next = cur_block->next;
-      cur_block->next = tmp_block;
-
+      DEBUG_ERROR("sprite anim, free too large!");
       return;
     }
 
-    DEBUG_ERROR("sprite anim, free 2 large!");
+    /* ---  */
+
+    if (alloc_end == (uint8_t*) cur_block) {
+      ((_freelist_block_t*) alloc)->next = cur_block->next;
+      ((_freelist_block_t*) alloc)->size = cur_block->size
+                                                   + alloc_framecount;
+
+      if (cur_block == prev_block) {
+        _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
+
+        _DEBUG_CASE("2");
+        return;
+      }
+
+      prev_block->next = (_freelist_block_t*) alloc;
+
+      _DEBUG_CASE("5");
+      return;
+    }
+
+    /* ---  */
+
+    if (alloc > prev_block_end) {
+      ((_freelist_block_t*) alloc)->next = cur_block;
+      ((_freelist_block_t*) alloc)->size = alloc_framecount;
+
+      prev_block->next = (_freelist_block_t*) alloc;
+
+      _DEBUG_CASE("4");
+      return;
+    }
+
+    /* ---  */
+
+    if (cur_block == prev_block
+        && alloc < (uint8_t*) _SpriteAnimation_freelist) {
+      ((_freelist_block_t*) alloc)->next = cur_block;
+      ((_freelist_block_t*) alloc)->size = alloc_framecount;
+
+      _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
+
+      _DEBUG_CASE("1");
+      return;
+    }
+
+    /* ---  */
+
+    DEBUG_ERROR("sprite anim, double free!");
     return;
-  }
+  } /* for (cur_block=; ...; cur_block=cur_block->next)  */
 
   /* -------------------------------------------------------------  */
 
-  if (alloc >= SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)) {
-    DEBUG_ERROR("sprite anim, outside ram!");
+#ifdef DEBUG_ASSERTION_CHECK
+  if (alloc_end >= (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)) {
+    DEBUG_ERROR("sprite anim, del outside ram!");
+    return;
+  }
+#endif /* DEBUG_ASSERTION_CHECK  */
+
+  prev_block_bufsize = prev_block->size << 6;
+  prev_block_end = (uint8_t*) prev_block + prev_block_bufsize;
+
+  /* ---  */
+
+  if (alloc == prev_block_end) {
+    prev_block->size += alloc_framecount;
+
+    _DEBUG_CASE("7");
     return;
   }
 
-  // TODO
+  /* ---  */
+
+  if (alloc > prev_block_end) {
+    ((_freelist_block_t*) alloc)->next = NULL;
+    ((_freelist_block_t*) alloc)->size = alloc_framecount;
+    prev_block->next = (_freelist_block_t*) alloc;
+
+    _DEBUG_CASE("8");
+    return;
+  }
+
+  /* ---  */
+
+  DEBUG_ERROR("sprite anim, double free 2!");
 }
 
 /* ***************************************************************  */
