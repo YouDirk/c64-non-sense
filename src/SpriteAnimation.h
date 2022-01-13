@@ -53,6 +53,16 @@ extern bool __fastcall__ SpriteAnimation_new(
  * touch the member variables of ANIMATION, i.e. pointers will NOT BE
  * SET TO NULL.
  *
+ *   ATTENTION: To get an improved performance, compiling without
+ *              DEBUG_ASSERTION_CHECK will use a faster control-flow
+ *              and errors will not be catched anymore.  Just "DOUBLE
+ *              FREE" errors will be catched if DEBUG_ASSERTION_CHECK
+ *              was disabled.
+ *
+ *              Therefore, make sure to get no DEBUG_ERROR() from this
+ *              function (apart from "DOUBLE FREE"), before disabling
+ *              DEBUG_ASSERTION_CHECK.
+ *
  * To heavy use of this function maybe result in an fragmented heap.
  * In that case think about to use SPRITEANIMATION_DELETE_ALL()
  * instead.
@@ -88,8 +98,8 @@ extern bool __fastcall__ SpriteAnimation_alloc_is_empty(void);
  *
  * Notice, it is possible that the function returns FALSE, but you
  * cannot allocate your animation, because the heap is fragmented.
- * The performantest way in that case is to try SPRITEANIMATION_NEW()
- * out and check the return value.
+ * The best performaning way in that case is to try
+ * SPRITEANIMATION_NEW() out and check the return value.
  */
 extern bool __fastcall__ SpriteAnimation_alloc_is_full(void);
 
@@ -108,12 +118,12 @@ extern uint8_t __fastcall__
 /* Returns the maximum number of free sprite frames in the Sprite RAM
  * as sum of all free fragments.
  *
- * Notice, it is possible that the function returns a number, which is
- * not possible to allocate with a single SPRITEANIMATION_NEW() call,
- * because of an fragmented heap.  The performantest way in that case
- * is to try SPRITEANIMATION_NEW() out and check the return value.  Or
- * use SPRITEANIMATION_ALLOC_FRAMESFREE_ANIMATION() if you need a
- * precise number.
+ * Notice, it is possible that this function returns a number, which
+ * is not possible to allocate with a single SPRITEANIMATION_NEW()
+ * call, because of an fragmented heap.  The best performaning way in
+ * that case is to try SPRITEANIMATION_NEW() out and check the return
+ * value.  Or use SPRITEANIMATION_ALLOC_FRAMESFREE_ANIMATION() if you
+ * need a precise number.
  */
 extern uint8_t __fastcall__
                     SpriteAnimation_alloc_framesfree_sum(void);

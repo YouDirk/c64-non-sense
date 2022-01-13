@@ -209,7 +209,7 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
 
 /* *******************************************************************
  *
- * cases for SPRITE_ANIMATION_DELETE()
+ * Cases for SPRITEANIMATION_DELETE()
  * -----------------------------------
  *
  *                      ._________________________.
@@ -236,14 +236,27 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
  * Useful for debugging, using the _DEBUG_CASES output.
  */
 
-#define _DEBUG_CASES 1
+#define _DEBUG_CASES               1
 
 #if _DEBUG_CASES == 1
-#  define _DEBUG_CASE(no) DEBUG_NOTE("sprite del, case " no)
+#  define _DEBUG_CASE(no)          DEBUG_NOTE("sprite del, case " no)
 #else
 #  define _DEBUG_CASE(no)
 #endif /* _DEBUG_CASES  */
 
+/* The code was optimized to reach a CASE (see comment above) with as
+ * small as possible conditions to test.  Therefore, some conditions
+ * are redundant in code, but in a condition-path of one call from
+ * begin to RETURN every condition is tested once, AND NO UNNECESSARY
+ * conditions should be tested.
+ *
+ * For example: The test if an allocation is before (outside) of
+ * Sprite RAM will be tested at the end of the condition-path, because
+ * in just 2 CASES (case 1 and 2) it is necessary to test and
+ * therefore in the most cases it would be a wasted condtition test.
+ * But on the other hand, the check, if the allocation is before the
+ * Sprite RAM, is implemented twice, in CASE 1 and for CASE 2.
+ */
 void __fastcall__
 SpriteAnimation_delete(const SpriteAnimation_t* animation)
 {
@@ -253,26 +266,34 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
   static uint8_t alloc_framecount;
 
+  /* reduce repeated dereferencing and calculations  */
   alloc = (uint8_t*) animation->buffer;
   alloc_framecount = animation->frame_count;
 
+  alloc_bufsize = alloc_framecount  << 6;
+  alloc_end = (uint8_t*) alloc + alloc_bufsize;
+
+  /* first check some default bad arguments  */
 #ifdef DEBUG_ASSERTION_CHECK
   if (alloc_framecount == 0) {
     DEBUG_ERROR("sprite anim, free zero size!");
     return;
   }
-  if (alloc == NULL) {
-    DEBUG_ERROR("sprite anim, free null ptr!");
-    return;
-  }
+  /* ALLOC == NULL check not required.  It will result in an 'OUTSIDE
+   * RAM (BEFORE)' error.
+   */
 #endif /* DEBUG_ASSERTION_CHECK  */
 
+  /* Sprite RAM full?  We add a first block here and therefore
+   * _SPRITEANIMATION_FREELIST will never be NULL after that
+   * condition.
+   */
   if (_SpriteAnimation_freelist == NULL) {
 #ifdef DEBUG_ASSERTION_CHECK
     if (alloc < (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)
-        || alloc >= (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)
-        || alloc_framecount > SPRITE_LOCATOR_COUNT) {
-      DEBUG_ERROR("sprite anim, free useless!");
+        || alloc_end
+           > (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)) {
+      DEBUG_ERROR("sprite anim, free outside ram (one)!");
       return;
     }
 #endif /* DEBUG_ASSERTION_CHECK  */
@@ -283,29 +304,68 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
     _DEBUG_CASE("1+8");
     return;
-
   } /* if (_SpriteAnimation_freelist == NULL)  */
 
-  alloc_bufsize = alloc_framecount  << 6;
-  alloc_end = (uint8_t*) alloc + alloc_bufsize;
+  /* -----------------------------------------------------------------
+   * Open CASES       : 1 2 3 4 5 6 7 8
+   * Boundaries tested: -
+   */
 
-  /* -------------------------------------------------------------  */
-
+  /* Loop through all block in the freelist, until ALLOC < CUR_BLOCK.
+   *
+   * On first iteration the following condition is TRUE:
+   *   CUR_BLOCK == PREV_BLOCK == _SPRITEANIMATION_FREELIST != NULL
+   */
   prev_block = _SpriteAnimation_freelist;
   for (cur_block=_SpriteAnimation_freelist; cur_block != NULL;
        cur_block=cur_block->next) {
 
+    /* iterate, until ALLOC < CUR_BLOCK (upper boundary for ALLOC)  */
     if (alloc >= (uint8_t*) cur_block) {
       prev_block = cur_block;
       continue;
     }
 
+    /* reduce repeated dereferencing and calculations  */
     prev_block_bufsize = prev_block->size << 6;
     prev_block_end = (uint8_t*) prev_block + prev_block_bufsize;
 
     /* ---  */
 
+    /* Here the condition path looks like this:
+     *   ALLOC < CUR_BLOCK
+     *
+     * Open CASES       : 1 2 3 4 5 6 7 8
+     * Boundaries tested: ALLOC < CUR_BLOCK
+     *
+     * CUR_BLOCK will never be NULL here, therefore not case 7 or 8
+     * possible here.
+     *
+     * Test if the end of previous block is attaching ALLOC.  CASE 3
+     * or 6.
+     *
+     * On first iteration:
+     *   ALLOC < (CUR_BLOCK == PREV_BLOCK) --> ALLOC < PREV_BLOCK_END,
+     *
+     * therefore this condtion (ALLOC == PREV_BLOCK_END) is FALSE (not
+     * case 1 or 2).
+     */
     if (alloc == prev_block_end) {
+      /* possible CASES: 3 6  */
+
+      /* Here the condition path looks like this:
+       *   ALLOC < CUR_BLOCK && ALLOC == PREV_BLOCK_END
+       *   && !first_iter
+       *
+       * Open CASES       : 3 6
+       * Boundaries tested: PREV_BLOCK_END = ALLOC < CUR_BLOCK
+       *
+       * The lower boundary is attched to the PREV_BLOCK.  If the
+       * upper boundary is lower than CUR_BLOCK then it´s CASE 3.
+       *
+       * As result we enlarge PREV_BLOCK by appending the size of
+       * ALLOC.
+       */
       if (alloc_end < (uint8_t*) cur_block) {
         prev_block->size += alloc_framecount;
 
@@ -313,6 +373,21 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
         return;
       }
 
+      /* Here the condition path looks like this:
+       *   ALLOC < CUR_BLOCK && ALLOC == PREV_BLOCK_END
+       *   && ALLOC_END >= CUR_BLOCK && !first_iter
+       *
+       * Open CASES       : 6
+       * Boundaries tested: PREV_BLOCK_END = ALLOC
+       *                                  && ALLOC_END >= CUR_BLOCK
+       *
+       * The lower boundary is attched to the PREV_BLOCK.  If the
+       * upper boundary equals CUR_BLOCK it´s also attached to it.
+       * Then this is CASE 6.
+       *
+       * As result we are merging PREV_BLOCK and ALLOC and CUR_BLOCK
+       * together.
+       */
       if (alloc_end == (uint8_t*) cur_block) {
         prev_block->next = cur_block->next;
         prev_block->size += alloc_framecount + cur_block->size;
@@ -321,36 +396,152 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
         return;
       }
 
-      DEBUG_ERROR("sprite anim, free too large!");
+      /* Here the condition path looks like this:
+       *   ALLOC < CUR_BLOCK && ALLOC == PREV_BLOCK_END
+       *   && ALLOC_END > CUR_BLOCK && !first_iter
+       *
+       * Open CASES       :
+       * Boundaries tested: PREV_BLOCK_END = ALLOC
+       *                                  && ALLOC_END > CUR_BLOCK
+       *
+       * The upper boundary overlaps to CUR_BLOCK.
+       */
+      DEBUG_ERROR("sprite anim, free overlap (after)!");
       return;
     }
 
     /* ---  */
 
+    /* Here the condition path looks like this:
+     *   ALLOC < CUR_BLOCK
+     *   && ALLOC != PREV_BLOCK_END
+     *
+     * Open CASES       : 1 2 4 5 7 8
+     * Boundaries tested: ALLOC < CUR_BLOCK
+     *
+     * CUR_BLOCK will never be NULL here, therefore not case 7 or 8
+     * possible here.
+     *
+     * Test if the end of ALLOC is attaching the current block.  CASE
+     * 5 (case 6 tested inside a condtion before).
+     *
+     * On first iteration:
+     *   CUR_BLOCK == _SPRITEANIMATION_FREELIST != NULL
+     *
+     * therefore this condtion is working for CASE 2 as well.
+     */
     if (alloc_end == (uint8_t*) cur_block) {
-      ((_freelist_block_t*) alloc)->next = cur_block->next;
-      ((_freelist_block_t*) alloc)->size = cur_block->size
+      /* possible CASES: 2 5  */
+
+      /* Here the condition path looks like this:
+       *   ALLOC < CUR_BLOCK && ALLOC_END == CUR_BLOCK
+       *   && ALLOC != PREV_BLOCK_END
+       *
+       * Open CASES       : 2 5
+       * Boundaries tested: ALLOC < CUR_BLOCK && ALLOC_END == CUR_BLOCK
+       *
+       * If not first iteration then its CASE 5.  Additionally an
+       * lower boundary test is needed.
+       *
+       * As result we enlarge CUR_BLOCK by prepending the size of
+       * ALLOC.  PREV_BLOCK->NEXT needed to be updated.
+       */
+      if (cur_block != _SpriteAnimation_freelist) {
+
+        /* After that the boundaries are:
+         *   PREV_BLOCK_END < ALLOC && ALLOC_END == CUR_BLOCK
+         */
+#ifdef DEBUG_ASSERTION_CHECK
+        if (alloc <= prev_block_end) {
+          DEBUG_ERROR("sprite anim, free overlap (before)!");
+          return;
+        }
+#endif /* DEBUG_ASSERTION_CHECK  */
+
+        ((_freelist_block_t*) alloc)->next = cur_block->next;
+        ((_freelist_block_t*) alloc)->size = cur_block->size
                                                    + alloc_framecount;
+        prev_block->next = (_freelist_block_t*) alloc;
 
-      if (cur_block == prev_block) {
-        _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
-
-        _DEBUG_CASE("2");
+        _DEBUG_CASE("5");
         return;
       }
 
-      prev_block->next = (_freelist_block_t*) alloc;
+      /* Here the condition path looks like this:
+       *   ALLOC < CUR_BLOCK && ALLOC_END == CUR_BLOCK && first_iter
+       *   && ALLOC != PREV_BLOCK_END
+       *
+       * Open CASES       : 2
+       * Boundaries tested: ALLOC < CUR_BLOCK && ALLOC_END == CUR_BLOCK
+       *
+       * Just one CASE possible and we know that wer are in the first
+       * iteration.  Just an lower boundary test is needed.
+       *
+       * As result we enlarge CUR_BLOCK by prepending the size of
+       * ALLOC.  Because we are in first iteration, we need to update
+       * _SPRITEANIMATION_FREELIST.
+       */
 
-      _DEBUG_CASE("5");
+      /* After that the boundaries are:
+       *   SpriteRAM_begin <= ALLOC && ALLOC_END == CUR_BLOCK
+       */
+#ifdef DEBUG_ASSERTION_CHECK
+      if (alloc
+          < (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)) {
+        DEBUG_ERROR("sprite anim, free outside ram (before)!");
+        return;
+      }
+#endif /* DEBUG_ASSERTION_CHECK  */
+
+      ((_freelist_block_t*) alloc)->next = cur_block->next;
+      ((_freelist_block_t*) alloc)->size = cur_block->size
+                                                   + alloc_framecount;
+      _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
+
+      _DEBUG_CASE("2");
       return;
     }
 
     /* ---  */
 
+    /* After that the boundaries are:
+     *   PREV_BLOCK_END != ALLOC && ALLOC_END < CUR_BLOCK
+     */
+#ifdef DEBUG_ASSERTION_CHECK
+    if (alloc_end >= (uint8_t*) cur_block) {
+      DEBUG_ERROR("sprite anim, free overlap (after)!!");
+      return;
+    }
+#endif /* DEBUG_ASSERTION_CHECK  */
+
+
+    /* Here the condition path looks like this:
+     *   ALLOC < CUR_BLOCK && ALLOC_END < CUR_BLOCK
+     *   && ALLOC != PREV_BLOCK_END && ALLOC_END != CUR_BLOCK
+     *
+     * Open CASES       : 1 4 7 8
+     * Boundaries tested: PREV_BLOCK_END != ALLOC
+     *                                   && ALLOC_END < CUR_BLOCK
+     *
+     * CUR_BLOCK will never be NULL here, therefore not case 7 or 8
+     * possible here.
+     *
+     * In words, we tested that ALLOC < CUR_BLOCK and that ALLOC will
+     * neither attach before the current block nor after previous
+     * block.
+     *
+     * If ALLOC is located after the previous block (not ovlapping)
+     * then it´s CASE 4.
+     *
+     * On first iteration:
+     *   ALLOC < (CUR_BLOCK == PREV_BLOCK) --> ALLOC < PREV_BLOCK_END,
+     *
+     * therefore this condtion (ALLOC > PREV_BLOCK_END) is FALSE (not
+     * case 1).
+     */
     if (alloc > prev_block_end) {
       ((_freelist_block_t*) alloc)->next = cur_block;
       ((_freelist_block_t*) alloc)->size = alloc_framecount;
-
       prev_block->next = (_freelist_block_t*) alloc;
 
       _DEBUG_CASE("4");
@@ -359,11 +550,41 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
     /* ---  */
 
-    if (cur_block == prev_block
-        && alloc < (uint8_t*) _SpriteAnimation_freelist) {
+    /* Here the condition path looks like this:
+     *   ALLOC < CUR_BLOCK && ALLOC <= PREV_BLOCK_END
+     *   && ALLOC_END < CUR_BLOCK && ALLOC != PREV_BLOCK_END
+     *   && ALLOC_END != CUR_BLOCK
+     *
+     * Open CASES       : 1 7 8
+     * Boundaries tested: PREV_BLOCK_END (not first iteration)
+     *                                   < ALLOC && ALLOC_END < CUR_BLOCK
+     *
+     * CUR_BLOCK will never be NULL here, therefore not case 7 or 8
+     * possible here.
+     *
+     * Now just DOUBLE FREEs (boundaries are tested) or CASE 1 are
+     * possible.  If we make sure, that this is the first iteration
+     *   CUR_BLOCK == _SPRITEANIMATION_FREELIST
+     *
+     * and that the lacking lower boundary is inside the Sprite RAM, then
+     * it´s CASE 1.
+     */
+    if (cur_block == _SpriteAnimation_freelist) {
+
+      /* After that the boundaries are:
+       *   SpriteRAM_begin <= ALLOC && ALLOC_END < CUR_BLOCK
+       */
+#ifdef DEBUG_ASSERTION_CHECK
+      if (alloc
+          < (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_FIRST)) {
+        DEBUG_ERROR("sprite anim, free outside ram (before)!!");
+        return;
+      }
+#endif /* DEBUG_ASSERTION_CHECK  */
+
+
       ((_freelist_block_t*) alloc)->next = cur_block;
       ((_freelist_block_t*) alloc)->size = alloc_framecount;
-
       _SpriteAnimation_freelist = (_freelist_block_t*) alloc;
 
       _DEBUG_CASE("1");
@@ -372,24 +593,56 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
     /* ---  */
 
+    /* Here the condition path looks like this:
+     *   ALLOC < CUR_BLOCK && ALLOC <= PREV_BLOCK_END
+     *   && ALLOC_END < CUR_BLOCK && ALLOC != PREV_BLOCK_END
+     *   && ALLOC_END != CUR_BLOCK && !first_iter
+     *
+     * Open CASES       : 7 8
+     * Boundaries tested: PREV_BLOCK_END < ALLOC && ALLOC_END < CUR_BLOCK
+     *
+     * CUR_BLOCK will never be NULL here, therefore not case 7 or 8
+     * possible here.
+     *
+     * Now just DOUBLE FREEs (boundaries are tested) are possible.
+     */
     DEBUG_ERROR("sprite anim, double free!");
     return;
   } /* for (cur_block=; ...; cur_block=cur_block->next)  */
 
-  /* -------------------------------------------------------------  */
+  /* -----------------------------------------------------------------
+   * Open CASES       : 7 8
+   * Boundaries tested: ALLOC >= PREV_BLOCK (loop condition)
+   */
 
 #ifdef DEBUG_ASSERTION_CHECK
-  if (alloc_end >= (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)) {
-    DEBUG_ERROR("sprite anim, del outside ram!");
+  if (alloc_end
+      > (uint8_t*) SPRITE_LOCATOR_DEREF(SPRITE_LOCATOR_END)) {
+    DEBUG_ERROR("sprite anim, free outside ram (after)!");
     return;
   }
 #endif /* DEBUG_ASSERTION_CHECK  */
 
+  /* reduce repeated dereferencing and calculations  */
   prev_block_bufsize = prev_block->size << 6;
   prev_block_end = (uint8_t*) prev_block + prev_block_bufsize;
 
   /* ---  */
 
+  /* Here the condition path looks like this:
+   *   ALLOC >= PREV_BLOCK
+   *   && ALLOC_END <= SpriteRAM_end
+   *
+   * Open CASES       : 7 8
+   * Boundaries tested: PREV_BLOCK <= ALLOC && ALLOC_END <= RAM_end
+   *
+   * We know that PREV_BLOCK will never be NULL, also if the FOR loop
+   * was never iterated.  And PREV_BLOCK->NEXT is pointing to NULL,
+   * therefore PREV_BLOCK is the last block in the list.
+   *
+   * Now we test, if ALLOC can be attched after the last block in
+   * list, which is CASE 7.  As result we just enlarge the last block.
+   */
   if (alloc == prev_block_end) {
     prev_block->size += alloc_framecount;
 
@@ -399,6 +652,19 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
   /* ---  */
 
+  /* Here the condition path looks like this:
+   *   ALLOC >= PREV_BLOCK && ALLOC != PREV_BLOCK_END
+   *   && ALLOC_END <= SpriteRAM_end
+   *
+   * Open CASES       : 8
+   * Boundaries tested: PREV_BLOCK <= ALLOC && ALLOC_END <= RAM_end
+   *
+   * Just still one case.  To make sure that ALLOC match to that CASE
+   * 8, we need to test for the lower boundary, which need to be
+   * greater than the end of the previous block.
+   *
+   * As result we create a new block, pointing from last block in list.
+   */
   if (alloc > prev_block_end) {
     ((_freelist_block_t*) alloc)->next = NULL;
     ((_freelist_block_t*) alloc)->size = alloc_framecount;
@@ -410,7 +676,16 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
   /* ---  */
 
-  DEBUG_ERROR("sprite anim, double free 2!");
+  /* Here the condition path looks like this:
+   *   ALLOC >= PREV_BLOCK && ALLOC > PREV_BLOCK_END
+   *   && ALLOC_END <= SpriteRAM_end
+   *
+   * Open CASES       : -
+   * Boundaries tested: PREV_BLOCK_END < ALLOC && ALLOC_END <= RAM_end
+   *
+   * Seems that there are just DOUBLE FREEs left.
+   */
+  DEBUG_ERROR("sprite anim, double free!!");
 }
 
 /* ***************************************************************  */

@@ -104,20 +104,17 @@ AASandbox_init(void)
   SpriteAnimation_new_alloc(&AASandbox_anim_test4, 2);
   SpriteAnimation_new_alloc(&AASandbox_anim_test5, 2);
   SpriteAnimation_new_alloc(&AASandbox_anim_test6, 2);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+
   SpriteAnimation_delete(&AASandbox_anim_test1);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_delete(&AASandbox_anim_test5);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_delete(&AASandbox_anim_test3);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_delete(&AASandbox_anim_test2);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_new_alloc(&AASandbox_anim_test1, 2);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
-  SpriteAnimation_delete(&AASandbox_anim_test4);
-  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  AASandbox_anim_test3.frame_count = 5;
+  SpriteAnimation_delete(&AASandbox_anim_test3); /* case 1/2, overlaps  */
   SpriteAnimation_delete(&AASandbox_anim_test6);
+  SPRITEANIMATION_DEBUG_ALLOC_PRINT();
+  AASandbox_anim_test3.frame_count = 5;
+  SpriteAnimation_delete(&AASandbox_anim_test3); /* case 4/5, overlaps  */
+  AASandbox_anim_test3.frame_count = 2;
+  SpriteAnimation_delete(&AASandbox_anim_test3);
   SPRITEANIMATION_DEBUG_ALLOC_PRINT();
   /* *** TODO: end of alloc() & free() tests ***  */
 
