@@ -167,7 +167,7 @@ _SpriteAnimation_alloc(uint8_t frame_count)
     return (Sprite_frame_t*) cur_block;
   }
 
-  DEBUG_ERROR("sprite anim, new out of mem!");
+  DEBUG_ERROR("sprite anim, new out of ram!");
   return NULL;
 }
 
@@ -236,7 +236,7 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
  * Useful for debugging, using the _DEBUG_CASES output.
  */
 
-#define _DEBUG_CASES               1
+#define _DEBUG_CASES               0
 
 #if _DEBUG_CASES == 1
 #  define _DEBUG_CASE(no)          DEBUG_NOTE("sprite del, case " no)
@@ -254,8 +254,9 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
  * Sprite RAM will be tested at the end of the condition-path, because
  * in just 2 CASES (case 1 and 2) it is necessary to test and
  * therefore in the most cases it would be a wasted condtition test.
- * But on the other hand, the check, if the allocation is before the
- * Sprite RAM, is implemented twice, in CASE 1 and for CASE 2.
+ * But on the other hand, the check - if an allocation is before
+ * (outside) of Sprite RAM - was implemented twice, in CASE 1 and for
+ * CASE 2.
  */
 void __fastcall__
 SpriteAnimation_delete(const SpriteAnimation_t* animation)

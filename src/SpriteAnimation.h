@@ -24,7 +24,21 @@
 
 #include "Sprite.h"
 
-/* ***************************************************************  */
+/* *******************************************************************
+ *
+ * For all SPRITEANIMATION_NEW*() functions:
+ *
+ *   ATTENTION: To get an improved performance, compiling without
+ *              DEBUG_ASSERTION_CHECK will use a faster control-flow
+ *              and errors will not be catched anymore.  Just "OUT OF
+ *              RAM" errors will be catched if DEBUG_ASSERTION_CHECK
+ *              was disabled.
+ *
+ *              Therefore, make sure to get no DEBUG_ERROR() from this
+ *              function (apart from "OUT OF RAM"), before disabling
+ *              DEBUG_ASSERTION_CHECK.
+ * -------------------------------------------------------------------
+ */
 
 /* Allocate a sprite ANIMATION in the Sprite RAM, but do not
  * initialize the allocated RAM.
@@ -47,7 +61,7 @@ extern bool __fastcall__ SpriteAnimation_new(
                     SpriteAnimation_t* animation,
                     const Sprite_frame_t* src, uint8_t frame_count);
 
-/* ---------------------------------------------------------------  */
+/* ***************************************************************  */
 
 /* Free the allocated sprite ANIMATION from Sprite RAM.  It will not
  * touch the member variables of ANIMATION, i.e. pointers will NOT BE
