@@ -209,18 +209,25 @@ typedef_struct_begin(Sprite_buffer_set_t)
    * see above.
    */
   typedef_struct_enum(Sprite_properties_t,        props)
+
+  /* Sprite locator, pointing to the current frame buffer of this
+   * sprite.  Set this if you like to display a static sprite image
+   * and don´t need spite animations.
+   *
+   * Make sure to set
+   *
+   *   GRAPHIX.ANIMS.SPRITES.SET.SPRITE[x] = NULL
+   *
+   * otherwise this LOCATOR will be automatically incremented/adapted
+   * for sprite animation depending on SPRITE_FRAME_T::TICK_COUNT.
+   */
+  typedef_struct_primit(Sprite_locator_t,         locator)
 typedef_struct_end(Sprite_buffer_set_t)
 
 /* Datatype of this structure.  */
 typedef_struct_begin(Sprite_buffer_t)
   /* Some writable member variables.  */
   typedef_struct_nested(Sprite_buffer_set_t,      set)
-
-  /* Sprite locator, pointing to the current frame buffer of this
-   * sprite.  Will be automatically incremented for sprite animation
-   * depending on SPRITE_FRAME_T::TICK_COUNT.
-   */
-  typedef_struct_primit(Sprite_locator_t,         locator)
 typedef_struct_end(Sprite_buffer_t)
 
 /* ***************************************************************  */

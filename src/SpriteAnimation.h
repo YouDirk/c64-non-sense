@@ -37,7 +37,8 @@
  *              Therefore, make sure to get no DEBUG_ERROR() from this
  *              function (apart from "OUT OF RAM" warnings), before
  *              disabling DEBUG_ASSERTION_CHECK.
- *              --------------------------------------------------------------- */
+ * -------------------------------------------------------------------
+ */
 
 /* Allocate a sprite ANIMATION in the Sprite RAM, but do not
  * initialize the allocated RAM.
@@ -45,7 +46,7 @@
  * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
 extern bool __fastcall__ SpriteAnimation_new_alloc(
-                   SpriteAnimation_t* animation, uint8_t frame_count);
+          SpriteAnimation_t* animation, uint8_t frame_count);
 
 /* Allocate a sprite ANIMATION in the Sprite RAM and initialize it
  * with the sprite frame buffer SRC.
@@ -53,8 +54,25 @@ extern bool __fastcall__ SpriteAnimation_new_alloc(
  * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
 extern bool __fastcall__ SpriteAnimation_new(
-                    SpriteAnimation_t* animation,
-                    const Sprite_frame_t* src, uint8_t frame_count);
+          SpriteAnimation_t* animation, const Sprite_frame_t* src,
+                                                 uint8_t frame_count);
+
+/* Initialize ANIMATION with SRC and reset it.  But it will not
+ * allocate new space in Sprite RAM, instead the Sprite RAM
+ * (i.e. SPRITEANIMATION_T::LOCATOR to SPRITEANIMATION_T::BUFFER) of
+ * SRC and ANIMATION is the same.
+ *
+ * One (for both) SPRITEANIMATION_DELETE() is just required if both
+ * copies, SRC and ANIMATION, are not needed anymore.
+ */
+extern void __fastcall__ SpriteAnimation_copy(
+          SpriteAnimation_t* animation, const SpriteAnimation_t* src);
+
+/* Initialize ANIMATION with SRC as it is, without reset.  Apart from
+ * that same as SPRITEANIMATION_COPY().
+ */
+extern void __fastcall__ SpriteAnimation_snapshot(
+          SpriteAnimation_t* animation, const SpriteAnimation_t* src);
 
 /* ***************************************************************  */
 

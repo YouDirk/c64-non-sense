@@ -82,7 +82,6 @@ typedef_struct_begin(SpriteManager_buffer_set_t)
   typedef_struct_enum(Graphix_color_t,                 multicolor_0b11)
 typedef_struct_end(SpriteManager_buffer_set_t)
 
-
 /* ---------------------------------------------------------------  */
 
 /* Sprites structure in graphic buffer.  */
@@ -90,7 +89,14 @@ typedef_struct_begin(SpriteManager_buffer_t)
   /* Some writable member variables.  */
   typedef_struct_nested(SpriteManager_buffer_set_t,         set)
 
-  /* Access to the 8 sprites of the C64 VIC-II graphic chip.  */
+  /* Access to the 8 hardware sprites of the C64 VIC-II graphic chip.
+   *
+   * The index of this array (0..7) is representing the Z-order of the
+   * displayed sprites.  SPRITE[0] is on top of all others, SPRITE[7]
+   * is behind all other sprites.  Additionally, sprites are behind
+   * the background if SPRITE_PROPS_PRIO_BGROUND_MASK of it was set in
+   * SPRITE_BUFFER_T::SET.PROPS, otherwise on top of background.
+   */
   typedef_struct_nested_array(Sprite_buffer_t,              sprite,  \
                               SPRITEMANAGER_SPRITES_COUNT)
   typedef_struct_nested(Sprite_buffer_t,                    end)
@@ -98,14 +104,37 @@ typedef_struct_end(SpriteManager_buffer_t)
 
 /* ***************************************************************  */
 
-/* Allocated sprite animations in Graphix structure.  */
-typedef_struct_begin(SpriteManager_animations_t)
-  /* Access to the allocated animations for the 8 sprites of the C64
-   * VIC-II graphic chip, which are currently in use.
+/* Configuration variables which can be set directly, without needing
+ * to call setter functions.
+ */
+typedef_struct_begin(SpriteManager_animations_set_t)
+  /* Attach your Sprite Animation to 1 of the 8 hardware sprite here,
+   * by setting the corresponding SPRITE[x] pointer.
+   *
+   * During playing the animation the corresponding
+   *
+   *   GRAPHIX.BUFFER.SPRITES.SPRITE[x].SET.LOCATOR
+   *
+   * will be incremented/adapted.  Therefore make sure that there is
+   * currently no static sprite image in use for this sprite.
+   *
+   * The index of this array (0..7) is representing the Z-order of the
+   * displayed sprites.  SPRITE[0] is on top of all others, SPRITE[7]
+   * is behind all other sprites.  Additionally, sprites are behind
+   * the background if SPRITE_PROPS_PRIO_BGROUND_MASK of it was set in
+   * SPRITE_BUFFER_T::SET.PROPS, otherwise on top of background.
    */
   typedef_struct_nested_array_ofptr(SpriteAnimation_t,      sprite,  \
                                     SPRITEMANAGER_SPRITES_COUNT)
   typedef_struct_nested_ptr(SpriteAnimation_t,              end)
+typedef_struct_end(SpriteManager_animations_set_t)
+
+/* ---------------------------------------------------------------  */
+
+/* Allocated sprite animations in Graphix structure.  */
+typedef_struct_begin(SpriteManager_animations_t)
+  /* Some writable member variables.  */
+  typedef_struct_nested(SpriteManager_animations_set_t,     set)
 typedef_struct_end(SpriteManager_animations_t)
 
 /* ***************************************************************  */

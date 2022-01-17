@@ -35,7 +35,7 @@ Sprite_new_all(void)
     cur_sprite->set.color = Graphix_white;
     cur_sprite->set.props = Sprite_props_none_mask;
 
-    cur_sprite->locator
+    cur_sprite->set.locator
       = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
   }
 }
@@ -61,9 +61,9 @@ Sprite_tick_all(void)
 
   DEBUG_RENDERTIME_IRQ_BEGIN(Graphix_lightgreen);
 
-  for (cur_anim_ptr=Graphix.anims.sprites.sprite,
+  for (cur_anim_ptr=Graphix.anims.sprites.set.sprite,
          cur_sprite=Graphix.buffer.sprites.sprite;
-       cur_anim_ptr != &Graphix.anims.sprites.end;
+       cur_anim_ptr != &Graphix.anims.sprites.set.end;
        ++cur_anim_ptr, ++cur_sprite) {
 
     cur_animation = *cur_anim_ptr;
@@ -74,7 +74,7 @@ Sprite_tick_all(void)
     /* Animation already ticked?  Then just set Sprite Locator  */
     if (cur_animation->_stamp_lasttick == (uint8_t) Engine.tick_count) {
       tmp_locator = cur_animation->current_locator; /* just optim.  */
-      cur_sprite->locator = tmp_locator;
+      cur_sprite->set.locator = tmp_locator;
 
       continue;
     }
@@ -85,7 +85,7 @@ Sprite_tick_all(void)
     tmp_count = tmp_frame->tick_count;
     if (++cur_animation->current_tick <= tmp_count) {
       tmp_locator = cur_animation->current_locator; /* just optim.  */
-      cur_sprite->locator = tmp_locator;
+      cur_sprite->set.locator = tmp_locator;
 
       continue;
     }
@@ -99,7 +99,7 @@ Sprite_tick_all(void)
     if (++cur_animation->current_frame_no < tmp_count) {
       ++cur_animation->current_locator;
       cur_animation->current_frame = tmp_frame + 1;
-      ++cur_sprite->locator;
+      ++cur_sprite->set.locator;
 
       continue;
     }
@@ -112,7 +112,7 @@ Sprite_tick_all(void)
     cur_animation->current_frame_no = 0;
     cur_animation->current_locator = tmp_locator;
     cur_animation->current_frame = tmp_frame;
-    cur_sprite->locator = tmp_locator;
+    cur_sprite->set.locator = tmp_locator;
   } /* for (cur_anim_ptr=Graphix.anims.; ...; ++cur_anim_ptr)  */
 
   DEBUG_RENDERTIME_IRQ_END();

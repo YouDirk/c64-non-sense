@@ -228,6 +228,37 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
   return true;
 }
 
+void __fastcall__
+SpriteAnimation_copy(SpriteAnimation_t* animation,
+                     const SpriteAnimation_t* src)
+{
+  static uint8_t frame_count;
+  static Sprite_locator_t locator;
+  static Sprite_frame_t* alloc;
+
+  frame_count = src->frame_count;
+  locator = src->locator;
+  alloc = src->buffer;
+
+  animation->frame_count = frame_count;
+  animation->locator = locator;
+  animation->buffer = alloc;
+
+  animation->current_tick = 0;
+  animation->current_frame_no = 0;
+  animation->current_locator = locator;
+  animation->current_frame = alloc;
+
+  animation->_stamp_lasttick = ((uint8_t) Engine.tick_count) - 1;
+}
+
+void __fastcall__
+SpriteAnimation_snapshot(SpriteAnimation_t* animation,
+                         const SpriteAnimation_t* src)
+{
+  memcpy(animation, src, sizeof(SpriteAnimation_t));
+}
+
 /* *******************************************************************
  *
  * Cases for SPRITEANIMATION_DELETE()
@@ -730,8 +761,8 @@ SpriteAnimation_delete_all(void)
     ->size = SPRITE_LOCATOR_COUNT;
 
   /* set all GRAPHIX.ANIMS.SPRITES.SPRITE to NULL  */
-  memset(&Graphix.anims.sprites.sprite,
-         NULL, sizeof(Graphix.anims.sprites.sprite));
+  memset(&Graphix.anims.sprites.set.sprite,
+         NULL, sizeof(Graphix.anims.sprites.set.sprite));
 }
 
 /* ***************************************************************  */

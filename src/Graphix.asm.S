@@ -116,7 +116,7 @@ sprites_bgprio:
 
         ldx #$00                        ; X := 0x00, sprite_counter
 sprites_loop:                           ; do {
-        ldy #Sprite_buffer_t::locator
+        ldy #Sprite_buffer_t::set + Sprite_buffer_set_t::locator
         lda (ZP_ISR_PTR2), y
         sta GRAPHIX_LOCATORS_SPRITES_RVAL, x
                                         ; set sprite locator

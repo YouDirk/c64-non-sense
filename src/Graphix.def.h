@@ -292,6 +292,8 @@ typedef_struct_begin(Graphix_set_t)
   typedef_struct_enum(Graphix_charset_t,               charset_exit)
 typedef_struct_end(Graphix_set_t)
 
+/* ---------------------------------------------------------------  */
+
 /* Structure of static members for module.  */
 typedef_struct_begin(Graphix_t)
   /* Some writable member variables.  */

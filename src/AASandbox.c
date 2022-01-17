@@ -30,11 +30,11 @@
 /* ***************************************************************  */
 
 #define _CONST_SPRITES                                               \
-  SpriteManager_sprites_5_mask
+  (SpriteManager_sprites_0_mask | SpriteManager_sprites_5_mask       \
+   | SpriteManager_sprites_6_mask | SpriteManager_sprites_7_mask)
 
 #define _BLINKING_SPRITES                                            \
-  (SpriteManager_sprites_4_mask | SpriteManager_sprites_0_mask       \
-   | SpriteManager_sprites_6_mask | SpriteManager_sprites_7_mask)
+  (SpriteManager_sprites_4_mask)
 
 /* ***************************************************************  */
 
@@ -44,7 +44,8 @@ static Pace_t AASandbox_pace_y, AASandbox_pace_x;
 static Pace_t AASandbox_pace_sprite_y, AASandbox_pace_sprite_x;
 
 static SpriteAnimation_t AASandbox_anim_blank, AASandbox_anim_multic;
-static SpriteAnimation_t AASandbox_anim_default;
+static SpriteAnimation_t AASandbox_anim_moving;
+static SpriteAnimation_t AASandbox_anim_botleft, AASandbox_anim_botright;
 
 #ifdef DEBUG
 static string_t AASandbox_charout;
@@ -83,15 +84,17 @@ AASandbox_init(void)
   SpriteAnimation_new_alloc(&AASandbox_anim_multic, 1);
   memset(AASandbox_anim_multic.buffer,
                                    0xe4, SPRITE_FRAME_BUFFER_BUFSIZE);
-  SpriteAnimation_new(&AASandbox_anim_default,
+  SpriteAnimation_new(&AASandbox_anim_moving,
         AAAssets_sprite_anim_heart, AAASSETS_SPRITE_ANIM_HEART_COUNT);
+  SpriteAnimation_copy(&AASandbox_anim_botleft, &AASandbox_anim_moving);
+  SpriteAnimation_copy(&AASandbox_anim_botright, &AASandbox_anim_moving);
 
   /* set sprite multi-color colors  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_orange;
 
   /* top, left  */
-  Graphix.buffer.sprites.sprite[4].locator
+  Graphix.buffer.sprites.sprite[4].set.locator
     = AASandbox_anim_multic.locator;
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
@@ -103,7 +106,7 @@ AASandbox_init(void)
     | Sprite_props_scale_x_mask;
 
   /* top, right  */
-  Graphix.anims.sprites.sprite[0] = &AASandbox_anim_default;
+  Graphix.anims.sprites.set.sprite[0] = &AASandbox_anim_moving;
   Graphix.buffer.sprites.sprite[0].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + 1;
   Graphix.buffer.sprites.sprite[0].set.pos_x
@@ -114,7 +117,7 @@ AASandbox_init(void)
     = Sprite_props_scale_y_mask | Sprite_props_scale_x_mask;;
 
   /* bottom, left  */
-  Graphix.buffer.sprites.sprite[6].locator
+  Graphix.buffer.sprites.sprite[6].set.locator
     = AASandbox_anim_blank.locator;
   Graphix.buffer.sprites.sprite[6].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
@@ -126,7 +129,7 @@ AASandbox_init(void)
     = Sprite_props_scale_y_mask;
 
   /* bottom, right  */
-  Graphix.buffer.sprites.sprite[7].locator
+  Graphix.buffer.sprites.sprite[7].set.locator
     = AASandbox_anim_blank.locator;
   Graphix.buffer.sprites.sprite[7].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
@@ -139,8 +142,7 @@ AASandbox_init(void)
     = Sprite_props_prio_bground_mask | Sprite_props_scale_x_mask;
 
   /* moving  */
-  Graphix.anims.sprites.sprite[5] = &AASandbox_anim_default;
-
+  Graphix.anims.sprites.set.sprite[5] = &AASandbox_anim_moving;
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT
     - SPRITE_HEIGHT;
@@ -222,9 +224,13 @@ AASandbox_tick(void)
     if (Input.joy_port2.axis_x.direction > 0) {
       Pace_start_pos(&AASandbox_pace_x);
       Pace_start_pos(&AASandbox_pace_sprite_x);
+
+      Graphix.anims.sprites.set.sprite[7] = &AASandbox_anim_botright;
     } else if (Input.joy_port2.axis_x.direction < 0) {
       Pace_start_neg(&AASandbox_pace_x);
       Pace_start_neg(&AASandbox_pace_sprite_x);
+
+      Graphix.anims.sprites.set.sprite[6] = &AASandbox_anim_botleft;
     } else {
       Pace_brake(&AASandbox_pace_x);
       Pace_brake(&AASandbox_pace_sprite_x);
@@ -257,6 +263,9 @@ AASandbox_tick(void)
     if (key_space) {
       Pace_brakerate_set(&AASandbox_pace_y, 50);
       Pace_brake(&AASandbox_pace_y);
+
+      Graphix.anims.sprites.set.sprite[6] = NULL;
+      Graphix.anims.sprites.set.sprite[7] = NULL;
     }
     else if (key_w) Pace_start_pos(&AASandbox_pace_y);
     else if (key_s) Pace_accelerate_neg(&AASandbox_pace_y);
