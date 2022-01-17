@@ -47,7 +47,7 @@
  */
 
 const Sprite_frame_t
-AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
+AAAssets_sprite_anim_heart[AAASSETS_SPRITE_ANIM_HEART_COUNT] = {
   {
     {{_(____,____),_(____,____),_(____,____)},
      {_(____,BBBB),_(BB__,___B),_(BBBB,B___)},
@@ -70,7 +70,7 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(____,B___),_(____,____)}},
-    50
+    49
   },
   {
     {{_(____,____),_(____,____),_(____,____)},
@@ -78,7 +78,7 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
      {_(___B,BBBB),_(BBBB,_BBB),_(BBBB,BB__)},
      {_(__BB,BBBB),_(BBBB,BBBB),_(BBBB,BBB_)},
      {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
-     {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
+     {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
      {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
@@ -94,8 +94,32 @@ AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT] = {
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(___B,BB__),_(____,____)},
      {_(____,____),_(____,B___),_(____,____)}},
-    50 | SPRITE_FRAME_TICKCOUNT_LAST_MASK
-  }
+    9
+  },
+  {
+    {{_(____,____),_(____,____),_(____,____)},
+     {_(____,BBBB),_(BB__,___B),_(BBBB,B___)},
+     {_(___B,BBBB),_(BBBB,_BBB),_(BBBB,BB__)},
+     {_(__BB,BBBB),_(BBBB,BBBB),_(BBBB,BBB_)},
+     {_(_BBB,BBBB),_(BBBB,BBBB),_(BBBB,BBBB)},
+     {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
+     {_(_BBB,BBBB),_(BB__,___B),_(BBBB,BBBB)},
+     {_(_BBB,BBBB),_(____,____),_(_BBB,BBBB)},
+     {_(_BBB,BBBB),_(____,____),_(_BBB,BBBB)},
+     {_(_BBB,BBBB),_(____,____),_(_BBB,BBBB)},
+     {_(__BB,BBBB),_(____,____),_(_BBB,BBB_)},
+     {_(__BB,BBBB),_(____,____),_(_BBB,BBB_)},
+     {_(____,BBBB),_(BB__,___B),_(BBBB,B___)},
+     {_(____,_BBB),_(BB__,___B),_(BBBB,____)},
+     {_(____,___B),_(BBBB,BBBB),_(BB__,____)},
+     {_(____,____),_(_BBB,BBBB),_(____,____)},
+     {_(____,____),_(__BB,BBB_),_(____,____)},
+     {_(____,____),_(__BB,BBB_),_(____,____)},
+     {_(____,____),_(___B,BB__),_(____,____)},
+     {_(____,____),_(___B,BB__),_(____,____)},
+     {_(____,____),_(____,B___),_(____,____)}},
+    9
+  },
 };
 
 /* ***************************************************************  */

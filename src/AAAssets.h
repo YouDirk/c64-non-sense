@@ -29,9 +29,9 @@
  * AssetLoader-module in the future.
  */
 
-#define AAASSETS_SPRANIM_MOVING_COUNT                       2
+#define AAASSETS_SPRITE_ANIM_HEART_COUNT                    3
 
 extern const Sprite_frame_t
-AAAssets_spranim_moving[AAASSETS_SPRANIM_MOVING_COUNT];
+AAAssets_sprite_anim_heart[AAASSETS_SPRITE_ANIM_HEART_COUNT];
 
 #endif /* AAASSETS_H__  */

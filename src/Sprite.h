@@ -22,18 +22,24 @@
 #include "common.h"
 #include "Sprite.gen.h"
 
+/* *******************************************************************
+ *
+ * Represents 1 of 8 hardware sprites.  Functions which are appended
+ * with *_ALL() will be looped it´s functionality through all spirtes,
+ * for performance improvement.
+ */
+
+/* Initialize all sprites as empty.  */
+extern void __fastcall__ Sprite_new_all(void);
+
+/* Free all sprites.  */
+#define Sprite_delete_all()
+/* extern void __fastcall__ Sprite_delete_all(void);  */
+
 /* ***************************************************************  */
 
-/* Initialize empty sprite structure.  */
-extern void __fastcall__ Sprite_new(Sprite_buffer_t* sprite);
-
-/* Free the sprite structure.  */
-extern void __fastcall__ Sprite_delete(Sprite_buffer_t* sprite);
-
-/* ***************************************************************  */
-
-/* Tick the sprite for animation, etc.  */
-extern void __fastcall__ Sprite_tick(Sprite_buffer_t* sprite);
+/* Tick all sprites for animation, etc.  */
+extern void __fastcall__ Sprite_tick_all(void);
 
 /* ***************************************************************  */
 

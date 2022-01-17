@@ -29,7 +29,8 @@
  *
  *   - allocation/free of the Sprite RAM (depends on VIC bank)
  *
- * for the usage of virtual sprites.
+ * for the usage of SpriteAnimations (and virtual sprites in the
+ * future).
  */
 
 /* Initialize this module, free all resoruces and virtual sprites.

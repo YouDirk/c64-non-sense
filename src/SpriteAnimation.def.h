@@ -39,13 +39,39 @@ typedef_struct_begin(SpriteAnimation_t)
   /* Sprite locator, pointing to the first frame buffer of this
    * animation.
    */
-  typedef_struct_primit(Sprite_locator_t,         first_frame)
+  typedef_struct_primit(Sprite_locator_t,         locator)
 
   /* Sprite pointer to the first frame buffer of this animation.  It´s
-   * just a dereferenced version of SPRITEANIMATION_T::FIRST_FRAME
-   * above.
+   * just a dereferenced version of SPRITEANIMATION_T::LOCATOR above.
    */
   typedef_struct_nested_ptr(Sprite_frame_t,       buffer)
+
+  /* -------------------------------------------------------------  */
+
+  /* Number of the current tick (time) during current frame of this
+   * animation.
+   */
+  typedef_struct_uint8(                           current_tick)
+
+  /* Number of the current frame during animation.  */
+  typedef_struct_uint8(                           current_frame_no)
+
+  /* Sprite locator, pointing to the current frame during this
+   * animation.
+   */
+  typedef_struct_primit(Sprite_locator_t,         current_locator)
+
+  /* Sprite pointer to the current frame during this animation.  It´s
+   * just a dereferenced version of SPRITEANIMATION_T::CURRENT_LOCATOR
+   * above.
+   */
+  typedef_struct_nested_ptr(Sprite_frame_t,       current_frame)
+
+  /* -----------------------------------------------------------------
+   * private members
+   */
+
+  typedef_struct_uint8(                           _stamp_lasttick)
 typedef_struct_end(SpriteAnimation_t)
 
 /* ***************************************************************  */

@@ -18,35 +18,104 @@
 
 #include "Sprite.h"
 
-/* ***************************************************************  */
-
-void __fastcall__
-Sprite_new(Sprite_buffer_t* sprite)
-{
-  sprite->set.pos_y = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
-  sprite->set.pos_x = SPRITE_POS_SMALLSCREEN_BEGIN_X;
-
-  sprite->set.color = Graphix_white;
-
-  sprite->set.props = Sprite_props_none_mask;
-
-  sprite->locator
-    = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
-}
-
-void __fastcall__
-Sprite_delete(Sprite_buffer_t* sprite)
-{
-  /* maybe that the rasterline ISR is still running  */
-  sprite->set.props = Sprite_props_none_mask;
-}
+#include "Engine.h"
 
 /* ***************************************************************  */
 
 void __fastcall__
-Sprite_tick(Sprite_buffer_t* sprite)
+Sprite_new_all(void)
 {
-  // TODO
+  static Sprite_buffer_t* cur_sprite;
+
+  for (cur_sprite=Graphix.buffer.sprites.sprite;
+       cur_sprite != &Graphix.buffer.sprites.end; ++cur_sprite) {
+    cur_sprite->set.pos_y = SPRITE_POS_SMALLSCREEN_BEGIN_Y;
+    cur_sprite->set.pos_x = SPRITE_POS_SMALLSCREEN_BEGIN_X;
+
+    cur_sprite->set.color = Graphix_white;
+    cur_sprite->set.props = Sprite_props_none_mask;
+
+    cur_sprite->locator
+      = SPRITE_LOCATOR_FROMREF(GRAPHIX_BUFFER_SPRITERAM_RVAL);
+  }
+}
+
+/* Nothing to do.  Just an empty-macro for now.
+ */
+
+/* void __fastcall__
+ * Sprite_delete_all(void) {}
+ */
+
+/* ***************************************************************  */
+
+void __fastcall__
+Sprite_tick_all(void)
+{
+  static Sprite_buffer_t* cur_sprite;
+  static SpriteAnimation_t **cur_anim_ptr, *cur_animation;
+
+  static Sprite_locator_t tmp_locator;
+  static Sprite_frame_t* tmp_frame;
+  static uint8_t tmp_count;
+
+  DEBUG_RENDERTIME_IRQ_BEGIN(Graphix_lightgreen);
+
+  for (cur_anim_ptr=Graphix.anims.sprites.sprite,
+         cur_sprite=Graphix.buffer.sprites.sprite;
+       cur_anim_ptr != &Graphix.anims.sprites.end;
+       ++cur_anim_ptr, ++cur_sprite) {
+
+    cur_animation = *cur_anim_ptr;
+    if (cur_animation == NULL) continue;
+
+    /* --- not NULL animation ---  */
+
+    /* Animation already ticked?  Then just set Sprite Locator  */
+    if (cur_animation->_stamp_lasttick == (uint8_t) Engine.tick_count) {
+      tmp_locator = cur_animation->current_locator; /* just optim.  */
+      cur_sprite->locator = tmp_locator;
+
+      continue;
+    }
+    cur_animation->_stamp_lasttick = (uint8_t) Engine.tick_count;
+
+    /* Just tick and set Sprite Locator?  */
+    tmp_frame = cur_animation->current_frame; /* just optim.  */
+    tmp_count = tmp_frame->tick_count;
+    if (++cur_animation->current_tick <= tmp_count) {
+      tmp_locator = cur_animation->current_locator; /* just optim.  */
+      cur_sprite->locator = tmp_locator;
+
+      continue;
+    }
+
+    /* --- new sprite frame in animation ---  */
+
+    cur_animation->current_tick = 0;
+
+    tmp_count = cur_animation->frame_count; /* just optim.  */
+    tmp_frame = cur_animation->current_frame;
+    if (++cur_animation->current_frame_no < tmp_count) {
+      ++cur_animation->current_locator;
+      cur_animation->current_frame = tmp_frame + 1;
+      ++cur_sprite->locator;
+
+      continue;
+    }
+
+    /* --- replay animation ---  */
+
+    tmp_locator = cur_animation->locator; /* just optim.  */
+    tmp_frame = cur_animation->buffer;
+
+    cur_animation->current_frame_no = 0;
+    cur_animation->current_locator = tmp_locator;
+    cur_animation->current_frame = tmp_frame;
+    cur_sprite->locator = tmp_locator;
+  } /* for (cur_anim_ptr=Graphix.anims.; ...; ++cur_anim_ptr)  */
+
+  DEBUG_RENDERTIME_IRQ_END();
 }
 
 /* ***************************************************************  */

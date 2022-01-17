@@ -31,21 +31,16 @@
  *   ATTENTION: To get an improved performance, compiling without
  *              DEBUG_ASSERTION_CHECK will use a faster control-flow
  *              and errors will not be catched anymore.  Just "OUT OF
- *              RAM" errors will be catched if DEBUG_ASSERTION_CHECK
+ *              RAM" warnings will be catched if DEBUG_ASSERTION_CHECK
  *              was disabled.
  *
  *              Therefore, make sure to get no DEBUG_ERROR() from this
- *              function (apart from "OUT OF RAM"), before disabling
- *              DEBUG_ASSERTION_CHECK.
- * -------------------------------------------------------------------
- */
+ *              function (apart from "OUT OF RAM" warnings), before
+ *              disabling DEBUG_ASSERTION_CHECK.
+ *              --------------------------------------------------------------- */
 
 /* Allocate a sprite ANIMATION in the Sprite RAM, but do not
  * initialize the allocated RAM.
- *
- * Do not forget to set ANIMATION->BUFFER[FRAME_COUNT-1].TICK_COUNT
- *                   to SPRITE_FRAME_TICKCOUNT_LAST_MASK
- * after the call of this function!
  *
  * returns: TRUE on success, otherwise FALSE if the allocation fails.
  */
@@ -70,12 +65,12 @@ extern bool __fastcall__ SpriteAnimation_new(
  *   ATTENTION: To get an improved performance, compiling without
  *              DEBUG_ASSERTION_CHECK will use a faster control-flow
  *              and errors will not be catched anymore.  Just "DOUBLE
- *              FREE" errors will be catched if DEBUG_ASSERTION_CHECK
+ *              FREE" warnings will catched if DEBUG_ASSERTION_CHECK
  *              was disabled.
  *
  *              Therefore, make sure to get no DEBUG_ERROR() from this
- *              function (apart from "DOUBLE FREE"), before disabling
- *              DEBUG_ASSERTION_CHECK.
+ *              function (apart from "DOUBLE FREE" warnings), before
+ *              disabling DEBUG_ASSERTION_CHECK.
  *
  * To heavy use of this function maybe result in an fragmented heap.
  * In that case think about to use SPRITEANIMATION_DELETE_ALL()

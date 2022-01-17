@@ -18,8 +18,8 @@
 
 #include "SpriteManager.h"
 
-#include "Sprite.h"
 #include "SpriteAnimation.h"
+#include "Sprite.h"
 
 /* ***************************************************************  */
 
@@ -35,34 +35,25 @@ SpriteManager_init(void)
   /* intialize Sprite RAM and GRAPHIX.ANIMS.SPRITES to NULL  */
   SpriteAnimation_delete_all();
 
-  /* initialize each sprite (unrolled loop)  */
-  Sprite_new(Graphix.buffer.sprites.sprite + 0);
-  Sprite_new(Graphix.buffer.sprites.sprite + 1);
-  Sprite_new(Graphix.buffer.sprites.sprite + 2);
-  Sprite_new(Graphix.buffer.sprites.sprite + 3);
-  Sprite_new(Graphix.buffer.sprites.sprite + 4);
-  Sprite_new(Graphix.buffer.sprites.sprite + 5);
-  Sprite_new(Graphix.buffer.sprites.sprite + 6);
-  Sprite_new(Graphix.buffer.sprites.sprite + 7);
+  /* initialize all hardware sprites  */
+  Sprite_new_all();
 }
 
 void __fastcall__
 SpriteManager_release(void)
 {
   /* disable all sprites  */
+  /* --- rasterline ISR maybe enabled ---  */
+  Graphix.buffer.sprites.set.enabled = SpriteManager_sprites_none_mask;
+  Graphix.buffer.sprites.set.multicolor_0b01 = VIC_SPR_MCOLOR0_0B01_DEFAULT;
+  Graphix.buffer.sprites.set.multicolor_0b11 = VIC_SPR_MCOLOR1_0B11_DEFAULT;
+  /* ---  */
   VIC.spr_ena = VIC_SPRITE_NONE_MASK;
   VIC.spr_mcolor0 = VIC_SPR_MCOLOR0_0B01_DEFAULT;
   VIC.spr_mcolor1 = VIC_SPR_MCOLOR1_0B11_DEFAULT;
 
-  /* free each sprite (unrolled loop)  */
-  Sprite_delete(Graphix.buffer.sprites.sprite + 0);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 1);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 2);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 3);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 4);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 5);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 6);
-  Sprite_delete(Graphix.buffer.sprites.sprite + 7);
+  /* free all hardware sprites  */
+  Sprite_delete_all();
 
   /* free all currently allocated sprite animation from Sprite RAM and
    * set GRAPHIX.ANIMS.SPRITES to NULL
@@ -92,13 +83,6 @@ SpriteManager_release(void)
 void __fastcall__
 SpriteManager_tick(void)
 {
-  /* tick each sprite (unrolled loop)  */
-  Sprite_tick(Graphix.buffer.sprites.sprite + 0);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 1);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 2);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 3);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 4);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 5);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 6);
-  Sprite_tick(Graphix.buffer.sprites.sprite + 7);
+  /* tick all hardware sprites  */
+  Sprite_tick_all();
 }

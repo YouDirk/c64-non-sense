@@ -18,6 +18,7 @@
 
 #include "SpriteAnimation.h"
 
+#include "Engine.h"
 #include "Sprite.h"
 
 /* ***************************************************************  */
@@ -167,7 +168,7 @@ _SpriteAnimation_alloc(uint8_t frame_count)
     return (Sprite_frame_t*) cur_block;
   }
 
-  DEBUG_ERROR("sprite anim, new out of ram!");
+  DEBUG_WARN("sprite anim, new out of ram!");
   return NULL;
 }
 
@@ -178,13 +179,23 @@ SpriteAnimation_new_alloc(SpriteAnimation_t* animation,
                           uint8_t frame_count)
 {
   static Sprite_frame_t* alloc;
+  static Sprite_locator_t locator;
 
   if ((alloc = _SpriteAnimation_alloc(frame_count)) == NULL)
     return false;
 
+  locator = SPRITE_LOCATOR_FROMREF((uint16_t) alloc);
+
   animation->frame_count = frame_count;
-  animation->first_frame = SPRITE_LOCATOR_FROMREF((uint16_t) alloc);
+  animation->locator = locator;
   animation->buffer = alloc;
+
+  animation->current_tick = 0;
+  animation->current_frame_no = 0;
+  animation->current_locator = locator;
+  animation->current_frame = alloc;
+
+  animation->_stamp_lasttick = ((uint8_t) Engine.tick_count) - 1;
 
   return true;
 }
@@ -194,15 +205,25 @@ SpriteAnimation_new(SpriteAnimation_t* animation,
                     const Sprite_frame_t* src, uint8_t frame_count)
 {
   static Sprite_frame_t* alloc;
+  static Sprite_locator_t locator;
 
   if ((alloc = _SpriteAnimation_alloc(frame_count)) == NULL)
     return false;
 
   memcpy(alloc, src, frame_count*sizeof(Sprite_frame_t));
 
+  locator = SPRITE_LOCATOR_FROMREF((uint16_t) alloc);
+
   animation->frame_count = frame_count;
-  animation->first_frame = SPRITE_LOCATOR_FROMREF((uint16_t) alloc);
+  animation->locator = locator;
   animation->buffer = alloc;
+
+  animation->current_tick = 0;
+  animation->current_frame_no = 0;
+  animation->current_locator = locator;
+  animation->current_frame = alloc;
+
+  animation->_stamp_lasttick = ((uint8_t) Engine.tick_count) - 1;
 
   return true;
 }
@@ -368,6 +389,9 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
        * ALLOC.
        */
       if (alloc_end < (uint8_t*) cur_block) {
+        /* Boundaries are:
+         *   PREV_BLOCK_END = ALLOC && ALLOC_END < CUR_BLOCK
+         */
         prev_block->size += alloc_framecount;
 
         _DEBUG_CASE("3");
@@ -390,6 +414,9 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
        * together.
        */
       if (alloc_end == (uint8_t*) cur_block) {
+        /* Boundaries are:
+         *   PREV_BLOCK_END = ALLOC && ALLOC_END == CUR_BLOCK
+         */
         prev_block->next = cur_block->next;
         prev_block->size += alloc_framecount + cur_block->size;
 
@@ -409,7 +436,7 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
        */
       DEBUG_ERROR("sprite anim, free overlap (after)!");
       return;
-    }
+    } /* if (alloc == prev_block_end)  */
 
     /* ---  */
 
@@ -501,7 +528,7 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
 
       _DEBUG_CASE("2");
       return;
-    }
+    } /* if (alloc_end == cur_block)  */
 
     /* ---  */
 
@@ -607,7 +634,7 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
      *
      * Now just DOUBLE FREEs (boundaries are tested) are possible.
      */
-    DEBUG_ERROR("sprite anim, double free!");
+    DEBUG_WARN("sprite anim, double free!");
     return;
   } /* for (cur_block=; ...; cur_block=cur_block->next)  */
 
@@ -686,7 +713,7 @@ SpriteAnimation_delete(const SpriteAnimation_t* animation)
    *
    * Seems that there are just DOUBLE FREEs left.
    */
-  DEBUG_ERROR("sprite anim, double free!!");
+  DEBUG_WARN("sprite anim, double free!!");
 }
 
 /* ***************************************************************  */
