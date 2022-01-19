@@ -29,7 +29,8 @@
 
 /* ***************************************************************  */
 
-static SpriteAnimation_t AASandox_char_idle;
+static SpriteAnimation_t AASandox_chartop_idle, AASandox_charbot_idle;
+
 static Pace_t AASandox_char_pace_x, AASandox_char_pace_y;
 static Pace_t AASandox_char_pace_jump;
 
@@ -79,11 +80,16 @@ AASandbox_init(void)
   }
 
   /* Load sprite animation into Sprite RAM  */
-  SpriteAnimation_new(&AASandox_char_idle, AAAssets_sprite_anim_charidle,
-                      AAASSETS_SPRITE_ANIM_CHARIDLE_COUNT);
+  SpriteAnimation_new(
+          &AASandox_chartop_idle, AAAssets_anim_chartop_idle,
+          AAASSETS_ANIM_CHARTOP_IDLE_COUNT);
+  SpriteAnimation_new(
+          &AASandox_charbot_idle, AAAssets_anim_charbot_idle,
+          AAASSETS_ANIM_CHARTOP_IDLE_COUNT);
 
   /* Attach and run sprite animation on hardware sprite 4  */
-  Graphix.anims.sprites.set.sprite[4] = &AASandox_char_idle;
+  Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
+  Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_idle;
 
   /* Initialize character hardware sprite  */
   Graphix.buffer.sprites.sprite[4].set.pos_x
@@ -91,11 +97,25 @@ AASandbox_init(void)
     - SPRITE_WIDTH/2;
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT/2
-    - SPRITE_HEIGHT/2;
+    - SPRITE_HEIGHT;
+  Graphix.buffer.sprites.sprite[4].set.color = Graphix_orange;
+  Graphix.buffer.sprites.sprite[4].set.props
+    = Sprite_props_multicolor_mask;
+  Graphix.buffer.sprites.sprite[5].set.pos_x
+    = SPRITE_POS_SMALLSCREEN_BEGIN_X + SPRITE_POS_SMALLSCREEN_WIDTH/2
+    - SPRITE_WIDTH/2;
+  Graphix.buffer.sprites.sprite[5].set.pos_y
+    = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT/2;
+  Graphix.buffer.sprites.sprite[5].set.color = Graphix_red;
+  Graphix.buffer.sprites.sprite[5].set.props
+    = Sprite_props_multicolor_mask;
   AASandbox_char_isjumping = false;
 
   /* Show hardware sprite 4 on screen  */
-  Graphix.buffer.sprites.set.enabled = SpriteManager_sprites_4_mask;
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_lightblue;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_brown;
+  Graphix.buffer.sprites.set.enabled
+    = SpriteManager_sprites_4_mask | SpriteManager_sprites_5_mask;
 
   /* Initialize paces for character sprite in x and y direction  */
   Pace_new(&AASandox_char_pace_x, 5, 2, 63, 0);
@@ -179,7 +199,7 @@ AASandbox_tick(void)
   if (Input.joy_port2.button1.changed) {
     if (Input.joy_port2.button1.pressed && !AASandbox_char_isjumping) {
       AASandbox_char_isjumping = true;
-      Pace_brakerate_set(&AASandox_char_pace_jump, 32);
+      Pace_brakerate_set(&AASandox_char_pace_jump, 31);
       Pace_impulse_neg(&AASandox_char_pace_jump);
     }
   }
@@ -207,6 +227,10 @@ AASandbox_tick(void)
   Graphix.buffer.sprites.sprite[4].set.pos_x
     += AASandox_char_pace_x.pace;
   Graphix.buffer.sprites.sprite[4].set.pos_y
+    += AASandox_char_pace_y.pace + AASandox_char_pace_jump.pace;
+  Graphix.buffer.sprites.sprite[5].set.pos_x
+    += AASandox_char_pace_x.pace;
+  Graphix.buffer.sprites.sprite[5].set.pos_y
     += AASandox_char_pace_y.pace + AASandox_char_pace_jump.pace;
 }
 
