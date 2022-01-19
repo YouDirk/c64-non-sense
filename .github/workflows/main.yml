@@ -20,7 +20,7 @@ name: CI
 on:
   push:
     branches: ['**']
-    tags: ['vlog-*']
+    tags: ['vlog-*', 'stream-*']
     paths: ['**']
   pull_request:
     branches: ['**']
@@ -198,5 +198,61 @@ jobs:
           the version that I used in the vlog from ${{github.ref}} at
           
           * https://www.youtube.com/playlist?list=PLSC2VXOJyxP01kz__GU2nvx4RmgCN4ZwO
+
+# ********************************************************************
+  release-stream:
+    name: "Release: stream template"
+    if: contains(github.ref, 'tags/stream-')
+    needs: [docker-cache, compile-linux]
+    runs-on: ubuntu-latest
+    container:
+      image: ${{needs.docker-cache.outputs.DOCKER_IMAGE}}
+      credentials:
+        username: ${{secrets.DOCKER_USER}}
+        password: ${{secrets.RELEASE_TOKEN}}
+    steps:
+      # Checking out to $GITHUB_WORKSPACE
+    - name: Checking out...
+      uses: actions/checkout@v2.3.4
+      with:
+        ref: ${{github.ref}}
+        clean: true
+        lfs: false
+        submodules: false
+    - name: Building Debug version, using `$> make all`...
+      run: |
+        make DEBUG_BUILD=1 \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug.d64 \
+          all
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Productive version, using `$> make recompile`...
+      run: |
+        make DEBUG_BUILD=0 \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').d64 \
+          recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: Building Full Debug version, using `$> make recompile`...
+      run: |
+        make DEBUG_BUILD=full \
+          D64EXT=$(echo $GITHUB_REF | sed 's~^.*/~~').debug-full.d64 \
+          recompile
+        cp -f ${{env.WORKFL_SRC_PATH}}/*.d64 .
+    - name: "Creating release: stream template..."
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{secrets.RELEASE_TOKEN}}
+        file_glob: true
+        file: "*.d64"
+        tag: ${{github.ref}}
+        overwrite: true
+        prerelease: true
+        release_name: Stream from ${{github.ref}}
+        body: >
+          The version `non-sense.${{github.ref}}.debug-full.d64` is
+          the version that I used in the stream from ${{github.ref}}
+          at
+          
+          * https://www.twitch.tv/collections/gkf9yYipyxbSag (from
+            https://www.twitch.tv/you_dirk)
 
 # ********************************************************************
