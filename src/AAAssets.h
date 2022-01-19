@@ -29,9 +29,9 @@
  * AssetLoader-module in the future.
  */
 
-#define AAASSETS_SPRITE_ANIM_HEART_COUNT                    3
+#define AAASSETS_SPRITE_ANIM_CHARIDLE_COUNT                 3
 
 extern const Sprite_frame_t
-AAAssets_sprite_anim_heart[AAASSETS_SPRITE_ANIM_HEART_COUNT];
+AAAssets_sprite_anim_charidle[AAASSETS_SPRITE_ANIM_CHARIDLE_COUNT];
 
 #endif /* AAASSETS_H__  */
