@@ -83,7 +83,7 @@ emulator due to copyright purposes.  Here an how-to:
 Download the source tarball `vice-3.x.tar.gz` (replace `3.x` with your
 installed VICE version as listed in `$> dpkg -l 'vice*'`) from
 
-* https://sourceforge.net/projects/vice-emu/files/releases/
+* *https://sourceforge.net/projects/vice-emu/files/releases/*
 
 Unpack it and copy it´s whole `data/*` directory into
 `/usr/share/vice/`.
