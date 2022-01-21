@@ -30,6 +30,10 @@
 /* ***************************************************************  */
 
 static SpriteAnimation_t AASandox_chartop_idle, AASandox_charbot_idle;
+static SpriteAnimation_t AASandox_chartop_runright,
+                         AASandox_charbot_runright;
+static SpriteAnimation_t AASandox_chartop_runleft,
+                         AASandox_charbot_runleft;
 
 static Pace_t AASandox_char_pace_x, AASandox_char_pace_y;
 static Pace_t AASandox_char_pace_jump;
@@ -85,7 +89,20 @@ AASandbox_init(void)
           AAASSETS_ANIM_CHARTOP_IDLE_COUNT);
   SpriteAnimation_new(
           &AASandox_charbot_idle, AAAssets_anim_charbot_idle,
-          AAASSETS_ANIM_CHARTOP_IDLE_COUNT);
+          AAASSETS_ANIM_CHARBOT_IDLE_COUNT);
+  SpriteAnimation_new(
+          &AASandox_chartop_runright, AAAssets_anim_chartop_runright,
+          AAASSETS_ANIM_CHARTOP_RUNRIGHT_COUNT);
+  SpriteAnimation_new(
+          &AASandox_charbot_runright, AAAssets_anim_charbot_runright,
+          AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT);
+  SpriteAnimation_new_alloc(
+          &AASandox_chartop_runleft,
+          AAASSETS_ANIM_CHARTOP_RUNRIGHT_COUNT);
+  SpriteAnimation_new_alloc(
+          &AASandox_charbot_runleft,
+          AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT);
+  // TODO: mirrored copy of RUNRIGHT for RUNLEFT ...
 
   /* Attach and run sprite animation on hardware sprite 4  */
   Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
@@ -190,9 +207,13 @@ AASandbox_tick(void)
       break;
     case -1:
       Pace_start_pos(&AASandox_char_pace_x);
+      Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_runright;
+      Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_runright;
       break;
     default:
       Pace_brake(&AASandox_char_pace_x);
+      Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
+      Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_idle;
       break;
     }
   }
