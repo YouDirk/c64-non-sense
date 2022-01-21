@@ -29,11 +29,11 @@
  * AssetLoader-module in the future.
  */
 
-#define AAASSETS_ANIM_CHARTOP_IDLE_COUNT                    3
+#define AAASSETS_ANIM_CHARTOP_IDLE_COUNT                    4
 extern const Sprite_frame_t
 AAAssets_anim_chartop_idle[AAASSETS_ANIM_CHARTOP_IDLE_COUNT];
 
-#define AAASSETS_ANIM_CHARBOT_IDLE_COUNT                    3
+#define AAASSETS_ANIM_CHARBOT_IDLE_COUNT                    4
 extern const Sprite_frame_t
 AAAssets_anim_charbot_idle[AAASSETS_ANIM_CHARBOT_IDLE_COUNT];
 

@@ -34,7 +34,7 @@ static SpriteAnimation_t AASandox_chartop_idle, AASandox_charbot_idle;
 static Pace_t AASandox_char_pace_x, AASandox_char_pace_y;
 static Pace_t AASandox_char_pace_jump;
 
-static bool AASandbox_char_isjumping;
+static int8_t AASandbox_char_jump_pxl;
 
 /* ***************************************************************  */
 
@@ -98,7 +98,7 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[4].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT/2
     - SPRITE_HEIGHT;
-  Graphix.buffer.sprites.sprite[4].set.color = Graphix_orange;
+  Graphix.buffer.sprites.sprite[4].set.color = Graphix_green;
   Graphix.buffer.sprites.sprite[4].set.props
     = Sprite_props_multicolor_mask;
   Graphix.buffer.sprites.sprite[5].set.pos_x
@@ -106,14 +106,14 @@ AASandbox_init(void)
     - SPRITE_WIDTH/2;
   Graphix.buffer.sprites.sprite[5].set.pos_y
     = SPRITE_POS_SMALLSCREEN_BEGIN_Y + SPRITE_POS_SMALLSCREEN_HEIGHT/2;
-  Graphix.buffer.sprites.sprite[5].set.color = Graphix_red;
+  Graphix.buffer.sprites.sprite[5].set.color = Graphix_yellow;
   Graphix.buffer.sprites.sprite[5].set.props
     = Sprite_props_multicolor_mask;
-  AASandbox_char_isjumping = false;
+  AASandbox_char_jump_pxl = 0;
 
   /* Show hardware sprite 4 on screen  */
-  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_lightblue;
-  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_brown;
+  Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
+  Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_red;
   Graphix.buffer.sprites.set.enabled
     = SpriteManager_sprites_4_mask | SpriteManager_sprites_5_mask;
 
@@ -196,24 +196,21 @@ AASandbox_tick(void)
       break;
     }
   }
+
   if (Input.joy_port2.button1.changed) {
-    if (Input.joy_port2.button1.pressed && !AASandbox_char_isjumping) {
-      AASandbox_char_isjumping = true;
+    if (Input.joy_port2.button1.pressed) {
       Pace_brakerate_set(&AASandox_char_pace_jump, 31);
       Pace_impulse_neg(&AASandox_char_pace_jump);
     }
-  }
-
-  /* --- events ---  */
-
-  if (AASandbox_char_isjumping) {
+  } else if (AASandbox_char_jump_pxl < 0) {
     if (Pace_is_stopped(&AASandox_char_pace_jump)) {
       Pace_brakerate_set(&AASandox_char_pace_jump, 63);
       Pace_accelerate_pos(&AASandox_char_pace_jump);
-    } else if (Pace_is_maxpace_pos(&AASandox_char_pace_jump)) {
-      Pace_brake(&AASandox_char_pace_jump);
-      AASandbox_char_isjumping = false;
     }
+  } else if (AASandbox_char_jump_pxl >= 0
+             && !Pace_is_stopped(&AASandox_char_pace_jump)) {
+    AASandbox_char_jump_pxl = 0;
+    Pace_stop(&AASandox_char_pace_jump);
   }
 
   /* --- ticking stuff ---  */
@@ -223,6 +220,8 @@ AASandbox_tick(void)
   Pace_tick(&AASandox_char_pace_jump);
 
   /* --- reaction ---  */
+
+  AASandbox_char_jump_pxl += AASandox_char_pace_jump.pace;
 
   Graphix.buffer.sprites.sprite[4].set.pos_x
     += AASandox_char_pace_x.pace;
