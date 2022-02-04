@@ -37,11 +37,11 @@ AAAssets_anim_chartop_idle[AAASSETS_ANIM_CHARTOP_IDLE_COUNT];
 extern const Sprite_frame_t
 AAAssets_anim_charbot_idle[AAASSETS_ANIM_CHARBOT_IDLE_COUNT];
 
-#define AAASSETS_ANIM_CHARTOP_RUNRIGHT_COUNT                    1
+#define AAASSETS_ANIM_CHARTOP_RUNRIGHT_COUNT                2
 extern const Sprite_frame_t
 AAAssets_anim_chartop_runright[AAASSETS_ANIM_CHARTOP_RUNRIGHT_COUNT];
 
-#define AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT                    1
+#define AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT                2
 extern const Sprite_frame_t
 AAAssets_anim_charbot_runright[AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT];
 

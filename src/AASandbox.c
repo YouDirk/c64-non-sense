@@ -39,6 +39,95 @@ static Pace_t AASandox_char_pace_x, AASandox_char_pace_y;
 static Pace_t AASandox_char_pace_jump;
 
 static int8_t AASandbox_char_jump_pxl;
+static bool AASandbox_char_is_moving, AASandbox_char_mark_stop_x;
+
+/* ***************************************************************  */
+
+static void
+_AASandbox_spriteanim_flipped_x(
+                SpriteAnimation_t* dest, const SpriteAnimation_t* src,
+                bool is_multicolor)
+{
+  static uint8_t *src_byte, *dest_byte;
+  static uint8_t mod, tmp;
+  static int8_t byte_swap;
+  static bool is_multic;
+
+  static Sprite_frame_t* src_buffer;
+
+  is_multic = is_multicolor;
+
+  src_buffer = src->buffer;
+  for (src_byte = (uint8_t*) src_buffer,
+         dest_byte = (uint8_t*) dest->buffer, mod=0;
+       src_byte < (2 << 6) + (uint8_t*) src_buffer;
+       ++src_byte, ++dest_byte, ++mod) {
+
+    if (((uint8_t) src_byte & 0x3f) == 0x3f) {
+      *dest_byte = *src_byte;
+
+      mod = -1;
+      continue;
+    }
+
+    if (mod == 3) mod = 0;
+    switch (mod) {
+    case 0: byte_swap = 2;  break;
+    case 1: byte_swap = 0;  break;
+    case 2: byte_swap = -2; break;
+    }
+
+    __asm__ ("lda %v\n"
+             "sta ptr4\n"
+             "lda %v + 1\n"
+             "sta ptr4 + 1\n"
+             "ldy #$00\n"
+             "lda (ptr4), y\n", src_byte, src_byte);
+
+    /* A = SRC_BYTE  */
+
+    __asm__ ("ldx #4\n"
+             "ldy %v\n"
+             "bne %g\n"
+             "ldx #8\n", is_multic, loop_multic);
+  loop_highres:
+    __asm__ ("beq %g\n"
+             "lsr\n"
+             "rol %v\n"
+             "dex\n"
+             "jmp %g\n", loop_end, tmp, loop_highres);
+  loop_multic:
+    __asm__ ("beq %g\n"
+             "lsr\n"
+             "ror\n"
+             "rol %v\n"
+             "asl\n"
+             "rol %v\n"
+             "lsr\n"
+             "dex\n"
+             "jmp %g\n", loop_end, tmp, tmp, loop_multic);
+  loop_end:
+
+    /* TMP := DEST data  */
+
+    __asm__ ("ldx #$00\n"
+             "lda %v\n"
+             "bpl add_ready\n"
+             "dex\n"
+             "add_ready:\n"
+             "clc\n"
+             "adc %v\n"
+             "sta ptr4\n"
+             "txa\n"
+             "adc %v + 1\n"
+             "sta ptr4 + 1\n"
+
+             "lda %v\n"
+             "ldy #$00\n"
+             "sta (ptr4), y\n",
+             byte_swap, dest_byte, dest_byte, tmp);
+  }
+}
 
 /* ***************************************************************  */
 
@@ -102,7 +191,10 @@ AASandbox_init(void)
   SpriteAnimation_new_alloc(
           &AASandox_charbot_runleft,
           AAASSETS_ANIM_CHARBOT_RUNRIGHT_COUNT);
-  // TODO: mirrored copy of RUNRIGHT for RUNLEFT ...
+  _AASandbox_spriteanim_flipped_x(
+         &AASandox_chartop_runleft, &AASandox_chartop_runright, true);
+  _AASandbox_spriteanim_flipped_x(
+         &AASandox_charbot_runleft, &AASandox_charbot_runright, true);
 
   /* Attach and run sprite animation on hardware sprite 4  */
   Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
@@ -127,6 +219,8 @@ AASandbox_init(void)
   Graphix.buffer.sprites.sprite[5].set.props
     = Sprite_props_multicolor_mask;
   AASandbox_char_jump_pxl = 0;
+  AASandbox_char_is_moving = false;
+  AASandbox_char_mark_stop_x = false;
 
   /* Show hardware sprite 4 on screen  */
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_blue;
@@ -135,7 +229,7 @@ AASandbox_init(void)
     = SpriteManager_sprites_4_mask | SpriteManager_sprites_5_mask;
 
   /* Initialize paces for character sprite in x and y direction  */
-  Pace_new(&AASandox_char_pace_x, 5, 2, 63, 0);
+  Pace_new(&AASandox_char_pace_x, 8, 2, 32, 0);
   Pace_new(&AASandox_char_pace_y, 5, 2, 63, 0);
   Pace_new(&AASandox_char_pace_jump, 11, 63, 63, 0);
 }
@@ -204,16 +298,18 @@ AASandbox_tick(void)
     switch (Input.joy_port2.axis_x.direction) {
     case 1:
       Pace_start_neg(&AASandox_char_pace_x);
+      Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_runleft;
+      Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_runleft;
+      AASandbox_char_is_moving = true;
       break;
     case -1:
       Pace_start_pos(&AASandox_char_pace_x);
       Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_runright;
       Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_runright;
+      AASandbox_char_is_moving = true;
       break;
     default:
-      Pace_brake(&AASandox_char_pace_x);
-      Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
-      Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_idle;
+      AASandbox_char_mark_stop_x = true;
       break;
     }
   }
@@ -234,6 +330,12 @@ AASandbox_tick(void)
     Pace_stop(&AASandox_char_pace_jump);
   }
 
+  if (AASandbox_char_mark_stop_x
+      && AASandbox_char_jump_pxl == 0) {
+    Pace_brake(&AASandox_char_pace_x);
+    AASandbox_char_mark_stop_x = false;
+  }
+
   /* --- ticking stuff ---  */
 
   Pace_tick(&AASandox_char_pace_x);
@@ -241,6 +343,14 @@ AASandbox_tick(void)
   Pace_tick(&AASandox_char_pace_jump);
 
   /* --- reaction ---  */
+
+  if (AASandbox_char_is_moving
+      && AASandbox_char_jump_pxl == 0
+      && Pace_is_stopped(&AASandox_char_pace_x)) {
+    Graphix.anims.sprites.set.sprite[4] = &AASandox_chartop_idle;
+    Graphix.anims.sprites.set.sprite[5] = &AASandox_charbot_idle;
+    AASandbox_char_is_moving = false;
+  }
 
   AASandbox_char_jump_pxl += AASandox_char_pace_jump.pace;
 

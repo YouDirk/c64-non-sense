@@ -320,7 +320,7 @@ extern_var(Graphix_t,                        Graphix)
 
 /* ***************************************************************  */
 
-define_dec(GRAPHIX_MMAPPING,                 0)
+define_dec(GRAPHIX_MMAPPING,                 1)
 
 /* GRAPHIX_MMAPPING = 0
  *
