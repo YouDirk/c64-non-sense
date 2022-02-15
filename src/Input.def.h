@@ -179,10 +179,10 @@ typedef_struct_begin(Input_axis_t)
    *
    * Assert: Must have SIZEOF 1 and be first member in this struct!
    */
-  typedef_struct_int8(direction)
+  typedef_struct_int8(                                 direction)
 
   /* TRUE for exactly 1 tick, if DIRECTION has changed it´s value.  */
-  typedef_struct_bool(changed)
+  typedef_struct_bool(                                 changed)
 typedef_struct_end(Input_axis_t)
 
 /* Information of a button  */
@@ -191,20 +191,20 @@ typedef_struct_begin(Input_button_t)
    *
    * Assert: Must have SIZEOF 1 and be first member in this struct!
    */
-  typedef_struct_bool(pressed)
+  typedef_struct_bool(                                 pressed)
 
   /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
-  typedef_struct_bool(changed)
+  typedef_struct_bool(                                 changed)
 typedef_struct_end(Input_button_t)
 
 /* Information about a joystick  */
 typedef_struct_begin(Input_joystick_t)
   /* State of the axes.  */
-  typedef_struct_nested(Input_axis_t, axis_y)
-  typedef_struct_nested(Input_axis_t, axis_x)
+  typedef_struct_nested(Input_axis_t,                  axis_y)
+  typedef_struct_nested(Input_axis_t,                  axis_x)
 
   /* State of the fire button.  */
-  typedef_struct_nested(Input_button_t, button1)
+  typedef_struct_nested(Input_button_t,                button1)
 typedef_struct_end(Input_joystick_t)
 
 /* ***************************************************************  */
@@ -297,6 +297,8 @@ typedef_struct_begin(Input_set_t)
    */
   typedef_struct_enum(Input_devices_t,                 enabled)
 typedef_struct_end(Input_set_t)
+
+/* ***************************************************************  */
 
 /* Structure of static members for module.  */
 typedef_struct_begin(Input_t)

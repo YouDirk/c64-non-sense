@@ -29,11 +29,14 @@
 /* Structure of static members for module.  */
 typedef struct EngineConfig_t {
 
+  /* Set during Graphix_init().  */
+  Graphix_charset_t charset_exit;
+
   /* Set during Input_init().  */
   Input_devices_t inputs_enabled;
 
-  /* Set during Graphix_init().  */
-  Graphix_charset_t charset_exit;
+  /* Set during SpriteManager_init().  */
+  bool is_sprite_animations_ticking;
 
 } EngineConfig_t;
 

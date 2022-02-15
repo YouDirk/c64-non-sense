@@ -108,6 +108,19 @@ typedef_struct_end(SpriteManager_buffer_t)
  * to call setter functions.
  */
 typedef_struct_begin(SpriteManager_animations_set_t)
+  /* Enables the ticking of Sprite Animations.  To improve performance
+   * set this to FALSE if no sprite animations are used.
+   *
+   * If set to FALSE then the GRAPHIX.ANIMS.SPRITES.SET.SPRITE[x]
+   * usage has no effects anymore.  Instead set
+   *
+   *   GRAPHIX.BUFFER.SPRITES.SPRITE[x].SET.LOCATOR
+   *                           = SPRITEANIMATION_T::LOCATOR + frame_no
+   *
+   * to make a static Sprite Frame visible.
+   */
+  typedef_struct_bool(                                     is_ticking)
+
   /* Attach your Sprite Animation to 1 of the 8 hardware sprite here,
    * by setting the corresponding SPRITE[x] pointer.
    *

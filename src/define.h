@@ -69,8 +69,10 @@ BC ******************************************************************
 
 #  define typedef_uint8(name)           typedef uint8_t name;
 #  define typedef_uint16(name)          typedef uint16_t name;
+#  define typedef_uint32(name)          typedef uint32_t name;
 #  define typedef_int8(name)            typedef int8_t name;
 #  define typedef_int16(name)           typedef int16_t name;
+#  define typedef_int32(name)           typedef int32_t name;
 
 #  define typedef_struct_begin(name)    typedef struct name {
 #  define typedef_struct_end(name)      } name;
@@ -327,8 +329,10 @@ BC ******************************************************************
 
 #  define typedef_uint8(name)      _define(name,       .byte) ; uint8
 #  define typedef_uint16(name)     _define(name,       .word) ; uint16
+#  define typedef_uint32(name)     _define(name,       .dword) ; uint32
 #  define typedef_int8(name)       _define(name,       .byte) ; int8
 #  define typedef_int16(name)      _define(name,       .word) ; int16
+#  define typedef_int32(name)      _define(name,       .dword) ; int32
 
 #  define typedef_struct_begin(name)    .struct name
 #  define typedef_struct_end(name)      .endstruct ; struct name

@@ -29,14 +29,25 @@ EngineConfig_init(void)
   /* Set game depending engine configurations here.
    */
 
-  /* Input devices which will be polled and are ticking in INPUT
-   * module.
-   */
-  EngineConfig.inputs_enabled = Input_all_mask;
-
   /* Charset which will be set after termination of the engine.
    */
   EngineConfig.charset_exit = Graphix_charset1_symbols_e;
+
+  /* Input devices which will be polled and are ticking in INPUT
+   * module.
+   *
+   * Just enable the input devices which are needed to improve the
+   * perfomance.
+   */
+  EngineConfig.inputs_enabled = Input_all_mask;
+
+  /* Should the Sprite Animations be enabled?  For more details take a
+   * look to SPRITEMANAGER_ANIMTAIONS_SET_T::IS_TICKING.
+   *
+   * Just enable Sprite Animations if they are needed to improve the
+   * perfomance.
+   */
+  EngineConfig.is_sprite_animations_ticking = true;
 }
 
 void __fastcall__

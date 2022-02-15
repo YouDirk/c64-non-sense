@@ -76,7 +76,7 @@ done:
 .export Graphix_rasterline_isr
 .proc Graphix_rasterline_isr: near
 .ifdef DEBUG_RENDERTIME_IRQ
-        lda #VIC_COLOR_YELLOW           ; we don´t need to push border
+        lda #VIC_COLOR_LIGHTBLUE        ; we don´t need to push border
         sta VIC_BORDERCOLOR             ; color, this isr set it activ
 .endif ; DEBUG_RENDERTIME_IRQ
 
@@ -243,7 +243,7 @@ sprites_done:
 ;; void __fastcall__ Graphix_buffer_swap(void)
 .export _Graphix_buffer_swap
 .proc _Graphix_buffer_swap: near
-        DEBUG_RENDERTIME_IRQ_BEGIN #VIC_COLOR_VIOLET
+        DEBUG_RENDERTIME_IRQ_BEGIN VIC_COLOR_VIOLET
 
         ;; Loading GRAPHIX_BUFFER_SHARED_PTR to PTR1 is atomar,
         ;; because the high byte equals GRAPHIX_BUFFER_BACK_PTR, as

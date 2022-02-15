@@ -30,7 +30,7 @@
   .macro DEBUG_RENDERTIME_IRQ_BEGIN color
         lda VIC_BORDERCOLOR             ; push current border color to
         pha                             ;   stack
-        lda color
+        lda #color
         sta VIC_BORDERCOLOR             ; set debug color
   .endmacro                             ; DEBUG_RENDERTIME_IRQ_BEGIN
 
@@ -50,7 +50,7 @@
         clc
         lda VIC_BORDERCOLOR             ; push current border color to
         pha                             ;   stack
-        lda color
+        lda #color
         pha                             ; push debug color to stack
   .endmacro                             ; DEBUG_RENDERTIME_FREECPU_BEGIN
 

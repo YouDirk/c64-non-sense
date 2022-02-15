@@ -27,6 +27,7 @@
 ;; void __fastcall__ _Input_keyboard_scan(void)
 .export __Input_keyboard_scan
 .proc __Input_keyboard_scan: near
+        DEBUG_RENDERTIME_IRQ_BEGIN VIC_COLOR_LIGHTRED
 
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
@@ -116,6 +117,7 @@ count_not_changed:
         lda #CIA_DDR_RONLY_ALL          ; restore data direction of
         sta CIA1_DDRA                   ;   portA
 
+        DEBUG_RENDERTIME_IRQ_END
         rts
 .endproc                                ; __Input_keyboard_scan
 
@@ -124,6 +126,7 @@ count_not_changed:
 ;; void __fastcall__ _Input_keyboard_petscii_convert(void)
 .export __Input_keyboard_petscii_convert
 .proc __Input_keyboard_petscii_convert: near
+        DEBUG_RENDERTIME_IRQ_BEGIN VIC_COLOR_LIGHTRED
 
   .define _PETSCII _Input + Input_t::keyboard + Input_keyboard_t::petscii
 
@@ -191,6 +194,7 @@ nullchar_done:                               ; else I...char := PETSCII
         sta _PETSCII + Input_keyboard_petscii_t::changed
 
 charkey_not_changed:          ; any shift-key released before char-key
+        DEBUG_RENDERTIME_IRQ_END
         rts
 .endproc                           ; __Input_keyboard_petscii_convert
 

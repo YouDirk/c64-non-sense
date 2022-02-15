@@ -20,6 +20,7 @@
 #define ENGINE_H__
 
 #include "common.h"
+#include "Engine.gen.h"
 
 #include "Timer.h"
 
@@ -55,56 +56,6 @@
                          ((ticks_t) (timestamp)/ENGINE_TICK_FACTOR)
 
 /* ***************************************************************  */
-
-/* Primitive datatype to store time.  Use the macros above to convert
- * a timestamp_t into a real world time, i.e. milliseconds.
- */
-typedef uint32_t                   timestamp_t;
-
-/* Primitive datatype to store counts of engine ticks.  Use the macros
- * above to convert a ticks_t into a time, i.e. milliseconds.
- */
-typedef uint32_t                   ticks_t;
-
-/* Configuration variables which can be set directly, without needing
- * to call setter functions.
- */
-typedef struct Engine_set_t {
-
-  /* If >= 0 then the engine will terminate with this exit code at the
-   * end of the current/next tick.
-   *
-   * set: 0 for regularly termination
-   */
-  int8_t exit_code;
-#define ENGINE_EXIT_SUCCESS                   0
-#define ENGINE_EXIT_FAILURE                   1
-#define ENGINE_EXIT_FAILURE_ENGINE            INT8_MAX  /* 127  */
-#define ENGINE_EXIT_NOTERMINATION            -1
-
-} Engine_set_t;
-
-/* Structure of static members for module.  */
-typedef struct Engine_t {
-
-  /* Some writable member variables.  */
-  Engine_set_t set;
-
-  /* Time(-stamp) of the last poll for an engine tick.  */
-  timestamp_t poll_time;
-
-  /* Time(-stamp) of the last engine tick.  */
-  timestamp_t tick_time;
-
-  /* Number of engine ticks since init/reset.  */
-  ticks_t tick_count;
-
-} Engine_t;
-
-/* ***************************************************************  */
-
-/* Static members of this module.  */
-extern Engine_t Engine;
 
 /* Initialize the mystic C64 NonSense Engine ^^
  *

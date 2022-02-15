@@ -55,7 +55,9 @@ main(void)
     Input_tick();
 
     /* poll test- and staged code  */
+    DEBUG_RENDERTIME_IRQ_BEGIN(Graphix_yellow);
     AASandbox_tick();
+    DEBUG_RENDERTIME_IRQ_END();
 
     /* sprite tick for animations, etc  */
     SpriteManager_tick();

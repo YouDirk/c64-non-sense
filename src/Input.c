@@ -97,6 +97,7 @@ Input_tick(void)
 {
   static uint8_t cia_port_inv;
 
+  DEBUG_RENDERTIME_IRQ_BEGIN(Graphix_lightred);
   if (Input.set.enabled & Input_joystick_port2_mask) {
     cia_port_inv = ~CIA1.pra;
 
@@ -121,6 +122,7 @@ Input_tick(void)
     _joystick_axis_tick((Input_axis_t*) &Input.joy_port1.button1,
                         cia_port_inv >> 2);
   }
+  DEBUG_RENDERTIME_IRQ_END();
 
   if (Input.set.enabled
       & (Input_keyboard_scan_mask | Input_keyboard_scan_petscii_mask)) {

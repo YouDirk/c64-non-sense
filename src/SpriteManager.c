@@ -21,6 +21,8 @@
 #include "SpriteAnimation.h"
 #include "Sprite.h"
 
+#include "EngineConfig.h"
+
 /* ***************************************************************  */
 
 void __fastcall__
@@ -31,6 +33,9 @@ SpriteManager_init(void)
   Graphix.buffer.sprites.set.enabled = SpriteManager_sprites_none_mask;
   Graphix.buffer.sprites.set.multicolor_0b01 = Graphix_black;
   Graphix.buffer.sprites.set.multicolor_0b11 = Graphix_black;
+
+  Graphix.anims.sprites.set.is_ticking
+                          = EngineConfig.is_sprite_animations_ticking;
 
   /* intialize Sprite RAM and GRAPHIX.ANIMS.SPRITES to NULL  */
   SpriteAnimation_delete_all();
@@ -84,5 +89,5 @@ void __fastcall__
 SpriteManager_tick(void)
 {
   /* tick all hardware sprites  */
-  Sprite_tick_all();
+  if (Graphix.anims.sprites.set.is_ticking) Sprite_tick_all();
 }
