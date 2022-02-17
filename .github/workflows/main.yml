@@ -192,7 +192,7 @@ jobs:
         tag: ${{github.ref}}
         overwrite: true
         prerelease: true
-        release_name: Vlog from ${{github.ref}}
+        release_name: Vlog from ${{github.ref}} (Topic)
         body: >
           The version `non-sense.${{github.ref}}.debug-full.d64` is
           the version that I used in the vlog from ${{github.ref}} at
@@ -246,7 +246,7 @@ jobs:
         tag: ${{github.ref}}
         overwrite: true
         prerelease: true
-        release_name: Stream from ${{github.ref}}
+        release_name: Stream from ${{github.ref}} (Topic)
         body: >
           The version `non-sense.${{github.ref}}.debug-full.d64` is
           the version that I used in the stream from ${{github.ref}}

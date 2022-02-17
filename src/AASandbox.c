@@ -249,8 +249,8 @@ AASandbox_tick(void)
       && Input.joy_port1.axis_y.direction == 0) {
     key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
-    for (i=0; i<Input.keyboard.pressed_count; ++i) {
-      switch (Input.keyboard.pressed[i]) {
+    for (i=0; i<Input.keyboard.sc_pressed_count; ++i) {
+      switch (Input.keyboard.sc_pressed[i]) {
       case Input_sc_w_e: key_w = true; break;
       case Input_sc_s_e: key_s = true; break;
       case Input_sc_a_e: key_a = true; break;

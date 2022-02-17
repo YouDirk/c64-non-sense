@@ -41,6 +41,9 @@ extern void __fastcall__ Input_tick(void);
  * private
  */
 
+extern void __fastcall__ _Input_joystick_port2_tick(void);
+extern void __fastcall__ _Input_joystick_port1_tick(void);
+
 extern void __fastcall__ _Input_keyboard_scan(void);
 extern void __fastcall__ _Input_keyboard_petscii_convert(void);
 

@@ -24,11 +24,139 @@
 
 ;; *******************************************************************
 
+;; void __fastcall__ _Input_joystick_port2_tick(void)
+.export __Input_joystick_port2_tick
+.proc __Input_joystick_port2_tick: near
+        .pushseg                        ; push current segment ("CODE")
+        .bss                            ; org uninitialized segment
+reg_bits:
+        .res 1                          ; copy of CIA1 port registers
+        .popseg                         ; restore "CODE" segment
+
+        lda CIA1_PRA                    ; bits of joy port2->CIA1 portA
+        eor #$ff                        ; bit set = PRESSED
+        sta reg_bits
+        ;; ---
+  .define _P2Y Input_t::joy_port2 + Input_joystick_t::axis_y
+        ldx _Input + _P2Y + Input_axis_t::direction ; X := previous P2Y
+        lda #$00                        ; 0 by default
+        lsr reg_bits
+        rol                             ; 1 if UP
+        lsr reg_bits
+        bcc _p2y_not_down
+        lda #$ff                        ; -1 if DOWN
+_p2y_not_down:
+        sta _Input + _P2Y + Input_axis_t::direction  ; save P2 Y-axis
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P2Y + Input_axis_t::direction
+        beq _p2y_not_changed
+        lda #$01
+_p2y_not_changed:
+        sta _Input + _P2Y + Input_axis_t::changed    ; save CHANGED P2Y
+        ;; ---
+  .define _P2X Input_t::joy_port2 + Input_joystick_t::axis_x
+        ldx _Input + _P2X + Input_axis_t::direction ; X := previous P2X
+        lda #$00                        ; 0 by default
+        lsr reg_bits
+        rol                             ; 1 if LEFT
+        lsr reg_bits
+        bcc _p2x_not_down
+        lda #$ff                        ; -1 if RIGHT
+_p2x_not_down:
+        sta _Input + _P2X + Input_axis_t::direction  ; save P2 X-axis
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P2X + Input_axis_t::direction
+        beq _p2x_not_changed
+        lda #$01
+_p2x_not_changed:
+        sta _Input + _P2X + Input_axis_t::changed    ; save CHANGED P2X
+        ;; ---
+  .define _P2B Input_t::joy_port2 + Input_joystick_t::button1
+        ldx _Input + _P2B + Input_button_t::pressed  ; X := previous P2B
+        lda #$00                        ; FALSE by default
+        lsr reg_bits
+        rol                             ; TRUE if pressed
+        sta _Input + _P2B + Input_button_t::pressed  ; save P2 button1
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P2B + Input_button_t::pressed
+        beq _p2b_not_changed
+        lda #$01
+_p2b_not_changed:
+        sta _Input + _P2B + Input_button_t::changed  ; save CHANGED P2B
+
+        rts
+.endproc                                ; __Input_joystick_port2_tick
+
+;; *******************************************************************
+
+;; void __fastcall__ _Input_joystick_port1_tick(void)
+.export __Input_joystick_port1_tick
+.proc __Input_joystick_port1_tick: near
+        .pushseg                        ; push current segment ("CODE")
+        .bss                            ; org uninitialized segment
+reg_bits:
+        .res 1                          ; copy of CIA1 port registers
+        .popseg                         ; restore "CODE" segment
+
+        lda CIA1_PRB                    ; bits of joy port1->CIA1 portB
+        eor #$ff                        ; bit set = PRESSED
+        sta reg_bits
+        ;; ---
+  .define _P1Y Input_t::joy_port1 + Input_joystick_t::axis_y
+        ldx _Input + _P1Y + Input_axis_t::direction ; X := previous P1Y
+        lda #$00                        ; 0 by default
+        lsr reg_bits
+        rol                             ; 1 if UP
+        lsr reg_bits
+        bcc _p1y_not_down
+        lda #$ff                        ; -1 if DOWN
+_p1y_not_down:
+        sta _Input + _P1Y + Input_axis_t::direction  ; save P1 Y-axis
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P1Y + Input_axis_t::direction
+        beq _p1y_not_changed
+        lda #$01
+_p1y_not_changed:
+        sta _Input + _P1Y + Input_axis_t::changed    ; save CHANGED P1Y
+        ;; ---
+  .define _P1X Input_t::joy_port1 + Input_joystick_t::axis_x
+        ldx _Input + _P1X + Input_axis_t::direction ; X := previous P1X
+        lda #$00                        ; 0 by default
+        lsr reg_bits
+        rol                             ; 1 if LEFT
+        lsr reg_bits
+        bcc _p1x_not_down
+        lda #$ff                        ; -1 if RIGHT
+_p1x_not_down:
+        sta _Input + _P1X + Input_axis_t::direction  ; save P1 X-axis
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P1X + Input_axis_t::direction
+        beq _p1x_not_changed
+        lda #$01
+_p1x_not_changed:
+        sta _Input + _P1X + Input_axis_t::changed    ; save CHANGED P1X
+        ;; ---
+  .define _P1B Input_t::joy_port1 + Input_joystick_t::button1
+        ldx _Input + _P1B + Input_button_t::pressed  ; X := previous P1B
+        lda #$00                        ; FALSE by default
+        lsr reg_bits
+        rol                             ; TRUE if pressed
+        sta _Input + _P1B + Input_button_t::pressed  ; save P1 button1
+        lda #$00                        ; CHANGED, FALSE by default
+        cpx _Input + _P1B + Input_button_t::pressed
+        beq _p1b_not_changed
+        lda #$01
+_p1b_not_changed:
+        sta _Input + _P1B + Input_button_t::changed  ; save CHANGED P1B
+
+        rts
+.endproc                                ; __Input_joystick_port1_tick
+
+;; *******************************************************************
+
 ;; void __fastcall__ _Input_keyboard_scan(void)
 .export __Input_keyboard_scan
 .proc __Input_keyboard_scan: near
-        DEBUG_RENDERTIME_IRQ_BEGIN VIC_COLOR_LIGHTRED
-
         .pushseg                        ; push current segment ("CODE")
         .bss                            ; org uninitialized segment
 cur_scan_value:
@@ -42,7 +170,7 @@ inner_loop_counter:
         lda #CIA_DDR_RW_ALL
         sta CIA1_DDRA                   ; scan value -> portA
 
-        ldx #$00                        ; X: pressed_count
+        ldx #$00                        ; X: sc_pressed_count
         stx _Input + Input_t::keyboard + Input_keyboard_t::changed
                                         ; changed := false
         ldy #$ff                        ; Y: scan code
@@ -68,17 +196,17 @@ inner_loop:
         ;; --- current key was pressed
         sta cur_input_matrix            ; "push": input matrix
         tya                             ; A := scan_code
-        cmp _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        cmp _Input+Input_t::keyboard + Input_keyboard_t::sc_pressed, x
         beq key_not_changed
-                         ; keyboard.pressed[pressed_count] := scan_code
-        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+               ; keyboard.sc_pressed[sc_pressed_count] := scan_code
+        sta _Input+Input_t::keyboard + Input_keyboard_t::sc_pressed, x
         lda #TRUE
-        sta _Input + Input_t::keyboard + Input_keyboard_t::changed
+        sta _Input+Input_t::keyboard + Input_keyboard_t::changed
 key_not_changed:
         lda cur_input_matrix            ; "pop": A := input matrix
-        inx                             ; ++pressed_count
-        cpx #INPUT_KEYBOARD_PRESSED_MAXCOUNT ; if (pressed_count ==
-        beq scan_done                        ;     MAXCOUNT) break;
+        inx                             ; ++sc_pressed_count
+        cpx #INPUT_KEYBOARD_SCPRESSED_MAXCOUNT ; if (sc_pressed_count
+        beq scan_done                          ;   == MAXCOUNT) break;
         ;; --- end of: current key was pressed
 
 inner_next:
@@ -102,22 +230,21 @@ debug_scannedall_ok:
 .endif ; DEBUG
 
 scan_done:
-                         ; keyboard.pressed[pressed_count] := 0x40
+                    ; keyboard.sc_pressed[sc_pressed_count] := 0x40
         lda #Input_sc_none_e
-        sta _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
+        sta _Input+Input_t::keyboard + Input_keyboard_t::sc_pressed, x
 
-                                ; if (Input.keyboard.pressed_count != X)
-        cpx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
-        beq count_not_changed   ;   then: I.keyboard.pressed_count := X
-        stx _Input + Input_t::keyboard + Input_keyboard_t::pressed_count
-        lda #TRUE               ;   then: I.keyboard.changed := true
-        sta _Input + Input_t::keyboard + Input_keyboard_t::changed
+                    ; if (Input.keyboard.sc_pressed_count != X)
+        cpx _Input+Input_t::keyboard+Input_keyboard_t::sc_pressed_count
+        beq count_not_changed ;   then: I.keyboard.sc_pressed_count := X
+        stx _Input+Input_t::keyboard+Input_keyboard_t::sc_pressed_count
+        lda #TRUE             ;   then: I.keyboard.changed := true
+        sta _Input+Input_t::keyboard+Input_keyboard_t::changed
 count_not_changed:
 
         lda #CIA_DDR_RONLY_ALL          ; restore data direction of
         sta CIA1_DDRA                   ;   portA
 
-        DEBUG_RENDERTIME_IRQ_END
         rts
 .endproc                                ; __Input_keyboard_scan
 
@@ -126,8 +253,6 @@ count_not_changed:
 ;; void __fastcall__ _Input_keyboard_petscii_convert(void)
 .export __Input_keyboard_petscii_convert
 .proc __Input_keyboard_petscii_convert: near
-        DEBUG_RENDERTIME_IRQ_BEGIN VIC_COLOR_LIGHTRED
-
   .define _PETSCII _Input + Input_t::keyboard + Input_keyboard_t::petscii
 
         ldy KERNAL_ZP_KEYBOARD_SCANCODE ; scan_code_prev := scan_code
@@ -140,9 +265,9 @@ count_not_changed:
         ldx #$ff                   ; X := counter = 0xff
 loop:
         inx                        ; ++counter = X
-                                   ; Y := I.keyboard.pressed[X]
-        ldy _Input + Input_t::keyboard + Input_keyboard_t::pressed, x
-        cpy #Input_sc_none_e       ; while (Input.keyboard.pressed[X]
+                                   ; Y := I.keyboard.sc_pressed[X]
+        ldy _Input+Input_t::keyboard + Input_keyboard_t::sc_pressed, x
+        cpy #Input_sc_none_e       ; while (Input.keyboard.sc_pressed[X]
         beq loop_done              ;        != Input_sc_none_e)
 
         lda KERNAL_PETSCIITABLE, y      ; A := PETSCII w/o shift-keys
@@ -154,7 +279,7 @@ loop:
         sta _PETSCII + Input_keyboard_petscii_t::shiftkeys
         jmp loop                   ; I.shiftkeys |= PETSCII
 not_shiftkey:
-        sty KERNAL_ZP_KEYBOARD_SCANCODE ; ZP_SCANCODE := I..pressed[X]
+        sty KERNAL_ZP_KEYBOARD_SCANCODE ; ZP_SCANCODE := I..sc_pressed[X]
         jmp loop
 loop_done:
         ;; set: KERNAL_ZP_KEYBOARD_SCANCODE, I..petscii.shiftkeys
@@ -194,7 +319,6 @@ nullchar_done:                               ; else I...char := PETSCII
         sta _PETSCII + Input_keyboard_petscii_t::changed
 
 charkey_not_changed:          ; any shift-key released before char-key
-        DEBUG_RENDERTIME_IRQ_END
         rts
 .endproc                           ; __Input_keyboard_petscii_convert
 

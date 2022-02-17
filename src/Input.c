@@ -37,7 +37,7 @@ Input_init(void)
   memset(&Input.joy_port1, 0x00, sizeof(Input_joystick_t));
 
   memset(&Input.keyboard, 0x00, sizeof(Input_keyboard_t));
-  Input.keyboard.pressed[0] = Input_sc_none_e; /* 0x40  */
+  Input.keyboard.sc_pressed[0] = Input_sc_none_e; /* 0x40  */
 
   /* zero-page variables which we are setting, instead of Kernal  */
   KERNAL_ZP_KEYBOARD_SCANCODE_PREV = Input_sc_none_e;
@@ -62,74 +62,25 @@ Input_release(void)
 
 /* ***************************************************************  */
 
-static void __fastcall__
-_joystick_axis_tick(Input_axis_t* result_axis,
-                    uint8_t cia_port_inv_shifted)
-{
-  static int8_t result_direction;
-
-#if (CIA1_PRAB_JOYUP_MASK | CIA1_PRAB_JOYDOWN_MASK) << 2 \
-    != (CIA1_PRAB_JOYLEFT_MASK | CIA1_PRAB_JOYRIGHT_MASK)
-#  error "_joystick_axis_tick(): CIA_INV_SHIFTED: Assertion 1 failed!"
-#endif
-#if CIA1_PRAB_JOYLEFT_MASK != CIA1_PRAB_JOYBTN1_MASK >> 2
-#  error "_joystick_axis_tick(): CIA_INV_SHIFTED: Assertion 2 failed!"
-#endif
-
-  if (cia_port_inv_shifted & CIA1_PRAB_JOYLEFT_MASK)
-    result_direction = 1;
-  else if (cia_port_inv_shifted & CIA1_PRAB_JOYRIGHT_MASK)
-    result_direction = -1;
-  else
-    result_direction = 0;
-
-  if (result_direction == result_axis->direction) {
-    result_axis->changed = false;
-    return;
-  }
-
-  result_axis->direction = result_direction;
-  result_axis->changed = true;
-}
-
 void __fastcall__
 Input_tick(void)
 {
-  static uint8_t cia_port_inv;
-
   DEBUG_RENDERTIME_IRQ_BEGIN(Graphix_lightred);
-  if (Input.set.enabled & Input_joystick_port2_mask) {
-    cia_port_inv = ~CIA1.pra;
 
-    _joystick_axis_tick(&Input.joy_port2.axis_y, cia_port_inv << 2);
-    _joystick_axis_tick(&Input.joy_port2.axis_x, cia_port_inv);
+  if (Input.set.enabled & Input_joystick_port2_mask)
+    _Input_joystick_port2_tick();
+  if (Input.set.enabled & Input_joystick_port1_mask)
+    _Input_joystick_port1_tick();
 
-    /* Asserting: Input_axis_t::direction and Input_button_t::pressed
-     * must have SIZEOF 1 and be first member in this struct!
-     */
-    _joystick_axis_tick((Input_axis_t*) &Input.joy_port2.button1,
-                        cia_port_inv >> 2);
-  }
-  if (Input.set.enabled & Input_joystick_port1_mask) {
-    cia_port_inv = ~CIA1.prb;
-
-    _joystick_axis_tick(&Input.joy_port1.axis_y, cia_port_inv << 2);
-    _joystick_axis_tick(&Input.joy_port1.axis_x, cia_port_inv);
-
-    /* Asserting: Input_axis_t::direction and Input_button_t::pressed
-     * must have SIZEOF 1 and be first member in this struct!
-     */
-    _joystick_axis_tick((Input_axis_t*) &Input.joy_port1.button1,
-                        cia_port_inv >> 2);
-  }
-  DEBUG_RENDERTIME_IRQ_END();
-
-  if (Input.set.enabled
-      & (Input_keyboard_scan_mask | Input_keyboard_scan_petscii_mask)) {
+  if (Input.set.enabled & Input_keyboard_scan_mask) {
 
     _Input_keyboard_scan();
 
-    if (Input.set.enabled & Input_keyboard_scan_petscii_mask)
+    if (Input.set.enabled & Input_keyboard_petscii_mask)
       _Input_keyboard_petscii_convert();
   }
+
+  DEBUG_RENDERTIME_IRQ_END();
 }
+
+/* ***************************************************************  */

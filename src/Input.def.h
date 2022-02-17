@@ -28,14 +28,81 @@ header_define(INPUT)
 
 /* Selectors for one or more specific input devices.  */
 typedef_enum_begin(Input_devices_t)
+  /* Disables all input devices below.  */
   typedef_enum_hex(Input_devices_t, 00,             Input_none_mask)
+
+  /* Enables the DEFAULT joystick at port 2 (CIA1 port A).  State
+   * available at
+   *
+   *   * INPUT.JOY_PORT2
+   */
   typedef_enum_hex(Input_devices_t, 01,   Input_joystick_port2_mask)
+
+  /* Enables joystick at port 1 (CIA1 port B).  State available at
+   *
+   *   * INPUT.JOY_PORT1
+   *
+   * ATTENTION: Make sure to have INPUT_KEYBOARD_SCAN_MASK disabled,
+   *            if joystick port 1 is in use.
+   *
+   * REASON: The keyboard scan routine selects CIA1 port A and reads
+   *         CIA1 port B.  Because both, keyboard and joystick port 1,
+   *         are hard wired to CIA1 port B, it exist no way to disable
+   *         the joystick port 1 signal during keyboard scan.  As
+   *         result the following scan codes will be detected during
+   *         keyboard scan if there is an input at the same time on
+   *         joystick port1:
+   *
+   *              * Up   : DEL    , 3, 5, 7 | 9, +, POUND , 1
+   *                Down : RETURN , W, R, Y | I, P, *     , LEFT
+   *                Left : CRSR RT, A, D, G | J, L, ;     , CTRL
+   *                Right: F7     , 4, 6, 8 | 0, -, HOME  , 2
+   *                Btn1 : F1     , Z, C, B | M, ., RSHIFT, SPACE
+   *   SCPRESSED_MAXCOUNT -------4--------->|
+   *
+   * Therefore it is highly recommended NOT USE KEYBOARD AND
+   * JOYSTICK_PORT1 at the same time together!
+   *
+   * Otherwise you need to take a detailed look to the "C64 keyboard
+   * matrix" and INPUT_KEYBOARD_SCPRESSED_MAXCOUNT below to extract
+   * which keys are possible to read concurrency to joystick port 1.
+   */
   typedef_enum_hex(Input_devices_t, 02,   Input_joystick_port1_mask)
+
+  /* Enables both joysticks above.  */
   typedef_enum_hex(Input_devices_t, 03,     Input_joystick_all_mask)
+
+  /* Enables the scan (for reading SCAN CODES) of keybroard.  It coast
+   * much CPU time.  Scanned codes are available at
+   *
+   *   * INPUT.KEYBOARD.SC_PRESSED[]
+   *
+   *   * via INPUT_SC_{keyname}_E below.
+   *
+   * Use this if you need key input during the game, such like WASD
+   * control.
+   *
+   * ATTENTION: Make sure there is not a keyboard scan enabled during
+   *            joystick port1 is in use!  For more details, see
+   *            INPUT_DEVICE_T::INPUT_JOYSTICK_PORT1_MAST above.
+   */
   typedef_enum_hex(Input_devices_t, 04,    Input_keyboard_scan_mask)
-  typedef_enum_hex(Input_devices_t, 08,                              \
-                                   Input_keyboard_scan_petscii_mask)
+
+  /* Requires that INPUT_KEYBOARD_SCAN_MASK above is set too.  Enables
+   * reading PETSCII codes, correct translated for output.  One per
+   * engine tick via
+   *
+   *   * INPUT.KEYBOARD.PETSCII.CHARACTER
+   *
+   * Use this if you require to input a string from the user, such
+   * like a player name.
+   */
+  typedef_enum_hex(Input_devices_t, 08, Input_keyboard_petscii_mask)
+
+  /* Enables full keyboard support: scan codes + PETSCII codes */
   typedef_enum_hex(Input_devices_t, 0c,     Input_keyboard_all_mask)
+
+  /* Enables all supported input devices above.  */
   typedef_enum_hex(Input_devices_t, ff,              Input_all_mask)
 typedef_enum_end(Input_devices_t)
 
@@ -172,12 +239,13 @@ typedef_enum_end(Input_scancode_t)
 
 /* ***************************************************************  */
 
-/* Information of an axis  */
+/* State of an axis.  */
 typedef_struct_begin(Input_axis_t)
-  /* 1 or -1 depending on push direction during this engine tick, if
-   * axis is pressed .
+  /* 1 or -1 depending on push direction.
    *
-   * Assert: Must have SIZEOF 1 and be first member in this struct!
+   *   *  1 if UP   or LEFT  is pressed
+   *   * -1 if DOWN or RIGHT is pressed
+   *   *  0 otherwise
    */
   typedef_struct_int8(                                 direction)
 
@@ -187,20 +255,28 @@ typedef_struct_end(Input_axis_t)
 
 /* Information of a button  */
 typedef_struct_begin(Input_button_t)
-  /* TRUE if button is pressed during this engine tick.
-   *
-   * Assert: Must have SIZEOF 1 and be first member in this struct!
-   */
+  /* TRUE if button is pressed.  */
   typedef_struct_bool(                                 pressed)
 
   /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
   typedef_struct_bool(                                 changed)
 typedef_struct_end(Input_button_t)
 
-/* Information about a joystick  */
+/* State of an joystick.  */
 typedef_struct_begin(Input_joystick_t)
-  /* State of the axes.  */
+  /* State of the Y-axis.
+   *
+   *   *  1 if UP   is pressed
+   *   * -1 if DOWN is pressed
+   *   *  0 otherwise
+   */
   typedef_struct_nested(Input_axis_t,                  axis_y)
+  /* State of the X-axis.
+   *
+   *   *  1 if LEFT  is pressed
+   *   * -1 if RIGHT is pressed
+   *   *  0 otherwise
+   */
   typedef_struct_nested(Input_axis_t,                  axis_x)
 
   /* State of the fire button.  */
@@ -233,14 +309,14 @@ typedef_struct_end(Input_keyboard_petscii_t)
 
 /* ***************************************************************  */
 
-/* Maximal possible items in INPUT.KEYBOARD.PRESSED  */
-define_dec(INPUT_KEYBOARD_PRESSED_MAXCOUNT,                      4)
+/* Maximal possible items in INPUT.KEYBOARD.SC_PRESSED  */
+define_dec(INPUT_KEYBOARD_SCPRESSED_MAXCOUNT,                    4)
 
-/* Real length of INPUT.KEYBOARD.PRESSED buffer, including 0x40
+/* Real length of INPUT.KEYBOARD.SC_PRESSED buffer, including 0x40
  * (INPUT_SC_NONE_E) termination.
  */
-define_dec(INPUT_KEYBOARD_PRESSED_BUFSIZE,                           \
-                                 INPUT_KEYBOARD_PRESSED_MAXCOUNT+1)
+define_dec(INPUT_KEYBOARD_SCPRESSED_BUFSIZE,                         \
+                                 INPUT_KEYBOARD_SCPRESSED_MAXCOUNT+1)
 
 /* Information about the keyboard  */
 typedef_struct_begin(Input_keyboard_t)
@@ -252,8 +328,8 @@ typedef_struct_begin(Input_keyboard_t)
    * is commonly known from null-termination of C strings.
    *
    * It´s possible to use an index variable in a loop, because
-   * INPUT.KEYBOARD.PRESSED is global static and SIZEOF this variable
-   * is 1.  Otherwise use a loop such like this instead:
+   * INPUT.KEYBOARD.SC_PRESSED is global static and SIZEOF this
+   * variable is 1.  Otherwise use a loop such like this instead:
    *
    * ```C
    * void __fastcall__
@@ -261,7 +337,7 @@ typedef_struct_begin(Input_keyboard_t)
    * {
    *   Input_scancode_t* cur_key;
    *
-   *   for (cur_key=Input.keyboard.pressed;
+   *   for (cur_key=Input.keyboard.sc_pressed;
    *        *cur_key != Input_sc_none_e; ++cur_key) {
    *     do_something(*cur_key);
    *   }
@@ -269,15 +345,16 @@ typedef_struct_begin(Input_keyboard_t)
    * ```
    */
   typedef_struct_enum_array(Input_scancode_t,                        \
-                            pressed, INPUT_KEYBOARD_PRESSED_BUFSIZE)
+                         sc_pressed, INPUT_KEYBOARD_SCPRESSED_BUFSIZE)
 
-  /* The number of items in INPUT.KEYBOARD.PRESSED.  For iteration do
-   * not use an index variable.  See comment of INPUT.KEYBOARD.PRESSED
-   * above.
+  /* The number of items in INPUT.KEYBOARD.SC_PRESSED.  For iteration
+   * do not use an index variable.  See comment of
+   * INPUT.KEYBOARD.SC_PRESSED above.
    */
-  typedef_struct_uint8(pressed_count)
+  typedef_struct_uint8(sc_pressed_count)
 
-  /* TRUE for exactly 1 tick, if PRESSED has changed it´s value.  */
+  /* TRUE for exactly 1 tick, if SC_PRESSED has changed it´s value.
+   */
   typedef_struct_bool(changed)
 
   /* Just filled if PETSCII enabled, using in INPUT.SET.ENABLED the
