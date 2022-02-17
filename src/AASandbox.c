@@ -246,7 +246,8 @@ AASandbox_tick(void)
 
   if (Input.keyboard.changed
       && Input.joy_port1.axis_x.direction == 0
-      && Input.joy_port1.axis_y.direction == 0) {
+      && Input.joy_port1.axis_y.direction == 0
+      && !Input.joy_port1.button1.pressed) {
     key_w=false, key_s=false, key_a=false, key_d=false, key_space=false;
 
     for (i=0; i<Input.keyboard.sc_pressed_count; ++i) {

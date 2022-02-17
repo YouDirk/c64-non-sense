@@ -60,12 +60,20 @@ typedef_enum_begin(Input_devices_t)
    *                Btn1 : F1     , Z, C, B | M, ., RSHIFT, SPACE
    *   SCPRESSED_MAXCOUNT -------4--------->|
    *
-   * Therefore it is highly recommended NOT USE KEYBOARD AND
+   * Therefore it is highly recommended to NOT USE KEYBOARD AND
    * JOYSTICK_PORT1 at the same time together!
    *
-   * Otherwise you need to take a detailed look to the "C64 keyboard
-   * matrix" and INPUT_KEYBOARD_SCPRESSED_MAXCOUNT below to extract
-   * which keys are possible to read concurrency to joystick port 1.
+   * WORKAROUNDS
+   * -----------
+   *
+   *     Otherwise you need to take a detailed look into the "C64
+   *     keyboard matrix" and INPUT_KEYBOARD_SCPRESSED_MAXCOUNT below
+   *     to extract which keys are possible to read concurrency to
+   *     joystick port 1.
+   *
+   *     Another way is to ignore the keyboard input if you detect an
+   *     input on joystick port 1.  See the example code in
+   *     INPUT_T::KEYBOARD below.
    */
   typedef_enum_hex(Input_devices_t, 02,   Input_joystick_port1_mask)
 
@@ -84,7 +92,7 @@ typedef_enum_begin(Input_devices_t)
    *
    * ATTENTION: Make sure there is not a keyboard scan enabled during
    *            joystick port1 is in use!  For more details, see
-   *            INPUT_DEVICE_T::INPUT_JOYSTICK_PORT1_MAST above.
+   *            INPUT_DEVICE_T::INPUT_JOYSTICK_PORT1_MASK above.
    */
   typedef_enum_hex(Input_devices_t, 04,    Input_keyboard_scan_mask)
 
@@ -143,10 +151,6 @@ typedef_enum_end(Input_devices_t)
  * Kernal PETSCII lookup table (C64 ASCII) at
  *
  *   (uint8_t*) 0xeb81, which is zeropage vector 0xf5 is pointing to.
- *
- *
- * --- defined in Input.def.h:
- * typedef uint8_t Input_scancode_t;
  *
  * ***************************************************************  */
 
@@ -397,20 +401,27 @@ typedef_struct_begin(Input_t)
    */
   typedef_struct_nested(Input_joystick_t,              joy_port2)
 
-  /* Joystick at port 1 does not work simultaneously together with the
-   * keyboard.  Therefore, if the keyboard status changed then make
-   * sure that there is no input from joystick at port 1.
+  /* Recommended usage
+   * ```
+   * void __fastcall__
+   * MyModule_tick(void)
+   * {
+   *   if (Input.joy_port1.axis_y.changed) {
+   *     do_something_with(Input.joy_port1.axis_y.direction);
+   *   }
+   * }
+   * ```
    *
-   * For recommended code if INPUT.SET.ENABLED =
-   * Input_joystick_port1_mask | Input_keyboard_*_mask is set together
-   *
-   *   * take a look to INPUT_T::INPUT_SET_T::KEYBOARD
+   * ATTENTION: Make sure there is not a keyboard scan enabled during
+   *            joystick port1 is in use!  For more details, see
+   *            INPUT_DEVICE_T::INPUT_JOYSTICK_PORT1_MASK above.
    */
   typedef_struct_nested(Input_joystick_t,              joy_port1)
 
   /* The keyboard ^^
    *
-   * Recommended using SCAN_CODES with at least INPUT_KEYBOARD_SCAN_MASK
+   * Recommended using of SCAN_CODES (requires at least
+   * INPUT_KEYBOARD_SCAN_MASK enabled)
    * ```
    * void __fastcall__
    * MyModule_tick(void)
@@ -420,9 +431,11 @@ typedef_struct_begin(Input_t)
    *
    *   if (Input.keyboard.changed
    *
-   *       // needed, if INPUT.SET.ENABLED = Input_joystick_port1_mask
+   *       // Recommended if INPUT.SET.ENABLED = Input_joystick_port1_mask
+   *       // to prioritize joystick port 1 and ignore false scanned keys.
    *       && Input.joy_port1.axis_x.direction == 0
    *       && Input.joy_port1.axis_y.direction == 0
+   *       && !Input.joy_port1.button1.pressed
    *
    *       ) {
    *     key_w=false, key_s=false, key_a=false, key_d=false;
@@ -447,10 +460,11 @@ typedef_struct_begin(Input_t)
    * }
    * ```
    *
-   * Recommended using PETSCII characters with at least
-   * INPUT_KEYBOARD_SCAN_PETSCII_MASK
+   * Recommended using of PETSCII (requires at least
+   * INPUT_KEYBOARD_PETSCII_MASK and INPUT_KEYBOARD_SCAN_MASK enabled)
+   *
    * ```
-   * AASandbox_tick(void)
+   * MyModule_tick(void)
    * {
    *   if (Input.keyboard.petscii.changed
    *       && Input.keyboard.petscii.character != '\0') {

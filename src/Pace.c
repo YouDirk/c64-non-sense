@@ -52,7 +52,7 @@
 
 void __fastcall__
 Pace_new(Pace_t* pace,
-         uint7_t velocity_max, uint8_t accel_rate, uint6_t brake_rate,
+         uint7_t velocity_max, uint6_t accel_rate, uint6_t brake_rate,
          uint6_t delay)
 {
   pace->pace = 0;

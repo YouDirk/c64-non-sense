@@ -37,6 +37,23 @@
 #define BBB_                                      e
 #define BBBB                                      f
 
+#define ____                                      0
+#define __ii                                      1
+#define __DD                                      2
+#define __gg                                      3
+#define ii__                                      4
+#define iiii                                      5
+#define iiDD                                      6
+#define iigg                                      7
+#define DD__                                      8
+#define DDii                                      9
+#define DDDD                                      a
+#define DDgg                                      b
+#define gg__                                      c
+#define ggii                                      d
+#define ggDD                                      e
+#define gggg                                      f
+
 #define __(high, low)                             0x##high##low
 #define _(high, low)                              __(high, low)
 

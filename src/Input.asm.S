@@ -60,9 +60,9 @@ _p2y_not_changed:
         lsr reg_bits
         rol                             ; 1 if LEFT
         lsr reg_bits
-        bcc _p2x_not_down
+        bcc _p2x_not_right
         lda #$ff                        ; -1 if RIGHT
-_p2x_not_down:
+_p2x_not_right:
         sta _Input + _P2X + Input_axis_t::direction  ; save P2 X-axis
         lda #$00                        ; CHANGED, FALSE by default
         cpx _Input + _P2X + Input_axis_t::direction
@@ -125,9 +125,9 @@ _p1y_not_changed:
         lsr reg_bits
         rol                             ; 1 if LEFT
         lsr reg_bits
-        bcc _p1x_not_down
+        bcc _p1x_not_right
         lda #$ff                        ; -1 if RIGHT
-_p1x_not_down:
+_p1x_not_right:
         sta _Input + _P1X + Input_axis_t::direction  ; save P1 X-axis
         lda #$00                        ; CHANGED, FALSE by default
         cpx _Input + _P1X + Input_axis_t::direction
