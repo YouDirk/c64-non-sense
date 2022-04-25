@@ -172,7 +172,7 @@ AASandbox_release(void)
 #ifdef DEBUG
   strcpy(++AASandbox_charout_last, "'");
   DEBUG_NOTE(AASandbox_charout);
-#endif /* DEBUG  */
+#endif /* End of DEBUG :o  */
 
   Pace_delete(&AASandbox_pace_sprite_x);
   Pace_delete(&AASandbox_pace_sprite_y);
