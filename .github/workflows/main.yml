@@ -44,7 +44,7 @@ jobs:
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
-      uses: actions/checkout@v2.3.4
+      uses: actions/checkout@v2
       with:
         ref: master
         clean: true
@@ -73,7 +73,7 @@ jobs:
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
-      uses: actions/checkout@v2.3.4
+      uses: actions/checkout@v2
       with:
         ref: ${{github.ref}}
         clean: true
@@ -103,7 +103,7 @@ jobs:
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
-      uses: actions/checkout@v2.3.4
+      uses: actions/checkout@v2
       with:
         ref: master
         clean: true
@@ -159,7 +159,7 @@ jobs:
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
-      uses: actions/checkout@v2.3.4
+      uses: actions/checkout@v2
       with:
         ref: ${{github.ref}}
         clean: true
@@ -213,7 +213,7 @@ jobs:
     steps:
       # Checking out to $GITHUB_WORKSPACE
     - name: Checking out...
-      uses: actions/checkout@v2.3.4
+      uses: actions/checkout@v2
       with:
         ref: ${{github.ref}}
         clean: true
