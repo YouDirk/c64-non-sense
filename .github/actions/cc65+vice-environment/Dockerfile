@@ -23,7 +23,8 @@ COPY entrypoint.sh /entrypoint.sh
 
 # Install required packages
 RUN \
-     sed -i 's/main/main contrib/' /etc/apt/sources.list \
+     sed -i 's/^\(Components:.*\)$/\1 contrib/' \
+       /etc/apt/sources.list.d/debian.sources \
   && apt-get -y update \
   && apt-get -y install make cc65 vice
 
